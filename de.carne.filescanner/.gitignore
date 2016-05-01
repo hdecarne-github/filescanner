@@ -1,4 +1,4 @@
 .gradle/
 .settings/
-bin/
 build/
+build-eclipse/
