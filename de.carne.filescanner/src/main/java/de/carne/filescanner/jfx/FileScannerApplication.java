@@ -16,7 +16,6 @@
  */
 package de.carne.filescanner.jfx;
 
-import java.io.File;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -26,6 +25,8 @@ import java.util.Map;
 import de.carne.Main;
 import de.carne.filescanner.jfx.session.SessionController;
 import de.carne.jfx.StageController;
+import de.carne.jfx.messagebox.MessageBoxController;
+import de.carne.jfx.messagebox.MessageBoxStyle;
 import de.carne.util.logging.Log;
 import de.carne.util.logging.LogConfig;
 import javafx.application.Application;
@@ -41,7 +42,16 @@ public class FileScannerApplication extends Application implements Main {
 	private static final String PARAMETER_VERBOSE = "--verbose";
 	private static final String PARAMETER_DEBUG = "--debug";
 
-	private static FileScannerApplication applicationInstance = null;
+	static {
+		MessageBoxController.registerImage(MessageBoxStyle.ICON_INFO, Images.IMAGE_INFO16);
+		MessageBoxController.registerImage(MessageBoxStyle.ICON_INFO, Images.IMAGE_INFO32);
+		MessageBoxController.registerImage(MessageBoxStyle.ICON_WARNING, Images.IMAGE_WARNING16);
+		MessageBoxController.registerImage(MessageBoxStyle.ICON_WARNING, Images.IMAGE_WARNING32);
+		MessageBoxController.registerImage(MessageBoxStyle.ICON_ERROR, Images.IMAGE_ERROR16);
+		MessageBoxController.registerImage(MessageBoxStyle.ICON_ERROR, Images.IMAGE_ERROR32);
+		MessageBoxController.registerImage(MessageBoxStyle.ICON_QUESTION, Images.IMAGE_QUESTION16);
+		MessageBoxController.registerImage(MessageBoxStyle.ICON_QUESTION, Images.IMAGE_QUESTION32);
+	}
 
 	void handleUncaughtException(Thread t, Throwable e, UncaughtExceptionHandler next) {
 		LOG.error(e, I18N.BUNDLE, I18N.STR_UNEXPECTED_EXCEPTION_MESSAGE, e.getLocalizedMessage());
@@ -66,8 +76,6 @@ public class FileScannerApplication extends Application implements Main {
 	 */
 	@Override
 	public void start(Stage stage) throws Exception {
-		assert stage != null;
-
 		Thread.currentThread().setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
 
 			private UncaughtExceptionHandler next = Thread.currentThread().getUncaughtExceptionHandler();
@@ -79,11 +87,9 @@ public class FileScannerApplication extends Application implements Main {
 
 		});
 
-		LOG.debug(null, "Starting JavaFX GUI...");
-
-		applicationInstance = this;
-
 		String openFile = processParameters();
+
+		LOG.debug(null, "Starting JavaFX GUI...");
 
 		SessionController session = StageController.setupPrimaryStage(stage, SessionController.class);
 
@@ -101,18 +107,7 @@ public class FileScannerApplication extends Application implements Main {
 	 */
 	@Override
 	public void stop() throws Exception {
-		applicationInstance = null;
 		LOG.debug(null, "JavaFX GUI stopped");
-	}
-
-	/**
-	 * Get the currently running application instance.
-	 *
-	 * @return The currently running application or {@code null}, if no
-	 *         application is running.
-	 */
-	public static FileScannerApplication getInstance() {
-		return applicationInstance;
 	}
 
 	private String processParameters() {
@@ -132,19 +127,13 @@ public class FileScannerApplication extends Application implements Main {
 			} else if (PARAMETER_DEBUG.equals(parameter)) {
 				LogConfig.applyConfig(LogConfig.CONFIG_DEBUG);
 				LOG.notice(I18N.BUNDLE, I18N.STR_DEBUG_ENABLED_MESSAGE);
-			} else if (openFile == null && isValidFileParameter(parameter)) {
+			} else if (openFile == null) {
 				openFile = parameter;
 			} else {
 				LOG.warning(I18N.BUNDLE, I18N.STR_INVALID_PARAMETER_MESSAGE, parameter);
 			}
 		}
 		return openFile;
-	}
-
-	private boolean isValidFileParameter(String parameter) {
-		File parameterFile = new File(parameter);
-
-		return parameterFile.isFile();
 	}
 
 	private void logVMInfo() {
