@@ -22,7 +22,6 @@ import javafx.beans.property.LongProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.scene.Cursor;
 import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
 import javafx.scene.text.Font;
@@ -36,7 +35,7 @@ public class HexView extends Control {
 	 * Construct {@code HexView}.
 	 */
 	public HexView() {
-		setCursor(Cursor.TEXT);
+
 	}
 
 	/*
@@ -52,7 +51,7 @@ public class HexView extends Control {
 
 	/**
 	 * Get the displayed file.
-	 * 
+	 *
 	 * @return The displayed file.
 	 */
 	public FileChannel getFile() {
@@ -61,7 +60,7 @@ public class HexView extends Control {
 
 	/**
 	 * Set the file to display.
-	 * 
+	 *
 	 * @param file The file to display.
 	 */
 	public void setFile(FileChannel file) {
@@ -71,7 +70,7 @@ public class HexView extends Control {
 
 	/**
 	 * Get the file property.
-	 * 
+	 *
 	 * @return The file property.
 	 */
 	public ObjectProperty<FileChannel> fileProperty() {
@@ -82,7 +81,7 @@ public class HexView extends Control {
 
 	/**
 	 * Get the displayed position.
-	 * 
+	 *
 	 * @return The displayed position.
 	 */
 	public Long getPosition() {
@@ -91,7 +90,7 @@ public class HexView extends Control {
 
 	/**
 	 * Set the displayed position.
-	 * 
+	 *
 	 * @param position The position to display.
 	 */
 	public void setPosition(Long position) {
@@ -100,20 +99,50 @@ public class HexView extends Control {
 
 	/**
 	 * Get the position property.
-	 * 
+	 *
 	 * @return The position property.
 	 */
 	public LongProperty positionProperty() {
 		return this.positionProperty;
 	}
 
-	private static final Font DEFAULT_MONOSPACED_FONT = new Font("Monospaced", 12.0);
+	private final SimpleObjectProperty<PositionRange> selectionProperty = new SimpleObjectProperty<>(
+			new PositionRange());
+
+	/**
+	 * Get the selection range.
+	 *
+	 * @return The selection range.
+	 */
+	public PositionRange getSelection() {
+		return this.selectionProperty.get();
+	}
+
+	/**
+	 * Set the selection range.
+	 *
+	 * @param selection The selection range to set.
+	 */
+	public void setSelection(PositionRange selection) {
+		this.selectionProperty.set(new PositionRange(selection));
+	}
+
+	/**
+	 * Get the selection property.
+	 *
+	 * @return The selection property.
+	 */
+	public ObjectProperty<PositionRange> selectionProperty() {
+		return this.selectionProperty;
+	}
+
+	private static final Font DEFAULT_MONOSPACED_FONT = new Font("Courier New", 13.0);
 
 	private final SimpleObjectProperty<Font> fontProperty = new SimpleObjectProperty<>(DEFAULT_MONOSPACED_FONT);
 
 	/**
 	 * Get the display font.
-	 * 
+	 *
 	 * @return The display font.
 	 */
 	public Font getFont() {
@@ -122,7 +151,7 @@ public class HexView extends Control {
 
 	/**
 	 * Set the display font.
-	 * 
+	 *
 	 * @param font The display font.
 	 */
 	public void setFont(Font font) {
@@ -131,7 +160,7 @@ public class HexView extends Control {
 
 	/**
 	 * Get the font property.
-	 * 
+	 *
 	 * @return The font property.
 	 */
 	public ObjectProperty<Font> fontProperty() {
