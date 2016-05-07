@@ -32,6 +32,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.MenuBar;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -45,6 +46,9 @@ public class SessionController extends StageController {
 	private static final Preferences PREFERENCES = Preferences.systemNodeForPackage(SessionController.class);
 
 	private static final String PREF_INITIAL_DIRECTORY = "initialDirectory";
+
+	@FXML
+	MenuBar systemMenuBar;
 
 	@FXML
 	HexView hexView;
@@ -121,6 +125,15 @@ public class SessionController extends StageController {
 			}
 
 		});
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see de.carne.jfx.StageController#getSystemMenuBar()
+	 */
+	@Override
+	protected MenuBar getSystemMenuBar() {
+		return this.systemMenuBar;
 	}
 
 	/*
