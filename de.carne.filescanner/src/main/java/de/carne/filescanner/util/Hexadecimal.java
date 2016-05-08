@@ -17,9 +17,9 @@
 package de.carne.filescanner.util;
 
 /**
- * Utility class used for hex formatting any kind of data.
+ * Utility class used for hexadecimal formatting.
  */
-public final class Hex {
+public final class Hexadecimal {
 
 	private static final char[] LOWER_NIBBLE_MAP = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a',
 			'b', 'c', 'd', 'e', 'f' };

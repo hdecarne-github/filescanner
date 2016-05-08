@@ -91,6 +91,25 @@ public final class Images {
 	 */
 	public static final Image IMAGE_QUESTION32 = getImage(Images.class, "iconQuestion32.png");
 
+	/**
+	 * FileScanner icon (16x16)
+	 */
+	public static final Image IMAGE_FILESCANNER16 = getImage(Images.class, "iconFileScanner16.png");
+
+	/**
+	 * FileScanner icon (32x32)
+	 */
+	public static final Image IMAGE_FILESCANNER32 = getImage(Images.class, "iconFileScanner32.png");
+
+	/**
+	 */
+	public static final Image IMAGE_FILESCANNER48 = getImage(Images.class, "iconFileScanner48.png");
+
+	/**
+	 * FileScanner icon (128x128)
+	 */
+	public static final Image IMAGE_FILESCANNER128 = getImage(Images.class, "iconFileScanner128.png");
+
 	private static Image getImage(Class<?> resourceClass, String resourceName) {
 		Image image;
 

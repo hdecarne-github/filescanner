@@ -16,7 +16,7 @@
  */
 package de.carne.filescanner.jfx.control;
 
-import de.carne.filescanner.util.Hex;
+import de.carne.filescanner.util.Hexadecimal;
 
 /**
  * Class used to represent a position range within a file (or any other
@@ -37,7 +37,7 @@ public final class PositionRange {
 
 	/**
 	 * Construct {@code PositionRange}.
-	 * 
+	 *
 	 * @param range The initial range (may be {@code null}).
 	 */
 	public PositionRange(PositionRange range) {
@@ -55,6 +55,34 @@ public final class PositionRange {
 		this.end = end;
 	}
 
+	/**
+	 * Get the start position.
+	 *
+	 * @return The start position.
+	 */
+	public long getStart() {
+		return this.start;
+	}
+
+	/**
+	 * Get the end position.
+	 *
+	 * @return The end position.
+	 */
+	public long getEnd() {
+		return this.end;
+	}
+
+	/**
+	 * Check whether a position is within the range.
+	 * 
+	 * @param position The position to check.
+	 * @return {@code true} if the position is within the range.
+	 */
+	public boolean inRange(long position) {
+		return this.start <= position && position < this.end;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
@@ -64,9 +92,9 @@ public final class PositionRange {
 		StringBuilder buffer = new StringBuilder();
 
 		buffer.append("[");
-		Hex.formatL(buffer, this.start);
+		Hexadecimal.formatL(buffer, this.start);
 		buffer.append(" - ");
-		Hex.formatL(buffer, this.end);
+		Hexadecimal.formatL(buffer, this.end);
 		buffer.append("[");
 		return buffer.toString();
 	}

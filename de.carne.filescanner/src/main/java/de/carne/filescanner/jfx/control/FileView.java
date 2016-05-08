@@ -29,13 +29,16 @@ import javafx.scene.text.Font;
 /**
  * Custom control for display raw byte data from a {@code FileChannel} object.
  */
-public class HexView extends Control {
+public class FileView extends Control {
+
+	private static final String USER_AGENT_STYLESHEET = FileView.class
+			.getResource(FileView.class.getSimpleName() + ".css").toExternalForm();
 
 	/**
-	 * Construct {@code HexView}.
+	 * Construct {@code FileView}.
 	 */
-	public HexView() {
-
+	public FileView() {
+		getStyleClass().add("file-view");
 	}
 
 	/*
@@ -44,7 +47,46 @@ public class HexView extends Control {
 	 */
 	@Override
 	protected Skin<?> createDefaultSkin() {
-		return new HexViewSkin(this);
+		return new FileViewSkin(this);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see javafx.scene.layout.Region#getUserAgentStylesheet()
+	 */
+	@Override
+	public String getUserAgentStylesheet() {
+		return USER_AGENT_STYLESHEET;
+	}
+
+	private final SimpleObjectProperty<FileViewType> viewTypeProperty = new SimpleObjectProperty<>(
+			FileViewType.HEXADECIMAL_U);
+
+	/**
+	 * Get the view type.
+	 *
+	 * @return The view type.
+	 */
+	public FileViewType getViewType() {
+		return this.viewTypeProperty.get();
+	}
+
+	/**
+	 * Set the view type.
+	 *
+	 * @param viewType The view type to set.
+	 */
+	public void setViewType(FileViewType viewType) {
+		this.viewTypeProperty.set(viewType != null ? viewType : FileViewType.HEXADECIMAL_U);
+	}
+
+	/**
+	 * Get the view type property.
+	 *
+	 * @return The view type property.
+	 */
+	public ObjectProperty<FileViewType> viewTypeProperty() {
+		return this.viewTypeProperty;
 	}
 
 	private final SimpleObjectProperty<FileChannel> fileProperty = new SimpleObjectProperty<>(null);

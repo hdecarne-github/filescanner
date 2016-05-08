@@ -22,7 +22,8 @@ import java.nio.channels.FileChannel;
 import java.nio.file.StandardOpenOption;
 import java.util.prefs.Preferences;
 
-import de.carne.filescanner.jfx.control.HexView;
+import de.carne.filescanner.jfx.Images;
+import de.carne.filescanner.jfx.control.FileView;
 import de.carne.jfx.StageController;
 import de.carne.jfx.aboutinfo.AboutInfoController;
 import de.carne.jfx.messagebox.MessageBoxStyle;
@@ -51,7 +52,7 @@ public class SessionController extends StageController {
 	MenuBar systemMenuBar;
 
 	@FXML
-	HexView hexView;
+	FileView hexView;
 
 	@FXML
 	void onNewSession(ActionEvent evt) {
@@ -90,6 +91,7 @@ public class SessionController extends StageController {
 		try {
 			AboutInfoController aboutInfo = openStage(AboutInfoController.class);
 
+			aboutInfo.setInfoIcon(Images.IMAGE_FILESCANNER48);
 			aboutInfo.addInfo(I18N.formatSTR_ABOUT_TITLE1(), I18N.formatSTR_ABOUT_INFO1());
 			aboutInfo.addInfo(I18N.formatSTR_ABOUT_TITLE2(), I18N.formatSTR_ABOUT_INFO2());
 			aboutInfo.getStage().showAndWait();
@@ -115,6 +117,8 @@ public class SessionController extends StageController {
 	protected void setupStage(Stage controllerStage) throws IOException {
 		super.setupStage(controllerStage);
 		controllerStage.setTitle(I18N.formatSTR_SESSION_TITLE());
+		controllerStage.getIcons().addAll(Images.IMAGE_FILESCANNER16, Images.IMAGE_FILESCANNER32,
+				Images.IMAGE_FILESCANNER48);
 		controllerStage.showingProperty().addListener(new ChangeListener<Boolean>() {
 
 			@Override
