@@ -102,8 +102,29 @@ public final class Images {
 	public static final Image IMAGE_FILESCANNER32 = getImage(Images.class, "iconFileScanner32.png");
 
 	/**
+	 * FileScanner icon (48x48)
 	 */
 	public static final Image IMAGE_FILESCANNER48 = getImage(Images.class, "iconFileScanner48.png");
+
+	/**
+	 * Input result icon (16x16)
+	 */
+	public static final Image IMAGE_INPUT_RESULT16 = getImage(Images.class, "iconInputResult16.png");
+
+	/**
+	 * Encoded result icon (16x16)
+	 */
+	public static final Image IMAGE_ENCODED_RESULT16 = getImage(Images.class, "iconFormatResult16.png");
+
+	/**
+	 * Format result icon (16x16)
+	 */
+	public static final Image IMAGE_FORMAT_RESULT16 = getImage(Images.class, "iconFormatResult16.png");
+
+	/**
+	 * Sub-format result icon (16x16)
+	 */
+	public static final Image IMAGE_SUB_FORMAT_RESULT16 = getImage(Images.class, "iconSubFormatResult16.png");
 
 	/**
 	 * FileScanner icon (128x128)

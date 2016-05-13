@@ -18,7 +18,6 @@ package de.carne.filescanner.jfx.control;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,6 +58,8 @@ class FileViewSkin extends SkinBase<FileView> implements VirtualScrollRegion.Scr
 
 	private static final char NON_PRINTABLE_CHAR = '.';
 
+	private final ByteBuffer readBuffer = ByteBuffer.allocateDirect(16);
+
 	private final VirtualScrollRegion<TextFlow> scrollRegion;
 	private TextFlow viewPane;
 	private double cachedViewPaneLineHeight = Double.NaN;
@@ -81,11 +82,11 @@ class FileViewSkin extends SkinBase<FileView> implements VirtualScrollRegion.Scr
 			}
 
 		});
-		skinnable.fileProperty().addListener(new ChangeListener<FileChannel>() {
+		skinnable.fileProperty().addListener(new ChangeListener<FileAccess>() {
 
 			@Override
-			public void changed(ObservableValue<? extends FileChannel> observable, FileChannel oldValue,
-					FileChannel newValue) {
+			public void changed(ObservableValue<? extends FileAccess> observable, FileAccess oldValue,
+					FileAccess newValue) {
 				requestLayout(true);
 			}
 
@@ -121,11 +122,10 @@ class FileViewSkin extends SkinBase<FileView> implements VirtualScrollRegion.Scr
 	 * @see de.carne.filescanner.jfx.control.VirtualScrollRegion.Scrollable#
 	 * layoutVirtual(double, double)
 	 */
-	@SuppressWarnings("resource")
 	@Override
 	public VirtualScrollLayout layoutVirtual(double viewWidth, double viewHeight) {
 		FileView skinnable = getSkinnable();
-		FileChannel file = skinnable.getFile();
+		FileAccess file = skinnable.getFile();
 		long fileSize = 0l;
 
 		if (file != null) {
@@ -137,11 +137,10 @@ class FileViewSkin extends SkinBase<FileView> implements VirtualScrollRegion.Scr
 		}
 
 		long lineCount = (fileSize + 15l) >>> 4;
-		long currentPosition = skinnable.getPosition().longValue();
+		long currentPosition = (skinnable.getPosition().longValue() >>> 4) << 4;
 		long currentLine = currentPosition >>> 4;
 		double viewPaneHeight = 0.0;
 		int viewPaneLines = 0;
-		ByteBuffer buffer = null;
 		ByteFormatter byteFormatter = BYTE_FORMATTER_MAP.get(skinnable.getViewType());
 		PositionRange selection = skinnable.getSelection();
 		VirtualScrollLayout scrollLayout = null;
@@ -149,22 +148,18 @@ class FileViewSkin extends SkinBase<FileView> implements VirtualScrollRegion.Scr
 		this.viewPane.getChildren().clear();
 		while (currentLine < lineCount && viewPaneHeight <= viewHeight) {
 			// Prepare buffer and read line data
-			if (buffer != null) {
-				buffer.clear();
-			} else {
-				buffer = ByteBuffer.allocateDirect(16);
-			}
+			this.readBuffer.clear();
 			try {
 				assert file != null;
 
-				file.read(buffer, currentPosition);
+				file.read(this.readBuffer, currentPosition);
 			} catch (IOException e) {
 				logIOError(e);
 			}
-			buffer.flip();
+			this.readBuffer.flip();
 
 			// Format the line data and create the corresponding text elements
-			List<String> lineParts = formatLineParts(buffer, byteFormatter, currentPosition, selection);
+			List<String> lineParts = formatLineParts(this.readBuffer, byteFormatter, currentPosition, selection);
 			int lineLength = 0;
 			boolean inSelection = false;
 

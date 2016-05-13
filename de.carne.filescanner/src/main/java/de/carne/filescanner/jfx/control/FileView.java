@@ -16,8 +16,6 @@
  */
 package de.carne.filescanner.jfx.control;
 
-import java.nio.channels.FileChannel;
-
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleLongProperty;
@@ -89,14 +87,14 @@ public class FileView extends Control {
 		return this.viewTypeProperty;
 	}
 
-	private final SimpleObjectProperty<FileChannel> fileProperty = new SimpleObjectProperty<>(null);
+	private final SimpleObjectProperty<FileAccess> fileProperty = new SimpleObjectProperty<>(null);
 
 	/**
 	 * Get the displayed file.
 	 *
 	 * @return The displayed file.
 	 */
-	public FileChannel getFile() {
+	public FileAccess getFile() {
 		return this.fileProperty.get();
 	}
 
@@ -105,7 +103,7 @@ public class FileView extends Control {
 	 *
 	 * @param file The file to display.
 	 */
-	public void setFile(FileChannel file) {
+	public void setFile(FileAccess file) {
 		this.fileProperty.set(file);
 		setPosition(null);
 	}
@@ -115,7 +113,7 @@ public class FileView extends Control {
 	 *
 	 * @return The file property.
 	 */
-	public ObjectProperty<FileChannel> fileProperty() {
+	public ObjectProperty<FileAccess> fileProperty() {
 		return this.fileProperty;
 	}
 

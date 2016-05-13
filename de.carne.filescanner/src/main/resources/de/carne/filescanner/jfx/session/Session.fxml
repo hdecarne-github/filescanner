@@ -7,8 +7,10 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.RadioMenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.image.Image?>
@@ -32,6 +34,17 @@
             <MenuItem mnemonicParsing="false" onAction="#onExit" text="%_STR_EXIT_MENU_ITEM" />
           </items>
         </Menu>
+            <Menu mnemonicParsing="false" text="%_STR_VIEW_MENU">
+               <items>
+                  <RadioMenuItem fx:id="binaryFileViewMenuItem" mnemonicParsing="false" onAction="#onBinaryFileViewSelected" text="%_STR_BINARY_FILE_VIEW_MENU_ITEM">
+                     <toggleGroup>
+                        <ToggleGroup fx:id="FILE_VIEW_TYPE_GROUP" />
+                     </toggleGroup>
+                  </RadioMenuItem>
+                  <RadioMenuItem fx:id="octalFileViewMenuItem" mnemonicParsing="false" onAction="#onOctalFileViewSelected" text="%_STR_OCTAL_FILE_VIEW_MENU_ITEM" toggleGroup="$FILE_VIEW_TYPE_GROUP" />
+                  <RadioMenuItem fx:id="hexadecimalFileViewMenuItem" mnemonicParsing="false" onAction="#onHexadecimalFileViewSelected" selected="true" text="%_STR_HEXADECIMAL_FILE_VIEW_MENU_ITEM" toggleGroup="$FILE_VIEW_TYPE_GROUP" />
+               </items>
+            </Menu>
         <Menu mnemonicParsing="false" text="%_STR_HELP_MENU">
           <items>
             <MenuItem mnemonicParsing="false" onAction="#onToggleLog" text="%_STR_TOGGLE_LOG_MENU_ITEM" />
@@ -60,7 +73,7 @@
               <items>
                 <AnchorPane minHeight="0.0" minWidth="0.0">
                      <children>
-                        <TreeView AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <TreeView fx:id="resultsView" showRoot="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                      </children></AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0">
                      <children>
@@ -68,11 +81,11 @@
                           <items>
                             <AnchorPane minHeight="0.0" minWidth="0.0">
                                  <children>
-                                    <WebView prefHeight="-1.0" prefWidth="-1.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    <WebView fx:id="resultDetailsView" prefHeight="-1.0" prefWidth="-1.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                  </children></AnchorPane>
                             <AnchorPane minHeight="0.0" minWidth="0.0">
                                  <children>
-                                    <FileView fx:id="hexView" layoutX="106.0" layoutY="51.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    <FileView fx:id="fileView" layoutX="106.0" layoutY="51.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                  </children></AnchorPane>
                           </items>
                         </SplitPane>
@@ -84,7 +97,7 @@
     </AnchorPane>
       <ToolBar>
         <items>
-          <Button mnemonicParsing="false">
+          <Button fx:id="cancelScanButton" mnemonicParsing="false" onAction="#onCancelScan">
                <graphic>
                   <ImageView pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -93,8 +106,8 @@
                   </ImageView>
                </graphic>
             </Button>
-            <ProgressBar progress="0.0" />
-            <Label text="Label" />
+            <ProgressBar fx:id="scanProgressBar" progress="0.0" />
+            <Label fx:id="scanStatusMessage" text="..." />
         </items>
       </ToolBar>
   </children>
