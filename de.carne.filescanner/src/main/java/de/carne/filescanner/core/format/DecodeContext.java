@@ -14,11 +14,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.carne.filescanner.core.transfer;
+package de.carne.filescanner.core.format;
+
+import java.util.HashMap;
 
 /**
- * Class used to access the data representation for all kinds of scan results.
+ *
  */
-public abstract class FileScannerResultView {
+public class DecodeContext {
+
+	public static class Attribute<T> {
+
+	}
+
+	private final HashMap<Object, Object> context = new HashMap<>();
+
+	private final DecodeContext parent;
+
+	public DecodeContext(DecodeContext parent) {
+		this.parent = parent;
+	}
+
+	public <T> void setAttribute(Attribute<T> attribute, T value) {
+		this.context.put(attribute, value);
+	}
 
 }

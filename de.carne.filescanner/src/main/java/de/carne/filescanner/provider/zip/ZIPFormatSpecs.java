@@ -16,6 +16,7 @@
  */
 package de.carne.filescanner.provider.zip;
 
+import de.carne.filescanner.core.format.DecodeContext.Attribute;
 import de.carne.filescanner.core.format.StructFormatSpec;
 import de.carne.filescanner.core.format.U16Attribute;
 import de.carne.filescanner.core.format.U32Attribute;
@@ -25,10 +26,14 @@ import de.carne.filescanner.core.format.U32Attribute;
  */
 class ZIPFormatSpecs {
 
-	public static final StructFormatSpec LOCAL_FILE_HEADER;
+	public static final Attribute<Short> LFH_FILE_NAME_LENGTH = new Attribute<>();
+
+	public static final Attribute<Short> LFH_EXTRA_FIELD_LENGTH = new Attribute<>();
+
+	public static final StructFormatSpec ZIP_LFH;
 
 	static {
-		StructFormatSpec lfh = new StructFormatSpec(true);
+		StructFormatSpec lfh = new StructFormatSpec();
 
 		lfh.append(new U32Attribute("local file header signature").setFinalValue(0x04034b50));
 		lfh.append(new U16Attribute("version needed to extract"));
@@ -39,18 +44,20 @@ class ZIPFormatSpecs {
 		lfh.append(new U32Attribute("crc-32"));
 		lfh.append(new U32Attribute("compressed size"));
 		lfh.append(new U32Attribute("uncompressed size"));
-		lfh.append(new U16Attribute("file name length"));
-		lfh.append(new U16Attribute("extra field length"));
-		LOCAL_FILE_HEADER = lfh;
+		lfh.append(new U16Attribute("file name length").bind(LFH_FILE_NAME_LENGTH));
+		lfh.append(new U16Attribute("extra field length").bind(LFH_EXTRA_FIELD_LENGTH));
+		lfh.setDecodable();
+		ZIP_LFH = lfh;
 	}
 
-	public static final StructFormatSpec ZIP_FORMAT;
+	public static final StructFormatSpec ZIP;
 
 	static {
-		StructFormatSpec zip = new StructFormatSpec(false);
+		StructFormatSpec zip = new StructFormatSpec();
 
-		zip.append(LOCAL_FILE_HEADER);
-		ZIP_FORMAT = zip;
+		zip.append(ZIP_LFH);
+		zip.setDecodable();
+		ZIP = zip;
 	}
 
 }

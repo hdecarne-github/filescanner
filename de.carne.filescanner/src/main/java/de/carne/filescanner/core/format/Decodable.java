@@ -14,11 +14,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.carne.filescanner.core.decode;
+package de.carne.filescanner.core.format;
+
+import java.io.IOException;
+
+import de.carne.filescanner.core.FileScannerResult;
 
 /**
- * 
+ * This interface defines the necessary function for result decoding and
+ * populating.
  */
-public class DecodeContext {
+public interface Decodable {
+
+	/**
+	 * Decode scanner results.
+	 *
+	 * @param parent The parent result to use for result creation.
+	 * @param position The position to start decoding at.
+	 * @throws IOException if an I/O error occurs.
+	 */
+	public void decode(FileScannerResult parent, long position) throws IOException;
 
 }

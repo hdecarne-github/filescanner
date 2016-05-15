@@ -23,25 +23,7 @@ import java.nio.ByteBuffer;
  */
 public abstract class FormatSpec {
 
-	private final boolean result;
-
-	/**
-	 * Construct {@code Format}.
-	 * 
-	 * @param result Whether this spec defines a scan result or not.
-	 */
-	protected FormatSpec(boolean result) {
-		this.result = result;
-	}
-
-	/**
-	 * Check whether this spec defines a scan result or not.
-	 * 
-	 * @return {@code true} if this spec defines a scan result.
-	 */
-	public boolean isResult() {
-		return this.result;
-	}
+	private Decodable decodable = null;
 
 	/**
 	 * Get this spec's match size.
@@ -70,6 +52,27 @@ public abstract class FormatSpec {
 			buffer.position(buffer.position() + matchSize);
 		}
 		return matches;
+	}
+
+	/**
+	 * Set this spec's {@code Decodable} service.
+	 *
+	 * @param decodable The {@code Decodable} service to set.
+	 * @return The updated format spec.
+	 */
+	public FormatSpec setDecodable(Decodable decodable) {
+		this.decodable = decodable;
+		return this;
+	}
+
+	/**
+	 * Get this spec's {@code Decodable} service.
+	 *
+	 * @return his spec's {@code Decodable} service or {@code null} if this spec
+	 *         does not support decoding.
+	 */
+	public Decodable getDecodable() {
+		return this.decodable;
 	}
 
 }

@@ -22,7 +22,9 @@ import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.Map;
 
+import de.carne.ApplicationLoader;
 import de.carne.Main;
+import de.carne.filescanner.core.transfer.HtmlResultRendererURLHandler;
 import de.carne.filescanner.jfx.session.SessionController;
 import de.carne.jfx.StageController;
 import de.carne.jfx.messagebox.MessageBoxController;
@@ -43,6 +45,9 @@ public class FileScannerApplication extends Application implements Main {
 	private static final String PARAMETER_DEBUG = "--debug";
 
 	static {
+		ApplicationLoader.registerURLStreamHandlerFactory(HtmlResultRendererURLHandler.PROTOCOL_RENDERER,
+				HtmlResultRendererURLHandler.URL_STREAM_HANDLER_FACTORY);
+
 		MessageBoxController.registerImage(MessageBoxStyle.ICON_INFO, Images.IMAGE_INFO16);
 		MessageBoxController.registerImage(MessageBoxStyle.ICON_INFO, Images.IMAGE_INFO32);
 		MessageBoxController.registerImage(MessageBoxStyle.ICON_WARNING, Images.IMAGE_WARNING16);

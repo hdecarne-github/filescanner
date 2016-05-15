@@ -29,16 +29,18 @@ import javafx.scene.image.ImageView;
 /**
  * Helper class for efficient handling of a possibly huge number of tree items.
  */
-class ResultTreeItemFactory {
+final class ResultTreeItemFactory {
 
 	class ResultTreeItem extends TreeItem<FileScannerResult> {
+
+		private boolean synced = false;
 
 		ResultTreeItem(FileScannerResult result, Image image) {
 			super(result, new ImageView(image));
 		}
 
 		public void syncChildren() {
-			ObservableList<TreeItem<FileScannerResult>> children = getChildren();
+			ObservableList<TreeItem<FileScannerResult>> children = super.getChildren();
 			List<FileScannerResult> resultChildren = getValue().children();
 			int resultChildIndex = 0;
 
@@ -59,6 +61,19 @@ class ResultTreeItemFactory {
 		@Override
 		public boolean isLeaf() {
 			return getValue().childrenCount() == 0;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see javafx.scene.control.TreeItem#getChildren()
+		 */
+		@Override
+		public ObservableList<TreeItem<FileScannerResult>> getChildren() {
+			if (!this.synced) {
+				syncChildren();
+				this.synced = true;
+			}
+			return super.getChildren();
 		}
 
 	}

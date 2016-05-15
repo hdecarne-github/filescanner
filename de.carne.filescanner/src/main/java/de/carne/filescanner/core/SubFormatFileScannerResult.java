@@ -17,29 +17,22 @@
 package de.carne.filescanner.core;
 
 import de.carne.filescanner.spi.FileScannerInput;
-import de.carne.filescanner.spi.Format;
 
 /**
  * {@code FileScannerResult} object of type
- * {@linkplain FileScannerResultType#FORMAT}.
+ * {@linkplain FileScannerResultType#SUB_FORMAT}.
  */
-public class FormatFileScannerResult extends FileScannerResult {
-
-	private final Format format;
+public class SubFormatFileScannerResult extends FileScannerResult {
 
 	/**
-	 * Construct {@code FormatFileScannerResult}.
+	 * Construct {@code SubFormatFileScannerResult}.
 	 *
 	 * @param format The format represented by this result object.
 	 * @param input The underlying input.
 	 * @param start The result's start position.
 	 */
-	public FormatFileScannerResult(Format format, FileScannerInput input, long start) {
-		super(FileScannerResultType.FORMAT, input, start, start, null);
-
-		assert format != null;
-
-		this.format = format;
+	public SubFormatFileScannerResult(FileScannerInput input, long start, long end, FileScannerResult parent) {
+		super(FileScannerResultType.SUB_FORMAT, input, start, end, parent);
 	}
 
 	/*
@@ -48,7 +41,7 @@ public class FormatFileScannerResult extends FileScannerResult {
 	 */
 	@Override
 	public String getTitle() {
-		return this.format.name();
+		return "???";
 	}
 
 }

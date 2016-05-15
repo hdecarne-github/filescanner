@@ -1,0 +1,24 @@
+body {
+	font-family: font-family: "Courier New", Courier, monospace;
+	font-size: 14.0pt;
+	white-space: nowrap;
+}
+.normal {
+}
+.value {
+	color: blue;
+}
+.comment {
+	color: green;
+}
+.keyword {
+	color: #660066;
+}
+.operator {
+}
+.label {
+	color: silver;
+}
+.error {
+	color: read;
+}

@@ -31,6 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -43,10 +44,46 @@ public final class ApplicationLoader extends URLClassLoader {
 
 	private static final boolean DEBUG = System.getProperty(ApplicationLoader.class.getName() + ".DEBUG") != null;
 
+	private static final HashMap<String, URLStreamHandlerFactory> URL_STREAM_HANDLER_FACTORY_MAP = new HashMap<>();
+
+	/**
+	 * Register an additional {@code URLStreamHandlerFactory}.
+	 * <p>
+	 * Only one factory can be set per VM. Therefore this function is provided
+	 * to add additional factories to the factory set by this loader.
+	 * </p>
+	 *
+	 * @param protocol The protocol to register the factory for.
+	 * @param factory The {@code URLStreamHandlerFactory} to register.
+	 */
+	public static void registerURLStreamHandlerFactory(String protocol, URLStreamHandlerFactory factory) {
+		assert protocol != null;
+		assert factory != null;
+
+		if (DEBUG) {
+			System.out.println("Loader: Registering URL protocol: " + protocol);
+		}
+		URL_STREAM_HANDLER_FACTORY_MAP.put(protocol, factory);
+	}
+
+	static URLStreamHandler createURLStreamHandler(String protocol) {
+		URLStreamHandlerFactory factory = URL_STREAM_HANDLER_FACTORY_MAP.get(protocol);
+
+		return (factory != null ? factory.createURLStreamHandler(protocol) : null);
+	}
+
 	private static final String PROTOCOL_RESOURCE = "resource";
 
+	private static final URLStreamHandlerFactory URL_STREAM_HANDLER_FACTORY = new URLStreamHandlerFactory() {
+
+		@Override
+		public URLStreamHandler createURLStreamHandler(String protocol) {
+			return ApplicationLoader.createResourceURLStreamHandler(protocol);
+		}
+
+	};
+
 	static {
-		ClassLoader.registerAsParallelCapable();
 		URL.setURLStreamHandlerFactory(new URLStreamHandlerFactory() {
 
 			@Override
@@ -55,6 +92,8 @@ public final class ApplicationLoader extends URLClassLoader {
 			}
 
 		});
+		registerURLStreamHandlerFactory(PROTOCOL_RESOURCE, URL_STREAM_HANDLER_FACTORY);
+		ClassLoader.registerAsParallelCapable();
 	}
 
 	private static Path CODE_PATH;
@@ -164,7 +203,7 @@ public final class ApplicationLoader extends URLClassLoader {
 		}
 	}
 
-	static URLStreamHandler createURLStreamHandler(String protocol) {
+	static URLStreamHandler createResourceURLStreamHandler(String protocol) {
 		URLStreamHandler handler = null;
 
 		if (PROTOCOL_RESOURCE.equals(protocol)) {
@@ -172,7 +211,7 @@ public final class ApplicationLoader extends URLClassLoader {
 
 				@Override
 				protected URLConnection openConnection(URL u) throws IOException {
-					return ApplicationLoader.openConnection(u);
+					return ApplicationLoader.openResourceConnection(u);
 				}
 
 			};
@@ -180,7 +219,7 @@ public final class ApplicationLoader extends URLClassLoader {
 		return handler;
 	}
 
-	static URLConnection openConnection(URL u) {
+	static URLConnection openResourceConnection(URL u) {
 		return new URLConnection(u) {
 
 			@Override
@@ -190,13 +229,13 @@ public final class ApplicationLoader extends URLClassLoader {
 
 			@Override
 			public InputStream getInputStream() throws IOException {
-				return ApplicationLoader.getInputStream(getURL());
+				return ApplicationLoader.getResourceInputStream(getURL());
 			}
 
 		};
 	}
 
-	static InputStream getInputStream(URL u) throws IOException {
+	static InputStream getResourceInputStream(URL u) throws IOException {
 		InputStream resourceStream = ApplicationLoader.class.getResourceAsStream(u.getFile());
 
 		if (resourceStream == null) {

@@ -19,38 +19,29 @@ package de.carne.filescanner.core.format;
 import java.nio.ByteBuffer;
 
 /**
- * Define {@linkplain DataType#U16} data attribute.
+ * Utility class providing {@code DataType#U32} related functions.
  */
-public class U32Attribute extends DataAttribute<Integer> {
+public final class U32Values {
 
 	/**
-	 * Construct {@code U32Attribute}.
-	 *
-	 * @param name The attribute's name.
+	 * Get value from buffer.
+	 * 
+	 * @param buffer The buffer the get the value from.
+	 * @return The retrieved value or null if the buffer has insufficient data.
 	 */
-	public U32Attribute(String name) {
-		super(DataType.U32, name);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.DataAttribute#getValue(java.nio.
-	 * ByteBuffer)
-	 */
-	@Override
-	public Integer getValue(ByteBuffer buffer) {
-		return U32Values.get(buffer);
+	public static Integer get(ByteBuffer buffer) {
+		return (DataType.U32.size() <= buffer.remaining() ? Integer.valueOf(buffer.getInt()) : null);
 	}
 
 	/**
-	 * Make attribute final (with a specific value).
-	 *
-	 * @param finalValue The final value.
-	 * @return The updated U32 attribute spec.
+	 * Get value from buffer at specific index.
+	 * 
+	 * @param buffer The buffer the get the value from.
+	 * @param index The buffer index to get the value from.
+	 * @return The retrieved value or null if the buffer has insufficient data.
 	 */
-	public U32Attribute setFinalValue(int finalValue) {
-		setFinalValue(Integer.valueOf(finalValue));
-		return this;
+	public static Integer get(ByteBuffer buffer, int index) {
+		return (index + DataType.U32.size() <= buffer.capacity() ? Integer.valueOf(buffer.getInt(index)) : null);
 	}
 
 }

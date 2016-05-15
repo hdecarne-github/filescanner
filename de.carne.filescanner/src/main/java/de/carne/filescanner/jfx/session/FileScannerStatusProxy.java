@@ -55,8 +55,11 @@ class FileScannerStatusProxy implements FileScannerStatus {
 
 				@Override
 				public void run() {
-					onScanStart(this.scannerParam, this.statsParam);
-					latch.countDown();
+					try {
+						onScanStart(this.scannerParam, this.statsParam);
+					} finally {
+						latch.countDown();
+					}
 				}
 
 			});
@@ -83,8 +86,11 @@ class FileScannerStatusProxy implements FileScannerStatus {
 
 				@Override
 				public void run() {
-					onScanFinished(this.scannerParam, this.statsParam);
-					latch.countDown();
+					try {
+						onScanFinished(this.scannerParam, this.statsParam);
+					} finally {
+						latch.countDown();
+					}
 				}
 
 			});
@@ -112,8 +118,11 @@ class FileScannerStatusProxy implements FileScannerStatus {
 
 				@Override
 				public void run() {
-					onScanCancelled(this.scannerParam, this.statsParam);
-					latch.countDown();
+					try {
+						onScanCancelled(this.scannerParam, this.statsParam);
+					} finally {
+						latch.countDown();
+					}
 				}
 
 			});
@@ -140,8 +149,11 @@ class FileScannerStatusProxy implements FileScannerStatus {
 
 				@Override
 				public void run() {
-					onScanProgress(this.scannerParam, this.statsParam);
-					latch.countDown();
+					try {
+						onScanProgress(this.scannerParam, this.statsParam);
+					} finally {
+						latch.countDown();
+					}
 				}
 
 			});
@@ -169,8 +181,11 @@ class FileScannerStatusProxy implements FileScannerStatus {
 
 				@Override
 				public void run() {
-					onScanResult(this.scannerParam, this.resultParam);
-					latch.countDown();
+					try {
+						onScanResult(this.scannerParam, this.resultParam);
+					} finally {
+						latch.countDown();
+					}
 				}
 
 			});
@@ -198,8 +213,11 @@ class FileScannerStatusProxy implements FileScannerStatus {
 
 				@Override
 				public void run() {
-					onScanException(this.scannerParam, this.eParam);
-					latch.countDown();
+					try {
+						onScanException(this.scannerParam, this.eParam);
+					} finally {
+						latch.countDown();
+					}
 				}
 
 			});

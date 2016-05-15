@@ -16,8 +16,11 @@
  */
 package de.carne.filescanner.core.format;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+
+import de.carne.filescanner.core.FileScannerResult;
 
 /**
  * Struct format spec: Define a consecutive list of format specs.
@@ -25,15 +28,6 @@ import java.util.ArrayList;
 public class StructFormatSpec extends FormatSpec {
 
 	private ArrayList<FormatSpec> specs = new ArrayList<>();
-
-	/**
-	 * Construct {@code StructFormatSpec}.
-	 * 
-	 * @param result Result flag.
-	 */
-	public StructFormatSpec(boolean result) {
-		super(result);
-	}
 
 	/**
 	 * Append a format spec.
@@ -84,6 +78,39 @@ public class StructFormatSpec extends FormatSpec {
 			}
 		}
 		return matches;
+	}
+
+	/**
+	 * Set this spec's {@code Decodable} service to the default one.
+	 *
+	 * @return The updated struct spec.
+	 */
+	public StructFormatSpec setDecodable() {
+		setDecodable(new StructDecodable());
+		return this;
+	}
+
+	private class StructDecodable implements Decodable {
+
+		public StructDecodable() {
+			// Nothing to do here
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see de.carne.filescanner.core.format.Decodable#decode(de.carne.
+		 * filescanner.core.FileScannerResult, long)
+		 */
+		@Override
+		public void decode(FileScannerResult parent, long position) throws IOException {
+			decodeStruct(parent, position);
+		}
+
+	}
+
+	void decodeStruct(FileScannerResult parent, long position) throws IOException {
+		// TODO Auto-generated method stub
+
 	}
 
 }

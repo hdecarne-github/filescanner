@@ -18,18 +18,21 @@ package de.carne.filescanner.jfx.session;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.prefs.Preferences;
 
 import de.carne.filescanner.core.FileScanner;
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerStats;
 import de.carne.filescanner.core.FileScannerStatus;
-import de.carne.filescanner.core.RootFileScannerInput;
+import de.carne.filescanner.core.transfer.HtmlResultRendererURLHandler;
 import de.carne.filescanner.jfx.Images;
 import de.carne.filescanner.jfx.control.FileView;
 import de.carne.filescanner.jfx.control.FileViewType;
 import de.carne.filescanner.jfx.control.PositionRange;
 import de.carne.filescanner.jfx.session.ResultTreeItemFactory.ResultTreeItem;
+import de.carne.filescanner.spi.FileScannerInput;
+import de.carne.filescanner.util.Units;
 import de.carne.jfx.StageController;
 import de.carne.jfx.aboutinfo.AboutInfoController;
 import de.carne.jfx.messagebox.MessageBoxStyle;
@@ -46,6 +49,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.ImageView;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -63,9 +67,15 @@ public class SessionController extends StageController {
 
 	private static final String PREF_INITIAL_DIRECTORY = "initialDirectory";
 
-	private final ResultTreeItemFactory resultItemFactory = new ResultTreeItemFactory();
+	private static final URL RESULT_VIEW_STYLE_URL = SessionController.class.getResource("ResultView.css");
+
+	private static final URL EMPTY_RESULT_VIEW_DOC = SessionController.class.getResource("EmptyResultView.html");
 
 	private FileScanner fileScanner = null;
+
+	private final ResultTreeItemFactory resultItemFactory = new ResultTreeItemFactory();
+
+	private URL resultViewURL = null;
 
 	@FXML
 	MenuBar systemMenuBar;
@@ -83,10 +93,13 @@ public class SessionController extends StageController {
 	TreeView<FileScannerResult> resultsView;
 
 	@FXML
-	WebView resultDetailsView;
+	WebView resultView;
 
 	@FXML
 	FileView fileView;
+
+	@FXML
+	ImageView scanStatusIcon;
 
 	@FXML
 	Button cancelScanButton;
@@ -96,6 +109,9 @@ public class SessionController extends StageController {
 
 	@FXML
 	Label scanStatusMessage;
+
+	@FXML
+	Label sysStatusMessage;
 
 	@FXML
 	void onNewSession(ActionEvent evt) {
@@ -163,12 +179,13 @@ public class SessionController extends StageController {
 
 	@FXML
 	void onCancelScan(ActionEvent evt) {
-		closeCurrentFileScanner(false);
+		closeCurrentFileScanner();
 		this.cancelScanButton.setDisable(true);
 	}
 
 	void closeSession() {
-		closeCurrentFileScanner(true);
+		closeCurrentFileScanner();
+		clearResults();
 		syncPreferences();
 	}
 
@@ -182,35 +199,49 @@ public class SessionController extends StageController {
 
 			this.fileView.setPosition(selection.getStart());
 			this.fileView.setSelection(selection);
+
+			if (this.resultViewURL != null) {
+				HtmlResultRendererURLHandler.close(this.resultViewURL);
+				this.resultViewURL = null;
+			}
+			try {
+				this.resultViewURL = HtmlResultRendererURLHandler.open(result);
+				this.resultView.getEngine().load(this.resultViewURL.toExternalForm());
+			} catch (IOException e) {
+				LOG.error(e, I18N.BUNDLE, I18N.STR_OPEN_RENDERER_ERROR);
+			}
 		} else {
 			this.fileView.setFile(null);
+			this.resultView.getEngine().load(EMPTY_RESULT_VIEW_DOC.toExternalForm());
 		}
 	}
 
 	void onFileScannerStart(FileScanner scanner, FileScannerStats stats) {
 		if (scanner.equals(this.fileScanner)) {
+			this.scanStatusIcon.setImage(Images.IMAGE_SUCCESS16);
 			this.cancelScanButton.setDisable(false);
-			updateScanStatusMessage(stats, I18N.STR_STATUS_START);
+			updateScanStatusMessage(stats, I18N.STR_SCAN_STATUS_START);
 		}
 	}
 
 	void onFileScannerFinished(FileScanner scanner, FileScannerStats stats) {
 		if (scanner.equals(this.fileScanner)) {
 			this.cancelScanButton.setDisable(true);
-			updateScanStatusMessage(stats, I18N.STR_STATUS_FINISHED);
+			updateScanStatusMessage(stats, I18N.STR_SCAN_STATUS_FINISHED);
 		}
 	}
 
 	void onFileScannerCancelled(FileScanner scanner, FileScannerStats stats) {
 		if (scanner.equals(this.fileScanner)) {
 			this.cancelScanButton.setDisable(true);
-			updateScanStatusMessage(stats, I18N.STR_STATUS_CANCELLED);
+			updateScanStatusMessage(stats, I18N.STR_SCAN_STATUS_CANCELLED);
 		}
 	}
 
 	void onFileScannerProgress(FileScanner scanner, FileScannerStats stats) {
 		if (scanner.equals(this.fileScanner)) {
-			updateScanStatusMessage(stats, I18N.STR_STATUS_PROGRESS);
+			updateScanStatusMessage(stats, I18N.STR_SCAN_STATUS_PROGRESS);
+			updateSystemStatusMessage();
 		}
 	}
 
@@ -221,7 +252,7 @@ public class SessionController extends StageController {
 	}
 
 	void onFileScannerException(FileScanner scanner, Throwable e) {
-
+		this.scanStatusIcon.setImage(Images.IMAGE_WARNING16);
 	}
 
 	/*
@@ -235,9 +266,12 @@ public class SessionController extends StageController {
 		controllerStage.getIcons().addAll(Images.IMAGE_FILESCANNER16, Images.IMAGE_FILESCANNER32,
 				Images.IMAGE_FILESCANNER48);
 		setupFileViewType(getFileViewTypePreference());
+		this.resultView.getEngine().setUserStyleSheetLocation(RESULT_VIEW_STYLE_URL.toExternalForm());
+		this.resultView.getEngine().load(EMPTY_RESULT_VIEW_DOC.toExternalForm());
 		this.cancelScanButton.setDisable(true);
 		this.scanProgressBar.setProgress(0.0);
-		this.scanStatusMessage.setText(I18N.formatSTR_STATUS_NONE());
+		this.scanStatusMessage.setText(I18N.formatSTR_SCAN_STATUS_NONE());
+		updateSystemStatusMessage();
 		controllerStage.showingProperty().addListener(new ChangeListener<Boolean>() {
 
 			@Override
@@ -308,7 +342,8 @@ public class SessionController extends StageController {
 	}
 
 	private void openFile(File file) {
-		closeCurrentFileScanner(true);
+		closeCurrentFileScanner();
+		clearResults();
 
 		LOG.debug(null, "Open file ''{0}''...", file);
 
@@ -347,7 +382,8 @@ public class SessionController extends StageController {
 
 			}));
 
-			this.fileScanner.queueInput(RootFileScannerInput.open(file));
+			FileScannerInput.open(this.fileScanner, file).startScan();
+
 			recordInitialDirectoryPreference(file);
 		} catch (IOException e) {
 			showMessageBox(I18N.formatSTR_OPEN_FILE_ERROR(file), e, MessageBoxStyle.ICON_ERROR,
@@ -384,25 +420,44 @@ public class SessionController extends StageController {
 		}
 	}
 
-	private void closeCurrentFileScanner(boolean clearResults) {
+	private void closeCurrentFileScanner() {
 		if (this.fileScanner != null) {
 			this.fileScanner.close();
 			this.fileScanner = null;
 		}
-		if (clearResults) {
-			this.resultsView.setRoot(null);
-			this.resultItemFactory.clear();
+	}
+
+	private void clearResults() {
+		this.resultView.getEngine().load(EMPTY_RESULT_VIEW_DOC.toExternalForm());
+		if (this.resultViewURL != null) {
+			HtmlResultRendererURLHandler.close(this.resultViewURL);
+			this.resultViewURL = null;
 		}
+		this.resultsView.setRoot(null);
+		this.resultItemFactory.clear();
 	}
 
 	private void updateScanStatusMessage(FileScannerStats stats, String messageKey) {
 		this.scanProgressBar.setProgress(stats.progress());
 
-		double scanned = stats.scanned();
-		double elapsed = stats.elapsed() / 1000.0;
-		double bps = (elapsed >= 1.0 ? scanned / elapsed : 0.0);
+		long scanned = stats.scanned();
+		long elapsedSeconds = stats.elapsed() / 1000;
+		long bps = (elapsedSeconds >= 1l ? scanned / elapsedSeconds : 0l);
 
-		this.scanStatusMessage.setText(I18N.format(messageKey, formatByteValue(scanned), formatByteValue(bps)));
+		this.scanStatusMessage
+				.setText(I18N.format(messageKey, Units.formatByteValue(scanned), Units.formatByteValue(bps)));
+	}
+
+	private void updateSystemStatusMessage() {
+		Runtime rt = Runtime.getRuntime();
+		long freeMemory = rt.freeMemory();
+		long totalMemory = rt.totalMemory();
+		long usedMemory = totalMemory - freeMemory;
+		long maxMemory = rt.maxMemory();
+		long usageRatio = (usedMemory / (maxMemory * 100));
+
+		this.sysStatusMessage.setText(I18N.formatSTR_SYS_STATUS(Units.formatByteValue(usedMemory),
+				Units.formatByteValue(maxMemory), usageRatio));
 	}
 
 	private FileViewType getFileViewTypePreference() {
@@ -439,31 +494,6 @@ public class SessionController extends StageController {
 
 	private void recordInitialDirectoryPreference(File file) {
 		PREFERENCES.put(PREF_INITIAL_DIRECTORY, file.getParent());
-	}
-
-	private String formatByteValue(double value) {
-		String text;
-
-		if (value > 1.0e24) {
-			text = I18N.formatSTR_BYTE_UNIT24(value / 1.0e24);
-		} else if (value > 1.0e21) {
-			text = I18N.formatSTR_BYTE_UNIT21(value / 1.0e21);
-		} else if (value > 1.0e18) {
-			text = I18N.formatSTR_BYTE_UNIT18(value / 1.0e18);
-		} else if (value > 1.0e15) {
-			text = I18N.formatSTR_BYTE_UNIT15(value / 1.0e15);
-		} else if (value > 1.0e12) {
-			text = I18N.formatSTR_BYTE_UNIT12(value / 1.0e12);
-		} else if (value > 1.0e9) {
-			text = I18N.formatSTR_BYTE_UNIT9(value / 1.0e9);
-		} else if (value > 1.0e6) {
-			text = I18N.formatSTR_BYTE_UNIT6(value / 1.0e6);
-		} else if (value > 1.0e3) {
-			text = I18N.formatSTR_BYTE_UNIT3(value / 1.0e3);
-		} else {
-			text = I18N.formatSTR_BYTE_UNIT0(value);
-		}
-		return text;
 	}
 
 }

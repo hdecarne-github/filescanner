@@ -16,11 +16,14 @@
  */
 package de.carne.filescanner.core;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import de.carne.filescanner.core.transfer.FileScannerResultView;
+import de.carne.filescanner.spi.FileScannerInput;
+import de.carne.filescanner.spi.FileScannerResultRenderer;
+import de.carne.filescanner.util.Hexadecimal;
 
 /**
  * A {@code FileScanner} result object.
@@ -53,7 +56,7 @@ public abstract class FileScannerResult {
 
 	private long end;
 
-	private FileScannerResult parent;
+	private FileScannerResult parent = null;
 
 	private final ArrayList<FileScannerResult> children = new ArrayList<>();
 
@@ -61,15 +64,14 @@ public abstract class FileScannerResult {
 			FileScannerResult parent) {
 		assert type != null;
 		assert input != null;
-		assert start < end;
+		assert start <= end;
 
 		this.type = type;
 		this.input = input;
 		this.start = start;
 		this.end = end;
-		this.parent = parent;
-		if (this.parent != null) {
-			this.parent.addChild(this);
+		if (parent != null) {
+			parent.addChild(this);
 		}
 	}
 
@@ -177,14 +179,30 @@ public abstract class FileScannerResult {
 	public abstract String getTitle();
 
 	/**
-	 * Get the result's data view.
+	 * Render the result for user display.
 	 * <p>
-	 * The data view provides a detailed representation of the result's data.
+	 * The default implementation simply displays the result's position and
+	 * size.
 	 * </p>
 	 *
-	 * @return The result's data view.
+	 * @param renderer The renderer to use.
+	 * @throws IOException if an I/O error occurs.
+	 * @throws InterruptedException if he render thread is interrupted.
 	 */
-	public abstract FileScannerResultView getView();
+	public void render(FileScannerResultRenderer renderer) throws IOException, InterruptedException {
+		renderer.setNormalMode().renderText("start");
+		renderer.setOperatorMode().renderText(" = ");
+		renderer.setValueMode().renderText(Hexadecimal.formatL(new StringBuilder(), start()).toString());
+		renderer.renderBreak();
+		renderer.setNormalMode().renderText("end");
+		renderer.setOperatorMode().renderText(" = ");
+		renderer.setValueMode().renderText(Hexadecimal.formatL(new StringBuilder(), end()).toString());
+		renderer.renderBreak();
+		renderer.setNormalMode().renderText("size");
+		renderer.setOperatorMode().renderText(" = ");
+		renderer.setValueMode().renderText(Hexadecimal.formatL(new StringBuilder(), size()).toString());
+		renderer.close();
+	}
 
 	/*
 	 * (non-Javadoc)

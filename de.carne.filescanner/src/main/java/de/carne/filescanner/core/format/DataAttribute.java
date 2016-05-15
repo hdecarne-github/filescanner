@@ -18,6 +18,8 @@ package de.carne.filescanner.core.format;
 
 import java.nio.ByteBuffer;
 
+import de.carne.filescanner.core.format.DecodeContext.Attribute;
+
 /**
  * Define basic data attributes.
  *
@@ -28,6 +30,7 @@ public abstract class DataAttribute<T> extends FormatSpec {
 	private final DataType dataType;
 	private final String name;
 	private T finalValue = null;
+	private Attribute<T> bound = null;
 
 	/**
 	 * Construct {@code DataAttribute}.
@@ -36,8 +39,6 @@ public abstract class DataAttribute<T> extends FormatSpec {
 	 * @param name The attribute's name.
 	 */
 	protected DataAttribute(DataType dataType, String name) {
-		super(false);
-
 		assert dataType != null;
 		assert name != null;
 
@@ -85,6 +86,15 @@ public abstract class DataAttribute<T> extends FormatSpec {
 	}
 
 	/**
+	 * Get the attribute's value.
+	 *
+	 * @param buffer The buffer to get the value from.
+	 * @return The attribute's value or {@code null} if the buffer's data is
+	 *         insufficient.
+	 */
+	public abstract T getValue(ByteBuffer buffer);
+
+	/**
 	 * Make attribute final (with a specific value).
 	 *
 	 * @param finalValue The final value.
@@ -105,13 +115,11 @@ public abstract class DataAttribute<T> extends FormatSpec {
 		return this.finalValue;
 	}
 
-	/**
-	 * Get the attribute's value.
-	 *
-	 * @param buffer The buffer to get the value from.
-	 * @return The attribute's value or {@code null} if the buffer's data is
-	 *         insufficient.
-	 */
-	public abstract T getValue(ByteBuffer buffer);
+	public final DataAttribute<T> bind(Attribute<T> attribute) {
+		assert this.bound == null;
+
+		this.bound = attribute;
+		return this;
+	}
 
 }

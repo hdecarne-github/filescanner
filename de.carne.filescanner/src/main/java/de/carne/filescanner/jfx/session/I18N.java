@@ -1,7 +1,7 @@
 /*
  * I18N resource strings
  *
- * Generated on 14.05.2016 00:23:52
+ * Generated on 15.05.2016 22:58:32
  */
 package de.carne.filescanner.jfx.session;
 
@@ -28,27 +28,6 @@ public final class I18N {
 		String pattern = BUNDLE.getString(key);
 
 		return (arguments.length > 0 ? MessageFormat.format(pattern, arguments) : pattern);
-	}
-
-	/**
-	 * Resource key {@code STR_BYTE_UNIT12}
-	 * <p>
-	 * {0} TB
-	 * </p>
-	 */
-	public static final String STR_BYTE_UNIT12 = "STR_BYTE_UNIT12";
-
-	/**
-	 * Resource string {@code STR_BYTE_UNIT12}
-	 * <p>
-	 * {0} TB
-	 * </p>
-	 *
-	 * @param arguments Format arguments.
-	 * @return The formated string.
-	 */
-	public static String formatSTR_BYTE_UNIT12(Object... arguments) {
-		return format(STR_BYTE_UNIT12, arguments);
 	}
 
 	/**
@@ -136,15 +115,15 @@ public final class I18N {
 	}
 
 	/**
-	 * Resource key {@code STR_STATUS_PROGRESS}
+	 * Resource key {@code STR_SCAN_STATUS_PROGRESS}
 	 * <p>
 	 * Scan in progress: {0} scanned ({1}&frasl;s)
 	 * </p>
 	 */
-	public static final String STR_STATUS_PROGRESS = "STR_STATUS_PROGRESS";
+	public static final String STR_SCAN_STATUS_PROGRESS = "STR_SCAN_STATUS_PROGRESS";
 
 	/**
-	 * Resource string {@code STR_STATUS_PROGRESS}
+	 * Resource string {@code STR_SCAN_STATUS_PROGRESS}
 	 * <p>
 	 * Scan in progress: {0} scanned ({1}&frasl;s)
 	 * </p>
@@ -152,41 +131,20 @@ public final class I18N {
 	 * @param arguments Format arguments.
 	 * @return The formated string.
 	 */
-	public static String formatSTR_STATUS_PROGRESS(Object... arguments) {
-		return format(STR_STATUS_PROGRESS, arguments);
+	public static String formatSTR_SCAN_STATUS_PROGRESS(Object... arguments) {
+		return format(STR_SCAN_STATUS_PROGRESS, arguments);
 	}
 
 	/**
-	 * Resource key {@code STR_STATUS_FINISHED}
-	 * <p>
-	 * Scan finished: {0} scanned ({1}&frasl;s)
-	 * </p>
-	 */
-	public static final String STR_STATUS_FINISHED = "STR_STATUS_FINISHED";
-
-	/**
-	 * Resource string {@code STR_STATUS_FINISHED}
-	 * <p>
-	 * Scan finished: {0} scanned ({1}&frasl;s)
-	 * </p>
-	 *
-	 * @param arguments Format arguments.
-	 * @return The formated string.
-	 */
-	public static String formatSTR_STATUS_FINISHED(Object... arguments) {
-		return format(STR_STATUS_FINISHED, arguments);
-	}
-
-	/**
-	 * Resource key {@code STR_STATUS_NONE}
+	 * Resource key {@code STR_SCAN_STATUS_NONE}
 	 * <p>
 	 * 
 	 * </p>
 	 */
-	public static final String STR_STATUS_NONE = "STR_STATUS_NONE";
+	public static final String STR_SCAN_STATUS_NONE = "STR_SCAN_STATUS_NONE";
 
 	/**
-	 * Resource string {@code STR_STATUS_NONE}
+	 * Resource string {@code STR_SCAN_STATUS_NONE}
 	 * <p>
 	 * 
 	 * </p>
@@ -194,29 +152,50 @@ public final class I18N {
 	 * @param arguments Format arguments.
 	 * @return The formated string.
 	 */
-	public static String formatSTR_STATUS_NONE(Object... arguments) {
-		return format(STR_STATUS_NONE, arguments);
+	public static String formatSTR_SCAN_STATUS_NONE(Object... arguments) {
+		return format(STR_SCAN_STATUS_NONE, arguments);
 	}
 
 	/**
-	 * Resource key {@code STR_BYTE_UNIT24}
+	 * Resource key {@code STR_SCAN_STATUS_FINISHED}
 	 * <p>
-	 * {0} YB
+	 * Scan finished: {0} scanned ({1}&frasl;s)
 	 * </p>
 	 */
-	public static final String STR_BYTE_UNIT24 = "STR_BYTE_UNIT24";
+	public static final String STR_SCAN_STATUS_FINISHED = "STR_SCAN_STATUS_FINISHED";
 
 	/**
-	 * Resource string {@code STR_BYTE_UNIT24}
+	 * Resource string {@code STR_SCAN_STATUS_FINISHED}
 	 * <p>
-	 * {0} YB
+	 * Scan finished: {0} scanned ({1}&frasl;s)
 	 * </p>
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formated string.
 	 */
-	public static String formatSTR_BYTE_UNIT24(Object... arguments) {
-		return format(STR_BYTE_UNIT24, arguments);
+	public static String formatSTR_SCAN_STATUS_FINISHED(Object... arguments) {
+		return format(STR_SCAN_STATUS_FINISHED, arguments);
+	}
+
+	/**
+	 * Resource key {@code STR_SCAN_STATUS_START}
+	 * <p>
+	 * Scan started: {0} scanned ({1}&frasl;s)
+	 * </p>
+	 */
+	public static final String STR_SCAN_STATUS_START = "STR_SCAN_STATUS_START";
+
+	/**
+	 * Resource string {@code STR_SCAN_STATUS_START}
+	 * <p>
+	 * Scan started: {0} scanned ({1}&frasl;s)
+	 * </p>
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formated string.
+	 */
+	public static String formatSTR_SCAN_STATUS_START(Object... arguments) {
+		return format(STR_SCAN_STATUS_START, arguments);
 	}
 
 	/**
@@ -241,27 +220,6 @@ public final class I18N {
 	}
 
 	/**
-	 * Resource key {@code STR_BYTE_UNIT9}
-	 * <p>
-	 * {0} GB
-	 * </p>
-	 */
-	public static final String STR_BYTE_UNIT9 = "STR_BYTE_UNIT9";
-
-	/**
-	 * Resource string {@code STR_BYTE_UNIT9}
-	 * <p>
-	 * {0} GB
-	 * </p>
-	 *
-	 * @param arguments Format arguments.
-	 * @return The formated string.
-	 */
-	public static String formatSTR_BYTE_UNIT9(Object... arguments) {
-		return format(STR_BYTE_UNIT9, arguments);
-	}
-
-	/**
 	 * Resource key {@code STR_ABOUT_TITLE1}
 	 * <p>
 	 * Copyright FileScanner
@@ -283,108 +241,24 @@ public final class I18N {
 	}
 
 	/**
-	 * Resource key {@code STR_BYTE_UNIT21}
+	 * Resource key {@code STR_SYS_STATUS}
 	 * <p>
-	 * {0} ZB
+	 * Memory usage: {0}&frasl;{1} ({2}%}
 	 * </p>
 	 */
-	public static final String STR_BYTE_UNIT21 = "STR_BYTE_UNIT21";
+	public static final String STR_SYS_STATUS = "STR_SYS_STATUS";
 
 	/**
-	 * Resource string {@code STR_BYTE_UNIT21}
+	 * Resource string {@code STR_SYS_STATUS}
 	 * <p>
-	 * {0} ZB
+	 * Memory usage: {0}&frasl;{1} ({2}%}
 	 * </p>
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formated string.
 	 */
-	public static String formatSTR_BYTE_UNIT21(Object... arguments) {
-		return format(STR_BYTE_UNIT21, arguments);
-	}
-
-	/**
-	 * Resource key {@code STR_BYTE_UNIT6}
-	 * <p>
-	 * {0} MB
-	 * </p>
-	 */
-	public static final String STR_BYTE_UNIT6 = "STR_BYTE_UNIT6";
-
-	/**
-	 * Resource string {@code STR_BYTE_UNIT6}
-	 * <p>
-	 * {0} MB
-	 * </p>
-	 *
-	 * @param arguments Format arguments.
-	 * @return The formated string.
-	 */
-	public static String formatSTR_BYTE_UNIT6(Object... arguments) {
-		return format(STR_BYTE_UNIT6, arguments);
-	}
-
-	/**
-	 * Resource key {@code STR_BYTE_UNIT3}
-	 * <p>
-	 * {0} kB
-	 * </p>
-	 */
-	public static final String STR_BYTE_UNIT3 = "STR_BYTE_UNIT3";
-
-	/**
-	 * Resource string {@code STR_BYTE_UNIT3}
-	 * <p>
-	 * {0} kB
-	 * </p>
-	 *
-	 * @param arguments Format arguments.
-	 * @return The formated string.
-	 */
-	public static String formatSTR_BYTE_UNIT3(Object... arguments) {
-		return format(STR_BYTE_UNIT3, arguments);
-	}
-
-	/**
-	 * Resource key {@code STR_STATUS_CANCELLED}
-	 * <p>
-	 * Scan cancelled: {0} scanned ({1}&frasl;s)
-	 * </p>
-	 */
-	public static final String STR_STATUS_CANCELLED = "STR_STATUS_CANCELLED";
-
-	/**
-	 * Resource string {@code STR_STATUS_CANCELLED}
-	 * <p>
-	 * Scan cancelled: {0} scanned ({1}&frasl;s)
-	 * </p>
-	 *
-	 * @param arguments Format arguments.
-	 * @return The formated string.
-	 */
-	public static String formatSTR_STATUS_CANCELLED(Object... arguments) {
-		return format(STR_STATUS_CANCELLED, arguments);
-	}
-
-	/**
-	 * Resource key {@code STR_BYTE_UNIT0}
-	 * <p>
-	 * {0} Byte
-	 * </p>
-	 */
-	public static final String STR_BYTE_UNIT0 = "STR_BYTE_UNIT0";
-
-	/**
-	 * Resource string {@code STR_BYTE_UNIT0}
-	 * <p>
-	 * {0} Byte
-	 * </p>
-	 *
-	 * @param arguments Format arguments.
-	 * @return The formated string.
-	 */
-	public static String formatSTR_BYTE_UNIT0(Object... arguments) {
-		return format(STR_BYTE_UNIT0, arguments);
+	public static String formatSTR_SYS_STATUS(Object... arguments) {
+		return format(STR_SYS_STATUS, arguments);
 	}
 
 	/**
@@ -409,66 +283,45 @@ public final class I18N {
 	}
 
 	/**
-	 * Resource key {@code STR_BYTE_UNIT18}
+	 * Resource key {@code STR_OPEN_RENDERER_ERROR}
 	 * <p>
-	 * {0} EB
+	 * An error occurred while starting the result rendering.
 	 * </p>
 	 */
-	public static final String STR_BYTE_UNIT18 = "STR_BYTE_UNIT18";
+	public static final String STR_OPEN_RENDERER_ERROR = "STR_OPEN_RENDERER_ERROR";
 
 	/**
-	 * Resource string {@code STR_BYTE_UNIT18}
+	 * Resource string {@code STR_OPEN_RENDERER_ERROR}
 	 * <p>
-	 * {0} EB
+	 * An error occurred while starting the result rendering.
 	 * </p>
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formated string.
 	 */
-	public static String formatSTR_BYTE_UNIT18(Object... arguments) {
-		return format(STR_BYTE_UNIT18, arguments);
+	public static String formatSTR_OPEN_RENDERER_ERROR(Object... arguments) {
+		return format(STR_OPEN_RENDERER_ERROR, arguments);
 	}
 
 	/**
-	 * Resource key {@code STR_STATUS_START}
+	 * Resource key {@code STR_SCAN_STATUS_CANCELLED}
 	 * <p>
-	 * Scan started: {0} scanned ({1}&frasl;s)
+	 * Scan cancelled: {0} scanned ({1}&frasl;s)
 	 * </p>
 	 */
-	public static final String STR_STATUS_START = "STR_STATUS_START";
+	public static final String STR_SCAN_STATUS_CANCELLED = "STR_SCAN_STATUS_CANCELLED";
 
 	/**
-	 * Resource string {@code STR_STATUS_START}
+	 * Resource string {@code STR_SCAN_STATUS_CANCELLED}
 	 * <p>
-	 * Scan started: {0} scanned ({1}&frasl;s)
+	 * Scan cancelled: {0} scanned ({1}&frasl;s)
 	 * </p>
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formated string.
 	 */
-	public static String formatSTR_STATUS_START(Object... arguments) {
-		return format(STR_STATUS_START, arguments);
-	}
-
-	/**
-	 * Resource key {@code STR_BYTE_UNIT15}
-	 * <p>
-	 * {0} PB
-	 * </p>
-	 */
-	public static final String STR_BYTE_UNIT15 = "STR_BYTE_UNIT15";
-
-	/**
-	 * Resource string {@code STR_BYTE_UNIT15}
-	 * <p>
-	 * {0} PB
-	 * </p>
-	 *
-	 * @param arguments Format arguments.
-	 * @return The formated string.
-	 */
-	public static String formatSTR_BYTE_UNIT15(Object... arguments) {
-		return format(STR_BYTE_UNIT15, arguments);
+	public static String formatSTR_SCAN_STATUS_CANCELLED(Object... arguments) {
+		return format(STR_SCAN_STATUS_CANCELLED, arguments);
 	}
 
 }

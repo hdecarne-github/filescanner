@@ -176,7 +176,7 @@ public class FileView extends Control {
 		return this.selectionProperty;
 	}
 
-	private static final Font DEFAULT_MONOSPACED_FONT = new Font("Courier New", 13.0);
+	private static final Font DEFAULT_MONOSPACED_FONT = new Font("Courier New", 14.0);
 
 	private final SimpleObjectProperty<Font> fontProperty = new SimpleObjectProperty<>(DEFAULT_MONOSPACED_FONT);
 

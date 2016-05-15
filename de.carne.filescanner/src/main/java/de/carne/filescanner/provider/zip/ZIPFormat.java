@@ -18,7 +18,7 @@ package de.carne.filescanner.provider.zip;
 
 import java.nio.ByteOrder;
 
-import de.carne.filescanner.core.format.FormatSpec;
+import de.carne.filescanner.core.format.Decodable;
 import de.carne.filescanner.spi.Format;
 
 /**
@@ -35,16 +35,16 @@ public class ZIPFormat extends Format {
 	 */
 	public ZIPFormat() {
 		super(NAME, ByteOrder.LITTLE_ENDIAN);
-		registerHeaderSpec(ZIPFormatSpecs.LOCAL_FILE_HEADER);
+		registerHeaderSpec(ZIPFormatSpecs.ZIP_LFH);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see de.carne.filescanner.spi.Format#getFormatSpec()
+	 * @see de.carne.filescanner.spi.Format#getDecodable()
 	 */
 	@Override
-	protected FormatSpec getFormatSpec() {
-		return ZIPFormatSpecs.ZIP_FORMAT;
+	protected Decodable getDecodable() {
+		return ZIPFormatSpecs.ZIP.getDecodable();
 	}
 
 }

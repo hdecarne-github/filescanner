@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.regex.Pattern;
 
-import de.carne.filescanner.core.FileScannerInput;
 import de.carne.filescanner.core.FormatFileScannerResult;
+import de.carne.filescanner.core.format.Decodable;
 import de.carne.filescanner.core.format.FormatSpec;
 import de.carne.util.logging.Log;
 
@@ -171,16 +171,16 @@ public abstract class Format {
 	public FormatFileScannerResult decodeInput(FileScannerInput input, long position) throws IOException {
 		FormatFileScannerResult decoded = new FormatFileScannerResult(this, input, position);
 
-		decodeFormatSpec(decoded, getFormatSpec(), input, position);
+		getDecodable().decode(decoded, position);
 		return decoded;
 	}
 
-	protected abstract FormatSpec getFormatSpec();
-
-	protected final void decodeFormatSpec(FormatFileScannerResult result, FormatSpec spec, FileScannerInput input,
-			long position) throws IOException {
-
-	}
+	/**
+	 * Get this format's {@Decodable} interface.
+	 *
+	 * @return This format's {@Decodable} interface.
+	 */
+	protected abstract Decodable getDecodable();
 
 	/*
 	 * (non-Javadoc)

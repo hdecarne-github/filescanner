@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import de.carne.filescanner.spi.FileScannerInput;
 import de.carne.filescanner.spi.Format;
 import de.carne.util.logging.Log;
 
@@ -91,6 +92,9 @@ public final class FileScanner implements Closeable {
 	 * @throws IOException if an I/O error occurs accessing the input.
 	 */
 	public void queueInput(FileScannerInput input) throws IOException {
+		assert input != null;
+		assert this.equals(input.scanner());
+
 		InputFileScannerResult result = new InputFileScannerResult(input, null);
 
 		this.status.onScanResult(this, result);

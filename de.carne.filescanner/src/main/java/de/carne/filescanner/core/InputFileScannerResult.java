@@ -18,7 +18,7 @@ package de.carne.filescanner.core;
 
 import java.io.IOException;
 
-import de.carne.filescanner.core.transfer.FileScannerResultView;
+import de.carne.filescanner.spi.FileScannerInput;
 
 /**
  * {@code FileScannerResult} object of type
@@ -37,16 +37,6 @@ class InputFileScannerResult extends FileScannerResult {
 	@Override
 	public String getTitle() {
 		return input().path().getFileName().toString();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.FileScannerResult#getView()
-	 */
-	@Override
-	public FileScannerResultView getView() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }
