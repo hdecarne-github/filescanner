@@ -72,6 +72,11 @@ public final class Images {
 	public static final Image IMAGE_NOTICE16 = getImage(Images.class, "iconNotice16.png");
 
 	/**
+	 * Debug icon (16x16)
+	 */
+	public static final Image IMAGE_DEBUG16 = getImage(Images.class, "iconDebug16.png");
+
+	/**
 	 * Help icon (16x16)
 	 */
 	public static final Image IMAGE_HELP16 = getImage(Images.class, "iconHelp16.png");

@@ -27,7 +27,8 @@ import de.carne.Main;
 import de.carne.filescanner.core.transfer.HtmlResultRendererURLHandler;
 import de.carne.filescanner.jfx.session.SessionController;
 import de.carne.jfx.StageController;
-import de.carne.jfx.messagebox.MessageBoxController;
+import de.carne.jfx.logview.LogImages;
+import de.carne.jfx.messagebox.MessageBoxImages;
 import de.carne.jfx.messagebox.MessageBoxStyle;
 import de.carne.util.logging.Log;
 import de.carne.util.logging.LogConfig;
@@ -48,14 +49,20 @@ public class FileScannerApplication extends Application implements Main {
 		ApplicationLoader.registerURLStreamHandlerFactory(HtmlResultRendererURLHandler.PROTOCOL_RENDERER,
 				HtmlResultRendererURLHandler.URL_STREAM_HANDLER_FACTORY);
 
-		MessageBoxController.registerImage(MessageBoxStyle.ICON_INFO, Images.IMAGE_INFO16);
-		MessageBoxController.registerImage(MessageBoxStyle.ICON_INFO, Images.IMAGE_INFO32);
-		MessageBoxController.registerImage(MessageBoxStyle.ICON_WARNING, Images.IMAGE_WARNING16);
-		MessageBoxController.registerImage(MessageBoxStyle.ICON_WARNING, Images.IMAGE_WARNING32);
-		MessageBoxController.registerImage(MessageBoxStyle.ICON_ERROR, Images.IMAGE_ERROR16);
-		MessageBoxController.registerImage(MessageBoxStyle.ICON_ERROR, Images.IMAGE_ERROR32);
-		MessageBoxController.registerImage(MessageBoxStyle.ICON_QUESTION, Images.IMAGE_QUESTION16);
-		MessageBoxController.registerImage(MessageBoxStyle.ICON_QUESTION, Images.IMAGE_QUESTION32);
+		LogImages.registerImage(Log.LEVEL_NOTICE, Images.IMAGE_NOTICE16);
+		LogImages.registerImage(Log.LEVEL_ERROR, Images.IMAGE_ERROR16);
+		LogImages.registerImage(Log.LEVEL_WARNING, Images.IMAGE_WARNING16);
+		LogImages.registerImage(Log.LEVEL_INFO, Images.IMAGE_INFO16);
+		LogImages.registerImage(Log.LEVEL_DEBUG, Images.IMAGE_DEBUG16);
+
+		MessageBoxImages.registerImage(MessageBoxStyle.ICON_INFO, Images.IMAGE_INFO16);
+		MessageBoxImages.registerImage(MessageBoxStyle.ICON_INFO, Images.IMAGE_INFO32);
+		MessageBoxImages.registerImage(MessageBoxStyle.ICON_WARNING, Images.IMAGE_WARNING16);
+		MessageBoxImages.registerImage(MessageBoxStyle.ICON_WARNING, Images.IMAGE_WARNING32);
+		MessageBoxImages.registerImage(MessageBoxStyle.ICON_ERROR, Images.IMAGE_ERROR16);
+		MessageBoxImages.registerImage(MessageBoxStyle.ICON_ERROR, Images.IMAGE_ERROR32);
+		MessageBoxImages.registerImage(MessageBoxStyle.ICON_QUESTION, Images.IMAGE_QUESTION16);
+		MessageBoxImages.registerImage(MessageBoxStyle.ICON_QUESTION, Images.IMAGE_QUESTION32);
 	}
 
 	void handleUncaughtException(Thread t, Throwable e, UncaughtExceptionHandler next) {

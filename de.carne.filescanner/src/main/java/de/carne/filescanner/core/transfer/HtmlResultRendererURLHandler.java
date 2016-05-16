@@ -26,6 +26,8 @@ import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.net.URLStreamHandlerFactory;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -139,14 +141,15 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 
 		String host = u.getHost();
 
-		synchronized (URL_MAP) {
-			for (URL url : URL_MAP.keySet()) {
-				if (host.equals(url.getHost())) {
+		Iterator<Map.Entry<URL, StreamHandler>> entryIterator = URL_MAP.entrySet().iterator();
 
-					LOG.debug(null, "Releasing renderer URL ''{0}''", url);
+		while (entryIterator.hasNext()) {
+			URL entryURL = entryIterator.next().getKey();
 
-					URL_MAP.remove(url);
-				}
+			if (host.equals(entryURL.getHost())) {
+				LOG.debug(null, "Releasing renderer URL ''{0}''", entryURL);
+
+				entryIterator.remove();
 			}
 		}
 	}

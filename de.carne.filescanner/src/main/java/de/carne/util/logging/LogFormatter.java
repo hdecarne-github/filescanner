@@ -45,7 +45,7 @@ public class LogFormatter extends Formatter {
 			sb.append(" [");
 			sb.append(record.getThreadID());
 			sb.append("] ");
-			sb.append(Log.formatLevel(record.getLevel()));
+			sb.append(Log.levelToString(record.getLevel()));
 			sb.append(" ");
 			sb.append(record.getLoggerName());
 			sb.append(" ");

@@ -35,6 +35,7 @@ import de.carne.filescanner.spi.FileScannerInput;
 import de.carne.filescanner.util.Units;
 import de.carne.jfx.StageController;
 import de.carne.jfx.aboutinfo.AboutInfoController;
+import de.carne.jfx.logview.LogViewTriggerProperty;
 import de.carne.jfx.messagebox.MessageBoxStyle;
 import de.carne.util.Strings;
 import de.carne.util.logging.Log;
@@ -43,6 +44,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.ProgressBar;
@@ -77,6 +79,8 @@ public class SessionController extends StageController {
 
 	private URL resultViewURL = null;
 
+	private final LogViewTriggerProperty logViewTriggerProperty = new LogViewTriggerProperty(this);
+
 	@FXML
 	MenuBar systemMenuBar;
 
@@ -88,6 +92,9 @@ public class SessionController extends StageController {
 
 	@FXML
 	RadioMenuItem hexadecimalFileViewMenuItem;
+
+	@FXML
+	CheckMenuItem toggleLogMenuItem;
 
 	@FXML
 	TreeView<FileScannerResult> resultsView;
@@ -156,11 +163,6 @@ public class SessionController extends StageController {
 	void onHexadecimalFileViewSelected(ActionEvent evt) {
 		this.fileView.setViewType(FileViewType.HEXADECIMAL_U);
 		recordFileViewTypePrefence(FileViewType.HEXADECIMAL_U);
-	}
-
-	@FXML
-	void onToggleLog(ActionEvent evt) {
-		// TODO
 	}
 
 	@FXML
@@ -266,6 +268,7 @@ public class SessionController extends StageController {
 		controllerStage.getIcons().addAll(Images.IMAGE_FILESCANNER16, Images.IMAGE_FILESCANNER32,
 				Images.IMAGE_FILESCANNER48);
 		setupFileViewType(getFileViewTypePreference());
+		this.toggleLogMenuItem.selectedProperty().bindBidirectional(this.logViewTriggerProperty);
 		this.resultView.getEngine().setUserStyleSheetLocation(RESULT_VIEW_STYLE_URL.toExternalForm());
 		this.resultView.getEngine().load(EMPTY_RESULT_VIEW_DOC.toExternalForm());
 		this.cancelScanButton.setDisable(true);

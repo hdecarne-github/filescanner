@@ -322,7 +322,13 @@ public final class Log {
 		log(LEVEL_DEBUG, thrown, bundle, format, args);
 	}
 
-	static String formatLevel(Level level) {
+	/**
+	 * Get the level string.
+	 *
+	 * @param level The level to get the string for.
+	 * @return The level string.
+	 */
+	public static String levelToString(Level level) {
 		String levelText;
 
 		if (LEVEL_NOTICE.equals(level)) {
@@ -339,6 +345,31 @@ public final class Log {
 			levelText = String.valueOf(level);
 		}
 		return levelText;
+	}
+
+	/**
+	 * Map a level to the best matching standard level.
+	 *
+	 * @param level The level to map.
+	 * @return The matching standard level.
+	 */
+	public static Level snapLevel(Level level) {
+		Level snappedLevel;
+
+		if (level == null) {
+			snappedLevel = LEVEL_DEBUG;
+		} else if (LEVEL_NOTICE.intValue() <= level.intValue()) {
+			snappedLevel = LEVEL_NOTICE;
+		} else if (LEVEL_ERROR.intValue() <= level.intValue()) {
+			snappedLevel = LEVEL_ERROR;
+		} else if (LEVEL_WARNING.intValue() <= level.intValue()) {
+			snappedLevel = LEVEL_WARNING;
+		} else if (LEVEL_INFO.intValue() <= level.intValue()) {
+			snappedLevel = LEVEL_INFO;
+		} else {
+			snappedLevel = LEVEL_DEBUG;
+		}
+		return snappedLevel;
 	}
 
 }

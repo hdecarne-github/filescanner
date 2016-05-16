@@ -19,10 +19,6 @@ package de.carne.jfx.messagebox;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 
 import de.carne.jfx.StageController;
 import javafx.event.ActionEvent;
@@ -31,7 +27,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
@@ -39,66 +34,6 @@ import javafx.stage.Stage;
  * Dialog controller for message box display.
  */
 public class MessageBoxController extends StageController {
-
-	private static final HashMap<MessageBoxStyle, List<Image>> IMAGE_REGISTRY = new HashMap<>();
-
-	private static double getImageSpace(Image image) {
-		return image.getWidth() * image.getHeight();
-	}
-
-	/**
-	 * Register message box style images.
-	 *
-	 * @param style The style to register the image for.
-	 * @param image The image to register.
-	 */
-	public static void registerImage(MessageBoxStyle style, Image image) {
-		assert style != null;
-		assert image != null;
-
-		List<Image> styleImages = IMAGE_REGISTRY.get(style);
-
-		if (styleImages == null) {
-			styleImages = new LinkedList<>();
-		}
-
-		double imageSpace = getImageSpace(image);
-		int imageIndex = 0;
-
-		while (imageIndex < styleImages.size() && imageSpace < getImageSpace(styleImages.get(imageIndex))) {
-			imageIndex++;
-		}
-		styleImages.add(imageIndex, image);
-		IMAGE_REGISTRY.put(style, styleImages);
-	}
-
-	/**
-	 * Get the images registered for a specific style.
-	 *
-	 * @param style The style to get the images for.
-	 * @return The images registered for the submitted style or an empty list,
-	 *         if no image has been registered yet.
-	 */
-	public static List<Image> getImages(MessageBoxStyle style) {
-		assert style != null;
-
-		List<Image> styleImages = IMAGE_REGISTRY.get(style);
-
-		return (styleImages != null ? Collections.unmodifiableList(styleImages) : Collections.emptyList());
-	}
-
-	/**
-	 * Get the image registered for a specific style.
-	 *
-	 * @param style The style to get the image for.
-	 * @return The largest image registered for the submitted style of
-	 *         {@code null} if no image has been registered yet.
-	 */
-	public static Image getImage(MessageBoxStyle style) {
-		List<Image> styleImages = IMAGE_REGISTRY.get(style);
-
-		return (styleImages != null ? styleImages.get(0) : null);
-	}
 
 	private MessageBoxResult resultCmd1 = MessageBoxResult.NONE;
 	private MessageBoxResult resultCmd2 = MessageBoxResult.NONE;
@@ -198,20 +133,20 @@ public class MessageBoxController extends StageController {
 		for (MessageBoxStyle style : styles) {
 			switch (style) {
 			case ICON_INFO:
-				getStage().getIcons().addAll(getImages(MessageBoxStyle.ICON_INFO));
-				this.ctlIcon.setImage(getImage(MessageBoxStyle.ICON_INFO));
+				getStage().getIcons().addAll(MessageBoxImages.getImages(MessageBoxStyle.ICON_INFO));
+				this.ctlIcon.setImage(MessageBoxImages.getImage(MessageBoxStyle.ICON_INFO));
 				break;
 			case ICON_WARNING:
-				getStage().getIcons().addAll(getImages(MessageBoxStyle.ICON_WARNING));
-				this.ctlIcon.setImage(getImage(MessageBoxStyle.ICON_WARNING));
+				getStage().getIcons().addAll(MessageBoxImages.getImages(MessageBoxStyle.ICON_WARNING));
+				this.ctlIcon.setImage(MessageBoxImages.getImage(MessageBoxStyle.ICON_WARNING));
 				break;
 			case ICON_ERROR:
-				getStage().getIcons().addAll(getImages(MessageBoxStyle.ICON_ERROR));
-				this.ctlIcon.setImage(getImage(MessageBoxStyle.ICON_ERROR));
+				getStage().getIcons().addAll(MessageBoxImages.getImages(MessageBoxStyle.ICON_ERROR));
+				this.ctlIcon.setImage(MessageBoxImages.getImage(MessageBoxStyle.ICON_ERROR));
 				break;
 			case ICON_QUESTION:
-				getStage().getIcons().addAll(getImages(MessageBoxStyle.ICON_QUESTION));
-				this.ctlIcon.setImage(getImage(MessageBoxStyle.ICON_QUESTION));
+				getStage().getIcons().addAll(MessageBoxImages.getImages(MessageBoxStyle.ICON_QUESTION));
+				this.ctlIcon.setImage(MessageBoxImages.getImage(MessageBoxStyle.ICON_QUESTION));
 				break;
 			case BUTTON_OK:
 				this.ctlCmd1Button.setText(I18N.formatSTR_OK_BUTTON());
