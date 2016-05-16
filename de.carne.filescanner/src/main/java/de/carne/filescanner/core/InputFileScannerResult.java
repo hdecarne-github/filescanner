@@ -26,8 +26,8 @@ import de.carne.filescanner.spi.FileScannerInput;
  */
 class InputFileScannerResult extends FileScannerResult {
 
-	InputFileScannerResult(FileScannerInput input, FileScannerResult parent) throws IOException {
-		super(FileScannerResultType.INPUT, input, 0l, input.size(), parent);
+	InputFileScannerResult(FileScannerResult parent, FileScannerInput input) throws IOException {
+		super(parent, FileScannerResultType.INPUT, input, 0l, input.size());
 	}
 
 	/*

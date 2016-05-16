@@ -16,23 +16,14 @@
  */
 package de.carne.filescanner.core;
 
-import de.carne.filescanner.spi.FileScannerInput;
-
 /**
  * {@code FileScannerResult} object of type
  * {@linkplain FileScannerResultType#SUB_FORMAT}.
  */
 public class SubFormatFileScannerResult extends FileScannerResult {
 
-	/**
-	 * Construct {@code SubFormatFileScannerResult}.
-	 *
-	 * @param format The format represented by this result object.
-	 * @param input The underlying input.
-	 * @param start The result's start position.
-	 */
-	public SubFormatFileScannerResult(FileScannerInput input, long start, long end, FileScannerResult parent) {
-		super(FileScannerResultType.SUB_FORMAT, input, start, end, parent);
+	public SubFormatFileScannerResult(FileScannerResult parent, long start, long end) {
+		super(parent, FileScannerResultType.SUB_FORMAT, parent.input(), start, end);
 	}
 
 	/*

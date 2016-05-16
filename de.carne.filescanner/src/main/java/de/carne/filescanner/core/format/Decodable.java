@@ -29,10 +29,11 @@ public interface Decodable {
 	/**
 	 * Decode scanner results.
 	 *
-	 * @param parent The parent result to use for result creation.
+	 * @param result The result object to decode.
 	 * @param position The position to start decoding at.
+	 * @return The number of decoded bytes.
 	 * @throws IOException if an I/O error occurs.
 	 */
-	public void decode(FileScannerResult parent, long position) throws IOException;
+	public long decode(FileScannerResult result, long position) throws IOException;
 
 }

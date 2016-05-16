@@ -16,7 +16,10 @@
  */
 package de.carne.filescanner.core.format;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
+
+import de.carne.filescanner.core.FileScannerResult;
 
 /**
  * Base class for all format specifications.
@@ -53,6 +56,16 @@ public abstract class FormatSpec {
 		}
 		return matches;
 	}
+
+	/**
+	 * Process the input data and eval this spec.
+	 *
+	 * @param result The result object of the current decode step.
+	 * @param position The position to start evaluating at.
+	 * @return The number of evaluated bytes.
+	 * @throws IOException if an I/O error occurs.
+	 */
+	public abstract long eval(FileScannerResult result, long position) throws IOException;
 
 	/**
 	 * Set this spec's {@code Decodable} service.

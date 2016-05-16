@@ -16,7 +16,6 @@
  */
 package de.carne.filescanner.provider.zip;
 
-import de.carne.filescanner.core.format.DecodeContext.Attribute;
 import de.carne.filescanner.core.format.StructFormatSpec;
 import de.carne.filescanner.core.format.U16Attribute;
 import de.carne.filescanner.core.format.U32Attribute;
@@ -26,9 +25,9 @@ import de.carne.filescanner.core.format.U32Attribute;
  */
 class ZIPFormatSpecs {
 
-	public static final Attribute<Short> LFH_FILE_NAME_LENGTH = new Attribute<>();
+	public static final U16Attribute LFH_FILE_NAME_LENGTH = new U16Attribute("file name length");
 
-	public static final Attribute<Short> LFH_EXTRA_FIELD_LENGTH = new Attribute<>();
+	public static final U16Attribute LFH_EXTRA_FIELD_LENGTH = new U16Attribute("extra field length");
 
 	public static final StructFormatSpec ZIP_LFH;
 
@@ -44,8 +43,8 @@ class ZIPFormatSpecs {
 		lfh.append(new U32Attribute("crc-32"));
 		lfh.append(new U32Attribute("compressed size"));
 		lfh.append(new U32Attribute("uncompressed size"));
-		lfh.append(new U16Attribute("file name length").bind(LFH_FILE_NAME_LENGTH));
-		lfh.append(new U16Attribute("extra field length").bind(LFH_EXTRA_FIELD_LENGTH));
+		lfh.append(LFH_FILE_NAME_LENGTH.bind());
+		lfh.append(LFH_EXTRA_FIELD_LENGTH.bind());
 		lfh.setDecodable();
 		ZIP_LFH = lfh;
 	}

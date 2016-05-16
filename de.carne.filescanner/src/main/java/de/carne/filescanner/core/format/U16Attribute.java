@@ -34,6 +34,15 @@ public class U16Attribute extends DataAttribute<Short> {
 
 	/*
 	 * (non-Javadoc)
+	 * @see de.carne.filescanner.core.format.DataAttribute#getValueType()
+	 */
+	@Override
+	public Class<Short> getValueType() {
+		return Short.class;
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see de.carne.filescanner.core.format.DataAttribute#getValue(java.nio.
 	 * ByteBuffer)
 	 */

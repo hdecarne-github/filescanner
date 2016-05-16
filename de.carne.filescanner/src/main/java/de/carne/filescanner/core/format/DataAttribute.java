@@ -16,9 +16,10 @@
  */
 package de.carne.filescanner.core.format;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import de.carne.filescanner.core.format.DecodeContext.Attribute;
+import de.carne.filescanner.core.FileScannerResult;
 
 /**
  * Define basic data attributes.
@@ -30,7 +31,7 @@ public abstract class DataAttribute<T> extends FormatSpec {
 	private final DataType dataType;
 	private final String name;
 	private T finalValue = null;
-	private Attribute<T> bound = null;
+	private boolean bound = false;
 
 	/**
 	 * Construct {@code DataAttribute}.
@@ -67,6 +68,17 @@ public abstract class DataAttribute<T> extends FormatSpec {
 		return (value != null && (this.finalValue == null || this.finalValue.equals(value)));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.carne.filescanner.core.format.FormatSpec#eval(de.carne.filescanner.
+	 * core.FileScannerResult, long)
+	 */
+	@Override
+	public long eval(FileScannerResult result, long position) throws IOException {
+		return this.dataType.size();
+	}
+
 	/**
 	 * Get the attribute's data type.
 	 *
@@ -84,6 +96,13 @@ public abstract class DataAttribute<T> extends FormatSpec {
 	public final String name() {
 		return this.name;
 	}
+
+	/**
+	 * Get the attribute's value type.
+	 *
+	 * @return The attribute's value type.
+	 */
+	public abstract Class<T> getValueType();
 
 	/**
 	 * Get the attribute's value.
@@ -115,10 +134,17 @@ public abstract class DataAttribute<T> extends FormatSpec {
 		return this.finalValue;
 	}
 
-	public final DataAttribute<T> bind(Attribute<T> attribute) {
-		assert this.bound == null;
-
-		this.bound = attribute;
+	/**
+	 * Mark this attribute as bound.
+	 * <p>
+	 * The values of bound attributes are written to the current context during
+	 * the spec's evaluation.
+	 * </p>
+	 *
+	 * @return The updated data attribute spec.
+	 */
+	public final DataAttribute<T> bind() {
+		this.bound = true;
 		return this;
 	}
 

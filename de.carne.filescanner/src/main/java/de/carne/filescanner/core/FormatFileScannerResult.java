@@ -35,7 +35,7 @@ public class FormatFileScannerResult extends FileScannerResult {
 	 * @param start The result's start position.
 	 */
 	public FormatFileScannerResult(Format format, FileScannerInput input, long start) {
-		super(FileScannerResultType.FORMAT, input, start, start, null);
+		super(null, FileScannerResultType.FORMAT, input, start, start);
 
 		assert format != null;
 

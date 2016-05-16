@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 import de.carne.filescanner.core.FormatFileScannerResult;
 import de.carne.filescanner.core.format.Decodable;
+import de.carne.filescanner.core.format.DecodeContext;
 import de.carne.filescanner.core.format.FormatSpec;
 import de.carne.util.logging.Log;
 
@@ -168,10 +169,10 @@ public abstract class Format {
 	 * @return The decode result or {@code null} if there was nothing to decode.
 	 * @throws IOException if an I/O error occurs.
 	 */
-	public FormatFileScannerResult decodeInput(FileScannerInput input, long position) throws IOException {
+	public final FormatFileScannerResult decodeInput(FileScannerInput input, long position) throws IOException {
 		FormatFileScannerResult decoded = new FormatFileScannerResult(this, input, position);
 
-		getDecodable().decode(decoded, position);
+		DecodeContext.setupContextAndDecode(getDecodable(), decoded, position);
 		return decoded;
 	}
 

@@ -21,6 +21,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import de.carne.filescanner.core.FileScannerResult;
+import de.carne.filescanner.core.SubFormatFileScannerResult;
 
 /**
  * Struct format spec: Define a consecutive list of format specs.
@@ -80,37 +81,53 @@ public class StructFormatSpec extends FormatSpec {
 		return matches;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.carne.filescanner.core.format.FormatSpec#eval(de.carne.filescanner.
+	 * core.FileScannerResult, long)
+	 */
+	@Override
+	public long eval(FileScannerResult result, long position) throws IOException {
+		long evaluated = 0l;
+
+		for (FormatSpec spec : this.specs) {
+			long specPosition = position + evaluated;
+			Decodable specDecodable = spec.getDecodable();
+
+			if (specDecodable != null) {
+				FileScannerResult specResult = new SubFormatFileScannerResult(result, specPosition,
+						specPosition + matchSize());
+
+				evaluated += DecodeContext.setupContextAndDecode(specDecodable, specResult, specPosition);
+			} else {
+				evaluated += spec.eval(result, specPosition);
+			}
+		}
+		return evaluated;
+	}
+
 	/**
 	 * Set this spec's {@code Decodable} service to the default one.
 	 *
 	 * @return The updated struct spec.
 	 */
 	public StructFormatSpec setDecodable() {
-		setDecodable(new StructDecodable());
+		setDecodable(new Decodable() {
+
+			@Override
+			public long decode(FileScannerResult result, long position) throws IOException {
+				return decodeStructSpec(result, position);
+			}
+
+		});
 		return this;
 	}
 
-	private class StructDecodable implements Decodable {
+	long decodeStructSpec(FileScannerResult result, long position) throws IOException {
+		long evaluated = eval(result, position);
 
-		public StructDecodable() {
-			// Nothing to do here
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * @see de.carne.filescanner.core.format.Decodable#decode(de.carne.
-		 * filescanner.core.FileScannerResult, long)
-		 */
-		@Override
-		public void decode(FileScannerResult parent, long position) throws IOException {
-			decodeStruct(parent, position);
-		}
-
-	}
-
-	void decodeStruct(FileScannerResult parent, long position) throws IOException {
-		// TODO Auto-generated method stub
-
+		return evaluated;
 	}
 
 }

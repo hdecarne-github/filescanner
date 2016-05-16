@@ -34,6 +34,15 @@ public class U32Attribute extends DataAttribute<Integer> {
 
 	/*
 	 * (non-Javadoc)
+	 * @see de.carne.filescanner.core.format.DataAttribute#getValueType()
+	 */
+	@Override
+	public Class<Integer> getValueType() {
+		return Integer.class;
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see de.carne.filescanner.core.format.DataAttribute#getValue(java.nio.
 	 * ByteBuffer)
 	 */

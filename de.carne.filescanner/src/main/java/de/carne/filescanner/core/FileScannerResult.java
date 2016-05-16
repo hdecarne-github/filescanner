@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import de.carne.filescanner.spi.FileScannerInput;
 import de.carne.filescanner.spi.FileScannerResultRenderer;
@@ -48,6 +49,24 @@ import de.carne.filescanner.util.Hexadecimal;
  */
 public abstract class FileScannerResult {
 
+	/**
+	 * Standard {@linkplain Comparator} for comparing results according to their
+	 * position.
+	 * <p>
+	 * The compared results must be associates with the same parent result.
+	 * </p>
+	 */
+	private static final Comparator<FileScannerResult> COMPARATOR = new Comparator<FileScannerResult>() {
+
+		@Override
+		public int compare(FileScannerResult o1, FileScannerResult o2) {
+			assert Objects.equals(o1.parent(), o2.parent());
+
+			return Long.signum(o1.start() - o2.start());
+		}
+
+	};
+
 	private final FileScannerResultType type;
 
 	private final FileScannerInput input;
@@ -60,8 +79,8 @@ public abstract class FileScannerResult {
 
 	private final ArrayList<FileScannerResult> children = new ArrayList<>();
 
-	FileScannerResult(FileScannerResultType type, FileScannerInput input, long start, long end,
-			FileScannerResult parent) {
+	FileScannerResult(FileScannerResult parent, FileScannerResultType type, FileScannerInput input, long start,
+			long end) {
 		assert type != null;
 		assert input != null;
 		assert start <= end;
@@ -78,19 +97,8 @@ public abstract class FileScannerResult {
 	synchronized void addChild(FileScannerResult child) {
 		child.parent = this;
 		this.children.add(child);
-		this.children.sort(new Comparator<FileScannerResult>() {
-
-			@Override
-			public int compare(FileScannerResult o1, FileScannerResult o2) {
-				return childCompare(o1, o2);
-			}
-
-		});
+		this.children.sort(COMPARATOR);
 		this.end = Math.max(this.end, this.children.get(this.children.size() - 1).end);
-	}
-
-	static int childCompare(FileScannerResult o1, FileScannerResult o2) {
-		return Long.signum(o1.start != o2.start ? o1.start - o2.start : o1.end - o2.end);
 	}
 
 	/**
@@ -125,8 +133,14 @@ public abstract class FileScannerResult {
 	 *
 	 * @return The result's end position within the input object.
 	 */
-	public final long end() {
-		return this.end;
+	public synchronized final long end() {
+		long realEnd = this.end;
+		int childrenCount = this.children.size();
+
+		if (this.type != FileScannerResultType.INPUT && childrenCount > 0) {
+			realEnd = this.children.get(childrenCount - 1).end();
+		}
+		return realEnd;
 	}
 
 	/**

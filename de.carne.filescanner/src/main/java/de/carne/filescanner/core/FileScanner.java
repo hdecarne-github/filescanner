@@ -95,7 +95,7 @@ public final class FileScanner implements Closeable {
 		assert input != null;
 		assert this.equals(input.scanner());
 
-		InputFileScannerResult result = new InputFileScannerResult(input, null);
+		InputFileScannerResult result = new InputFileScannerResult(null, input);
 
 		this.status.onScanResult(this, result);
 
@@ -213,9 +213,11 @@ public final class FileScanner implements Closeable {
 		for (Format format : formats) {
 			decoded = format.decodeInput(input, position);
 			if (decoded != null && decoded.size() > 0) {
-				result = decoded;
-				parentResult.addChild(result);
-				break;
+				if (decoded.size() > 0) {
+					result = decoded;
+					parentResult.addChild(result);
+					break;
+				}
 			}
 		}
 		return result;
