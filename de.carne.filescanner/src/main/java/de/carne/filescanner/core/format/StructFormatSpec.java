@@ -20,8 +20,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
-import de.carne.filescanner.core.FileScannerResult;
-import de.carne.filescanner.core.SubFormatFileScannerResult;
+import de.carne.filescanner.core.FileScannerResultBuilder;
 
 /**
  * Struct format spec: Define a consecutive list of format specs.
@@ -85,10 +84,10 @@ public class StructFormatSpec extends FormatSpec {
 	 * (non-Javadoc)
 	 * @see
 	 * de.carne.filescanner.core.format.FormatSpec#eval(de.carne.filescanner.
-	 * core.FileScannerResult, long)
+	 * core.FileScannerResultBuilder, long)
 	 */
 	@Override
-	public long eval(FileScannerResult result, long position) throws IOException {
+	public long eval(FileScannerResultBuilder result, long position) throws IOException {
 		long evaluated = 0l;
 
 		for (FormatSpec spec : this.specs) {
@@ -96,7 +95,7 @@ public class StructFormatSpec extends FormatSpec {
 			Decodable specDecodable = spec.getDecodable();
 
 			if (specDecodable != null) {
-				FileScannerResult specResult = new SubFormatFileScannerResult(result, specPosition,
+				FileScannerResultBuilder specResult = result.addResult(spec.resultType(), specPosition,
 						specPosition + matchSize());
 
 				evaluated += DecodeContext.setupContextAndDecode(specDecodable, specResult, specPosition);
@@ -116,7 +115,7 @@ public class StructFormatSpec extends FormatSpec {
 		setDecodable(new Decodable() {
 
 			@Override
-			public long decode(FileScannerResult result, long position) throws IOException {
+			public long decode(FileScannerResultBuilder result, long position) throws IOException {
 				return decodeStructSpec(result, position);
 			}
 
@@ -124,7 +123,7 @@ public class StructFormatSpec extends FormatSpec {
 		return this;
 	}
 
-	long decodeStructSpec(FileScannerResult result, long position) throws IOException {
+	long decodeStructSpec(FileScannerResultBuilder result, long position) throws IOException {
 		long evaluated = eval(result, position);
 
 		return evaluated;

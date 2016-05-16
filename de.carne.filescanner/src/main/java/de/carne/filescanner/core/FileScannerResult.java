@@ -30,20 +30,20 @@ import de.carne.filescanner.util.Hexadecimal;
  * A {@code FileScanner} result object.
  * <p>
  * Results are of different types ({@link FileScannerResultType}) and ordered
- * hierarchically. The resulting pattern is:
+ * hierarchically. The resulting structure is:
  *
  * <pre>
- *  Input               An input
+ *  Input               	An input
  *  |
- *  +-Format            An identified file format
+ *  +-Format            	An identified format/file structure
  *    |
- *    +-Sub-format      A sub-format used by the file format (optional)
+ *    +-Format   	   		A format/file structure can contain others.
  *      |
- *      +-Encoded       An encoded data stream (optional)
+ *      +-Encoded (Input)	An encoded data stream (optional)
  *        |
- *        +-Input       The input data representing the decoded data stream
+ *        +-Input       	The input data representing the decoded data stream
  *          |
- *          +-...       Goes on recursively
+ *          +-...       	Goes on recursively
  * </pre>
  * </p>
  */
@@ -56,16 +56,20 @@ public abstract class FileScannerResult {
 	 * The compared results must be associates with the same parent result.
 	 * </p>
 	 */
-	private static final Comparator<FileScannerResult> COMPARATOR = new Comparator<FileScannerResult>() {
+	private static final Comparator<FileScannerResult> POSITION_COMPARATOR = new Comparator<FileScannerResult>() {
 
 		@Override
 		public int compare(FileScannerResult o1, FileScannerResult o2) {
-			assert Objects.equals(o1.parent(), o2.parent());
-
-			return Long.signum(o1.start() - o2.start());
+			return compareResultPositions(o1, o2);
 		}
 
 	};
+
+	static int compareResultPositions(FileScannerResult o1, FileScannerResult o2) {
+		assert Objects.equals(o1.parent(), o2.parent());
+
+		return Long.signum(o1.start - o2.start);
+	}
 
 	private final FileScannerResultType type;
 
@@ -73,32 +77,31 @@ public abstract class FileScannerResult {
 
 	private final long start;
 
-	private long end;
-
-	private FileScannerResult parent = null;
-
 	private final ArrayList<FileScannerResult> children = new ArrayList<>();
 
-	FileScannerResult(FileScannerResult parent, FileScannerResultType type, FileScannerInput input, long start,
-			long end) {
+	FileScannerResult(FileScannerResultType type, FileScannerInput input, long start) {
 		assert type != null;
 		assert input != null;
-		assert start <= end;
+		assert start >= 0;
 
 		this.type = type;
 		this.input = input;
 		this.start = start;
-		this.end = end;
-		if (parent != null) {
-			parent.addChild(this);
-		}
 	}
 
 	synchronized void addChild(FileScannerResult child) {
-		child.parent = this;
 		this.children.add(child);
-		this.children.sort(COMPARATOR);
-		this.end = Math.max(this.end, this.children.get(this.children.size() - 1).end);
+		this.children.sort(POSITION_COMPARATOR);
+	}
+
+	synchronized void setChildren(List<FileScannerResult> children) {
+		this.children.addAll(children);
+	}
+
+	synchronized long getChildrenEnd() {
+		int childrenCount = this.children.size();
+
+		return (childrenCount > 0 ? this.children.get(childrenCount - 1).end() : this.start);
 	}
 
 	/**
@@ -133,15 +136,7 @@ public abstract class FileScannerResult {
 	 *
 	 * @return The result's end position within the input object.
 	 */
-	public synchronized final long end() {
-		long realEnd = this.end;
-		int childrenCount = this.children.size();
-
-		if (this.type != FileScannerResultType.INPUT && childrenCount > 0) {
-			realEnd = this.children.get(childrenCount - 1).end();
-		}
-		return realEnd;
-	}
+	public abstract long end();
 
 	/**
 	 * Get the result's size.
@@ -149,7 +144,7 @@ public abstract class FileScannerResult {
 	 * @return The result's size.
 	 */
 	public final long size() {
-		return this.end - this.start;
+		return this.end() - this.start;
 	}
 
 	/**
@@ -157,9 +152,7 @@ public abstract class FileScannerResult {
 	 *
 	 * @return The parent result or {@code null} if this is a root result.
 	 */
-	public final FileScannerResult parent() {
-		return this.parent;
-	}
+	public abstract FileScannerResult parent();
 
 	/**
 	 * Get the result's children count.
@@ -190,7 +183,7 @@ public abstract class FileScannerResult {
 	 *
 	 * @return The result's title.
 	 */
-	public abstract String getTitle();
+	public abstract String title();
 
 	/**
 	 * Render the result for user display.
@@ -224,7 +217,7 @@ public abstract class FileScannerResult {
 	 */
 	@Override
 	public String toString() {
-		return getTitle();
+		return title();
 	}
 
 }

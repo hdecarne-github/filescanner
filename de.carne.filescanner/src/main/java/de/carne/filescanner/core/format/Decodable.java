@@ -18,22 +18,22 @@ package de.carne.filescanner.core.format;
 
 import java.io.IOException;
 
-import de.carne.filescanner.core.FileScannerResult;
+import de.carne.filescanner.core.FileScannerResultBuilder;
 
 /**
- * This interface defines the necessary function for result decoding and
- * populating.
+ * This interface defines functions every displayable scan result has to
+ * implement.
  */
 public interface Decodable {
 
 	/**
 	 * Decode scanner results.
 	 *
-	 * @param result The result object to decode.
+	 * @param result The result builder object to decode into.
 	 * @param position The position to start decoding at.
 	 * @return The number of decoded bytes.
 	 * @throws IOException if an I/O error occurs.
 	 */
-	public long decode(FileScannerResult result, long position) throws IOException;
+	public long decode(FileScannerResultBuilder result, long position) throws IOException;
 
 }

@@ -19,7 +19,7 @@ package de.carne.filescanner.core.format;
 import java.io.IOException;
 import java.util.HashMap;
 
-import de.carne.filescanner.core.FileScannerResult;
+import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.util.logging.Log;
 
 /**
@@ -80,13 +80,13 @@ public class DecodeContext {
 	 * Setup a new {@code DecodeContext} and start decoding.
 	 *
 	 * @param decodable The {@linkplain Decodable} to use for decoding.
-	 * @param result The result object to decode.
+	 * @param result The result builder object to decode into.
 	 * @param position The position to start decoding at.
 	 * @return The number of decoded bytes.
 	 * @throws IOException if an I/O error occurs.
-	 * @see Decodable#decode(FileScannerResult, long)
+	 * @see Decodable#decode(FileScannerResultBuilder, long)
 	 */
-	public static long setupContextAndDecode(Decodable decodable, FileScannerResult result, long position)
+	public static long setupContextAndDecode(Decodable decodable, FileScannerResultBuilder result, long position)
 			throws IOException {
 		DecodeContext parentContext = CONTEXT.get();
 		DecodeContext context = new DecodeContext(parentContext);

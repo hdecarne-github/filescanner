@@ -19,7 +19,7 @@ package de.carne.filescanner.core.format;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import de.carne.filescanner.core.FileScannerResult;
+import de.carne.filescanner.core.FileScannerResultBuilder;
 
 /**
  * Define basic data attributes.
@@ -72,10 +72,10 @@ public abstract class DataAttribute<T> extends FormatSpec {
 	 * (non-Javadoc)
 	 * @see
 	 * de.carne.filescanner.core.format.FormatSpec#eval(de.carne.filescanner.
-	 * core.FileScannerResult, long)
+	 * core.FileScannerResultBuilder, long)
 	 */
 	@Override
-	public long eval(FileScannerResult result, long position) throws IOException {
+	public long eval(FileScannerResultBuilder result, long position) throws IOException {
 		return this.dataType.size();
 	}
 

@@ -16,28 +16,33 @@
  */
 package de.carne.filescanner.core;
 
-import java.io.IOException;
-
 import de.carne.filescanner.spi.FileScannerInput;
 
 /**
  * {@code FileScannerResult} object of type
- * {@linkplain FileScannerResultType#INPUT}.
+ * {@linkplain FileScannerResultType#FORMAT}.
  */
-class InputFileScannerResult extends FileScannerResult {
+public class SimpleFileScannerResult extends FileScannerResult {
 
 	private final long end;
 
 	private final FileScannerResult parent;
 
-	InputFileScannerResult(FileScannerResult parent, FileScannerInput input) throws IOException {
-		super(FileScannerResultType.INPUT, input, 0l);
+	private final String title;
 
-		this.end = input.size();
+	SimpleFileScannerResult(FileScannerResult parent, FileScannerResultType type, FileScannerInput input, long start,
+			long end, String title) {
+		super(type, input, start);
+
+		assert parent != null;
+		assert type != FileScannerResultType.INPUT;
+		assert start <= end;
+		assert title != null;
+
+		this.end = end;
 		this.parent = parent;
-		if (this.parent != null) {
-			this.parent.addChild(this);
-		}
+		this.parent.addChild(this);
+		this.title = title;
 	}
 
 	/*
@@ -64,7 +69,7 @@ class InputFileScannerResult extends FileScannerResult {
 	 */
 	@Override
 	public String title() {
-		return input().path().getFileName().toString();
+		return this.title;
 	}
 
 }

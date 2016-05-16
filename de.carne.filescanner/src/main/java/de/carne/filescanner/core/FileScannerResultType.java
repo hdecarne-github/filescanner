@@ -27,18 +27,13 @@ public enum FileScannerResultType {
 	INPUT,
 
 	/**
-	 * Known file format.
+	 * Known format.
 	 */
 	FORMAT,
 
 	/**
-	 * Known sub-format (used within a file format).
+	 * Encoded input data stream.
 	 */
-	SUB_FORMAT,
-
-	/**
-	 * Encoded data stream.
-	 */
-	ENCODED
+	ENCODED_INPUT
 
 }

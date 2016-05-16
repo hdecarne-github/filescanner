@@ -117,19 +117,14 @@ public final class Images {
 	public static final Image IMAGE_INPUT_RESULT16 = getImage(Images.class, "iconInputResult16.png");
 
 	/**
-	 * Encoded result icon (16x16)
-	 */
-	public static final Image IMAGE_ENCODED_RESULT16 = getImage(Images.class, "iconFormatResult16.png");
-
-	/**
 	 * Format result icon (16x16)
 	 */
 	public static final Image IMAGE_FORMAT_RESULT16 = getImage(Images.class, "iconFormatResult16.png");
 
 	/**
-	 * Sub-format result icon (16x16)
+	 * Encoded input result icon (16x16)
 	 */
-	public static final Image IMAGE_SUB_FORMAT_RESULT16 = getImage(Images.class, "iconSubFormatResult16.png");
+	public static final Image IMAGE_ENCODED_INPUT_RESULT16 = getImage(Images.class, "iconEncodedInputResult16.png");
 
 	/**
 	 * FileScanner icon (128x128)

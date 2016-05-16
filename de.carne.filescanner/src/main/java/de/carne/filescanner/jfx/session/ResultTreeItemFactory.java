@@ -105,11 +105,8 @@ final class ResultTreeItemFactory {
 		case FORMAT:
 			image = Images.IMAGE_FORMAT_RESULT16;
 			break;
-		case SUB_FORMAT:
-			image = Images.IMAGE_SUB_FORMAT_RESULT16;
-			break;
-		case ENCODED:
-			image = Images.IMAGE_ENCODED_RESULT16;
+		case ENCODED_INPUT:
+			image = Images.IMAGE_ENCODED_INPUT_RESULT16;
 			break;
 		default:
 			throw new IllegalStateException("Unexpected result type: " + result.type());

@@ -142,19 +142,19 @@ public final class FileScanner implements Closeable {
 	}
 
 	@SuppressWarnings("resource")
-	void scanInput(InputFileScannerResult parentResult) {
-		FileScannerStatsCollector currentStats = this.stats.recordInput(parentResult);
+	void scanInput(InputFileScannerResult inputResult) {
+		FileScannerStatsCollector currentStats = this.stats.recordInput(inputResult);
 
 		if (currentStats.scanCount() == 1) {
 			this.status.onScanStart(this, currentStats);
 		}
 
-		FileScannerInput input = parentResult.input();
+		FileScannerInput input = inputResult.input();
 
 		LOG.notice(null, "Scanning input ''{0}''...", input.path());
 
 		long scanPosition = 0l;
-		long inputSize = parentResult.size();
+		long inputSize = inputResult.size();
 		long lastProgressTime = System.currentTimeMillis();
 		long lastProgressPosition = scanPosition;
 		FormatMatcher formatMatcher = new FormatMatcher();
@@ -180,11 +180,11 @@ public final class FileScanner implements Closeable {
 				}
 
 				// Do the actual decoding
-				FileScannerResult result = decodeInput(parentResult, scanPosition, formatMatcher);
+				FileScannerResult decoded = decodeInput(inputResult, scanPosition, formatMatcher);
 
-				if (result != null) {
-					scanPosition += result.size();
-					this.status.onScanResult(this, result);
+				if (decoded != null) {
+					scanPosition += decoded.size();
+					this.status.onScanResult(this, decoded);
 				} else {
 					scanPosition += 1l;
 				}
@@ -203,24 +203,19 @@ public final class FileScanner implements Closeable {
 	}
 
 	@SuppressWarnings("resource")
-	private FormatFileScannerResult decodeInput(InputFileScannerResult parentResult, long position,
+	private FileScannerResult decodeInput(InputFileScannerResult inputResult, long position,
 			FormatMatcher formatMatcher) throws IOException {
-		FileScannerInput input = parentResult.input();
+		FileScannerInput input = inputResult.input();
 		List<Format> formats = formatMatcher.matchFormats(input, position);
-		FormatFileScannerResult decoded = null;
-		FormatFileScannerResult result = null;
+		FileScannerResult decoded = null;
 
 		for (Format format : formats) {
-			decoded = format.decodeInput(input, position);
-			if (decoded != null && decoded.size() > 0) {
-				if (decoded.size() > 0) {
-					result = decoded;
-					parentResult.addChild(result);
-					break;
-				}
+			decoded = format.decodeInput(inputResult, position);
+			if (decoded != null) {
+				break;
 			}
 		}
-		return result;
+		return decoded;
 	}
 
 }

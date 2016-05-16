@@ -25,7 +25,9 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.regex.Pattern;
 
-import de.carne.filescanner.core.FormatFileScannerResult;
+import de.carne.filescanner.core.FileScannerResult;
+import de.carne.filescanner.core.FileScannerResultBuilder;
+import de.carne.filescanner.core.FileScannerResultType;
 import de.carne.filescanner.core.format.Decodable;
 import de.carne.filescanner.core.format.DecodeContext;
 import de.carne.filescanner.core.format.FormatSpec;
@@ -164,16 +166,20 @@ public abstract class Format {
 	/**
 	 * Decode the format.
 	 *
-	 * @param input The input to decode from.
+	 * @param result The result object to decode into.
 	 * @param position The position to start decoding at.
 	 * @return The decode result or {@code null} if there was nothing to decode.
 	 * @throws IOException if an I/O error occurs.
 	 */
-	public final FormatFileScannerResult decodeInput(FileScannerInput input, long position) throws IOException {
-		FormatFileScannerResult decoded = new FormatFileScannerResult(this, input, position);
+	public final FileScannerResult decodeInput(FileScannerResult result, long position) throws IOException {
+		assert result != null;
+		assert position >= 0;
 
-		DecodeContext.setupContextAndDecode(getDecodable(), decoded, position);
-		return decoded;
+		FileScannerResultBuilder decodedBuilder = new FileScannerResultBuilder(FileScannerResultType.FORMAT,
+				result.input(), position, name());
+
+		DecodeContext.setupContextAndDecode(getDecodable(), decodedBuilder, position);
+		return decodedBuilder.toResult(result);
 	}
 
 	/**

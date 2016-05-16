@@ -16,39 +16,54 @@
  */
 package de.carne.filescanner.core;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.file.Path;
+
 import de.carne.filescanner.spi.FileScannerInput;
-import de.carne.filescanner.spi.Format;
 
 /**
- * {@code FileScannerResult} object of type
- * {@linkplain FileScannerResultType#FORMAT}.
+ *
  */
-public class FormatFileScannerResult extends FileScannerResult {
-
-	private final Format format;
+class NestedFileScannerInput extends FileScannerInput {
 
 	/**
-	 * Construct {@code FormatFileScannerResult}.
-	 *
-	 * @param format The format represented by this result object.
-	 * @param input The underlying input.
-	 * @param start The result's start position.
+	 * @param scanner
+	 * @param path
 	 */
-	public FormatFileScannerResult(Format format, FileScannerInput input, long start) {
-		super(null, FileScannerResultType.FORMAT, input, start, start);
-
-		assert format != null;
-
-		this.format = format;
+	public NestedFileScannerInput(FileScanner scanner, Path path) {
+		super(scanner, path);
+		// TODO Auto-generated constructor stub
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.FileScannerResult#getTitle()
+	 * @see de.carne.filescanner.spi.FileScannerInput#size()
 	 */
 	@Override
-	public String getTitle() {
-		return this.format.name();
+	public long size() throws IOException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see de.carne.filescanner.spi.FileScannerInput#read(java.nio.ByteBuffer,
+	 * long)
+	 */
+	@Override
+	public int read(ByteBuffer dst, long position) throws IOException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see de.carne.filescanner.spi.FileScannerInput#close0()
+	 */
+	@Override
+	protected void close0() throws Exception {
+		// Nothing to do here
 	}
 
 }
