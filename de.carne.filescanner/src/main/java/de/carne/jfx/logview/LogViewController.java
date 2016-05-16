@@ -36,6 +36,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 /**
  * Dialog controller for live log display.
@@ -94,6 +95,15 @@ public class LogViewController extends StageController {
 			}
 
 		});
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see de.carne.jfx.StageController#getStyle()
+	 */
+	@Override
+	protected StageStyle getStyle() {
+		return StageStyle.UTILITY;
 	}
 
 	/*

@@ -37,6 +37,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 
 /**
@@ -108,6 +109,18 @@ public abstract class StageController {
 	}
 
 	/**
+	 * Called during stage setup to get the stage's style.
+	 * <p>
+	 * Derived classes can override this to change it's style.
+	 * </p>
+	 *
+	 * @return The style to use for stage setup.
+	 */
+	protected StageStyle getStyle() {
+		return StageStyle.DECORATED;
+	}
+
+	/**
 	 * Called during stage setup to get the stage's modality.
 	 * <p>
 	 * Derived classes can override this to change it's modality.
@@ -155,7 +168,6 @@ public abstract class StageController {
 			}
 
 		});
-
 	}
 
 	private static <T extends StageController> T setupStage(Stage ownerStage, Stage controllerStage,
@@ -176,8 +188,6 @@ public abstract class StageController {
 		String bundleName = baseName + ".I18N";
 
 		LOG.debug(null, "Setting up stage for controller: {0}", controllerName);
-		LOG.debug(null, " Using FXML resource           : {0}", fxmlResourceName);
-		LOG.debug(null, " Using resource bundle         : {0}", bundleName);
 
 		FXMLLoader loader = new FXMLLoader();
 
@@ -190,6 +200,7 @@ public abstract class StageController {
 
 		T controller = loader.getController();
 
+		controllerStage.initStyle(controller.getStyle());
 		if (ownerStage != null) {
 			controllerStage.initOwner(ownerStage);
 			controllerStage.initModality(controller.getModality());
