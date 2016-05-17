@@ -16,7 +16,10 @@
  */
 package de.carne.filescanner.core;
 
+import java.nio.ByteOrder;
+
 import de.carne.filescanner.spi.FileScannerInput;
+import de.carne.filescanner.spi.Format;
 
 /**
  * This class is used to build up the scan result hierarchy for a single format.
@@ -32,31 +35,30 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 
 	private final FileScannerResultBuilder parent;
 
+	private final ByteOrder order;
+
 	private String title;
 
 	/**
 	 * Construct {@code FileScannerResultBuilder}.
 	 *
-	 * @param type The result type to build up.
+	 * @param format The format to decode.
 	 * @param input The result object's input.
 	 * @param start The result object's start position.
-	 * @param title The result object's title.
 	 */
-	public FileScannerResultBuilder(FileScannerResultType type, FileScannerInput input, long start, String title) {
-		this(null, type, input, start, start, title);
+	public FileScannerResultBuilder(Format format, FileScannerInput input, long start) {
+		this(null, FileScannerResultType.FORMAT, input, start, start, format.order(), format.name());
 	}
 
 	private FileScannerResultBuilder(FileScannerResultBuilder parent, FileScannerResultType type,
-			FileScannerInput input, long start, long end, String title) {
+			FileScannerInput input, long start, long end, ByteOrder order, String title) {
 		super(type, input, start);
-
-		assert title != null;
-
 		this.end = end;
 		this.parent = parent;
 		if (this.parent != null) {
 			this.parent.addChild(this);
 		}
+		this.order = order;
 		this.title = title;
 	}
 
@@ -123,7 +125,7 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 		assert start() <= resultStart;
 		assert resultStart <= resultEnd;
 
-		return new FileScannerResultBuilder(this, type, input(), resultStart, resultEnd, "");
+		return new FileScannerResultBuilder(this, type, input(), resultStart, resultEnd, this.order, "");
 	}
 
 	/**

@@ -35,17 +35,15 @@ public final class FileScanner implements Closeable {
 
 	private static final Log LOG = new Log(FileScanner.class);
 
-	private static final String THIS_PACKAGE = FileScanner.class.getPackage().getName();
+	private static final String PROPERTY_PACKAGE = FileScanner.class.getPackage().getName();
 
-	private static final long PROGRESS_INTERVAL = 500;
-
-	private static final String THREAD_COUNT_PROPERTY = THIS_PACKAGE + ".threadCount";
+	private static final String THREAD_COUNT_PROPERTY = PROPERTY_PACKAGE + ".threadCount";
 
 	private static final int THREAD_COUNT;
 
 	static {
 		String threadCountProperty = System.getProperty(THREAD_COUNT_PROPERTY);
-		int threadCount = -1;
+		int threadCount = 0;
 
 		if (threadCountProperty != null) {
 			try {
@@ -53,7 +51,7 @@ public final class FileScanner implements Closeable {
 			} catch (NumberFormatException e) {
 				// ignore
 			}
-			if (threadCount <= 0) {
+			if (threadCount < 0) {
 				LOG.warning(null, "Ignoring invalid {0} value: ''{1}''", THREAD_COUNT_PROPERTY, threadCountProperty);
 			}
 		}
@@ -65,6 +63,8 @@ public final class FileScanner implements Closeable {
 
 		THREAD_COUNT = threadCount;
 	}
+
+	private static final long PROGRESS_INTERVAL = 1000;
 
 	private final ExecutorService threadPool = Executors.newFixedThreadPool(THREAD_COUNT);
 

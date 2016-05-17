@@ -98,7 +98,7 @@ public abstract class FileScannerResultRenderer {
 		}
 	}
 
-	private void ensureOpenAndPrepared() throws IOException {
+	private void ensureOpenAndPrepared() throws IOException, InterruptedException {
 		if (!this.open.get()) {
 			throw new IOException("Renderer closed");
 		}
@@ -124,7 +124,7 @@ public abstract class FileScannerResultRenderer {
 		return this;
 	}
 
-	private void applyMode() throws IOException {
+	private void applyMode() throws IOException, InterruptedException {
 		if (!this.nextMode.equals(this.currentMode)) {
 			if (this.currentMode != null) {
 				writeEndMode(this.currentMode);
@@ -363,8 +363,9 @@ public abstract class FileScannerResultRenderer {
 	 * </p>
 	 *
 	 * @throws IOException if an I/O error occurs.
+	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	protected void writePreamble() throws IOException {
+	protected void writePreamble() throws IOException, InterruptedException {
 		// default is to write nothing
 	}
 
@@ -376,8 +377,9 @@ public abstract class FileScannerResultRenderer {
 	 * </p>
 	 *
 	 * @throws IOException if an I/O error occurs.
+	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	protected void writeEpilogue() throws IOException {
+	protected void writeEpilogue() throws IOException, InterruptedException {
 		// default is to write nothing
 	}
 
@@ -390,8 +392,9 @@ public abstract class FileScannerResultRenderer {
 	 *
 	 * @param mode The beginning mode.
 	 * @throws IOException if an I/O error occurs.
+	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	protected void writeBeginMode(Mode mode) throws IOException {
+	protected void writeBeginMode(Mode mode) throws IOException, InterruptedException {
 		// default is to write nothing
 	}
 
@@ -404,8 +407,9 @@ public abstract class FileScannerResultRenderer {
 	 *
 	 * @param mode The ending mode.
 	 * @throws IOException if an I/O error occurs.
+	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	protected void writeEndMode(Mode mode) throws IOException {
+	protected void writeEndMode(Mode mode) throws IOException, InterruptedException {
 		// default is to write nothing
 	}
 
@@ -413,8 +417,9 @@ public abstract class FileScannerResultRenderer {
 	 * Write a line break.
 	 *
 	 * @throws IOException if an I/O error occurs.
+	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	protected abstract void writeBreak() throws IOException;
+	protected abstract void writeBreak() throws IOException, InterruptedException;
 
 	/**
 	 * Write text data.
@@ -422,8 +427,9 @@ public abstract class FileScannerResultRenderer {
 	 * @param mode The currently active render mode.
 	 * @param text The text to write.
 	 * @throws IOException if an I/O error occurs.
+	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	protected abstract void writeText(Mode mode, String text) throws IOException;
+	protected abstract void writeText(Mode mode, String text) throws IOException, InterruptedException;
 
 	/**
 	 * Write referencing text data.
@@ -432,8 +438,9 @@ public abstract class FileScannerResultRenderer {
 	 * @param text The text to write.
 	 * @param position The referenced position.
 	 * @throws IOException if an I/O error occurs.
+	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	protected void writeRefText(Mode mode, String text, long position) throws IOException {
+	protected void writeRefText(Mode mode, String text, long position) throws IOException, InterruptedException {
 		writeText(mode, text);
 	}
 
@@ -443,8 +450,9 @@ public abstract class FileScannerResultRenderer {
 	 * @param mode The currently active render mode.
 	 * @param streamHandler The image data to render.
 	 * @throws IOException if an I/O error occurs.
+	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	protected abstract void writeImage(Mode mode, StreamHandler streamHandler) throws IOException;
+	protected abstract void writeImage(Mode mode, StreamHandler streamHandler) throws IOException, InterruptedException;
 
 	/**
 	 * Write referencing image data.
@@ -453,8 +461,10 @@ public abstract class FileScannerResultRenderer {
 	 * @param streamHandler The image data to render.
 	 * @param position The referenced position.
 	 * @throws IOException if an I/O error occurs.
+	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	protected void writeRefImage(Mode mode, StreamHandler streamHandler, long position) throws IOException {
+	protected void writeRefImage(Mode mode, StreamHandler streamHandler, long position)
+			throws IOException, InterruptedException {
 		writeImage(mode, streamHandler);
 	}
 
@@ -464,8 +474,9 @@ public abstract class FileScannerResultRenderer {
 	 * @param mode The currently active render mode.
 	 * @param streamHandler The video data to render.
 	 * @throws IOException if an I/O error occurs.
+	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	protected abstract void writeVideo(Mode mode, StreamHandler streamHandler) throws IOException;
+	protected abstract void writeVideo(Mode mode, StreamHandler streamHandler) throws IOException, InterruptedException;
 
 	/**
 	 * Write referencing video data.
@@ -474,8 +485,10 @@ public abstract class FileScannerResultRenderer {
 	 * @param streamHandler The video data to render.
 	 * @param position The referenced position.
 	 * @throws IOException if an I/O error occurs.
+	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	protected void writeRefVideo(Mode mode, StreamHandler streamHandler, long position) throws IOException {
+	protected void writeRefVideo(Mode mode, StreamHandler streamHandler, long position)
+			throws IOException, InterruptedException {
 		writeVideo(mode, streamHandler);
 	}
 

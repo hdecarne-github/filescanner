@@ -27,7 +27,6 @@ import java.util.regex.Pattern;
 
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
-import de.carne.filescanner.core.FileScannerResultType;
 import de.carne.filescanner.core.format.Decodable;
 import de.carne.filescanner.core.format.DecodeContext;
 import de.carne.filescanner.core.format.FormatSpec;
@@ -175,8 +174,7 @@ public abstract class Format {
 		assert result != null;
 		assert position >= 0;
 
-		FileScannerResultBuilder decodedBuilder = new FileScannerResultBuilder(FileScannerResultType.FORMAT,
-				result.input(), position, name());
+		FileScannerResultBuilder decodedBuilder = new FileScannerResultBuilder(this, result.input(), position);
 
 		DecodeContext.setupContextAndDecode(getDecodable(), decodedBuilder, position);
 		return decodedBuilder.toResult(result);
