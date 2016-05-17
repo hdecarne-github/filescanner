@@ -26,6 +26,7 @@ import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerStats;
 import de.carne.filescanner.core.FileScannerStatus;
 import de.carne.filescanner.core.transfer.HtmlResultRendererURLHandler;
+import de.carne.filescanner.core.transfer.HtmlResultRendererURLHandler.RenderResult;
 import de.carne.filescanner.jfx.Images;
 import de.carne.filescanner.jfx.control.FileView;
 import de.carne.filescanner.jfx.control.FileViewType;
@@ -69,6 +70,8 @@ public class SessionController extends StageController {
 
 	private static final String PREF_INITIAL_DIRECTORY = "initialDirectory";
 
+	private static final int RESULT_VIEW_FAST_TIMEOUT = 250;
+
 	private static final URL RESULT_VIEW_STYLE_URL = SessionController.class.getResource("ResultView.css");
 
 	private static final URL EMPTY_RESULT_VIEW_DOC = SessionController.class.getResource("EmptyResultView.html");
@@ -77,7 +80,7 @@ public class SessionController extends StageController {
 
 	private final ResultTreeItemFactory resultItemFactory = new ResultTreeItemFactory();
 
-	private URL resultViewURL = null;
+	private RenderResult resultViewObject = null;
 
 	private final LogViewTriggerProperty logViewTriggerProperty = new LogViewTriggerProperty(this);
 
@@ -202,13 +205,17 @@ public class SessionController extends StageController {
 			this.fileView.setPosition(selection.getStart());
 			this.fileView.setSelection(selection);
 
-			if (this.resultViewURL != null) {
-				HtmlResultRendererURLHandler.close(this.resultViewURL);
-				this.resultViewURL = null;
+			if (this.resultViewObject != null) {
+				HtmlResultRendererURLHandler.close(this.resultViewObject);
+				this.resultViewObject = null;
 			}
 			try {
-				this.resultViewURL = HtmlResultRendererURLHandler.open(result);
-				this.resultView.getEngine().load(this.resultViewURL.toExternalForm());
+				this.resultViewObject = HtmlResultRendererURLHandler.open(result, RESULT_VIEW_FAST_TIMEOUT);
+				if (this.resultViewObject.isFast()) {
+					this.resultView.getEngine().loadContent(this.resultViewObject.getFastResult());
+				} else {
+					this.resultView.getEngine().load(this.resultViewObject.getURLResult().toExternalForm());
+				}
 			} catch (IOException e) {
 				LOG.error(e, I18N.BUNDLE, I18N.STR_OPEN_RENDERER_ERROR);
 			}
@@ -432,9 +439,9 @@ public class SessionController extends StageController {
 
 	private void clearResults() {
 		this.resultView.getEngine().load(EMPTY_RESULT_VIEW_DOC.toExternalForm());
-		if (this.resultViewURL != null) {
-			HtmlResultRendererURLHandler.close(this.resultViewURL);
-			this.resultViewURL = null;
+		if (this.resultViewObject != null) {
+			HtmlResultRendererURLHandler.close(this.resultViewObject);
+			this.resultViewObject = null;
 		}
 		this.resultsView.setRoot(null);
 		this.resultItemFactory.clear();

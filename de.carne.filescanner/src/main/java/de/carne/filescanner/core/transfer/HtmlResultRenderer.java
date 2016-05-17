@@ -17,24 +17,19 @@
 package de.carne.filescanner.core.transfer;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
 
 import de.carne.filescanner.spi.FileScannerResultRenderer;
 
 /**
- * {@code FileScannerResultRenderer} implementation generating HTML output.
+ * Base class for all {@code FileScannerResultRenderer} implementations that
+ * generate HTML output.
  */
-class HtmlResultRenderer extends FileScannerResultRenderer {
+abstract class HtmlResultRenderer extends FileScannerResultRenderer {
 
 	private final HtmlResultRendererURLHandler urlHandler;
 
-	private final OutputStreamWriter out;
-
-	public HtmlResultRenderer(HtmlResultRendererURLHandler urlHandler, OutputStream out) {
+	public HtmlResultRenderer(HtmlResultRendererURLHandler urlHandler) {
 		this.urlHandler = urlHandler;
-		this.out = new OutputStreamWriter(out, StandardCharsets.UTF_8);
 	}
 
 	/*
@@ -42,9 +37,8 @@ class HtmlResultRenderer extends FileScannerResultRenderer {
 	 * @see de.carne.filescanner.spi.FileScannerResultRenderer#writePreamble()
 	 */
 	@Override
-	protected void writePreamble() throws IOException {
-		this.out.write("<!DOCTYPE HTML>\n<html>\n<head>\n<meta charset=\"utf-8\">\n</head>\n<body>\n");
-		this.out.flush();
+	protected void writePreamble() throws IOException, InterruptedException {
+		write("<!DOCTYPE HTML>\n<html>\n<head>\n<meta charset=\"utf-8\">\n</head>\n<body>\n");
 	}
 
 	/*
@@ -52,9 +46,8 @@ class HtmlResultRenderer extends FileScannerResultRenderer {
 	 * @see de.carne.filescanner.spi.FileScannerResultRenderer#writeEpilogue()
 	 */
 	@Override
-	protected void writeEpilogue() throws IOException {
-		this.out.write("</body>\n</html>\n");
-		this.out.flush();
+	protected void writeEpilogue() throws IOException, InterruptedException {
+		write("</body>\n</html>\n");
 	}
 
 	/*
@@ -64,10 +57,8 @@ class HtmlResultRenderer extends FileScannerResultRenderer {
 	 * carne.filescanner.spi.FileScannerResultRenderer.Mode)
 	 */
 	@Override
-	protected void writeBeginMode(Mode mode) throws IOException {
-		this.out.write("<span class=\"");
-		this.out.write(mode.name().toLowerCase());
-		this.out.write("\">");
+	protected void writeBeginMode(Mode mode) throws IOException, InterruptedException {
+		write("<span class=\"", mode.name().toLowerCase(), "\">");
 	}
 
 	/*
@@ -77,8 +68,8 @@ class HtmlResultRenderer extends FileScannerResultRenderer {
 	 * filescanner.spi.FileScannerResultRenderer.Mode)
 	 */
 	@Override
-	protected void writeEndMode(Mode mode) throws IOException {
-		this.out.write("</span>");
+	protected void writeEndMode(Mode mode) throws IOException, InterruptedException {
+		write("</span>");
 	}
 
 	/*
@@ -86,9 +77,8 @@ class HtmlResultRenderer extends FileScannerResultRenderer {
 	 * @see de.carne.filescanner.spi.FileScannerResultRenderer#writeBreak()
 	 */
 	@Override
-	protected void writeBreak() throws IOException {
-		this.out.write("<br/>\n");
-		this.out.flush();
+	protected void writeBreak() throws IOException, InterruptedException {
+		write("<br/>\n");
 	}
 
 	/*
@@ -98,8 +88,8 @@ class HtmlResultRenderer extends FileScannerResultRenderer {
 	 * filescanner.spi.FileScannerResultRenderer.Mode, java.lang.String)
 	 */
 	@Override
-	protected void writeText(Mode mode, String text) throws IOException {
-		this.out.write(text);
+	protected void writeText(Mode mode, String text) throws IOException, InterruptedException {
+		write(text);
 	}
 
 	/*
@@ -109,7 +99,7 @@ class HtmlResultRenderer extends FileScannerResultRenderer {
 	 * filescanner.spi.FileScannerResultRenderer.Mode, java.lang.String, long)
 	 */
 	@Override
-	protected void writeRefText(Mode mode, String text, long position) throws IOException {
+	protected void writeRefText(Mode mode, String text, long position) throws IOException, InterruptedException {
 		// TODO Auto-generated method stub
 		super.writeRefText(mode, text, position);
 	}
@@ -122,10 +112,8 @@ class HtmlResultRenderer extends FileScannerResultRenderer {
 	 * de.carne.filescanner.spi.FileScannerResultRenderer.StreamHandler)
 	 */
 	@Override
-	protected void writeImage(Mode mode, StreamHandler streamHandler) throws IOException {
-		this.out.write("<img src=\"");
-		this.out.write(this.urlHandler.openStream(streamHandler).toExternalForm());
-		this.out.write("\"/>");
+	protected void writeImage(Mode mode, StreamHandler streamHandler) throws IOException, InterruptedException {
+		write("<img src=\"", this.urlHandler.openStream(streamHandler).toExternalForm(), "\"/>");
 	}
 
 	/*
@@ -136,7 +124,8 @@ class HtmlResultRenderer extends FileScannerResultRenderer {
 	 * de.carne.filescanner.spi.FileScannerResultRenderer.StreamHandler, long)
 	 */
 	@Override
-	protected void writeRefImage(Mode mode, StreamHandler streamHandler, long position) throws IOException {
+	protected void writeRefImage(Mode mode, StreamHandler streamHandler, long position)
+			throws IOException, InterruptedException {
 		// TODO Auto-generated method stub
 		super.writeRefImage(mode, streamHandler, position);
 	}
@@ -149,10 +138,8 @@ class HtmlResultRenderer extends FileScannerResultRenderer {
 	 * de.carne.filescanner.spi.FileScannerResultRenderer.StreamHandler)
 	 */
 	@Override
-	protected void writeVideo(Mode mode, StreamHandler streamHandler) throws IOException {
-		this.out.write("<video src=\"");
-		this.out.write(this.urlHandler.openStream(streamHandler).toExternalForm());
-		this.out.write("\"/>");
+	protected void writeVideo(Mode mode, StreamHandler streamHandler) throws IOException, InterruptedException {
+		write("<video src=\"", this.urlHandler.openStream(streamHandler).toExternalForm(), "\"/>");
 	}
 
 	/*
@@ -163,9 +150,12 @@ class HtmlResultRenderer extends FileScannerResultRenderer {
 	 * de.carne.filescanner.spi.FileScannerResultRenderer.StreamHandler, long)
 	 */
 	@Override
-	protected void writeRefVideo(Mode mode, StreamHandler streamHandler, long position) throws IOException {
+	protected void writeRefVideo(Mode mode, StreamHandler streamHandler, long position)
+			throws IOException, InterruptedException {
 		// TODO Auto-generated method stub
 		super.writeRefVideo(mode, streamHandler, position);
 	}
+
+	protected abstract void write(String... artefacts) throws IOException, InterruptedException;
 
 }

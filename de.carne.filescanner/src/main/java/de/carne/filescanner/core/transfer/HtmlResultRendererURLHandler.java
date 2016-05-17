@@ -41,8 +41,9 @@ import de.carne.util.logging.Log;
 /**
  * This class renders scanner results in HTML format.
  * <p>
- * The render result is accessed via an URL. The latter makes this solution
- * usable with any browser like UI control.
+ * The render result can be accessed asynchronously via an URL or directly. The
+ * direct access is only possible if the rendering finished in a given time
+ * limit. The URL access is always possible.
  * </p>
  */
 public class HtmlResultRendererURLHandler implements StreamHandler {
@@ -99,23 +100,97 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 	}
 
 	/**
-	 * Open a new renderer URL.
+	 * The actual render result.
+	 * <p>
+	 * Use the {@linkplain RenderResult#isFast()} function to check whether a
+	 * fast result is available.
+	 * </p>
+	 */
+	public static class RenderResult {
+
+		private final URL baseURL;
+
+		private final String fastResult;
+
+		RenderResult(URL baseURL, String fastResult) {
+			this.baseURL = baseURL;
+			this.fastResult = fastResult;
+		}
+
+		/**
+		 * Check whether the fast result is available.
+		 * <p>
+		 * If this function returns {@code true} the render result can be
+		 * accessed directly by calling {@linkplain #getFastResult()}.
+		 * </p>
+		 *
+		 * @return {@code true}, if the fast result is available.
+		 */
+		public boolean isFast() {
+			return this.fastResult != null;
+		}
+
+		/**
+		 * Get the fast result.
+		 *
+		 * @return The fast result or {@code null} if no fast result is
+		 *         available.
+		 * @see #isFast()
+		 */
+		public String getFastResult() {
+			return this.fastResult;
+		}
+
+		/**
+		 * Get the render result URL.
+		 * <p>
+		 * The render result URL is always defined and can be used to access the
+		 * render result via URL access (e.g. from a browser like control).
+		 * </p>
+		 *
+		 * @return The render result URL.
+		 */
+		public URL getURLResult() {
+			return this.baseURL;
+		}
+
+	}
+
+	/**
+	 * Open a renderer.
 	 *
 	 * @param result The {@code FileScannerResult} to render.
-	 * @return The created {@URL} for accessing the renderer output.
+	 * @param fastTimeout The time in milliseconds this function waits for a
+	 *        fast result. If this parameter is 0 the fast result is not checked
+	 *        at all.
+	 * @return The created {@linkplain RenderResult} for accessing the renderer
+	 *         output.
 	 * @throws IOException if an I/O error occurs.
 	 */
-	public static URL open(FileScannerResult result) throws IOException {
+	public static RenderResult open(FileScannerResult result, int fastTimeout) throws IOException {
 		assert result != null;
 
 		URL baseURL = new URL(PROTOCOL_RENDERER, UUID.randomUUID().toString(), "");
 
 		LOG.debug(null, "Creating renderer URL: ''{0}''", baseURL);
 
-		HtmlResultRendererURLHandler renderer = new HtmlResultRendererURLHandler(result, baseURL);
+		HtmlResultRendererURLHandler urlHandler = new HtmlResultRendererURLHandler(result, baseURL);
 
-		URL_MAP.put(baseURL, renderer);
-		return baseURL;
+		URL_MAP.put(baseURL, urlHandler);
+
+		String fastResult = null;
+
+		if (fastTimeout > 0) {
+			try {
+				BufferHtmlResultRenderer buffer = new BufferHtmlResultRenderer(urlHandler, fastTimeout);
+
+				result.render(buffer);
+				fastResult = buffer.toString();
+			} catch (InterruptedException e) {
+				LOG.info(null, "Fast rendering timout ({0} ms) reached; continue with URL result only", fastTimeout);
+			}
+		}
+		return new RenderResult(baseURL, fastResult);
 	}
 
 	URL openStream(StreamHandler handler) throws IOException {
@@ -129,17 +204,17 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 	}
 
 	/**
-	 * Close a renderer URL.
+	 * Close a render result.
 	 * <p>
-	 * Closing the URL invalidates the URL.
+	 * Closing the render result invalidates it's URL.
 	 * </p>
 	 *
-	 * @param u The {@URL} to close.
+	 * @param result The {@linkplain RenderResult} to close.
 	 */
-	public static void close(URL u) {
-		assert u != null;
+	public static void close(RenderResult result) {
+		assert result != null;
 
-		String host = u.getHost();
+		String host = result.getURLResult().getHost();
 
 		Iterator<Map.Entry<URL, StreamHandler>> entryIterator = URL_MAP.entrySet().iterator();
 
@@ -248,7 +323,7 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 	}
 
 	void renderResult(PipedOutputStream pipe) throws IOException, InterruptedException {
-		this.result.render(new HtmlResultRenderer(this, pipe));
+		this.result.render(new PipeHtmlResultRenderer(this, pipe));
 	}
 
 }
