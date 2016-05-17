@@ -20,12 +20,14 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 import de.carne.filescanner.core.FileScanner;
+import de.carne.filescanner.util.Units;
 import de.carne.util.logging.Log;
 
 /**
@@ -34,6 +36,73 @@ import de.carne.util.logging.Log;
 public abstract class FileScannerInput implements Closeable {
 
 	private static final Log LOG = new Log(FileScannerInput.class);
+
+	private static final String PROPERTY_PACKAGE = FileScanner.class.getPackage().getName();
+
+	private static final String CACHE_ALIGNMENT_PROPERTY = PROPERTY_PACKAGE + ".cacheAlignment";
+
+	/**
+	 * The cache alignment used for
+	 * {@linkplain #cachedRead(long, int, ByteOrder)} calls:
+	 */
+	public static final int CACHE_ALIGNMENT;
+
+	static {
+		String cacheAlignmentProperty = System.getProperty(CACHE_ALIGNMENT_PROPERTY);
+		int cacheAlignment = 0;
+
+		if (cacheAlignmentProperty != null) {
+			try {
+				cacheAlignment = Integer.parseUnsignedInt(cacheAlignmentProperty, 16);
+			} catch (NumberFormatException e) {
+				// ignore
+			}
+			if (cacheAlignment <= 0 || (cacheAlignment & 0xfff) != 0) {
+				LOG.warning(null, "Ignoring invalid {0} value: ''{1}''", CACHE_ALIGNMENT_PROPERTY,
+						cacheAlignmentProperty);
+				cacheAlignment = 0;
+			}
+		}
+		if (cacheAlignment == 0l) {
+			cacheAlignment = 0x1000;
+		}
+		LOG.notice(null, "Using cache alignment: {0}h ({1})", Integer.toString(cacheAlignment, 16),
+				Units.formatByteValue(cacheAlignment));
+		CACHE_ALIGNMENT = cacheAlignment;
+	}
+
+	private static final String CACHE_SIZE_PROPERTY = PROPERTY_PACKAGE + ".cacheSize";
+
+	/**
+	 * The cache size used for {@linkplain #cachedRead(long, int, ByteOrder)}
+	 * calls:
+	 */
+	public static final int CACHE_SIZE;
+
+	static {
+		String cacheSizeProperty = System.getProperty(CACHE_SIZE_PROPERTY);
+		int cacheSize = 0;
+
+		if (cacheSizeProperty != null) {
+			try {
+				cacheSize = Integer.parseUnsignedInt(cacheSizeProperty, 16);
+			} catch (NumberFormatException e) {
+				// ignore
+			}
+			if (cacheSize <= 0 || (cacheSize & (CACHE_ALIGNMENT - 1)) != 0) {
+				LOG.warning(null, "Ignoring invalid {0} value: ''{1}''", CACHE_SIZE_PROPERTY, cacheSizeProperty);
+				cacheSize = 0;
+			}
+		}
+		if (cacheSize == 0) {
+			cacheSize = 0x10000;
+		}
+		LOG.notice(null, "Using cache size: {0}h ({1})", Long.toString(cacheSize, 16),
+				Units.formatByteValue(cacheSize));
+		CACHE_SIZE = cacheSize;
+	}
+
+	private static final ThreadLocal<Cache> CACHE = new ThreadLocal<>();
 
 	private final FileScanner scanner;
 
@@ -88,6 +157,27 @@ public abstract class FileScannerInput implements Closeable {
 	 * @throws IOException if an I/O error occurs.
 	 */
 	public abstract int read(ByteBuffer dst, long position) throws IOException;
+
+	/**
+	 * Read and cache data from input.
+	 *
+	 * @param position The position to read from.
+	 * @param size The number of bytes to read.
+	 * @param order The byte order of the returned buffer.
+	 * @return A byte buffer containing the read bytes. If the input end was
+	 *         reached during the read operation the buffer may contain less
+	 *         bytes than requested.
+	 * @throws IOException if an I/O error occurs.
+	 */
+	public ByteBuffer cachedRead(long position, int size, ByteOrder order) throws IOException {
+		Cache cache = CACHE.get();
+
+		if (cache == null) {
+			cache = new Cache(LOG);
+			CACHE.set(cache);
+		}
+		return cache.read(position, size, order);
+	}
 
 	/**
 	 * Start scanning this input.
@@ -199,6 +289,46 @@ public abstract class FileScannerInput implements Closeable {
 		assert file != null;
 
 		return open(scanner, file.toPath());
+	}
+
+	private class Cache {
+
+		private final Log log;
+
+		private final ByteBuffer cacheBuffer = ByteBuffer.allocateDirect(CACHE_SIZE);
+
+		private long cachePosition = -1l;
+
+		public Cache(Log log) {
+			this.log = log;
+		}
+
+		public ByteBuffer read(long position, int size, ByteOrder order) throws IOException {
+			long readPosition = position & (CACHE_ALIGNMENT - 1);
+			int readSize = (int) (position - readPosition) + size;
+			ByteBuffer buffer;
+
+			if (readSize <= CACHE_SIZE) {
+				if (this.cachePosition < 0 || readPosition < this.cachePosition
+						|| (this.cachePosition + CACHE_SIZE) < (readPosition + readSize)) {
+					this.cachePosition = -1l;
+					this.cacheBuffer.clear();
+					FileScannerInput.this.read(this.cacheBuffer, readPosition);
+					this.cacheBuffer.flip();
+					this.cachePosition = readPosition;
+				}
+				buffer = this.cacheBuffer.asReadOnlyBuffer();
+				buffer.position((int) (this.cachePosition - readPosition));
+			} else {
+				this.log.warning(null, "Excessive read request ({1}); ignoring cache", Units.formatByteValue(readSize));
+
+				buffer = ByteBuffer.allocate(size);
+				FileScannerInput.this.read(buffer, position);
+			}
+			buffer.order(order);
+			return buffer;
+		}
+
 	}
 
 }
