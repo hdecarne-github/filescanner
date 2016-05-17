@@ -116,9 +116,9 @@
                </graphic>
             </Button>
             <ProgressBar fx:id="scanProgressBar" progress="0.0" HBox.hgrow="NEVER" />
-            <Label fx:id="scanStatusMessage" maxWidth="1.7976931348623157E308" text="..." HBox.hgrow="ALWAYS" />
+            <Label fx:id="scanStatusMessage" maxWidth="1.7976931348623157E308" text="%STR_SCAN_STATUS_NONE" HBox.hgrow="ALWAYS" />
             <Separator orientation="VERTICAL" HBox.hgrow="NEVER" />
-            <Label fx:id="sysStatusMessage" layoutX="160.0" layoutY="15.0" text="..." HBox.hgrow="NEVER" />
+            <Label fx:id="systemStatusMessage" layoutX="160.0" layoutY="15.0" text="%STR_SYSTEM_STATUS" HBox.hgrow="NEVER" />
          </children>
          <padding>
             <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

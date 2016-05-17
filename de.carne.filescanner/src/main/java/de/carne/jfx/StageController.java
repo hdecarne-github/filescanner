@@ -18,8 +18,8 @@ package de.carne.jfx;
 
 import java.io.IOException;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
@@ -29,8 +29,6 @@ import de.carne.jfx.messagebox.MessageBoxController;
 import de.carne.jfx.messagebox.MessageBoxResult;
 import de.carne.jfx.messagebox.MessageBoxStyle;
 import de.carne.util.logging.Log;
-import javafx.application.Platform;
-import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -46,8 +44,6 @@ import javafx.stage.WindowEvent;
 public abstract class StageController {
 
 	private static final Log LOG = new Log(StageController.class);
-
-	private static final ExecutorService TASK_EXECUTOR = Executors.newSingleThreadScheduledExecutor();
 
 	private static final Pattern CONTROLLER_PATTERN = Pattern.compile("^(.*)\\.(.+)Controller$");
 
@@ -67,6 +63,19 @@ public abstract class StageController {
 	 */
 	protected ResourceBundle getBundle() {
 		return this.bundle;
+	}
+
+	private static final ScheduledExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor();
+
+	/**
+	 * Get the {@linkplain ScheduledExecutorService} to use for background
+	 * processing.
+	 *
+	 * @return The {@linkplain ScheduledExecutorService} to use for background
+	 *         processing.
+	 */
+	protected ScheduledExecutorService getExecutorService() {
+		return EXECUTOR_SERVICE;
 	}
 
 	/**
@@ -307,59 +316,6 @@ public abstract class StageController {
 	 */
 	public void reportUnexpectedException(Throwable unexpected) {
 		LOG.error(unexpected, I18N.BUNDLE, I18N.STR_UNEXPECTED_EXCEPTION_MESSAGE, unexpected.getLocalizedMessage());
-	}
-
-	/**
-	 * Run a background task.
-	 *
-	 * @param task The task to run.
-	 */
-	public <T> void runTask(Task<T> task) {
-		LOG.debug(null, "Executing task: ''{0}''", task);
-		TASK_EXECUTOR.execute(new Runnable() {
-			private Runnable task2 = task;
-
-			@Override
-			public void run() {
-				beginTask();
-				try {
-					this.task2.run();
-				} finally {
-					endTask();
-				}
-			}
-
-		});
-	}
-
-	void beginTask() {
-		if (Platform.isFxApplicationThread()) {
-			this.stage.getScene().getRoot().setDisable(true);
-		} else {
-			Platform.runLater(new Runnable() {
-
-				@Override
-				public void run() {
-					beginTask();
-				}
-
-			});
-		}
-	}
-
-	void endTask() {
-		if (Platform.isFxApplicationThread()) {
-			this.stage.getScene().getRoot().setDisable(false);
-		} else {
-			Platform.runLater(new Runnable() {
-
-				@Override
-				public void run() {
-					endTask();
-				}
-
-			});
-		}
 	}
 
 	void onCloseRequest(WindowEvent evt) {

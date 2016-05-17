@@ -19,6 +19,8 @@ package de.carne.filescanner.jfx.session;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.prefs.Preferences;
 
 import de.carne.filescanner.core.FileScanner;
@@ -40,8 +42,10 @@ import de.carne.jfx.logview.LogViewTriggerProperty;
 import de.carne.jfx.messagebox.MessageBoxStyle;
 import de.carne.util.Strings;
 import de.carne.util.logging.Log;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -75,6 +79,8 @@ public class SessionController extends StageController {
 	private static final URL RESULT_VIEW_STYLE_URL = SessionController.class.getResource("ResultView.css");
 
 	private static final URL EMPTY_RESULT_VIEW_DOC = SessionController.class.getResource("EmptyResultView.html");
+
+	private ScheduledFuture<?> systemStatusFuture = null;
 
 	private FileScanner fileScanner = null;
 
@@ -121,7 +127,7 @@ public class SessionController extends StageController {
 	Label scanStatusMessage;
 
 	@FXML
-	Label sysStatusMessage;
+	Label systemStatusMessage;
 
 	@FXML
 	void onNewSession(ActionEvent evt) {
@@ -189,6 +195,8 @@ public class SessionController extends StageController {
 	}
 
 	void closeSession() {
+		this.systemStatusFuture.cancel(false);
+		this.systemStatusFuture = null;
 		closeCurrentFileScanner();
 		clearResults();
 		syncPreferences();
@@ -229,28 +237,27 @@ public class SessionController extends StageController {
 		if (scanner.equals(this.fileScanner)) {
 			this.scanStatusIcon.setImage(Images.IMAGE_SUCCESS16);
 			this.cancelScanButton.setDisable(false);
-			updateScanStatusMessage(stats, I18N.STR_SCAN_STATUS_START);
+			updateScanStatusMessage(I18N.STR_SCAN_STATUS_START, stats);
 		}
 	}
 
 	void onFileScannerFinished(FileScanner scanner, FileScannerStats stats) {
 		if (scanner.equals(this.fileScanner)) {
 			this.cancelScanButton.setDisable(true);
-			updateScanStatusMessage(stats, I18N.STR_SCAN_STATUS_FINISHED);
+			updateScanStatusMessage(I18N.STR_SCAN_STATUS_FINISHED, stats);
 		}
 	}
 
 	void onFileScannerCancelled(FileScanner scanner, FileScannerStats stats) {
 		if (scanner.equals(this.fileScanner)) {
 			this.cancelScanButton.setDisable(true);
-			updateScanStatusMessage(stats, I18N.STR_SCAN_STATUS_CANCELLED);
+			updateScanStatusMessage(I18N.STR_SCAN_STATUS_CANCELLED, stats);
 		}
 	}
 
 	void onFileScannerProgress(FileScanner scanner, FileScannerStats stats) {
 		if (scanner.equals(this.fileScanner)) {
-			updateScanStatusMessage(stats, I18N.STR_SCAN_STATUS_PROGRESS);
-			updateSystemStatusMessage();
+			updateScanStatusMessage(I18N.STR_SCAN_STATUS_PROGRESS, stats);
 		}
 	}
 
@@ -279,9 +286,16 @@ public class SessionController extends StageController {
 		this.resultView.getEngine().setUserStyleSheetLocation(RESULT_VIEW_STYLE_URL.toExternalForm());
 		this.resultView.getEngine().load(EMPTY_RESULT_VIEW_DOC.toExternalForm());
 		this.cancelScanButton.setDisable(true);
-		this.scanProgressBar.setProgress(0.0);
-		this.scanStatusMessage.setText(I18N.formatSTR_SCAN_STATUS_NONE());
-		updateSystemStatusMessage();
+		updateScanStatusMessage(I18N.STR_SCAN_STATUS_NONE, null);
+		this.systemStatusFuture = getExecutorService().scheduleAtFixedRate(new Task<Void>() {
+
+			@Override
+			protected Void call() throws Exception {
+				updateSystemStatusMessage();
+				return null;
+			}
+
+		}, 1, 1, TimeUnit.SECONDS);
 		controllerStage.showingProperty().addListener(new ChangeListener<Boolean>() {
 
 			@Override
@@ -447,27 +461,42 @@ public class SessionController extends StageController {
 		this.resultItemFactory.clear();
 	}
 
-	private void updateScanStatusMessage(FileScannerStats stats, String messageKey) {
-		this.scanProgressBar.setProgress(stats.progress());
+	private void updateScanStatusMessage(String messageKey, FileScannerStats stats) {
+		if (stats != null) {
+			this.scanProgressBar.setProgress(stats.progress());
+			long scanned = stats.scanned();
+			long elapsedSeconds = stats.elapsed() / 1000l;
+			long bps = (elapsedSeconds >= 1l ? scanned / elapsedSeconds : 0l);
 
-		long scanned = stats.scanned();
-		long elapsedSeconds = stats.elapsed() / 1000;
-		long bps = (elapsedSeconds >= 1l ? scanned / elapsedSeconds : 0l);
-
-		this.scanStatusMessage
-				.setText(I18N.format(messageKey, Units.formatByteValue(scanned), Units.formatByteValue(bps)));
+			this.scanStatusMessage
+					.setText(I18N.format(messageKey, Units.formatByteValue(scanned), Units.formatByteValue(bps)));
+		} else {
+			this.scanProgressBar.setProgress(0.0);
+			this.scanStatusMessage.setText(I18N.format(messageKey));
+		}
 	}
 
-	private void updateSystemStatusMessage() {
-		Runtime rt = Runtime.getRuntime();
-		long freeMemory = rt.freeMemory();
-		long totalMemory = rt.totalMemory();
-		long usedMemory = totalMemory - freeMemory;
-		long maxMemory = rt.maxMemory();
-		long usageRatio = (usedMemory / (maxMemory * 100));
+	void updateSystemStatusMessage() {
+		if (Platform.isFxApplicationThread()) {
+			Runtime rt = Runtime.getRuntime();
+			long freeMemory = rt.freeMemory();
+			long totalMemory = rt.totalMemory();
+			long usedMemory = totalMemory - freeMemory;
+			long maxMemory = rt.maxMemory();
+			long usageRatio = (usedMemory / (maxMemory * 100));
 
-		this.sysStatusMessage.setText(I18N.formatSTR_SYS_STATUS(Units.formatByteValue(usedMemory),
-				Units.formatByteValue(maxMemory), usageRatio));
+			this.systemStatusMessage
+					.setText(I18N.formatSTR_SYSTEM_STATUS(Units.formatByteValue(usedMemory), usageRatio));
+		} else {
+			Platform.runLater(new Runnable() {
+
+				@Override
+				public void run() {
+					updateSystemStatusMessage();
+				}
+
+			});
+		}
 	}
 
 	private FileViewType getFileViewTypePreference() {
