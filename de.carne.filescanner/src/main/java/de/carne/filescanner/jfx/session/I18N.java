@@ -1,7 +1,7 @@
 /*
  * I18N resource strings
  *
- * Generated on 15.05.2016 22:58:32
+ * Generated on May 17, 2016 4:28:55 AM
  */
 package de.carne.filescanner.jfx.session;
 
@@ -75,7 +75,7 @@ public final class I18N {
 	/**
 	 * Resource key {@code STR_ABOUT_INFO2}
 	 * <p>
-	 * This program makes use of the Farm-Fresh icon set (http:&frasl;&frasl;www.fatcow.com&frasl;free-icons) .<br/>Â© Copyright 2009-2014 FatCow Web Hosting. All rights reserved.<br/>http:&frasl;&frasl;www.fatcow.com<br/><br/>These icons are licensed under a Creative Commons Attribution 3.0 License.<br/>http:&frasl;&frasl;creativecommons.org&frasl;licenses&frasl;by&frasl;3.0&frasl;us&frasl;.
+	 * This program makes use of the Farm-Fresh icon set (http:&frasl;&frasl;www.fatcow.com&frasl;free-icons) .<br/>© Copyright 2009-2014 FatCow Web Hosting. All rights reserved.<br/>http:&frasl;&frasl;www.fatcow.com<br/><br/>These icons are licensed under a Creative Commons Attribution 3.0 License.<br/>http:&frasl;&frasl;creativecommons.org&frasl;licenses&frasl;by&frasl;3.0&frasl;us&frasl;.
 	 * </p>
 	 */
 	public static final String STR_ABOUT_INFO2 = "STR_ABOUT_INFO2";
@@ -83,7 +83,7 @@ public final class I18N {
 	/**
 	 * Resource string {@code STR_ABOUT_INFO2}
 	 * <p>
-	 * This program makes use of the Farm-Fresh icon set (http:&frasl;&frasl;www.fatcow.com&frasl;free-icons) .<br/>Â© Copyright 2009-2014 FatCow Web Hosting. All rights reserved.<br/>http:&frasl;&frasl;www.fatcow.com<br/><br/>These icons are licensed under a Creative Commons Attribution 3.0 License.<br/>http:&frasl;&frasl;creativecommons.org&frasl;licenses&frasl;by&frasl;3.0&frasl;us&frasl;.
+	 * This program makes use of the Farm-Fresh icon set (http:&frasl;&frasl;www.fatcow.com&frasl;free-icons) .<br/>© Copyright 2009-2014 FatCow Web Hosting. All rights reserved.<br/>http:&frasl;&frasl;www.fatcow.com<br/><br/>These icons are licensed under a Creative Commons Attribution 3.0 License.<br/>http:&frasl;&frasl;creativecommons.org&frasl;licenses&frasl;by&frasl;3.0&frasl;us&frasl;.
 	 * </p>
 	 *
 	 * @param arguments Format arguments.
@@ -96,7 +96,7 @@ public final class I18N {
 	/**
 	 * Resource key {@code STR_ABOUT_INFO1}
 	 * <p>
-	 * Copyright Â© 2007-2016 Holger de Carne and contributors,<br/>All Rights Reserved.<br/><br/>This program is free software: you can redistribute it and&frasl;or modify<br/>it under the terms of the GNU General Public License as published by<br/>the Free Software Foundation, either version 3 of the License, or<br/>(at your option) any later version.<br/><br/>This program is distributed in the hope that it will be useful,<br/>but WITHOUT ANY WARRANTY; without even the implied warranty of<br/>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the<br/>GNU General Public License for more details.<br/><br/>You should have received a copy of the GNU General Public License<br/>along with this program.  If not, see http:&frasl;&frasl;www.gnu.org&frasl;licenses.
+	 * Copyright © 2007-2016 Holger de Carne and contributors,<br/>All Rights Reserved.<br/><br/>This program is free software: you can redistribute it and&frasl;or modify<br/>it under the terms of the GNU General Public License as published by<br/>the Free Software Foundation, either version 3 of the License, or<br/>(at your option) any later version.<br/><br/>This program is distributed in the hope that it will be useful,<br/>but WITHOUT ANY WARRANTY; without even the implied warranty of<br/>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the<br/>GNU General Public License for more details.<br/><br/>You should have received a copy of the GNU General Public License<br/>along with this program.  If not, see http:&frasl;&frasl;www.gnu.org&frasl;licenses.
 	 * </p>
 	 */
 	public static final String STR_ABOUT_INFO1 = "STR_ABOUT_INFO1";
@@ -104,7 +104,7 @@ public final class I18N {
 	/**
 	 * Resource string {@code STR_ABOUT_INFO1}
 	 * <p>
-	 * Copyright Â© 2007-2016 Holger de Carne and contributors,<br/>All Rights Reserved.<br/><br/>This program is free software: you can redistribute it and&frasl;or modify<br/>it under the terms of the GNU General Public License as published by<br/>the Free Software Foundation, either version 3 of the License, or<br/>(at your option) any later version.<br/><br/>This program is distributed in the hope that it will be useful,<br/>but WITHOUT ANY WARRANTY; without even the implied warranty of<br/>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the<br/>GNU General Public License for more details.<br/><br/>You should have received a copy of the GNU General Public License<br/>along with this program.  If not, see http:&frasl;&frasl;www.gnu.org&frasl;licenses.
+	 * Copyright © 2007-2016 Holger de Carne and contributors,<br/>All Rights Reserved.<br/><br/>This program is free software: you can redistribute it and&frasl;or modify<br/>it under the terms of the GNU General Public License as published by<br/>the Free Software Foundation, either version 3 of the License, or<br/>(at your option) any later version.<br/><br/>This program is distributed in the hope that it will be useful,<br/>but WITHOUT ANY WARRANTY; without even the implied warranty of<br/>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the<br/>GNU General Public License for more details.<br/><br/>You should have received a copy of the GNU General Public License<br/>along with this program.  If not, see http:&frasl;&frasl;www.gnu.org&frasl;licenses.
 	 * </p>
 	 *
 	 * @param arguments Format arguments.

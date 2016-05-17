@@ -1,7 +1,7 @@
 /*
  * I18N resource strings
  *
- * Generated on 16.05.2016 13:58:56
+ * Generated on May 17, 2016 4:28:55 AM
  */
 package de.carne.jfx.logview;
 
