@@ -74,7 +74,8 @@ public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 	 */
 	@Override
 	public long eval(FileScannerResultBuilder result, long position) throws IOException {
-		ByteBuffer buffer = result.input().cachedRead(position, this.type.size(), result.order());
+		int typeSize = this.type.size();
+		ByteBuffer buffer = ensureSA(result.input().cachedRead(position, typeSize, result.order()), typeSize);
 		T value = getValue(buffer);
 
 		if (value == null) {
@@ -83,7 +84,7 @@ public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 		if (isBound()) {
 			bindValue(value);
 		}
-		return this.type.size();
+		return typeSize;
 	}
 
 	/**

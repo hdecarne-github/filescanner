@@ -48,7 +48,7 @@ public class U32Attribute extends NumberAttribute<Integer> {
 	 */
 	@Override
 	public Integer getValue(ByteBuffer buffer) {
-		return (matchSize() <= buffer.remaining() ? Integer.valueOf(buffer.getInt()) : null);
+		return (isSA(buffer, matchSize()) ? Integer.valueOf(buffer.getInt()) : null);
 	}
 
 	/**

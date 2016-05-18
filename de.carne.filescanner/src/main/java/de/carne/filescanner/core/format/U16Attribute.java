@@ -48,7 +48,7 @@ public class U16Attribute extends NumberAttribute<Short> {
 	 */
 	@Override
 	public Short getValue(ByteBuffer buffer) {
-		return (matchSize() <= buffer.remaining() ? Short.valueOf(buffer.getShort()) : null);
+		return (isSA(buffer, matchSize()) ? Short.valueOf(buffer.getShort()) : null);
 	}
 
 	/**

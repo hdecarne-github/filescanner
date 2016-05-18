@@ -16,11 +16,13 @@
  */
 package de.carne.filescanner.core.format;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.core.FileScannerResultType;
+import de.carne.filescanner.spi.FileScannerInput;
 
 /**
  * Base class for all format specifications.
@@ -50,7 +52,7 @@ public abstract class FormatSpec {
 	 */
 	public boolean matches(ByteBuffer buffer) {
 		int matchSize = matchSize();
-		boolean matches = 0 < matchSize && matchSize <= buffer.remaining();
+		boolean matches = matchSize != 0 && isSA(buffer, matchSize);
 
 		if (matches) {
 			buffer.position(buffer.position() + matchSize);
@@ -60,7 +62,7 @@ public abstract class FormatSpec {
 
 	/**
 	 * Get this's specs result type.
-	 * 
+	 *
 	 * @return This's specs result type.
 	 */
 	public FileScannerResultType resultType() {
@@ -96,6 +98,68 @@ public abstract class FormatSpec {
 	 */
 	public Decodable getDecodable() {
 		return this.decodable;
+	}
+
+	/**
+	 * Check whether a buffer contains sufficient data.
+	 *
+	 * @param buffer The buffer to check.
+	 * @param size The required number of data bytes.
+	 * @return {@code true} if the buffer contains the required number of bytes
+	 *         or more.
+	 */
+	protected static final boolean isSA(ByteBuffer buffer, int size) {
+		return size <= buffer.remaining();
+	}
+
+	/**
+	 * Ensure that a buffer contains sufficient data.
+	 *
+	 * @param buffer The buffer to check.
+	 * @param size The required number of data bytes.
+	 * @return The checked buffer.
+	 * @throws EOFException if the buffer does not contain the required number
+	 *         of bytes.
+	 */
+	protected static final ByteBuffer ensureSA(ByteBuffer buffer, int size) throws EOFException {
+		if (!(size <= buffer.remaining())) {
+			throw new EOFException("Insufficent buffer data: Requested " + size + ", got " + buffer.remaining());
+		}
+		return buffer;
+	}
+
+	/**
+	 * Check whether an input contains sufficient data.
+	 *
+	 * @param input The input to check.
+	 * @param position The input position to check with.
+	 * @param size The required number of data bytes.
+	 * @return {@code true} if the input contains the required number of bytes
+	 *         or more.
+	 * @throws IOException if an I/O error occurs.
+	 */
+	protected static final boolean isSA(FileScannerInput input, long position, long size)
+			throws IOException {
+		return (position + size) <= input.size();
+	}
+
+	/**
+	 * Ensure that an input contains sufficient data.
+	 *
+	 * @param input The input to check.
+	 * @param position The input position to check with.
+	 * @param size The required number of data bytes.
+	 * @throws EOFException if the input does not contain the required number of
+	 *         bytes.
+	 * @throws IOException if an I/O error occurs.
+	 */
+	protected static final void ensureSA(FileScannerInput input, long position, long size)
+			throws EOFException, IOException {
+		long inputSize = input.size();
+
+		if (!((position + size) <= inputSize)) {
+			throw new EOFException("Insufficent input data: Requested " + size + ", got " + (inputSize - position));
+		}
 	}
 
 }
