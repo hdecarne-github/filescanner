@@ -45,7 +45,6 @@ import de.carne.util.logging.Log;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -287,12 +286,11 @@ public class SessionController extends StageController {
 		this.resultView.getEngine().load(EMPTY_RESULT_VIEW_DOC.toExternalForm());
 		this.cancelScanButton.setDisable(true);
 		updateScanStatusMessage(I18N.STR_SCAN_STATUS_NONE, null);
-		this.systemStatusFuture = getExecutorService().scheduleAtFixedRate(new Task<Void>() {
+		this.systemStatusFuture = getExecutorService().scheduleAtFixedRate(new Runnable() {
 
 			@Override
-			protected Void call() throws Exception {
+			public void run() {
 				updateSystemStatusMessage();
-				return null;
 			}
 
 		}, 1, 1, TimeUnit.SECONDS);
