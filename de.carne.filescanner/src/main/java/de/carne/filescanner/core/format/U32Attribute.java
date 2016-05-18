@@ -51,15 +51,4 @@ public class U32Attribute extends NumberAttribute<Integer> {
 		return (isSA(buffer, matchSize()) ? Integer.valueOf(buffer.getInt()) : null);
 	}
 
-	/**
-	 * Make attribute final (with a specific value).
-	 *
-	 * @param finalValue The final value.
-	 * @return The updated U32 attribute spec.
-	 */
-	public U32Attribute setFinalValue(int finalValue) {
-		setFinalValue(Integer.valueOf(finalValue));
-		return this;
-	}
-
 }

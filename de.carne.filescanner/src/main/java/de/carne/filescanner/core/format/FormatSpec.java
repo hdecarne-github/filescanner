@@ -109,6 +109,9 @@ public abstract class FormatSpec {
 	 *         or more.
 	 */
 	protected static final boolean isSA(ByteBuffer buffer, int size) {
+		assert buffer != null;
+		assert size >= 0;
+
 		return size <= buffer.remaining();
 	}
 
@@ -122,6 +125,9 @@ public abstract class FormatSpec {
 	 *         of bytes.
 	 */
 	protected static final ByteBuffer ensureSA(ByteBuffer buffer, int size) throws EOFException {
+		assert buffer != null;
+		assert size >= 0;
+
 		if (!(size <= buffer.remaining())) {
 			throw new EOFException("Insufficent buffer data: Requested " + size + ", got " + buffer.remaining());
 		}
@@ -138,8 +144,11 @@ public abstract class FormatSpec {
 	 *         or more.
 	 * @throws IOException if an I/O error occurs.
 	 */
-	protected static final boolean isSA(FileScannerInput input, long position, long size)
-			throws IOException {
+	protected static final boolean isSA(FileScannerInput input, long position, long size) throws IOException {
+		assert input != null;
+		assert position >= 0;
+		assert size >= 0;
+
 		return (position + size) <= input.size();
 	}
 
@@ -155,6 +164,10 @@ public abstract class FormatSpec {
 	 */
 	protected static final void ensureSA(FileScannerInput input, long position, long size)
 			throws EOFException, IOException {
+		assert input != null;
+		assert position >= 0;
+		assert size >= 0;
+
 		long inputSize = input.size();
 
 		if (!((position + size) <= inputSize)) {

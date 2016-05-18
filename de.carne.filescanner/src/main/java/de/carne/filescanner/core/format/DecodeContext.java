@@ -47,6 +47,8 @@ public class DecodeContext {
 	 * @param value The attribute value to set.
 	 */
 	public <T> void setAttribute(Attribute<T> attribute, T value) {
+		assert attribute != null;
+
 		DecodeContext currentContext = this;
 
 		while (currentContext != null && !currentContext.context.containsKey(attribute)) {
@@ -66,6 +68,8 @@ public class DecodeContext {
 	 * @return The set attribute value or {@code null} if none has been set.
 	 */
 	public <T> T getAttribute(Attribute<T> attribute) {
+		assert attribute != null;
+
 		DecodeContext currentContext = this;
 		Object value = null;
 
@@ -88,6 +92,10 @@ public class DecodeContext {
 	 */
 	public static long setupContextAndDecode(Decodable decodable, FileScannerResultBuilder result, long position)
 			throws IOException {
+		assert decodable != null;
+		assert result != null;
+		assert position >= 0;
+
 		DecodeContext parentContext = CONTEXT.get();
 		DecodeContext context = new DecodeContext(parentContext);
 		long decoded;

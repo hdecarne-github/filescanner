@@ -16,7 +16,6 @@
  */
 package de.carne.filescanner.core.format;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
@@ -61,6 +60,8 @@ public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 	 */
 	@Override
 	public boolean matches(ByteBuffer buffer) {
+		assert buffer != null;
+
 		T value = getValue(buffer);
 
 		return (value != null && (this.finalValue == null || this.finalValue.equals(value)));
@@ -75,14 +76,11 @@ public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 	@Override
 	public long eval(FileScannerResultBuilder result, long position) throws IOException {
 		int typeSize = this.type.size();
-		ByteBuffer buffer = ensureSA(result.input().cachedRead(position, typeSize, result.order()), typeSize);
-		T value = getValue(buffer);
 
-		if (value == null) {
-			throw new EOFException();
-		}
 		if (isBound()) {
-			bindValue(value);
+			ByteBuffer buffer = ensureSA(result.input().cachedRead(position, typeSize, result.order()), typeSize);
+
+			bindValue(getValue(buffer));
 		}
 		return typeSize;
 	}

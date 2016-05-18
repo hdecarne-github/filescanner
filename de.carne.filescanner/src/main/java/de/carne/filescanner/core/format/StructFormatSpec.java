@@ -27,7 +27,7 @@ import de.carne.filescanner.core.FileScannerResultBuilder;
  */
 public class StructFormatSpec extends FormatSpec {
 
-	private ArrayList<FormatSpec> specs = new ArrayList<>();
+	private final ArrayList<FormatSpec> specs = new ArrayList<>();
 
 	/**
 	 * Append a format spec.
@@ -36,6 +36,8 @@ public class StructFormatSpec extends FormatSpec {
 	 * @return The updated struct spec.
 	 */
 	public StructFormatSpec append(FormatSpec spec) {
+		assert spec != null;
+
 		this.specs.add(spec);
 		return this;
 	}
@@ -66,18 +68,17 @@ public class StructFormatSpec extends FormatSpec {
 	 */
 	@Override
 	public boolean matches(ByteBuffer buffer) {
-		boolean matches = this.specs.size() > 0 && this.specs.get(0).matchSize() > 0;
+		assert buffer != null;
+
+		int matchCount = 0;
 
 		for (FormatSpec spec : this.specs) {
-			if (spec.matchSize() == 0) {
+			if (spec.matchSize() == 0 || !spec.matches(buffer)) {
 				break;
 			}
-			if (!spec.matches(buffer)) {
-				matches = false;
-				break;
-			}
+			matchCount++;
 		}
-		return matches;
+		return matchCount > 0;
 	}
 
 	/*
@@ -88,11 +89,14 @@ public class StructFormatSpec extends FormatSpec {
 	 */
 	@Override
 	public long eval(FileScannerResultBuilder result, long position) throws IOException {
+		assert result != null;
+		assert position >= 0;
+
 		long evaluated = 0l;
 
 		for (FormatSpec spec : this.specs) {
-			long specPosition = position + evaluated;
 			Decodable specDecodable = spec.getDecodable();
+			long specPosition = position + evaluated;
 
 			if (specDecodable != null) {
 				FileScannerResultBuilder specResult = result.addResult(spec.resultType(), specPosition,

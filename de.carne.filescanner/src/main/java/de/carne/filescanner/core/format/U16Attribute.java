@@ -51,15 +51,4 @@ public class U16Attribute extends NumberAttribute<Short> {
 		return (isSA(buffer, matchSize()) ? Short.valueOf(buffer.getShort()) : null);
 	}
 
-	/**
-	 * Make attribute final (with a specific value).
-	 *
-	 * @param finalValue The final value.
-	 * @return The updated U16 attribute spec.
-	 */
-	public U16Attribute setFinalValue(short finalValue) {
-		setFinalValue(Short.valueOf(finalValue));
-		return this;
-	}
-
 }
