@@ -304,7 +304,7 @@ public abstract class FileScannerInput implements Closeable {
 		}
 
 		public ByteBuffer read(long position, int size, ByteOrder order) throws IOException {
-			long readPosition = position & (CACHE_ALIGNMENT - 1);
+			long readPosition = position & ~(CACHE_ALIGNMENT - 1);
 			int readSize = (int) (position - readPosition) + size;
 			ByteBuffer buffer;
 
@@ -318,7 +318,10 @@ public abstract class FileScannerInput implements Closeable {
 					this.cachePosition = readPosition;
 				}
 				buffer = this.cacheBuffer.asReadOnlyBuffer();
-				buffer.position((int) (this.cachePosition - readPosition));
+
+				int bufferPosition = (int) (position - this.cachePosition);
+
+				buffer.position(Math.min(bufferPosition, buffer.remaining()));
 			} else {
 				this.log.warning(null, "Excessive read request ({1}); ignoring cache", Units.formatByteValue(readSize));
 

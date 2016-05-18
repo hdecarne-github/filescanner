@@ -100,6 +100,10 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 		this.title = title;
 	}
 
+	public ByteOrder order() {
+		return this.order;
+	}
+
 	/**
 	 * Add a new result to the builder.
 	 *

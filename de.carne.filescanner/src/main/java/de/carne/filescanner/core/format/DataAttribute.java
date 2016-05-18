@@ -76,6 +76,11 @@ public abstract class DataAttribute<T> extends FormatSpec {
 	 */
 	@Override
 	public long eval(FileScannerResultBuilder result, long position) throws IOException {
+		if (this.bound) {
+			ByteBuffer buffer = result.input().cachedRead(position, this.dataType.size(), result.order());
+
+			DecodeContext.get().setAttribute(this, getValue(buffer));
+		}
 		return this.dataType.size();
 	}
 
