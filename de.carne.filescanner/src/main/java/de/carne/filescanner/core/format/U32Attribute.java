@@ -19,9 +19,9 @@ package de.carne.filescanner.core.format;
 import java.nio.ByteBuffer;
 
 /**
- * Define {@linkplain DataType#U16} data attribute.
+ * Defines a {@linkplain NumberAttributeType#U16} attribute.
  */
-public class U32Attribute extends DataAttribute<Integer> {
+public class U32Attribute extends NumberAttribute<Integer> {
 
 	/**
 	 * Construct {@code U32Attribute}.
@@ -29,7 +29,7 @@ public class U32Attribute extends DataAttribute<Integer> {
 	 * @param name The attribute's name.
 	 */
 	public U32Attribute(String name) {
-		super(DataType.U32, name);
+		super(NumberAttributeType.U32, name);
 	}
 
 	/*
@@ -48,7 +48,7 @@ public class U32Attribute extends DataAttribute<Integer> {
 	 */
 	@Override
 	public Integer getValue(ByteBuffer buffer) {
-		return U32Values.get(buffer);
+		return (matchSize() <= buffer.remaining() ? Integer.valueOf(buffer.getInt()) : null);
 	}
 
 	/**

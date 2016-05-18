@@ -17,9 +17,9 @@
 package de.carne.filescanner.core.format;
 
 /**
- * Data attribute types.
+ * Number attribute types.
  */
-public enum DataType {
+public enum NumberAttributeType {
 
 	/**
 	 * Signed byte.
@@ -65,24 +65,24 @@ public enum DataType {
 
 	private boolean signed;
 
-	private DataType(int size, boolean signed) {
+	private NumberAttributeType(int size, boolean signed) {
 		this.size = size;
 		this.signed = signed;
 	}
 
 	/**
-	 * Get the data type's size.
-	 * 
-	 * @return The data type's size.
+	 * Get the type's size.
+	 *
+	 * @return The type's size.
 	 */
 	public int size() {
 		return this.size;
 	}
 
 	/**
-	 * Get the data type's signed flag.
-	 * 
-	 * @return The data type's signed flag.
+	 * Get the type's signed flag.
+	 *
+	 * @return The type's signed flag.
 	 */
 	public boolean signed() {
 		return this.signed;

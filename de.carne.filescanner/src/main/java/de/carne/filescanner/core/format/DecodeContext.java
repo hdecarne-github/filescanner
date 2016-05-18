@@ -32,7 +32,7 @@ public class DecodeContext {
 
 	private static final ThreadLocal<DecodeContext> CONTEXT = new ThreadLocal<>();
 
-	private final HashMap<DataAttribute<?>, Object> context = new HashMap<>();
+	private final HashMap<Attribute<?>, Object> context = new HashMap<>();
 
 	private final DecodeContext parent;
 
@@ -46,7 +46,7 @@ public class DecodeContext {
 	 * @param attribute The attribute to set.
 	 * @param value The attribute value to set.
 	 */
-	public <T> void setAttribute(DataAttribute<T> attribute, T value) {
+	public <T> void setAttribute(Attribute<T> attribute, T value) {
 		DecodeContext currentContext = this;
 
 		while (currentContext != null && !currentContext.context.containsKey(attribute)) {
@@ -65,7 +65,7 @@ public class DecodeContext {
 	 * @param attribute The attribute to get.
 	 * @return The set attribute value or {@code null} if none has been set.
 	 */
-	public <T> T getAttribute(DataAttribute<T> attribute) {
+	public <T> T getAttribute(Attribute<T> attribute) {
 		DecodeContext currentContext = this;
 		Object value = null;
 

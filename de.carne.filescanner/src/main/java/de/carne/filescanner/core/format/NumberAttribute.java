@@ -16,35 +16,33 @@
  */
 package de.carne.filescanner.core.format;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import de.carne.filescanner.core.FileScannerResultBuilder;
 
 /**
- * Define basic data attributes.
+ * This class defines Number based attributes of fixed size.
  *
- * @param <T> The attribute' data type.
+ * @param <T> The attribute's type.
  */
-public abstract class DataAttribute<T> extends FormatSpec {
+public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 
-	private final DataType dataType;
-	private final String name;
+	private final NumberAttributeType type;
 	private T finalValue = null;
-	private boolean bound = false;
 
 	/**
-	 * Construct {@code DataAttribute}.
+	 * Construct {@code NumberAttribute}.
 	 *
-	 * @param dataType The attribute's data type.
+	 * @param type The attribute's type.
 	 * @param name The attribute's name.
 	 */
-	protected DataAttribute(DataType dataType, String name) {
-		assert dataType != null;
-		assert name != null;
+	protected NumberAttribute(NumberAttributeType type, String name) {
+		super(name);
+		assert type != null;
 
-		this.dataType = dataType;
-		this.name = name;
+		this.type = type;
 	}
 
 	/*
@@ -53,7 +51,7 @@ public abstract class DataAttribute<T> extends FormatSpec {
 	 */
 	@Override
 	public int matchSize() {
-		return this.dataType.size();
+		return this.type.size();
 	}
 
 	/*
@@ -76,47 +74,17 @@ public abstract class DataAttribute<T> extends FormatSpec {
 	 */
 	@Override
 	public long eval(FileScannerResultBuilder result, long position) throws IOException {
-		if (this.bound) {
-			ByteBuffer buffer = result.input().cachedRead(position, this.dataType.size(), result.order());
+		ByteBuffer buffer = result.input().cachedRead(position, this.type.size(), result.order());
+		T value = getValue(buffer);
 
-			DecodeContext.get().setAttribute(this, getValue(buffer));
+		if (value == null) {
+			throw new EOFException();
 		}
-		return this.dataType.size();
+		if (isBound()) {
+			bindValue(value);
+		}
+		return this.type.size();
 	}
-
-	/**
-	 * Get the attribute's data type.
-	 *
-	 * @return The attribute's data type.
-	 */
-	public final DataType dataType() {
-		return this.dataType;
-	}
-
-	/**
-	 * Get the attribute's name.
-	 *
-	 * @return The attribute's name.
-	 */
-	public final String name() {
-		return this.name;
-	}
-
-	/**
-	 * Get the attribute's value type.
-	 *
-	 * @return The attribute's value type.
-	 */
-	public abstract Class<T> getValueType();
-
-	/**
-	 * Get the attribute's value.
-	 *
-	 * @param buffer The buffer to get the value from.
-	 * @return The attribute's value or {@code null} if the buffer's data is
-	 *         insufficient.
-	 */
-	public abstract T getValue(ByteBuffer buffer);
 
 	/**
 	 * Make attribute final (with a specific value).
@@ -124,7 +92,7 @@ public abstract class DataAttribute<T> extends FormatSpec {
 	 * @param finalValue The final value.
 	 * @return The updated data attribute spec.
 	 */
-	public final DataAttribute<T> setFinalValue(T finalValue) {
+	public final NumberAttribute<T> setFinalValue(T finalValue) {
 		this.finalValue = finalValue;
 		return this;
 	}
@@ -137,20 +105,6 @@ public abstract class DataAttribute<T> extends FormatSpec {
 	 */
 	public final T getFinalValue() {
 		return this.finalValue;
-	}
-
-	/**
-	 * Mark this attribute as bound.
-	 * <p>
-	 * The values of bound attributes are written to the current context during
-	 * the spec's evaluation.
-	 * </p>
-	 *
-	 * @return The updated data attribute spec.
-	 */
-	public final DataAttribute<T> bind() {
-		this.bound = true;
-		return this;
 	}
 
 }
