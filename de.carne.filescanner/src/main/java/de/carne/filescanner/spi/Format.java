@@ -176,16 +176,16 @@ public abstract class Format {
 
 		FileScannerResultBuilder decodedBuilder = new FileScannerResultBuilder(this, result.input(), position);
 
-		ResultContext.setupAndDecode(getDecodable(), decodedBuilder);
+		ResultContext.setupAndDecode(decodable(), decodedBuilder);
 		return decodedBuilder.toResult(result);
 	}
 
 	/**
-	 * Get this format's {@Decodable} interface.
+	 * Get this format's {@Decodable}.
 	 *
-	 * @return This format's {@Decodable} interface.
+	 * @return This format's {@Decodable}.
 	 */
-	protected abstract Decodable getDecodable();
+	public abstract Decodable decodable();
 
 	/*
 	 * (non-Javadoc)

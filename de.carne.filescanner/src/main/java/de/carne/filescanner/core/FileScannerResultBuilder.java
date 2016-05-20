@@ -16,9 +16,12 @@
  */
 package de.carne.filescanner.core;
 
+import java.io.IOException;
 import java.nio.ByteOrder;
 
+import de.carne.filescanner.core.format.Renderable;
 import de.carne.filescanner.spi.FileScannerInput;
+import de.carne.filescanner.spi.FileScannerResultRenderer;
 import de.carne.filescanner.spi.Format;
 
 /**
@@ -35,9 +38,9 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 
 	private final FileScannerResultBuilder parent;
 
-	private final ByteOrder order;
-
 	private String title;
+
+	private final Renderable renderable;
 
 	/**
 	 * Construct {@code FileScannerResultBuilder}.
@@ -47,19 +50,19 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 	 * @param start The result object's start position.
 	 */
 	public FileScannerResultBuilder(Format format, FileScannerInput input, long start) {
-		this(null, FileScannerResultType.FORMAT, input, start, format.order(), format.name());
+		this(null, FileScannerResultType.FORMAT, input, format.order(), start, format.name(), format.decodable());
 	}
 
 	private FileScannerResultBuilder(FileScannerResultBuilder parent, FileScannerResultType type,
-			FileScannerInput input, long start, ByteOrder order, String title) {
-		super(type, input, start);
+			FileScannerInput input, ByteOrder order, long start, String title, Renderable renderable) {
+		super(type, input, order, start);
 		this.end = start;
 		this.parent = parent;
 		if (this.parent != null) {
 			this.parent.addChild(this);
 		}
-		this.order = order;
 		this.title = title;
+		this.renderable = renderable;
 	}
 
 	/*
@@ -112,27 +115,29 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 	}
 
 	/**
-	 * Get this builder's byte order.
+	 * Get this builder's {@linkplain Renderable}.
 	 *
-	 * @return This builder's byte order.
+	 * @return This builder's {@linkplain Renderable}.
 	 */
-	public ByteOrder order() {
-		return this.order;
+	public Renderable renderable() {
+		return this.renderable;
 	}
 
 	/**
 	 * Add a new result to the builder.
 	 *
-	 * @param type The result type to build up.
+	 * @param resultType The result type to build up.
 	 * @param resultStart The result object's start position.
+	 * @param resultRenderable The result's {@linkplain Renderable}.
 	 * @return The builder for the added result object.
 	 */
-	public FileScannerResultBuilder addResult(FileScannerResultType type, long resultStart) {
+	public FileScannerResultBuilder addResult(FileScannerResultType resultType, long resultStart,
+			Renderable resultRenderable) {
 		assert type() != FileScannerResultType.INPUT;
-		assert type != null;
+		assert resultType != null;
 		assert start() <= resultStart;
 
-		return new FileScannerResultBuilder(this, type, input(), resultStart, this.order, "");
+		return new FileScannerResultBuilder(this, resultType, input(), order(), resultStart, "", resultRenderable);
 	}
 
 	/**
@@ -167,12 +172,15 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 
 		private final String title;
 
+		private final Renderable renderable;
+
 		FinalFileScannerResult(FileScannerResult parent, FileScannerResultBuilder builder) {
-			super(builder.type(), builder.input(), builder.start());
+			super(builder.type(), builder.input(), builder.order(), builder.start());
 			this.end = builder.end();
 			this.parent = parent;
 			this.parent.addChild(this);
 			this.title = builder.title();
+			this.renderable = builder.renderable();
 			this.context().addResultAttributes(builder.context());
 		}
 
@@ -201,6 +209,20 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 		@Override
 		public String title() {
 			return this.title;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see de.carne.filescanner.core.FileScannerResult#render(de.carne.
+		 * filescanner.spi.FileScannerResultRenderer)
+		 */
+		@Override
+		public void render(FileScannerResultRenderer renderer) throws IOException, InterruptedException {
+			if (this.renderable != null) {
+				this.renderable.render(this, renderer);
+			} else {
+				super.render(renderer);
+			}
 		}
 
 	}

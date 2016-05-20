@@ -17,8 +17,11 @@
 package de.carne.filescanner.core;
 
 import java.io.IOException;
+import java.nio.ByteOrder;
 
 import de.carne.filescanner.spi.FileScannerInput;
+import de.carne.filescanner.spi.FileScannerResultRenderer;
+import de.carne.filescanner.util.Units;
 
 /**
  * {@code FileScannerResult} object of type
@@ -31,7 +34,7 @@ class InputFileScannerResult extends FileScannerResult {
 	private final FileScannerResult parent;
 
 	InputFileScannerResult(FileScannerResult parent, FileScannerInput input) throws IOException {
-		super(FileScannerResultType.INPUT, input, 0l);
+		super(FileScannerResultType.INPUT, input, ByteOrder.nativeOrder(), 0l);
 
 		this.end = input.size();
 		this.parent = parent;
@@ -65,6 +68,24 @@ class InputFileScannerResult extends FileScannerResult {
 	@Override
 	public String title() {
 		return input().path().getFileName().toString();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.carne.filescanner.core.FileScannerResult#render(de.carne.filescanner.
+	 * spi.FileScannerResultRenderer)
+	 */
+	@Override
+	public void render(FileScannerResultRenderer renderer) throws IOException, InterruptedException {
+		renderer.setNormalMode().renderText("path");
+		renderer.setOperatorMode().renderText(" = ");
+		renderer.setValueMode().renderText(input().path().toString());
+		renderer.renderBreak();
+		renderer.setNormalMode().renderText("size");
+		renderer.setOperatorMode().renderText(" = ");
+		renderer.setValueMode().renderText(Units.formatByteValue(size()));
+		renderer.close();
 	}
 
 }

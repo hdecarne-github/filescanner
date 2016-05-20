@@ -14,37 +14,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.carne.filescanner.provider.zip;
+package de.carne.filescanner.core.format;
 
-import java.nio.ByteOrder;
+import java.io.IOException;
 
-import de.carne.filescanner.core.format.Decodable;
-import de.carne.filescanner.spi.Format;
+import de.carne.filescanner.core.FileScannerResult;
+import de.carne.filescanner.spi.FileScannerResultRenderer;
 
 /**
- * ZIP file format decoder:
- * <a href="https://en.wikipedia.org/wiki/Zip_(file_format)">https://en.
- * wikipedia.org/wiki/Zip_(file_format)</a>.
+ * This interface defines functions render a format and it's nested structures.
  */
-public class ZIPFormat extends Format {
-
-	private static final String NAME = "ZIP archive";
+public interface Renderable {
 
 	/**
-	 * Construct {@code ZIPFormat}.
+	 * Render the scanner result.
+	 *
+	 * @param result The result object to render.
+	 * @param renderer The renderer to use.
+	 * @throws IOException if an I/O error occurs.
+	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	public ZIPFormat() {
-		super(NAME, ByteOrder.LITTLE_ENDIAN);
-		registerHeaderSpec(ZIPFormatSpecs.ZIP_LFH);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.spi.Format#decodable()
-	 */
-	@Override
-	public Decodable decodable() {
-		return ZIPFormatSpecs.ZIP.getDecodable();
-	}
+	public void render(FileScannerResult result, FileScannerResultRenderer renderer)
+			throws IOException, InterruptedException;
 
 }
