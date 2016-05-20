@@ -47,13 +47,13 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 	 * @param start The result object's start position.
 	 */
 	public FileScannerResultBuilder(Format format, FileScannerInput input, long start) {
-		this(null, FileScannerResultType.FORMAT, input, start, start, format.order(), format.name());
+		this(null, FileScannerResultType.FORMAT, input, start, format.order(), format.name());
 	}
 
 	private FileScannerResultBuilder(FileScannerResultBuilder parent, FileScannerResultType type,
-			FileScannerInput input, long start, long end, ByteOrder order, String title) {
+			FileScannerInput input, long start, ByteOrder order, String title) {
 		super(type, input, start);
-		this.end = end;
+		this.end = start;
 		this.parent = parent;
 		if (this.parent != null) {
 			this.parent.addChild(this);
@@ -69,6 +69,17 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 	@Override
 	public long end() {
 		return Math.max(this.end, getChildrenEnd());
+	}
+
+	/**
+	 * Update the result's end position.
+	 *
+	 * @param updatedEnd The updated end position to set.
+	 */
+	public void updateEnd(long updatedEnd) {
+		assert start() <= updatedEnd;
+
+		this.end = updatedEnd;
 	}
 
 	/*
@@ -90,16 +101,21 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 	}
 
 	/**
-	 * Set the result object's title.
+	 * Updated the result object's title.
 	 *
-	 * @param title The title to set.
+	 * @param updatedTitle The updated title to set.
 	 */
-	public void setTitle(String title) {
-		assert title != null;
+	public void updateTitle(String updatedTitle) {
+		assert updatedTitle != null;
 
-		this.title = title;
+		this.title = updatedTitle;
 	}
 
+	/**
+	 * Get this builder's byte order.
+	 *
+	 * @return This builder's byte order.
+	 */
 	public ByteOrder order() {
 		return this.order;
 	}
@@ -112,24 +128,11 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 	 * @return The builder for the added result object.
 	 */
 	public FileScannerResultBuilder addResult(FileScannerResultType type, long resultStart) {
-		return addResult(type, resultStart, resultStart);
-	}
-
-	/**
-	 * Add a new result to the builder.
-	 *
-	 * @param type The result type to build up.
-	 * @param resultStart The result object's start position.
-	 * @param resultEnd The result object's end position.
-	 * @return The builder for the added result object.
-	 */
-	public FileScannerResultBuilder addResult(FileScannerResultType type, long resultStart, long resultEnd) {
 		assert type() != FileScannerResultType.INPUT;
 		assert type != null;
 		assert start() <= resultStart;
-		assert resultStart <= resultEnd;
 
-		return new FileScannerResultBuilder(this, type, input(), resultStart, resultEnd, this.order, "");
+		return new FileScannerResultBuilder(this, type, input(), resultStart, this.order, "");
 	}
 
 	/**
@@ -146,7 +149,7 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 		FileScannerResult decoded = null;
 
 		if (size() > 0) {
-			decoded = new SimpleFileScannerResult(result, type(), input(), start(), end(), this.title);
+			decoded = new FinalFileScannerResult(result, this);
 			for (FileScannerResult child : children()) {
 				FileScannerResultBuilder childBuilder = ((FileScannerResultBuilder) child);
 
@@ -154,6 +157,52 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 			}
 		}
 		return decoded;
+	}
+
+	private static class FinalFileScannerResult extends FileScannerResult {
+
+		private final long end;
+
+		private final FileScannerResult parent;
+
+		private final String title;
+
+		FinalFileScannerResult(FileScannerResult parent, FileScannerResultBuilder builder) {
+			super(builder.type(), builder.input(), builder.start());
+			this.end = builder.end();
+			this.parent = parent;
+			this.parent.addChild(this);
+			this.title = builder.title();
+			this.context().addResultAttributes(builder.context());
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see de.carne.filescanner.core.FileScannerResult#end()
+		 */
+		@Override
+		public long end() {
+			return this.end;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see de.carne.filescanner.core.FileScannerResult#parent()
+		 */
+		@Override
+		public FileScannerResult parent() {
+			return this.parent;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see de.carne.filescanner.core.FileScannerResult#title()
+		 */
+		@Override
+		public String title() {
+			return this.title;
+		}
+
 	}
 
 }

@@ -16,7 +16,7 @@
  */
 package de.carne.filescanner.core.format;
 
-import java.nio.ByteBuffer;
+import java.util.function.Supplier;
 
 /**
  * This class defines basic format spec attributes.
@@ -28,10 +28,33 @@ import java.nio.ByteBuffer;
  *
  * @param <T> The attribute' data type.
  */
-public abstract class Attribute<T> extends FormatSpec {
+public abstract class Attribute<T> extends FormatSpec implements Supplier<T> {
+
+	/**
+	 * Possible bind scopes for an attribute.
+	 */
+	public static enum BindScope {
+
+		/**
+		 * Attribute not bound.
+		 */
+		NONE,
+
+		/**
+		 * Attribute bound with decode scope.
+		 */
+		DECODE,
+
+		/**
+		 * Attribute bound with result scope.
+		 */
+		RESULT
+
+	}
 
 	private final String name;
-	private boolean bound = false;
+
+	private BindScope bindScope = BindScope.NONE;
 
 	/**
 	 * Construct {@code Attribute}.
@@ -61,26 +84,40 @@ public abstract class Attribute<T> extends FormatSpec {
 	public abstract Class<T> getValueType();
 
 	/**
-	 * Get the attribute's value.
+	 * Mark this attribute as locally bound.
 	 *
-	 * @param buffer The buffer to get the value from.
-	 * @return The attribute's value or {@code null} if the buffer's data is
-	 *         insufficient.
+	 * @return The updated data attribute spec.
+	 * @see #bind(boolean)
 	 */
-	public abstract T getValue(ByteBuffer buffer);
+	public final Attribute<T> bind() {
+		return bind(false);
+	}
 
 	/**
 	 * Mark this attribute as bound.
 	 * <p>
-	 * The values of bound attributes are written to the current context during
-	 * the spec's evaluation.
+	 * The values of bound attributes are written to the decode context during
+	 * the spec's evaluation. Decode bound attributes are only available via the
+	 * eval phase. Result bound attributes are also available during the render
+	 * phase.
 	 * </p>
 	 *
+	 * @param result Whether this attribute is result bound ({@code true}) or
+	 *        only decode bound ({@code false}).
 	 * @return The updated data attribute spec.
 	 */
-	public final Attribute<T> bind() {
-		this.bound = true;
+	public final Attribute<T> bind(boolean result) {
+		this.bindScope = (result ? BindScope.RESULT : BindScope.DECODE);
 		return this;
+	}
+
+	/**
+	 * Get the attribute's bind scope.
+	 * 
+	 * @return The attribute's bind scope.
+	 */
+	public final BindScope bindScope() {
+		return this.bindScope;
 	}
 
 	/**
@@ -88,8 +125,8 @@ public abstract class Attribute<T> extends FormatSpec {
 	 *
 	 * @return [@code true} if the attribute is bound.
 	 */
-	protected final boolean isBound() {
-		return this.bound;
+	public final boolean isBound() {
+		return this.bindScope != BindScope.NONE;
 	}
 
 	/**
@@ -98,7 +135,18 @@ public abstract class Attribute<T> extends FormatSpec {
 	 * @param value The value to bind.
 	 */
 	protected final void bindValue(T value) {
-		DecodeContext.get().setAttribute(this, value);
+		ResultContextHolder.get().setAttribute(this, value);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.util.function.Supplier#get()
+	 */
+	@Override
+	public T get() {
+		assert this.bindScope != BindScope.NONE;
+
+		return ResultContextHolder.get().getAttribute(this);
 	}
 
 }

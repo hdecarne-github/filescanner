@@ -16,23 +16,30 @@
  */
 package de.carne.filescanner.core.format;
 
-import java.io.IOException;
-
-import de.carne.filescanner.core.FileScannerResultBuilder;
+import java.nio.charset.Charset;
 
 /**
- * This interface defines functions every displayable scan result has to
- * implement.
+ *
  */
-public interface Decodable {
+public abstract class StringAttribute extends Attribute<String> {
 
-	/**
-	 * Decode scanner results.
-	 *
-	 * @param result The result builder object to decode into.
-	 * @return The number of decoded bytes.
-	 * @throws IOException if an I/O error occurs.
+	private final Charset charset;
+
+	public StringAttribute(String name, Charset charset) {
+		super(name);
+
+		assert charset != null;
+
+		this.charset = charset;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see de.carne.filescanner.core.format.Attribute#getValueType()
 	 */
-	public long decode(FileScannerResultBuilder result) throws IOException;
+	@Override
+	public Class<String> getValueType() {
+		return String.class;
+	}
 
 }

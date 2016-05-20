@@ -99,10 +99,9 @@ public class StructFormatSpec extends FormatSpec {
 			long specPosition = position + evaluated;
 
 			if (specDecodable != null) {
-				FileScannerResultBuilder specResult = result.addResult(spec.resultType(), specPosition,
-						specPosition + matchSize());
+				FileScannerResultBuilder specResult = result.addResult(spec.resultType(), specPosition);
 
-				evaluated += DecodeContext.setupContextAndDecode(specDecodable, specResult, specPosition);
+				evaluated += ResultContextHolder.setupAndDecode(specDecodable, specResult);
 			} else {
 				evaluated += spec.eval(result, specPosition);
 			}
@@ -119,18 +118,12 @@ public class StructFormatSpec extends FormatSpec {
 		setDecodable(new Decodable() {
 
 			@Override
-			public long decode(FileScannerResultBuilder result, long position) throws IOException {
-				return decodeStructSpec(result, position);
+			public long decode(FileScannerResultBuilder result) throws IOException {
+				return eval(result, result.start());
 			}
 
 		});
 		return this;
-	}
-
-	long decodeStructSpec(FileScannerResultBuilder result, long position) throws IOException {
-		long evaluated = eval(result, position);
-
-		return evaluated;
 	}
 
 }

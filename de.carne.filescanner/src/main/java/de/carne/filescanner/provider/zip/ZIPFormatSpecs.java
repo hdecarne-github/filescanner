@@ -16,6 +16,9 @@
  */
 package de.carne.filescanner.provider.zip;
 
+import java.nio.charset.StandardCharsets;
+
+import de.carne.filescanner.core.format.AStringAttribute;
 import de.carne.filescanner.core.format.StructFormatSpec;
 import de.carne.filescanner.core.format.U16Attribute;
 import de.carne.filescanner.core.format.U32Attribute;
@@ -43,8 +46,9 @@ class ZIPFormatSpecs {
 		lfh.append(new U32Attribute("crc-32"));
 		lfh.append(new U32Attribute("compressed size"));
 		lfh.append(new U32Attribute("uncompressed size"));
-		lfh.append(LFH_FILE_NAME_LENGTH.bind());
-		lfh.append(LFH_EXTRA_FIELD_LENGTH.bind());
+		lfh.append(LFH_FILE_NAME_LENGTH.bind(true));
+		lfh.append(LFH_EXTRA_FIELD_LENGTH.bind(true));
+		lfh.append(new AStringAttribute("file name", StandardCharsets.UTF_8, LFH_FILE_NAME_LENGTH));
 		lfh.setDecodable();
 		ZIP_LFH = lfh;
 	}

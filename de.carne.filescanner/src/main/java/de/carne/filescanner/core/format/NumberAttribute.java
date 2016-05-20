@@ -86,6 +86,15 @@ public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 	}
 
 	/**
+	 * Get the attribute's value.
+	 *
+	 * @param buffer The buffer to get the value from.
+	 * @return The attribute's value or {@code null} if the buffer's data is
+	 *         insufficient.
+	 */
+	public abstract T getValue(ByteBuffer buffer);
+
+	/**
 	 * Make attribute final (with a specific value).
 	 *
 	 * @param finalValue The final value.

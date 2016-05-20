@@ -25,6 +25,7 @@ import java.util.Objects;
 import de.carne.filescanner.spi.FileScannerInput;
 import de.carne.filescanner.spi.FileScannerResultRenderer;
 import de.carne.filescanner.util.Hexadecimal;
+import de.carne.filescanner.util.Units;
 
 /**
  * A {@code FileScanner} result object.
@@ -76,6 +77,17 @@ public abstract class FileScannerResult {
 	private final FileScannerInput input;
 
 	private final long start;
+
+	private final ResultContext context = new ResultContext() {
+
+		@Override
+		protected ResultContext parent() {
+			FileScannerResult parentResult = FileScannerResult.this.parent();
+
+			return (parentResult != null ? parentResult.context() : null);
+		}
+
+	};
 
 	private final ArrayList<FileScannerResult> children = new ArrayList<>();
 
@@ -148,6 +160,15 @@ public abstract class FileScannerResult {
 	}
 
 	/**
+	 * Get the result's context.
+	 *
+	 * @return The result's context.
+	 */
+	public final ResultContext context() {
+		return this.context;
+	}
+
+	/**
 	 * Get the parent result.
 	 *
 	 * @return The parent result or {@code null} if this is a root result.
@@ -197,6 +218,31 @@ public abstract class FileScannerResult {
 	 * @throws InterruptedException if he render thread is interrupted.
 	 */
 	public void render(FileScannerResultRenderer renderer) throws IOException, InterruptedException {
+		switch (this.type) {
+		case INPUT:
+			renderInput(renderer);
+			break;
+		case FORMAT:
+		case ENCODED_INPUT:
+			renderGeneric(renderer);
+			break;
+		default:
+			throw new IllegalArgumentException("Unexpected result type: " + this.type);
+		}
+	}
+
+	private void renderInput(FileScannerResultRenderer renderer) throws IOException, InterruptedException {
+		renderer.setNormalMode().renderText("path");
+		renderer.setOperatorMode().renderText(" = ");
+		renderer.setValueMode().renderText(this.input.path().toString());
+		renderer.renderBreak();
+		renderer.setNormalMode().renderText("size");
+		renderer.setOperatorMode().renderText(" = ");
+		renderer.setValueMode().renderText(Units.formatByteValue(size()));
+		renderer.close();
+	}
+
+	private void renderGeneric(FileScannerResultRenderer renderer) throws IOException, InterruptedException {
 		renderer.setNormalMode().renderText("start");
 		renderer.setOperatorMode().renderText(" = ");
 		renderer.setValueMode().renderText(Hexadecimal.formatL(new StringBuilder(), start()).toString());
@@ -207,7 +253,7 @@ public abstract class FileScannerResult {
 		renderer.renderBreak();
 		renderer.setNormalMode().renderText("size");
 		renderer.setOperatorMode().renderText(" = ");
-		renderer.setValueMode().renderText(Hexadecimal.formatL(new StringBuilder(), size()).toString());
+		renderer.setValueMode().renderText(Units.formatByteValue(size()));
 		renderer.close();
 	}
 
