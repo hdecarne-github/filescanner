@@ -14,13 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.carne.filescanner.core.format;
+package de.carne.filescanner.core.format.spec;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.function.Supplier;
 
+import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
+import de.carne.filescanner.core.format.ValueExpression;
+import de.carne.filescanner.spi.FileScannerResultRenderer;
 
 /**
  *
@@ -56,13 +59,26 @@ public class AStringAttribute extends StringAttribute {
 
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.FormatSpec#eval(de.carne.filescanner.
-	 * core.FileScannerResultBuilder, long)
+	 * @see de.carne.filescanner.core.format.FormatSpec#specDecode(de.carne.
+	 * filescanner. core.FileScannerResultBuilder, long)
 	 */
 	@Override
-	public long eval(FileScannerResultBuilder result, long position) throws IOException {
+	public long specDecode(FileScannerResultBuilder result, long position) throws IOException {
 		return this.sizeExpression.afterEval();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.carne.filescanner.core.format.spec.FormatSpec#specRender(de.carne.
+	 * filescanner.core.FileScannerResult, long,
+	 * de.carne.filescanner.spi.FileScannerResultRenderer)
+	 */
+	@Override
+	public long specRender(FileScannerResult result, long position, FileScannerResultRenderer renderer)
+			throws IOException, InterruptedException {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

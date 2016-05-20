@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import de.carne.filescanner.core.format.FormatSpec;
+import de.carne.filescanner.core.format.spec.FormatSpec;
 import de.carne.filescanner.spi.FileScannerInput;
 import de.carne.filescanner.spi.Format;
 

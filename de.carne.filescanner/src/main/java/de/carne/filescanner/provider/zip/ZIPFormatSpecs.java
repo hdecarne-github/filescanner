@@ -18,10 +18,10 @@ package de.carne.filescanner.provider.zip;
 
 import java.nio.charset.StandardCharsets;
 
-import de.carne.filescanner.core.format.AStringAttribute;
-import de.carne.filescanner.core.format.StructFormatSpec;
-import de.carne.filescanner.core.format.U16Attribute;
-import de.carne.filescanner.core.format.U32Attribute;
+import de.carne.filescanner.core.format.spec.AStringAttribute;
+import de.carne.filescanner.core.format.spec.StructFormatSpec;
+import de.carne.filescanner.core.format.spec.U16Attribute;
+import de.carne.filescanner.core.format.spec.U32Attribute;
 
 /**
  * ZIP format structures.

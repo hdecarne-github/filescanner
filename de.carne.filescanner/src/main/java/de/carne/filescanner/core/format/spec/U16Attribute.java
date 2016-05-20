@@ -14,22 +14,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.carne.filescanner.core.format;
+package de.carne.filescanner.core.format.spec;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
+
+import de.carne.filescanner.core.FileScannerResult;
+import de.carne.filescanner.spi.FileScannerResultRenderer;
 
 /**
  * Defines a {@linkplain NumberAttributeType#U16} attribute.
  */
-public class U32Attribute extends NumberAttribute<Integer> {
+public class U16Attribute extends NumberAttribute<Short> {
 
 	/**
-	 * Construct {@code U32Attribute}.
+	 * Construct {@code U16Attribute}.
 	 *
 	 * @param name The attribute's name.
 	 */
-	public U32Attribute(String name) {
-		super(NumberAttributeType.U32, name);
+	public U16Attribute(String name) {
+		super(NumberAttributeType.U16, name);
 	}
 
 	/*
@@ -37,8 +41,8 @@ public class U32Attribute extends NumberAttribute<Integer> {
 	 * @see de.carne.filescanner.core.format.DataAttribute#getValueType()
 	 */
 	@Override
-	public Class<Integer> getValueType() {
-		return Integer.class;
+	public Class<Short> getValueType() {
+		return Short.class;
 	}
 
 	/*
@@ -47,8 +51,22 @@ public class U32Attribute extends NumberAttribute<Integer> {
 	 * ByteBuffer)
 	 */
 	@Override
-	public Integer getValue(ByteBuffer buffer) {
-		return (isSA(buffer, matchSize()) ? Integer.valueOf(buffer.getInt()) : null);
+	public Short getValue(ByteBuffer buffer) {
+		return (isSA(buffer, matchSize()) ? Short.valueOf(buffer.getShort()) : null);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.carne.filescanner.core.format.spec.FormatSpec#specRender(de.carne.
+	 * filescanner.core.FileScannerResult, long,
+	 * de.carne.filescanner.spi.FileScannerResultRenderer)
+	 */
+	@Override
+	public long specRender(FileScannerResult result, long position, FileScannerResultRenderer renderer)
+			throws IOException, InterruptedException {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

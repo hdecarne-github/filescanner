@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.carne.filescanner.core.format;
+package de.carne.filescanner.core.format.spec;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -29,6 +29,7 @@ import de.carne.filescanner.core.FileScannerResultBuilder;
 public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 
 	private final NumberAttributeType type;
+
 	private T finalValue = null;
 
 	/**
@@ -69,12 +70,11 @@ public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.FormatSpec#eval(de.carne.filescanner.
-	 * core.FileScannerResultBuilder, long)
+	 * @see de.carne.filescanner.core.format.FormatSpec#specDecode(de.carne.
+	 * filescanner. core.FileScannerResultBuilder, long)
 	 */
 	@Override
-	public long eval(FileScannerResultBuilder result, long position) throws IOException {
+	public long specDecode(FileScannerResultBuilder result, long position) throws IOException {
 		int typeSize = this.type.size();
 
 		if (isBound()) {

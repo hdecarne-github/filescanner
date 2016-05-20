@@ -14,16 +14,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.carne.filescanner.core.format;
+package de.carne.filescanner.core.format.spec;
 
 import java.util.function.Supplier;
+
+import de.carne.filescanner.core.format.ResultContext;
 
 /**
  * This class defines basic format spec attributes.
  * <p>
  * Basic attributes are of the form &lt;name&gt; = &lt;value&gt; where value is
- * a reasonable simple type. Basic attributes can be bound to the decode context
- * and hence evaluated by a format spec.
+ * a reasonable simple type. Attributes can be bound to a
+ * {@linkplain ResultContext} and hence evaluated during decode or render phase.
  * </p>
  *
  * @param <T> The attribute' data type.
@@ -36,17 +38,17 @@ public abstract class Attribute<T> extends FormatSpec implements Supplier<T> {
 	public static enum BindScope {
 
 		/**
-		 * Attribute not bound.
+		 * Attribute is not bound.
 		 */
 		NONE,
 
 		/**
-		 * Attribute bound with decode scope.
+		 * Attribute is bound with decode scope.
 		 */
 		DECODE,
 
 		/**
-		 * Attribute bound with result scope.
+		 * Attribute is bound with result scope.
 		 */
 		RESULT
 
@@ -113,7 +115,7 @@ public abstract class Attribute<T> extends FormatSpec implements Supplier<T> {
 
 	/**
 	 * Get the attribute's bind scope.
-	 * 
+	 *
 	 * @return The attribute's bind scope.
 	 */
 	public final BindScope bindScope() {
@@ -135,7 +137,7 @@ public abstract class Attribute<T> extends FormatSpec implements Supplier<T> {
 	 * @param value The value to bind.
 	 */
 	protected final void bindValue(T value) {
-		ResultContextHolder.get().setAttribute(this, value);
+		ResultContext.get().setAttribute(this, value);
 	}
 
 	/*
@@ -146,7 +148,7 @@ public abstract class Attribute<T> extends FormatSpec implements Supplier<T> {
 	public T get() {
 		assert this.bindScope != BindScope.NONE;
 
-		return ResultContextHolder.get().getAttribute(this);
+		return ResultContext.get().getAttribute(this);
 	}
 
 }

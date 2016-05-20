@@ -14,16 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.carne.filescanner.core.format;
+package de.carne.filescanner.core.format.spec;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
+import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
+import de.carne.filescanner.core.format.Decodable;
+import de.carne.filescanner.core.format.ResultContext;
+import de.carne.filescanner.spi.FileScannerResultRenderer;
 
 /**
- * Struct format spec: Define a consecutive list of format specs.
+ * Struct format spec combining a consecutive list of format specs.
  */
 public class StructFormatSpec extends FormatSpec {
 
@@ -83,34 +87,59 @@ public class StructFormatSpec extends FormatSpec {
 
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.FormatSpec#eval(de.carne.filescanner.
-	 * core.FileScannerResultBuilder, long)
+	 * @see de.carne.filescanner.core.format.FormatSpec#specDecode(de.carne.
+	 * filescanner. core.FileScannerResultBuilder, long)
 	 */
 	@Override
-	public long eval(FileScannerResultBuilder result, long position) throws IOException {
+	public long specDecode(FileScannerResultBuilder result, long position) throws IOException {
 		assert result != null;
 		assert position >= 0;
 
-		long evaluated = 0l;
+		long decoded = 0l;
 
 		for (FormatSpec spec : this.specs) {
 			Decodable specDecodable = spec.getDecodable();
-			long specPosition = position + evaluated;
+			long specPosition = position + decoded;
 
 			if (specDecodable != null) {
 				FileScannerResultBuilder specResult = result.addResult(spec.resultType(), specPosition);
 
-				evaluated += ResultContextHolder.setupAndDecode(specDecodable, specResult);
+				decoded += ResultContext.setupAndDecode(specDecodable, specResult);
 			} else {
-				evaluated += spec.eval(result, specPosition);
+				decoded += spec.specDecode(result, specPosition);
 			}
 		}
-		return evaluated;
+		return decoded;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see de.carne.filescanner.core.format.FormatSpec#specRender(de.carne.
+	 * filescanner.core.FileScannerResult, long,
+	 * de.carne.filescanner.spi.FileScannerResultRenderer)
+	 */
+	@Override
+	public long specRender(FileScannerResult result, long position, FileScannerResultRenderer renderer)
+			throws IOException, InterruptedException {
+		assert result != null;
+		assert result.start() <= position;
+		assert position < result.end();
+		assert renderer != null;
+
+		long rendered = 0l;
+
+		for (FormatSpec spec : this.specs) {
+			if (!spec.isDecodable()) {
+				long renderPosition = position + rendered;
+
+				rendered += spec.specRender(result, renderPosition, renderer);
+			}
+		}
+		return rendered;
 	}
 
 	/**
-	 * Set this spec's {@code Decodable} service to the default one.
+	 * Set this spec's {@code Decodable} to the default.
 	 *
 	 * @return The updated struct spec.
 	 */
@@ -119,7 +148,13 @@ public class StructFormatSpec extends FormatSpec {
 
 			@Override
 			public long decode(FileScannerResultBuilder result) throws IOException {
-				return eval(result, result.start());
+				return specDecode(result, result.start());
+			}
+
+			@Override
+			public void render(FileScannerResult result, FileScannerResultRenderer renderer)
+					throws IOException, InterruptedException {
+				specRender(result, result.start(), renderer);
 			}
 
 		});

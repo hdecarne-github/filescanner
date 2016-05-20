@@ -28,8 +28,8 @@ import java.util.regex.Pattern;
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.core.format.Decodable;
-import de.carne.filescanner.core.format.ResultContextHolder;
-import de.carne.filescanner.core.format.FormatSpec;
+import de.carne.filescanner.core.format.ResultContext;
+import de.carne.filescanner.core.format.spec.FormatSpec;
 import de.carne.util.logging.Log;
 
 /**
@@ -176,7 +176,7 @@ public abstract class Format {
 
 		FileScannerResultBuilder decodedBuilder = new FileScannerResultBuilder(this, result.input(), position);
 
-		ResultContextHolder.setupAndDecode(getDecodable(), decodedBuilder);
+		ResultContext.setupAndDecode(getDecodable(), decodedBuilder);
 		return decodedBuilder.toResult(result);
 	}
 
