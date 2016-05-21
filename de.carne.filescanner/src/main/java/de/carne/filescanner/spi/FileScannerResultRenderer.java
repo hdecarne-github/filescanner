@@ -343,6 +343,27 @@ public abstract class FileScannerResultRenderer {
 	}
 
 	/**
+	 * Convenience function for finishing a render step.
+	 * <p>
+	 * Depending on the submitted either {@linkplain #close()} (overall
+	 * rendering is done) or {@linkplain #renderBreak()} (line rendering is
+	 * done) is called.
+	 * </p>
+	 *
+	 * @param close Whether to call {@linkplain #close()} or
+	 *        {@linkplain #renderBreak()}.
+	 * @throws IOException if an I/O error occurs.
+	 * @throws InterruptedException if the render thread was interrupted.
+	 */
+	public final void renderBreakOrClose(boolean close) throws IOException, InterruptedException {
+		if (close) {
+			close();
+		} else {
+			renderBreak();
+		}
+	}
+
+	/**
 	 * Close the rendering process.
 	 *
 	 * @throws IOException if an I/O error occurs.

@@ -317,7 +317,7 @@ public abstract class FileScannerInput implements Closeable {
 					this.cacheBuffer.flip();
 					this.cachePosition = readPosition;
 				}
-				buffer = this.cacheBuffer.asReadOnlyBuffer();
+				buffer = this.cacheBuffer.asReadOnlyBuffer().order(order);
 
 				int bufferPosition = (int) (position - this.cachePosition);
 
@@ -325,10 +325,10 @@ public abstract class FileScannerInput implements Closeable {
 			} else {
 				this.log.warning(null, "Excessive read request ({1}); ignoring cache", Units.formatByteValue(readSize));
 
-				buffer = ByteBuffer.allocate(size);
+				buffer = ByteBuffer.allocate(size).order(order);
 				FileScannerInput.this.read(buffer, position);
+				buffer.flip();
 			}
-			buffer.order(order);
 			return buffer;
 		}
 

@@ -19,6 +19,8 @@ package de.carne.filescanner.core.format.spec;
 import java.io.EOFException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.text.MessageFormat;
+import java.util.function.Supplier;
 
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
@@ -30,9 +32,9 @@ import de.carne.filescanner.spi.FileScannerResultRenderer;
 /**
  * Base class for spec based format definitions.
  */
-public abstract class FormatSpec {
+public abstract class FormatSpec implements Decodable {
 
-	private Decodable decodable = null;
+	private StringExpression resultTitleExpression = null;
 
 	/**
 	 * Get this spec's match size.
@@ -105,6 +107,20 @@ public abstract class FormatSpec {
 	 */
 	public abstract long specDecode(FileScannerResultBuilder result, long position) throws IOException;
 
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.carne.filescanner.core.format.Decodable#decode(de.carne.filescanner.
+	 * core.FileScannerResultBuilder)
+	 */
+	@Override
+	public long decode(FileScannerResultBuilder result) throws IOException {
+		long decoded = specDecode(result, result.start());
+
+		result.updateTitle(this.resultTitleExpression.afterDecode());
+		return decoded;
+	}
+
 	/**
 	 * Render a previously decoded result by interpreting this spec.
 	 *
@@ -118,38 +134,75 @@ public abstract class FormatSpec {
 	public abstract long specRender(FileScannerResult result, long position, FileScannerResultRenderer renderer)
 			throws IOException, InterruptedException;
 
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.carne.filescanner.core.format.Renderable#render(de.carne.filescanner.
+	 * core.FileScannerResult,
+	 * de.carne.filescanner.spi.FileScannerResultRenderer)
+	 */
+	@Override
+	public void render(FileScannerResult result, FileScannerResultRenderer renderer)
+			throws IOException, InterruptedException {
+		specRender(result, result.start(), renderer);
+	}
+
 	/**
-	 * Set this spec's {@linkplain Decodable}.
+	 * Mark this spec as a scan result.
 	 * <p>
-	 * Settings a spec's {@linkplain Decodable} instructs the caller to decode
-	 * this spec into it's own result buffer.
+	 * Marking spec as a result instructs the caller to decode this spec into
+	 * it's own result object.
 	 * </p>
 	 *
-	 * @param decodable The {@linkplain Decodable} to set.
+	 * @param title The title to use for the result object.
 	 * @return The updated format spec.
 	 */
-	public final FormatSpec setDecodable(Decodable decodable) {
-		this.decodable = decodable;
+	public final FormatSpec setResult(String title) {
+		this.resultTitleExpression = new StringExpression(title);
 		return this;
 	}
 
 	/**
-	 * Get this spec's {@linkplain Decodable}.
+	 * Mark this spec as a scan result.
+	 * <p>
+	 * Marking spec as a result instructs the caller to decode this spec into
+	 * it's own result object.
+	 * </p>
 	 *
-	 * @return This spec's {@linkplain Decodable} or {@code null} if this spec
-	 *         should be decoded inline (into the current result builder).
+	 * @param titleLambda The string expression providing the title to use for
+	 *        the result object.
+	 * @return The updated format spec.
 	 */
-	public final Decodable getDecodable() {
-		return this.decodable;
+	public final FormatSpec setResult(Supplier<String> titleLambda) {
+		this.resultTitleExpression = new StringExpression(titleLambda);
+		return this;
 	}
 
 	/**
-	 * Check whether this spec has a {@linkplain Decodable} assigned.
+	 * Mark this spec as a scan result.
+	 * <p>
+	 * Marking spec as a result instructs the caller to decode this spec into
+	 * it's own result object.
+	 * </p>
 	 *
-	 * @return {@code true} if this spec has a {@linkplain Decodable} assigned.
+	 * @param pattern The {@linkplain MessageFormat} format pattern for the
+	 *        result object's title.
+	 * @param titleLambda The string expression providing the format param to
+	 *        use during title formatting.
+	 * @return The updated format spec.
 	 */
-	public final boolean isDecodable() {
-		return this.decodable != null;
+	public final FormatSpec setResult(String pattern, Supplier<String> titleLambda) {
+		this.resultTitleExpression = new StringExpression(pattern, titleLambda);
+		return this;
+	}
+
+	/**
+	 * Check whether this spec has been set as result.
+	 *
+	 * @return {@code true} if this spec has been set as a result.
+	 */
+	public final boolean isResult() {
+		return this.resultTitleExpression != null;
 	}
 
 	/**

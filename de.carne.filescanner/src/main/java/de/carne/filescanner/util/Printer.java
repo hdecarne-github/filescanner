@@ -16,9 +16,10 @@
  */
 package de.carne.filescanner.util;
 
+import java.nio.CharBuffer;
+
 /**
- * Utility class used for formatting raw bytes by tranforming them to their ISO
- * 8859-1 (Latin-1) representation.
+ * Utility class used for formatting character based data.
  */
 public final class Printer {
 
@@ -92,6 +93,61 @@ public final class Printer {
 		char mapped = CHAR_MAP[b & 0xff];
 
 		buffer.append(mapped != '\0' ? mapped : nonPrintable);
+		return buffer;
+	}
+
+	/**
+	 * Format {@code char} value.
+	 *
+	 * @param buffer The buffer to format into.
+	 * @param c The value to format.
+	 * @return The updated buffer.
+	 */
+	public static StringBuilder format(StringBuilder buffer, char c) {
+		switch (c) {
+		case '\0':
+			buffer.append("\0");
+			break;
+		case '\b':
+			buffer.append("\b");
+			break;
+		case '\t':
+			buffer.append("\t");
+			break;
+		case '\n':
+			buffer.append("\n");
+			break;
+		case '\r':
+			buffer.append("\r");
+			break;
+		case '\\':
+			buffer.append("\\\\");
+			break;
+		case '"':
+			buffer.append("\"");
+			break;
+		default:
+			buffer.append(isPrintable(c) ? c : Hexadecimal.formatL(new StringBuilder("\\u"), (short) c).toString());
+		}
+		return buffer;
+	}
+
+	private static boolean isPrintable(int codePoint) {
+		return (((1 << Character.CONTROL) | (1 << Character.FORMAT) | (1 << Character.PRIVATE_USE)
+				| (1 << Character.SURROGATE)) & Character.getType(codePoint)) == 0;
+	}
+
+	/**
+	 * Format {@code CharBuffer} content.
+	 *
+	 * @param buffer The buffer to format into.
+	 * @param charBuffer The values to format.
+	 * @return The updated buffer.
+	 */
+	public static StringBuilder format(StringBuilder buffer, CharBuffer charBuffer) {
+		while (charBuffer.hasRemaining()) {
+			format(buffer, charBuffer.get());
+		}
 		return buffer;
 	}
 

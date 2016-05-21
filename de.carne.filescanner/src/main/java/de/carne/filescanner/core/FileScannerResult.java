@@ -17,6 +17,7 @@
 package de.carne.filescanner.core;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -223,28 +224,54 @@ public abstract class FileScannerResult {
 
 	/**
 	 * Render the result for user display.
-	 * <p>
-	 * The default implementation simply displays the result's position and
-	 * size.
-	 * </p>
 	 *
 	 * @param renderer The renderer to use.
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if he render thread is interrupted.
 	 */
 	public void render(FileScannerResultRenderer renderer) throws IOException, InterruptedException {
+		renderDefault(renderer);
+	}
+
+	/**
+	 * Render the result for user display using the default rendering.
+	 * <p>
+	 * The default entering simply displays the result attributes (position,
+	 * size, ...).
+	 * </p>
+	 *
+	 * @param renderer The renderer to use.
+	 * @throws IOException if an I/O error occurs.
+	 * @throws InterruptedException if he render thread is interrupted.
+	 */
+	public void renderDefault(FileScannerResultRenderer renderer) throws IOException, InterruptedException {
 		renderer.setNormalMode().renderText("start");
 		renderer.setOperatorMode().renderText(" = ");
-		renderer.setValueMode().renderText(Hexadecimal.formatL(new StringBuilder(), start()).toString());
+		renderer.setValueMode().renderText(Hexadecimal.formatL(new StringBuilder("0x"), start()).toString());
 		renderer.renderBreak();
 		renderer.setNormalMode().renderText("end");
 		renderer.setOperatorMode().renderText(" = ");
-		renderer.setValueMode().renderText(Hexadecimal.formatL(new StringBuilder(), end()).toString());
+		renderer.setValueMode().renderText(Hexadecimal.formatL(new StringBuilder("0x"), end()).toString());
 		renderer.renderBreak();
 		renderer.setNormalMode().renderText("size");
 		renderer.setOperatorMode().renderText(" = ");
 		renderer.setValueMode().renderText(Units.formatByteValue(size()));
 		renderer.close();
+	}
+
+	/**
+	 * Read and cache data from the result's input.
+	 *
+	 * @param position The position to read from.
+	 * @param size The number of bytes to read.
+	 * @return A byte buffer containing the read bytes. If the input end was
+	 *         reached during the read operation the buffer may contain less
+	 *         bytes than requested.
+	 * @throws IOException if an I/O error occurs.
+	 * @see FileScannerInput#cachedRead(long, int, ByteOrder)
+	 */
+	public ByteBuffer cachedRead(long position, int size) throws IOException {
+		return this.input.cachedRead(position, size, this.order);
 	}
 
 	/*

@@ -16,39 +16,31 @@
  */
 package de.carne.filescanner.core.format.spec;
 
-import java.nio.ByteBuffer;
+import java.util.function.Supplier;
 
 /**
- * Defines a {@linkplain NumberAttributeType#U16} attribute.
+ * A {@linkplain Number} based {@linkplain ValueExpression}.
+ *
+ * @param <T> The expressed number type.
  */
-public class U16Attribute extends NumberAttribute<Short> {
+public class NumberExpression<T extends Number> extends ValueExpression<T> {
 
 	/**
-	 * Construct {@code U16Attribute}.
+	 * Construct {@code NumberExpression} with static value.
 	 *
-	 * @param name The attribute's name.
+	 * @param staticValue This expressions static value.
 	 */
-	public U16Attribute(String name) {
-		super(NumberAttributeType.U16, name, U16Format.HEXADECIMAL);
+	public NumberExpression(T staticValue) {
+		super(staticValue);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.DataAttribute#getValueType()
+	/**
+	 * Construct {@code NumberExpression} with dynamic value.
+	 *
+	 * @param valueLambda The Lambda expression providing the value.
 	 */
-	@Override
-	public Class<Short> getValueType() {
-		return Short.class;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.DataAttribute#getValue(java.nio.
-	 * ByteBuffer)
-	 */
-	@Override
-	public Short getValue(ByteBuffer buffer) {
-		return (isSA(buffer, matchSize()) ? Short.valueOf(buffer.getShort()) : null);
+	public NumberExpression(Supplier<T> valueLambda) {
+		super(valueLambda);
 	}
 
 }

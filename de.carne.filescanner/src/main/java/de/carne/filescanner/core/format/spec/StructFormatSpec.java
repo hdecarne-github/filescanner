@@ -22,7 +22,6 @@ import java.util.ArrayList;
 
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
-import de.carne.filescanner.core.format.Decodable;
 import de.carne.filescanner.core.format.ResultContext;
 import de.carne.filescanner.spi.FileScannerResultRenderer;
 
@@ -98,13 +97,12 @@ public class StructFormatSpec extends FormatSpec {
 		long decoded = 0l;
 
 		for (FormatSpec spec : this.specs) {
-			Decodable specDecodable = spec.getDecodable();
 			long specPosition = position + decoded;
 
-			if (specDecodable != null) {
-				FileScannerResultBuilder specResult = result.addResult(spec.resultType(), specPosition, specDecodable);
+			if (spec.isResult()) {
+				FileScannerResultBuilder specResult = result.addResult(spec.resultType(), specPosition, spec);
 
-				decoded += ResultContext.setupAndDecode(specDecodable, specResult);
+				decoded += ResultContext.setupAndDecode(spec, specResult);
 			} else {
 				decoded += spec.specDecode(result, specPosition);
 			}
@@ -129,36 +127,16 @@ public class StructFormatSpec extends FormatSpec {
 		long rendered = 0l;
 
 		for (FormatSpec spec : this.specs) {
-			if (!spec.isDecodable()) {
+			if (!spec.isResult()) {
 				long renderPosition = position + rendered;
 
 				rendered += spec.specRender(result, renderPosition, renderer);
 			}
 		}
+		if (rendered == 0l) {
+			result.renderDefault(renderer);
+		}
 		return rendered;
-	}
-
-	/**
-	 * Set this spec's {@code Decodable} to the default.
-	 *
-	 * @return The updated struct spec.
-	 */
-	public StructFormatSpec setDecodable() {
-		setDecodable(new Decodable() {
-
-			@Override
-			public void render(FileScannerResult result, FileScannerResultRenderer renderer)
-					throws IOException, InterruptedException {
-				specRender(result, result.start(), renderer);
-			}
-
-			@Override
-			public long decode(FileScannerResultBuilder result) throws IOException {
-				return specDecode(result, result.start());
-			}
-
-		});
-		return this;
 	}
 
 }

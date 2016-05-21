@@ -16,39 +16,35 @@
  */
 package de.carne.filescanner.core.format.spec;
 
-import java.nio.ByteBuffer;
+import de.carne.filescanner.util.Hexadecimal;
 
 /**
- * Defines a {@linkplain NumberAttributeType#U16} attribute.
+ * Number formats for a {@linkplain NumberAttributeType#U32} attribute.
  */
-public class U16Attribute extends NumberAttribute<Short> {
+public abstract class U32Format extends NumberFormat<Integer> {
 
 	/**
-	 * Construct {@code U16Attribute}.
-	 *
-	 * @param name The attribute's name.
+	 * Decimal format.
 	 */
-	public U16Attribute(String name) {
-		super(NumberAttributeType.U16, name, U16Format.HEXADECIMAL);
-	}
+	public static final U32Format DECIMAL = new U32Format() {
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.DataAttribute#getValueType()
-	 */
-	@Override
-	public Class<Short> getValueType() {
-		return Short.class;
-	}
+		@Override
+		public String apply(Integer t) {
+			return java.text.NumberFormat.getNumberInstance().format(t);
+		}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.DataAttribute#getValue(java.nio.
-	 * ByteBuffer)
+	};
+
+	/**
+	 * Hexadecimal format.
 	 */
-	@Override
-	public Short getValue(ByteBuffer buffer) {
-		return (isSA(buffer, matchSize()) ? Short.valueOf(buffer.getShort()) : null);
-	}
+	public static final U32Format HEXADECIMAL = new U32Format() {
+
+		@Override
+		public String apply(Integer t) {
+			return Hexadecimal.formatL(new StringBuilder("0x"), t.intValue()).toString();
+		}
+
+	};
 
 }

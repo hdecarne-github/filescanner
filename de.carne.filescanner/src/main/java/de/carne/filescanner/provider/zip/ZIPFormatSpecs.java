@@ -28,9 +28,16 @@ import de.carne.filescanner.core.format.spec.U32Attribute;
  */
 class ZIPFormatSpecs {
 
+	public static final String NAME_ZIP = "ZIP archive";
+
+	public static final String NAME_ZIP_LFH = "Local file header [{0}]";
+
 	public static final U16Attribute LFH_FILE_NAME_LENGTH = new U16Attribute("file name length");
 
 	public static final U16Attribute LFH_EXTRA_FIELD_LENGTH = new U16Attribute("extra field length");
+
+	public static final AStringAttribute LFH_FILE_NAME = new AStringAttribute("file name", StandardCharsets.UTF_8,
+			LFH_FILE_NAME_LENGTH);
 
 	public static final StructFormatSpec ZIP_LFH;
 
@@ -48,8 +55,8 @@ class ZIPFormatSpecs {
 		lfh.append(new U32Attribute("uncompressed size"));
 		lfh.append(LFH_FILE_NAME_LENGTH.bind(true));
 		lfh.append(LFH_EXTRA_FIELD_LENGTH.bind(true));
-		lfh.append(new AStringAttribute("file name", StandardCharsets.UTF_8, LFH_FILE_NAME_LENGTH));
-		lfh.setDecodable();
+		lfh.append(LFH_FILE_NAME.bind());
+		lfh.setResult(NAME_ZIP_LFH, LFH_FILE_NAME);
 		ZIP_LFH = lfh;
 	}
 
@@ -59,7 +66,7 @@ class ZIPFormatSpecs {
 		StructFormatSpec zip = new StructFormatSpec();
 
 		zip.append(ZIP_LFH);
-		zip.setDecodable();
+		zip.setResult(NAME_ZIP);
 		ZIP = zip;
 	}
 

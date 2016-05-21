@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.ByteOrder;
 
 import de.carne.filescanner.core.format.Renderable;
+import de.carne.filescanner.core.format.ResultContext;
 import de.carne.filescanner.spi.FileScannerInput;
 import de.carne.filescanner.spi.FileScannerResultRenderer;
 import de.carne.filescanner.spi.Format;
@@ -219,7 +220,7 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 		@Override
 		public void render(FileScannerResultRenderer renderer) throws IOException, InterruptedException {
 			if (this.renderable != null) {
-				this.renderable.render(this, renderer);
+				ResultContext.setupAndRender(this.renderable, this, renderer);
 			} else {
 				super.render(renderer);
 			}

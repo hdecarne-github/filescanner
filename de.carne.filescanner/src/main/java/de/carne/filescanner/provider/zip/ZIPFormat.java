@@ -28,13 +28,11 @@ import de.carne.filescanner.spi.Format;
  */
 public class ZIPFormat extends Format {
 
-	private static final String NAME = "ZIP archive";
-
 	/**
 	 * Construct {@code ZIPFormat}.
 	 */
 	public ZIPFormat() {
-		super(NAME, ByteOrder.LITTLE_ENDIAN);
+		super(ZIPFormatSpecs.NAME_ZIP, ByteOrder.LITTLE_ENDIAN);
 		registerHeaderSpec(ZIPFormatSpecs.ZIP_LFH);
 	}
 
@@ -44,7 +42,7 @@ public class ZIPFormat extends Format {
 	 */
 	@Override
 	public Decodable decodable() {
-		return ZIPFormatSpecs.ZIP.getDecodable();
+		return ZIPFormatSpecs.ZIP;
 	}
 
 }

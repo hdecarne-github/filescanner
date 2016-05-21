@@ -135,7 +135,7 @@ public abstract class ResultContext {
 	/**
 	 * Activate a context and render a result.
 	 *
-	 * @param decodable The {@linkplain Decodable} to use for decoding.
+	 * @param renderable The {@linkplain Renderable} to use for rendering.
 	 * @param result The result to render and which's context should be
 	 *        activate.
 	 * @param renderer The renderer to use.
@@ -143,16 +143,17 @@ public abstract class ResultContext {
 	 * @throws InterruptedException if the render thread was interrupted.
 	 * @see Decodable#render(FileScannerResult, FileScannerResultRenderer)
 	 */
-	public static void setupAndRender(Decodable decodable, FileScannerResult result, FileScannerResultRenderer renderer)
-			throws IOException, InterruptedException {
-		assert decodable != null;
+	public static void setupAndRender(Renderable renderable, FileScannerResult result,
+			FileScannerResultRenderer renderer) throws IOException, InterruptedException {
+		assert renderable != null;
 		assert result != null;
+		assert renderer != null;
 
 		ResultContext parentContext = RESULT_CONTEXT.get();
 
 		try {
 			RESULT_CONTEXT.set(result.context());
-			decodable.render(result, renderer);
+			renderable.render(result, renderer);
 		} finally {
 			if (parentContext != null) {
 				RESULT_CONTEXT.set(parentContext);

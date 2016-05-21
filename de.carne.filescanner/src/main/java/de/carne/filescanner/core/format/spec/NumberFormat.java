@@ -16,39 +16,15 @@
  */
 package de.carne.filescanner.core.format.spec;
 
-import java.nio.ByteBuffer;
+import java.util.function.Function;
 
 /**
- * Defines a {@linkplain NumberAttributeType#U16} attribute.
+ * Base class for {@linkplain NumberAttribute} formats.
+ *
+ * @param <T> The attribute's type.
  */
-public class U16Attribute extends NumberAttribute<Short> {
+public abstract class NumberFormat<T extends Number> implements Function<T, String> {
 
-	/**
-	 * Construct {@code U16Attribute}.
-	 *
-	 * @param name The attribute's name.
-	 */
-	public U16Attribute(String name) {
-		super(NumberAttributeType.U16, name, U16Format.HEXADECIMAL);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.DataAttribute#getValueType()
-	 */
-	@Override
-	public Class<Short> getValueType() {
-		return Short.class;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.DataAttribute#getValue(java.nio.
-	 * ByteBuffer)
-	 */
-	@Override
-	public Short getValue(ByteBuffer buffer) {
-		return (isSA(buffer, matchSize()) ? Short.valueOf(buffer.getShort()) : null);
-	}
+	// No own abstract functions needed.
 
 }

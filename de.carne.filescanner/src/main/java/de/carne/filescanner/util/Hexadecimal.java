@@ -54,6 +54,114 @@ public final class Hexadecimal {
 	}
 
 	/**
+	 * Format a {@code short} value using lower case characters.
+	 *
+	 * @param buffer The buffer to format into.
+	 * @param s The value to format.
+	 * @return The updated buffer.
+	 */
+	public static StringBuilder formatL(StringBuilder buffer, short s) {
+		buffer.append(LOWER_NIBBLE_MAP[(s >> 12) & 0xf]);
+		buffer.append(LOWER_NIBBLE_MAP[(s >> 8) & 0xf]);
+		buffer.append(LOWER_NIBBLE_MAP[(s >> 4) & 0xf]);
+		buffer.append(LOWER_NIBBLE_MAP[s & 0xf]);
+		return buffer;
+	}
+
+	/**
+	 * Format a {@code short} value using lower case characters.
+	 *
+	 * @param s The value to format.
+	 * @return The formatted value.
+	 */
+	public static String formatL(short s) {
+		return formatL(new StringBuilder(), s).toString();
+	}
+
+	/**
+	 * Format a {@code short} value using upper case characters.
+	 *
+	 * @param buffer The buffer to format into.
+	 * @param s The value to format.
+	 * @return The updated buffer.
+	 */
+	public static StringBuilder formatU(StringBuilder buffer, short s) {
+		buffer.append(UPPER_NIBBLE_MAP[(s >> 12) & 0xf]);
+		buffer.append(UPPER_NIBBLE_MAP[(s >> 8) & 0xf]);
+		buffer.append(UPPER_NIBBLE_MAP[(s >> 4) & 0xf]);
+		buffer.append(UPPER_NIBBLE_MAP[s & 0xf]);
+		return buffer;
+	}
+
+	/**
+	 * Format a {@code short} value using upper case characters.
+	 *
+	 * @param s The value to format.
+	 * @return The formatted value.
+	 */
+	public static String formatU(short s) {
+		return formatU(new StringBuilder(), s).toString();
+	}
+
+	/**
+	 * Format a {@code int} value using lower case characters.
+	 *
+	 * @param buffer The buffer to format into.
+	 * @param i The value to format.
+	 * @return The updated buffer.
+	 */
+	public static StringBuilder formatL(StringBuilder buffer, int i) {
+		buffer.append(LOWER_NIBBLE_MAP[(i >> 28) & 0xf]);
+		buffer.append(LOWER_NIBBLE_MAP[(i >> 24) & 0xf]);
+		buffer.append(LOWER_NIBBLE_MAP[(i >> 20) & 0xf]);
+		buffer.append(LOWER_NIBBLE_MAP[(i >> 16) & 0xf]);
+		buffer.append(LOWER_NIBBLE_MAP[(i >> 12) & 0xf]);
+		buffer.append(LOWER_NIBBLE_MAP[(i >> 8) & 0xf]);
+		buffer.append(LOWER_NIBBLE_MAP[(i >> 4) & 0xf]);
+		buffer.append(LOWER_NIBBLE_MAP[i & 0xf]);
+		return buffer;
+	}
+
+	/**
+	 * Format a {@code int} value using lower case characters.
+	 *
+	 * @param i The value to format.
+	 * @return The formatted value.
+	 */
+	public static String formatL(int i) {
+		return formatL(new StringBuilder(), i).toString();
+	}
+
+	/**
+	 * Format a {@code int} value using upper case characters.
+	 *
+	 * @param buffer The buffer to format into.
+	 * @param i The value to format.
+	 * @return The updated buffer.
+	 */
+	public static StringBuilder formatU(StringBuilder buffer, int i) {
+		buffer.append(UPPER_NIBBLE_MAP[(i >> 28) & 0xf]);
+		buffer.append(UPPER_NIBBLE_MAP[(i >> 24) & 0xf]);
+		buffer.append(UPPER_NIBBLE_MAP[(i >> 20) & 0xf]);
+		buffer.append(UPPER_NIBBLE_MAP[(i >> 16) & 0xf]);
+		buffer.append(UPPER_NIBBLE_MAP[(i >> 12) & 0xf]);
+		buffer.append(UPPER_NIBBLE_MAP[(i >> 8) & 0xf]);
+		buffer.append(UPPER_NIBBLE_MAP[(i >> 4) & 0xf]);
+		buffer.append(UPPER_NIBBLE_MAP[i & 0xf]);
+		return buffer;
+	}
+
+	/**
+	 * Format a {@code int} value using upper case characters.
+	 *
+	 * @param i The value to format.
+	 * @return The formatted value.
+	 */
+	public static String formatU(int i) {
+		return formatU(new StringBuilder(), i).toString();
+	}
+
+	/**
 	 * Format a {@code long} value using lower case characters.
 	 *
 	 * @param buffer The buffer to format into.

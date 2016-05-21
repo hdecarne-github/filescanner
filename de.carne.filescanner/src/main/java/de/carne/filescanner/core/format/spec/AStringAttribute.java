@@ -22,17 +22,20 @@ import java.util.function.Supplier;
 
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
-import de.carne.filescanner.core.format.ValueExpression;
 import de.carne.filescanner.spi.FileScannerResultRenderer;
 
 /**
- *
+ * Defines an array-like string attribute.
+ * <p>
+ * The actual size of the string has be defined statically or via a Lambda
+ * expression.
+ * </p>
  */
 public class AStringAttribute extends StringAttribute {
 
-	private final ValueExpression<Short> sizeExpression;
+	private final NumberExpression<?> sizeExpression;
 
-	private AStringAttribute(String name, Charset charset, ValueExpression<Short> sizeExpression) {
+	private AStringAttribute(String name, Charset charset, NumberExpression<?> sizeExpression) {
 		super(name, charset);
 
 		assert sizeExpression != null;
@@ -40,12 +43,26 @@ public class AStringAttribute extends StringAttribute {
 		this.sizeExpression = sizeExpression;
 	}
 
-	public AStringAttribute(String name, Charset charset, Short staticSize) {
-		this(name, charset, new ValueExpression<>(staticSize, Short.valueOf((short) 0)));
+	/**
+	 * Construct {@code AStringAttribute}.
+	 *
+	 * @param name The attribute's name.
+	 * @param charset The charset to use for string decoding.
+	 * @param staticSize The static string data size.
+	 */
+	public AStringAttribute(String name, Charset charset, Number staticSize) {
+		this(name, charset, new NumberExpression<>(staticSize));
 	}
 
-	public AStringAttribute(String name, Charset charset, Supplier<Short> dynamicSize) {
-		this(name, charset, new ValueExpression<>(dynamicSize, Short.valueOf((short) 0)));
+	/**
+	 * Construct {@code AStringAttribute}.
+	 *
+	 * @param name The attribute's name.
+	 * @param charset The charset to use for string decoding.
+	 * @param sizeLambda The expression providing the string data size.
+	 */
+	public AStringAttribute(String name, Charset charset, Supplier<? extends Number> sizeLambda) {
+		this(name, charset, new NumberExpression<>(sizeLambda));
 	}
 
 	/*
@@ -54,7 +71,17 @@ public class AStringAttribute extends StringAttribute {
 	 */
 	@Override
 	public int matchSize() {
-		return this.sizeExpression.beforeEval();
+		Number sizeValue = this.sizeExpression.beforeDecode();
+		int matchSize = 0;
+
+		if (sizeValue != null) {
+			long sizeValueLong = sizeValue.longValue();
+
+			if (sizeValueLong < MAX_MATCH_SIZE) {
+				matchSize = sizeValue.intValue();
+			}
+		}
+		return matchSize;
 	}
 
 	/*
@@ -64,7 +91,12 @@ public class AStringAttribute extends StringAttribute {
 	 */
 	@Override
 	public long specDecode(FileScannerResultBuilder result, long position) throws IOException {
-		return this.sizeExpression.afterEval();
+		long decoded = this.sizeExpression.afterDecode().longValue();
+
+		if (isBound()) {
+			bindValue(decodeString(result, position, decoded).toString());
+		}
+		return decoded;
 	}
 
 	/*
@@ -77,8 +109,13 @@ public class AStringAttribute extends StringAttribute {
 	@Override
 	public long specRender(FileScannerResult result, long position, FileScannerResultRenderer renderer)
 			throws IOException, InterruptedException {
-		// TODO Auto-generated method stub
-		return 0;
+		long rendered = this.sizeExpression.afterDecode().longValue();
+
+		renderer.setNormalMode().renderText(name());
+		renderer.setOperatorMode().renderText(" = ");
+		renderString(result, position, rendered, renderer);
+		renderer.renderBreakOrClose(isResult());
+		return rendered;
 	}
 
 }

@@ -16,11 +16,7 @@
  */
 package de.carne.filescanner.core.format.spec;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
-
-import de.carne.filescanner.core.FileScannerResult;
-import de.carne.filescanner.spi.FileScannerResultRenderer;
 
 /**
  * Defines a {@linkplain NumberAttributeType#U16} attribute.
@@ -33,7 +29,7 @@ public class U32Attribute extends NumberAttribute<Integer> {
 	 * @param name The attribute's name.
 	 */
 	public U32Attribute(String name) {
-		super(NumberAttributeType.U32, name);
+		super(NumberAttributeType.U32, name, U32Format.HEXADECIMAL);
 	}
 
 	/*
@@ -53,20 +49,6 @@ public class U32Attribute extends NumberAttribute<Integer> {
 	@Override
 	public Integer getValue(ByteBuffer buffer) {
 		return (isSA(buffer, matchSize()) ? Integer.valueOf(buffer.getInt()) : null);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.spec.FormatSpec#specRender(de.carne.
-	 * filescanner.core.FileScannerResult, long,
-	 * de.carne.filescanner.spi.FileScannerResultRenderer)
-	 */
-	@Override
-	public long specRender(FileScannerResult result, long position, FileScannerResultRenderer renderer)
-			throws IOException, InterruptedException {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 }

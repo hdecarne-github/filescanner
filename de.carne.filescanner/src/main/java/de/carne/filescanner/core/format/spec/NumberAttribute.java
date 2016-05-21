@@ -19,7 +19,9 @@ package de.carne.filescanner.core.format.spec;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
+import de.carne.filescanner.spi.FileScannerResultRenderer;
 
 /**
  * This class defines Number based attributes of fixed size.
@@ -30,6 +32,8 @@ public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 
 	private final NumberAttributeType type;
 
+	private final NumberFormat<T> format;
+
 	private T finalValue = null;
 
 	/**
@@ -37,12 +41,15 @@ public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 	 *
 	 * @param type The attribute's type.
 	 * @param name The attribute's name.
+	 * @param format The attribute's primary format.
 	 */
-	protected NumberAttribute(NumberAttributeType type, String name) {
+	protected NumberAttribute(NumberAttributeType type, String name, NumberFormat<T> format) {
 		super(name);
 		assert type != null;
+		assert format != null;
 
 		this.type = type;
+		this.format = format;
 	}
 
 	/*
@@ -82,6 +89,27 @@ public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 
 			bindValue(getValue(buffer));
 		}
+		return typeSize;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.carne.filescanner.core.format.spec.FormatSpec#specRender(de.carne.
+	 * filescanner.core.FileScannerResult, long,
+	 * de.carne.filescanner.spi.FileScannerResultRenderer)
+	 */
+	@Override
+	public long specRender(FileScannerResult result, long position, FileScannerResultRenderer renderer)
+			throws IOException, InterruptedException {
+		int typeSize = this.type.size();
+		ByteBuffer buffer = ensureSA(result.cachedRead(position, typeSize), typeSize);
+		T value = getValue(buffer);
+
+		renderer.setNormalMode().renderText(name());
+		renderer.setOperatorMode().renderText(" = ");
+		renderer.setValueMode().renderText(this.format.apply(value));
+		renderer.renderBreakOrClose(isResult());
 		return typeSize;
 	}
 
