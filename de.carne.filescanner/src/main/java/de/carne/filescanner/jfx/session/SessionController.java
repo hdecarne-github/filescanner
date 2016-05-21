@@ -19,6 +19,7 @@ package de.carne.filescanner.jfx.session;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.prefs.Preferences;
@@ -56,6 +57,9 @@ import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -147,6 +151,7 @@ public class SessionController extends StageController {
 
 		if (file != null) {
 			openFile(file);
+			recordInitialDirectoryPreference(file);
 		}
 	}
 
@@ -191,6 +196,24 @@ public class SessionController extends StageController {
 	void onCancelScan(ActionEvent evt) {
 		closeCurrentFileScanner();
 		this.cancelScanButton.setDisable(true);
+	}
+
+	@FXML
+	void onDragOver(DragEvent evt) {
+		if (evt.getDragboard().getContentTypes().contains(DataFormat.FILES)) {
+			evt.acceptTransferModes(TransferMode.ANY);
+			evt.consume();
+		}
+	}
+
+	@FXML
+	void onDragDropped(DragEvent evt) {
+		List<File> files = evt.getDragboard().getFiles();
+
+		if (files != null && files.size() > 0) {
+			openFile(files.get(0));
+			evt.consume();
+		}
 	}
 
 	void closeSession() {
@@ -276,16 +299,21 @@ public class SessionController extends StageController {
 	 */
 	@Override
 	protected void setupStage(Stage controllerStage) throws IOException {
+		// Basic setup
 		super.setupStage(controllerStage);
 		controllerStage.setTitle(I18N.formatSTR_SESSION_TITLE());
 		controllerStage.getIcons().addAll(Images.IMAGE_FILESCANNER16, Images.IMAGE_FILESCANNER32,
 				Images.IMAGE_FILESCANNER48);
+
+		// Control setup (menu, views, ...)
 		setupFileViewType(getFileViewTypePreference());
 		this.toggleLogMenuItem.selectedProperty().bindBidirectional(this.logViewTriggerProperty);
 		this.resultView.getEngine().setUserStyleSheetLocation(RESULT_VIEW_STYLE_URL.toExternalForm());
 		this.resultView.getEngine().load(EMPTY_RESULT_VIEW_DOC.toExternalForm());
 		this.cancelScanButton.setDisable(true);
 		updateScanStatusMessage(I18N.STR_SCAN_STATUS_NONE, null);
+
+		// Periodic status update
 		this.systemStatusFuture = getExecutorService().scheduleAtFixedRate(new Runnable() {
 
 			@Override
@@ -294,6 +322,8 @@ public class SessionController extends StageController {
 			}
 
 		}, 1, 1, TimeUnit.SECONDS);
+
+		// Cleanup on close
 		controllerStage.showingProperty().addListener(new ChangeListener<Boolean>() {
 
 			@Override
@@ -304,6 +334,8 @@ public class SessionController extends StageController {
 			}
 
 		});
+
+		// Update views on selection change
 		this.resultsView.getSelectionModel().selectedItemProperty()
 				.addListener(new ChangeListener<TreeItem<FileScannerResult>>() {
 
@@ -405,8 +437,6 @@ public class SessionController extends StageController {
 			}));
 
 			FileScannerInput.open(this.fileScanner, file).startScan();
-
-			recordInitialDirectoryPreference(file);
 		} catch (IOException e) {
 			showMessageBox(I18N.formatSTR_OPEN_FILE_ERROR(file), e, MessageBoxStyle.ICON_ERROR,
 					MessageBoxStyle.BUTTON_OK);
