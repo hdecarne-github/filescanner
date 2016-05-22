@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2016 Holger de Carne and contributors, All Rights Reserved.
+ * Copyright (c) 2007-2016 Holger de Carne and contributors, All Rights Reserved.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 /**
- * {@link Handler} implementation capable of buffering log messages and forwarding them to a list of registered
- * {@link Handler} instances.
+ * {@link Handler} implementation capable of buffering log messages and
+ * forwarding them to a list of registered {@link Handler} instances.
  */
 public class LogBufferHandler extends Handler {
 
@@ -63,7 +63,8 @@ public class LogBufferHandler extends Handler {
 	/**
 	 * Add a handler to forward any published log records to.
 	 * <p>
-	 * Already buffered log records are automatically forwarded to the submitted handler.
+	 * Already buffered log records are automatically forwarded to the submitted
+	 * handler.
 	 * </p>
 	 *
 	 * @param handler The handler to add.

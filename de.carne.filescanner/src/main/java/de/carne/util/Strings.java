@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2016 Holger de Carne and contributors, All Rights Reserved.
+ * Copyright (c) 2007-2016 Holger de Carne and contributors, All Rights Reserved.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ public final class Strings {
 
 	/**
 	 * Check whether a string is empty (null or "").
-	 * 
+	 *
 	 * @param s The string to check.
 	 * @return true, if the string is empty (null or "").
 	 */
@@ -33,7 +33,7 @@ public final class Strings {
 
 	/**
 	 * Check whether a string is not empty (not null and not "").
-	 * 
+	 *
 	 * @param s The string to check.
 	 * @return true, if the string is not empty (not null and not "").
 	 */
@@ -43,7 +43,7 @@ public final class Strings {
 
 	/**
 	 * Perform a safe trim on a string that may be null.
-	 * 
+	 *
 	 * @param s The string to trim or null.
 	 * @return The trimmed string or "" if the string is null.
 	 */

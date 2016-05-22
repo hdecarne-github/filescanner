@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2016 Holger de Carne and contributors, All Rights Reserved.
+ * Copyright (c) 2007-2016 Holger de Carne and contributors, All Rights Reserved.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,8 @@ class PropertiesPreferences extends AbstractPreferences {
 
 	/*
 	 * (non-Javadoc)
-	 * @see java.util.prefs.AbstractPreferences#putSpi(java.lang.String, java.lang.String)
+	 * @see java.util.prefs.AbstractPreferences#putSpi(java.lang.String,
+	 * java.lang.String)
 	 */
 	@Override
 	protected void putSpi(String key, String value) {

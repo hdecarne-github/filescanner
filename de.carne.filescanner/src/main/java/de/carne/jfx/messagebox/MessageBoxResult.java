@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2016 Holger de Carne and contributors, All Rights Reserved.
+ * Copyright (c) 2007-2016 Holger de Carne and contributors, All Rights Reserved.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,8 @@ package de.carne.jfx.messagebox;
 public enum MessageBoxResult {
 
 	/**
-	 * No button was selected (message box was closed via system menu or not show at all).
+	 * No button was selected (message box was closed via system menu or not
+	 * show at all).
 	 */
 	NONE,
 
