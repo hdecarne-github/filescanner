@@ -30,7 +30,9 @@ class ZIPFormatSpecs {
 
 	public static final String NAME_ZIP = "ZIP archive";
 
-	public static final String NAME_ZIP_LFH = "Local file header [{0}]";
+	public static final String NAME_ZIP_ENTRY = "ZIP entry [{0}]";
+
+	public static final String NAME_ZIP_LFH = "Local file header";
 
 	public static final U16Attribute LFH_FILE_NAME_LENGTH = new U16Attribute("file name length");
 
@@ -56,8 +58,19 @@ class ZIPFormatSpecs {
 		lfh.append(LFH_FILE_NAME_LENGTH.bind(true));
 		lfh.append(LFH_EXTRA_FIELD_LENGTH.bind(true));
 		lfh.append(LFH_FILE_NAME.bind());
-		lfh.setResult(NAME_ZIP_LFH, LFH_FILE_NAME);
+		lfh.setResult(NAME_ZIP_LFH);
 		ZIP_LFH = lfh;
+	}
+
+	public static final StructFormatSpec ZIP_ENTRY;
+
+	static {
+		StructFormatSpec zipEntry = new StructFormatSpec();
+
+		zipEntry.append(ZIP_LFH);
+		zipEntry.declareAttribute(LFH_FILE_NAME);
+		zipEntry.setResult(NAME_ZIP_ENTRY, LFH_FILE_NAME);
+		ZIP_ENTRY = zipEntry;
 	}
 
 	public static final StructFormatSpec ZIP;
@@ -65,7 +78,7 @@ class ZIPFormatSpecs {
 	static {
 		StructFormatSpec zip = new StructFormatSpec();
 
-		zip.append(ZIP_LFH);
+		zip.append(ZIP_ENTRY);
 		zip.setResult(NAME_ZIP);
 		ZIP = zip;
 	}

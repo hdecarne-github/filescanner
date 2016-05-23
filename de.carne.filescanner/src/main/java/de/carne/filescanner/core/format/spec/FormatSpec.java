@@ -20,12 +20,14 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.function.Supplier;
 
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.core.FileScannerResultType;
 import de.carne.filescanner.core.format.Decodable;
+import de.carne.filescanner.core.format.ResultContext;
 import de.carne.filescanner.spi.FileScannerInput;
 import de.carne.filescanner.spi.FileScannerResultRenderer;
 
@@ -33,6 +35,8 @@ import de.carne.filescanner.spi.FileScannerResultRenderer;
  * Base class for spec based format definitions.
  */
 public abstract class FormatSpec implements Decodable {
+
+	private final ArrayList<Attribute<?>> declaredAttributes = new ArrayList<>();
 
 	private StringExpression resultTitleExpression = null;
 
@@ -115,6 +119,12 @@ public abstract class FormatSpec implements Decodable {
 	 */
 	@Override
 	public long decode(FileScannerResultBuilder result) throws IOException {
+		ResultContext context = ResultContext.get();
+
+		for (Attribute<?> declaredAttribute : this.declaredAttributes) {
+			context.setAttribute(declaredAttribute, null);
+		}
+
 		long decoded = specDecode(result, result.start());
 
 		result.updateTitle(this.resultTitleExpression.afterDecode());
@@ -145,6 +155,17 @@ public abstract class FormatSpec implements Decodable {
 	public void render(FileScannerResult result, FileScannerResultRenderer renderer)
 			throws IOException, InterruptedException {
 		specRender(result, result.start(), renderer);
+	}
+
+	/**
+	 * Declare an attribute to make it accessible in this spec's result scope.
+	 * 
+	 * @param attribute The attribute to declare.
+	 */
+	public final void declareAttribute(Attribute<?> attribute) {
+		assert attribute != null;
+
+		this.declaredAttributes.add(attribute);
 	}
 
 	/**
