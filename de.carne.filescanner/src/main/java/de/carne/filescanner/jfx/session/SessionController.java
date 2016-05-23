@@ -80,6 +80,8 @@ public class SessionController extends StageController {
 
 	private static final int RESULT_VIEW_FAST_TIMEOUT = 250;
 
+	// WebEngine does not accept custom URL handlers; hence we provide resource
+	// access via the direct URL
 	private static final URL RESULT_VIEW_STYLE_URL = ApplicationLoader
 			.getDirectURL(SessionController.class.getResource("ResultView.css"));
 
