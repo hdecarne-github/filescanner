@@ -24,6 +24,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.prefs.Preferences;
 
+import de.carne.ApplicationLoader;
 import de.carne.filescanner.core.FileScanner;
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerStats;
@@ -79,7 +80,8 @@ public class SessionController extends StageController {
 
 	private static final int RESULT_VIEW_FAST_TIMEOUT = 250;
 
-	private static final URL RESULT_VIEW_STYLE_URL = SessionController.class.getResource("ResultView.css");
+	private static final URL RESULT_VIEW_STYLE_URL = ApplicationLoader
+			.getDirectURL(SessionController.class.getResource("ResultView.css"));
 
 	private static final URL EMPTY_RESULT_VIEW_DOC = SessionController.class.getResource("EmptyResultView.html");
 

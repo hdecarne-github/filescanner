@@ -141,6 +141,23 @@ public final class ApplicationLoader extends URLClassLoader {
 		return codeJar;
 	}
 
+	/**
+	 * Get the direct {@linkplain URL} and remove a possibly existing resource
+	 * re-direct.
+	 * <p>
+	 * By using this function the application can provide resource access via
+	 * one of the JDK's standard URL handlers for code that cannot handle a
+	 * custom URL handler.
+	 * </p>
+	 *
+	 * @param u The {@linkplain URL} to get the direct {@linkplain URL}.
+	 * @return The native resource {@linkplain URL}.
+	 */
+	public static URL getDirectURL(URL u) {
+		return (u != null && PROTOCOL_RESOURCE.equals(u.getProtocol())
+				? ApplicationLoader.class.getResource(u.getFile()) : u);
+	}
+
 	private static final URL[] RESOURCE_URLS;
 
 	static {
