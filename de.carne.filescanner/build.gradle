@@ -35,7 +35,7 @@ repositories {
 
 dependencies {
 	compile(
-		'de.carne:Compression:0.0.1'
+		'de.carne:Compression:0.1.0-SNAPSHOT'
 	)
 	testCompile(
 		'junit:junit:4.12'
