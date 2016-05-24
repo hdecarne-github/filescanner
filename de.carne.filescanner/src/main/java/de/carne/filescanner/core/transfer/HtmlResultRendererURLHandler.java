@@ -84,7 +84,8 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 
 	private static final String STREAM_PREFIX = "stream";
 
-	private static final HashMap<URL, StreamHandler> URL_MAP = new HashMap<>();
+	// Do not use URL as the key, as this will degrade performance
+	private static final HashMap<String, StreamHandler> URL_MAP = new HashMap<>();
 
 	private static final ExecutorService THREAD_POOL = Executors.newCachedThreadPool();
 
@@ -176,7 +177,7 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 
 		HtmlResultRendererURLHandler urlHandler = new HtmlResultRendererURLHandler(result, baseURL);
 
-		URL_MAP.put(baseURL, urlHandler);
+		URL_MAP.put(baseURL.toExternalForm(), urlHandler);
 
 		String fastResult = null;
 
@@ -195,10 +196,11 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 
 	URL openStream(StreamHandler handler) throws IOException {
 		URL streamURL = new URL(PROTOCOL_RENDERER, this.baseURL.getHost(), STREAM_PREFIX + this.streamIndex);
+		String streamURLString = streamURL.toExternalForm();
 
-		LOG.debug(null, "Creating stream URL: ''0}''", streamURL);
+		LOG.debug(null, "Creating stream URL: ''0}''", streamURLString);
 
-		URL_MAP.put(streamURL, handler);
+		URL_MAP.put(streamURLString, handler);
 		this.streamIndex++;
 		return streamURL;
 	}
@@ -214,15 +216,15 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 	public static void close(RenderResult result) {
 		assert result != null;
 
-		String host = result.getURLResult().getHost();
+		String baseURLString = result.getURLResult().toExternalForm();
 
-		Iterator<Map.Entry<URL, StreamHandler>> entryIterator = URL_MAP.entrySet().iterator();
+		Iterator<Map.Entry<String, StreamHandler>> entryIterator = URL_MAP.entrySet().iterator();
 
 		while (entryIterator.hasNext()) {
-			URL entryURL = entryIterator.next().getKey();
+			String entryURLString = entryIterator.next().getKey();
 
-			if (host.equals(entryURL.getHost())) {
-				LOG.debug(null, "Releasing renderer URL ''{0}''", entryURL);
+			if (entryURLString.startsWith(baseURLString)) {
+				LOG.debug(null, "Releasing renderer URL ''{0}''", entryURLString);
 
 				entryIterator.remove();
 			}
