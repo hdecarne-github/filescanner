@@ -3,8 +3,8 @@ Did you ever wonder what is inside a file. The FileScanner tool is capable to de
 
 This makes FileScanner a suitable tool for those who want to see the details or want to get a better understanding of a file format.
 
-If you want to see a specific format be supported by FileScanner, just send me a
-message with an example link via [info@filescanner.org](mailto:info@filescanner.org)
+If you want to see a specific format be supported by FileScanner, just drop me a
+message with a link to an example via [info@filescanner.org](mailto:info@filescanner.org)
 
 ### Current version (1.x)
 ![FileScanner 1.x](http://hdecarne.github.io/filescanner1.png)
