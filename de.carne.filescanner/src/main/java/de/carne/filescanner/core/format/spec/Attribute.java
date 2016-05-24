@@ -16,6 +16,9 @@
  */
 package de.carne.filescanner.core.format.spec;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Supplier;
 
 import de.carne.filescanner.core.format.ResultContext;
@@ -57,6 +60,8 @@ public abstract class Attribute<T> extends FormatSpec implements Supplier<T> {
 	private final String name;
 
 	private BindScope bindScope = BindScope.NONE;
+
+	private final ArrayList<AttributeRenderer<T>> extraRendererList = new ArrayList<>();
 
 	/**
 	 * Construct {@code Attribute}.
@@ -138,6 +143,30 @@ public abstract class Attribute<T> extends FormatSpec implements Supplier<T> {
 	 */
 	protected final void bindValue(T value) {
 		ResultContext.get().setAttribute(this, value);
+	}
+
+	/**
+	 * Add an extra {@linkplain AttributeRenderer} for this attribute.
+	 *
+	 * @param extraRenderer The renderer to add.
+	 * @return The updated data attribute spec.
+	 */
+	public final Attribute<T> addExtraRenderer(AttributeRenderer<T> extraRenderer) {
+		assert extraRenderer != null;
+
+		this.extraRendererList.add(extraRenderer);
+		return this;
+	}
+
+	/**
+	 * Get the registered extra {@linkplain AttributeRenderer} for this
+	 * attribute.
+	 * 
+	 * @return The registered extra {@linkplain AttributeRenderer} for this
+	 *         attribute.
+	 */
+	protected final List<AttributeRenderer<T>> getExtraRenderer() {
+		return Collections.unmodifiableList(this.extraRendererList);
 	}
 
 	/*

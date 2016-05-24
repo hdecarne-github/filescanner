@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 
 import de.carne.filescanner.core.format.spec.AStringAttribute;
 import de.carne.filescanner.core.format.spec.StructFormatSpec;
+import de.carne.filescanner.core.format.spec.SymbolRenderer;
 import de.carne.filescanner.core.format.spec.U16Attribute;
 import de.carne.filescanner.core.format.spec.U32Attribute;
 
@@ -33,6 +34,36 @@ class ZIPFormatSpecs {
 	public static final String NAME_ZIP_ENTRY = "ZIP entry [{0}]";
 
 	public static final String NAME_ZIP_LFH = "Local file header";
+
+	public static final U16Attribute LFH_COMPRESSION_METHOD = new U16Attribute("compression method");
+
+	public static final SymbolRenderer<Short> ZIP_COMPRESSION_METHOD_SYMBOLS = new SymbolRenderer<>();
+
+	static {
+		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 0, "Stored (no compression)");
+		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 1, "Shrunk");
+		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 2, "Reduced with compression factor 1");
+		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 3, "Reduced with compression factor 2");
+		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 4, "Reduced with compression factor 3");
+		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 5, "Reduced with compression factor 4");
+		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 6, "Imploded");
+		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 7, "Reserved");
+		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 8, "Deflated");
+		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 9, "Enhanced Deflating");
+		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 10, "IBM TERSE (old)");
+		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 11, "Reserved");
+		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 12, "BZIP2");
+		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 13, "Reserved");
+		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 14, "LZMA (EFS)");
+		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 15, "Reserved");
+		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 16, "Reserved");
+		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 17, "Reserved");
+		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 18, "IBM TERSE (new)");
+		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 19, "IBM LZ77");
+		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 97, "WavPack");
+		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 98, "PPMd");
+		LFH_COMPRESSION_METHOD.addExtraRenderer(ZIP_COMPRESSION_METHOD_SYMBOLS);
+	}
 
 	public static final U16Attribute LFH_FILE_NAME_LENGTH = new U16Attribute("file name length");
 
@@ -49,7 +80,7 @@ class ZIPFormatSpecs {
 		lfh.append(new U32Attribute("local file header signature").setFinalValue(0x04034b50));
 		lfh.append(new U16Attribute("version needed to extract"));
 		lfh.append(new U16Attribute("general purpose bit flag"));
-		lfh.append(new U16Attribute("compression method"));
+		lfh.append(LFH_COMPRESSION_METHOD.bind());
 		lfh.append(new U16Attribute("last mod file time"));
 		lfh.append(new U16Attribute("last mod file date"));
 		lfh.append(new U32Attribute("crc-32"));
@@ -68,7 +99,7 @@ class ZIPFormatSpecs {
 		StructFormatSpec zipEntry = new StructFormatSpec();
 
 		zipEntry.append(ZIP_LFH);
-		zipEntry.declareAttribute(LFH_FILE_NAME);
+		zipEntry.declareAttribute(LFH_COMPRESSION_METHOD).declareAttribute(LFH_FILE_NAME);
 		zipEntry.setResult(NAME_ZIP_ENTRY, LFH_FILE_NAME);
 		ZIP_ENTRY = zipEntry;
 	}

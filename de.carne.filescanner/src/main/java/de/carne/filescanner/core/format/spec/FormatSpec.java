@@ -159,13 +159,15 @@ public abstract class FormatSpec implements Decodable {
 
 	/**
 	 * Declare an attribute to make it accessible in this spec's result scope.
-	 * 
+	 *
 	 * @param attribute The attribute to declare.
+	 * @return The updated format spec.
 	 */
-	public final void declareAttribute(Attribute<?> attribute) {
+	public final FormatSpec declareAttribute(Attribute<?> attribute) {
 		assert attribute != null;
 
 		this.declaredAttributes.add(attribute);
+		return this;
 	}
 
 	/**

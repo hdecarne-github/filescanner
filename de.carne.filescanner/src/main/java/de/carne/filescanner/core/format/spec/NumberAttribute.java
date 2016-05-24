@@ -109,6 +109,9 @@ public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 		renderer.setNormalMode().renderText(name());
 		renderer.setOperatorMode().renderText(" = ");
 		renderer.setValueMode().renderText(this.format.apply(value));
+		for (AttributeRenderer<T> extraRenderer : getExtraRenderer()) {
+			extraRenderer.render(value, renderer);
+		}
 		renderer.renderBreakOrClose(isResult());
 		return typeSize;
 	}
@@ -126,7 +129,7 @@ public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 	 * Make attribute final (with a specific value).
 	 *
 	 * @param finalValue The final value.
-	 * @return The updated data attribute spec.
+	 * @return The updated number attribute spec.
 	 */
 	public final NumberAttribute<T> setFinalValue(T finalValue) {
 		this.finalValue = finalValue;
