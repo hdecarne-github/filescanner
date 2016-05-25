@@ -30,9 +30,9 @@ final class FileScannerStatsCollector implements FileScannerStats {
 
 	private long scanned = 0l;
 
-	private long startTime = 0l;
+	private long startNanos = 0l;
 
-	private long elapsed = 0l;
+	private long elapsedNanos = 0l;
 
 	public FileScannerStatsCollector() {
 		// Nothing to do here
@@ -43,9 +43,9 @@ final class FileScannerStatsCollector implements FileScannerStats {
 		this.finishedCount = stats.finishedCount;
 		this.totalInputSize = stats.totalInputSize;
 		this.scanned = stats.scanned;
-		this.elapsed = stats.elapsed;
-		if (stats.startTime > 0) {
-			this.elapsed += System.currentTimeMillis() - stats.startTime;
+		this.elapsedNanos = stats.elapsedNanos;
+		if (stats.startNanos > 0) {
+			this.elapsedNanos += System.nanoTime() - stats.startNanos;
 		}
 	}
 
@@ -53,7 +53,7 @@ final class FileScannerStatsCollector implements FileScannerStats {
 		this.scanCount++;
 		this.totalInputSize += result.size();
 		if (this.scanCount == 1) {
-			this.startTime = System.currentTimeMillis();
+			this.startNanos = System.nanoTime();
 		}
 		return new FileScannerStatsCollector(this);
 	}
@@ -81,7 +81,7 @@ final class FileScannerStatsCollector implements FileScannerStats {
 
 	@Override
 	public long elapsed() {
-		return this.elapsed;
+		return this.elapsedNanos / 1000000;
 	}
 
 	@Override

@@ -30,7 +30,7 @@ public final class LogConfig {
 
 	private static String currentConfig = null;
 
-	private static long currentConfigTime = 0;
+	private static long currentConfigNanos = 0;
 
 	/**
 	 * Default logging configuration.
@@ -97,7 +97,7 @@ public final class LogConfig {
 					LogManager.getLogManager().readConfiguration(configIS);
 					configApplied = true;
 					currentConfig = config;
-					currentConfigTime = System.currentTimeMillis();
+					currentConfigNanos = System.nanoTime();
 				} else {
 					System.err.println("Unable to open logging configuration: " + config);
 				}
@@ -116,7 +116,7 @@ public final class LogConfig {
 	 *         applied.
 	 */
 	public static long configTime() {
-		return currentConfigTime;
+		return currentConfigNanos;
 	}
 
 }

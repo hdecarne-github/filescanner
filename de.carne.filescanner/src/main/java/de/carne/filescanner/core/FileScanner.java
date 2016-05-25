@@ -64,7 +64,7 @@ public final class FileScanner implements Closeable {
 		THREAD_COUNT = threadCount;
 	}
 
-	private static final long PROGRESS_INTERVAL = 1000;
+	private static final long PROGRESS_INTERVAL = 1000000000l;
 
 	private final ExecutorService threadPool = Executors.newFixedThreadPool(THREAD_COUNT);
 
@@ -155,7 +155,7 @@ public final class FileScanner implements Closeable {
 
 		long scanPosition = 0l;
 		long inputSize = inputResult.size();
-		long lastProgressTime = System.currentTimeMillis();
+		long lastProgressNanos = System.nanoTime();
 		long lastProgressPosition = scanPosition;
 		FormatMatcher formatMatcher = new FormatMatcher();
 
@@ -168,14 +168,14 @@ public final class FileScanner implements Closeable {
 				}
 
 				// Report progress (from time to time)
-				long currentTime = System.currentTimeMillis();
+				long currentNanos = System.nanoTime();
 
-				if ((currentTime - lastProgressTime) > PROGRESS_INTERVAL) {
+				if ((currentNanos - lastProgressNanos) > PROGRESS_INTERVAL) {
 					long scannedDelta = scanPosition - lastProgressPosition;
 
 					currentStats = this.stats.recordScanned(scannedDelta, false);
 					this.status.onScanProgress(this, currentStats);
-					lastProgressTime = currentTime;
+					lastProgressNanos = currentNanos;
 					lastProgressPosition = scanPosition;
 				}
 

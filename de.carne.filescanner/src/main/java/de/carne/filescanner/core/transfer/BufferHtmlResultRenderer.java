@@ -24,13 +24,13 @@ import java.io.IOException;
  */
 class BufferHtmlResultRenderer extends HtmlResultRenderer {
 
-	private final long timeLimit;
+	private final long nanoLimit;
 
 	private final StringBuilder buffer = new StringBuilder();
 
 	BufferHtmlResultRenderer(HtmlResultRendererURLHandler urlHandler, int fastTimeout) {
 		super(urlHandler);
-		this.timeLimit = System.currentTimeMillis() + fastTimeout;
+		this.nanoLimit = System.nanoTime() + (fastTimeout * 1000000);
 	}
 
 	/*
@@ -41,7 +41,7 @@ class BufferHtmlResultRenderer extends HtmlResultRenderer {
 	 */
 	@Override
 	protected void write(String... artefacts) throws IOException, InterruptedException {
-		if (this.timeLimit < System.currentTimeMillis()) {
+		if ((this.nanoLimit - System.nanoTime()) < 0) {
 			throw new InterruptedException();
 		}
 		for (String artefact : artefacts) {
