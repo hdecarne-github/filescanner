@@ -269,12 +269,13 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 	}
 
 	static StreamHandler getStreamHandler(URL u) throws IOException {
-		LOG.debug(null, "Accessing renderer URL ''{0}''", u);
+		String urlString = u.toExternalForm();
+		LOG.debug(null, "Accessing renderer URL ''{0}''", urlString);
 
-		StreamHandler streamHandler = URL_MAP.get(u);
+		StreamHandler streamHandler = URL_MAP.get(urlString);
 
 		if (streamHandler == null) {
-			throw new FileNotFoundException(u.toExternalForm());
+			throw new FileNotFoundException(urlString);
 		}
 		return streamHandler;
 	}
