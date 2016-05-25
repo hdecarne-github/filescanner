@@ -17,18 +17,33 @@
 package de.carne.filescanner.core.format.spec;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.function.Function;
 
 import de.carne.filescanner.spi.FileScannerResultRenderer;
 
 /**
- * Map based attribute renderer (which maps values to symbols).
+ * Simple attribute renderer which adds a comment part to the output.
+ * <p>
+ * The necessary attribute value to string conversion has to be defined via a
+ * Lambda expression.
+ * </p>
  *
  * @param <T> The attribute' data type.
  */
-public class SymbolRenderer<T> extends AttributeRenderer<T> {
+public class CommentRenderer<T> extends AttributeRenderer<T> {
 
-	private final HashMap<T, String> symbolMap = new HashMap<>();
+	private final Function<T, String> function;
+
+	/**
+	 * Construct {@code CommentRenderer}.
+	 *
+	 * @param function The function to use for value to string conversion.
+	 */
+	public CommentRenderer(Function<T, String> function) {
+		assert function != null;
+
+		this.function = function;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -38,25 +53,11 @@ public class SymbolRenderer<T> extends AttributeRenderer<T> {
 	 */
 	@Override
 	public void render(T value, FileScannerResultRenderer renderer) throws IOException, InterruptedException {
-		String symbol = this.symbolMap.get(value);
+		String valueString = this.function.apply(value);
 
-		if (symbol != null) {
-			renderer.setCommentMode().renderText(" // ").renderText(symbol);
+		if (valueString != null) {
+			renderer.setCommentMode().renderText(" // ").renderText(valueString);
 		}
-	}
-
-	/**
-	 * Add a symbol.
-	 *
-	 * @param value The value to map.
-	 * @param symbol The symbol to map the value to.
-	 * @return The updated renderer.
-	 */
-	public SymbolRenderer<T> addSymbol(T value, String symbol) {
-		assert value != null;
-
-		this.symbolMap.put(value, symbol);
-		return this;
 	}
 
 }
