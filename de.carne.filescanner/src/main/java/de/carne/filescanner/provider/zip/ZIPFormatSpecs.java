@@ -20,11 +20,12 @@ import java.nio.charset.StandardCharsets;
 
 import de.carne.filescanner.core.format.spec.AStringAttribute;
 import de.carne.filescanner.core.format.spec.StructFormatSpec;
-import de.carne.filescanner.core.format.spec.SymbolRenderer;
 import de.carne.filescanner.core.format.spec.U16Attribute;
 import de.carne.filescanner.core.format.spec.U16Attributes;
 import de.carne.filescanner.core.format.spec.U16FlagRenderer;
+import de.carne.filescanner.core.format.spec.U16SymbolRenderer;
 import de.carne.filescanner.core.format.spec.U32Attribute;
+import de.carne.filescanner.core.format.spec.U32Attributes;
 
 /**
  * ZIP format structures.
@@ -36,6 +37,31 @@ class ZIPFormatSpecs {
 	public static final String NAME_ZIP_ENTRY = "ZIP entry [{0}]";
 
 	public static final String NAME_ZIP_LFH = "Local file header";
+
+	public static final ZIPVersionRenderer ZIP_VERSION_SYMBOLS = new ZIPVersionRenderer();
+
+	static {
+		ZIP_VERSION_SYMBOLS.addSymbol((short) (0 << 8), "MS-DOS and OS/2 (FAT / VFAT / FAT32 file systems)");
+		ZIP_VERSION_SYMBOLS.addSymbol((short) (1 << 8), "Amiga");
+		ZIP_VERSION_SYMBOLS.addSymbol((short) (2 << 8), "OpenVMS");
+		ZIP_VERSION_SYMBOLS.addSymbol((short) (3 << 8), "UNIX");
+		ZIP_VERSION_SYMBOLS.addSymbol((short) (4 << 8), "VM/CMS");
+		ZIP_VERSION_SYMBOLS.addSymbol((short) (5 << 8), "Atari ST");
+		ZIP_VERSION_SYMBOLS.addSymbol((short) (6 << 8), "OS/2 H.P.F.S.");
+		ZIP_VERSION_SYMBOLS.addSymbol((short) (7 << 8), "Macintosh");
+		ZIP_VERSION_SYMBOLS.addSymbol((short) (8 << 8), "Z-System");
+		ZIP_VERSION_SYMBOLS.addSymbol((short) (9 << 8), "CP/M");
+		ZIP_VERSION_SYMBOLS.addSymbol((short) (10 << 8), "Windows NTFS");
+		ZIP_VERSION_SYMBOLS.addSymbol((short) (11 << 8), "MVS (OS/390 - Z/OS)");
+		ZIP_VERSION_SYMBOLS.addSymbol((short) (12 << 8), "VSE");
+		ZIP_VERSION_SYMBOLS.addSymbol((short) (13 << 8), "Acorn Risc");
+		ZIP_VERSION_SYMBOLS.addSymbol((short) (14 << 8), "VFAT");
+		ZIP_VERSION_SYMBOLS.addSymbol((short) (15 << 8), "alternate MVS");
+		ZIP_VERSION_SYMBOLS.addSymbol((short) (16 << 8), "BeOS");
+		ZIP_VERSION_SYMBOLS.addSymbol((short) (17 << 8), "Tandem");
+		ZIP_VERSION_SYMBOLS.addSymbol((short) (18 << 8), "OS/400");
+		ZIP_VERSION_SYMBOLS.addSymbol((short) (19 << 8), "OS/X (Darwin)");
+	}
 
 	public static final U16FlagRenderer ZIP_GENERAL_PURPOSE_FLAG_SYMBOLS = new U16FlagRenderer();
 
@@ -51,7 +77,7 @@ class ZIPFormatSpecs {
 		ZIP_GENERAL_PURPOSE_FLAG_SYMBOLS.addFlagSymbol((short) 0x0001, "Encryption");
 	}
 
-	public static final SymbolRenderer<Short> ZIP_COMPRESSION_METHOD_SYMBOLS = new SymbolRenderer<>();
+	public static final U16SymbolRenderer ZIP_COMPRESSION_METHOD_SYMBOLS = new U16SymbolRenderer();
 
 	static {
 		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 0, "Stored (no compression)");
@@ -61,21 +87,17 @@ class ZIPFormatSpecs {
 		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 4, "Reduced with compression factor 3");
 		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 5, "Reduced with compression factor 4");
 		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 6, "Imploded");
-		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 7, "Reserved");
+		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 7, "Tokenizing compression algorithm");
 		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 8, "Deflated");
-		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 9, "Enhanced Deflating");
-		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 10, "IBM TERSE (old)");
-		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 11, "Reserved");
-		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 12, "BZIP2");
-		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 13, "Reserved");
+		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 9, "Enhanced Deflating using Deflate64(tm)");
+		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 10,
+				"PKWARE Data Compression Library Imploding (old IBM TERSE)");
+		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 12, "BZIP2 algorithm");
 		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 14, "LZMA (EFS)");
-		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 15, "Reserved");
-		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 16, "Reserved");
-		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 17, "Reserved");
 		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 18, "IBM TERSE (new)");
-		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 19, "IBM LZ77");
-		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 97, "WavPack");
-		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 98, "PPMd");
+		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 19, "IBM LZ77 z Architecture (PFS)");
+		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 97, "WavPack compressed data");
+		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 98, "PPMd version I, Rev 1");
 	}
 
 	public static final U16Attribute LFH_COMPRESSION_METHOD = new U16Attribute("compression method");
@@ -93,16 +115,16 @@ class ZIPFormatSpecs {
 		StructFormatSpec lfh = new StructFormatSpec();
 
 		lfh.append(new U32Attribute("local file header signature").setFinalValue(0x04034b50));
-		lfh.append(new U16Attribute("version needed to extract"));
+		lfh.append(new U16Attribute("version needed to extract").addExtraRenderer(ZIP_VERSION_SYMBOLS));
 		lfh.append(new U16Attribute("general purpose bit flag").addExtraRenderer(ZIP_GENERAL_PURPOSE_FLAG_SYMBOLS));
 		lfh.append(LFH_COMPRESSION_METHOD.bind().addExtraRenderer(ZIP_COMPRESSION_METHOD_SYMBOLS));
 		lfh.append(new U16Attribute("last mod file time").addExtraRenderer(U16Attributes.DOS_TIME_COMMENT));
 		lfh.append(new U16Attribute("last mod file date").addExtraRenderer(U16Attributes.DOS_DATE_COMMENT));
 		lfh.append(new U32Attribute("crc-32"));
-		lfh.append(new U32Attribute("compressed size"));
-		lfh.append(new U32Attribute("uncompressed size"));
-		lfh.append(LFH_FILE_NAME_LENGTH.bind(true));
-		lfh.append(LFH_EXTRA_FIELD_LENGTH.bind(true));
+		lfh.append(new U32Attribute("compressed size").addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
+		lfh.append(new U32Attribute("uncompressed size").addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
+		lfh.append(LFH_FILE_NAME_LENGTH.bind(true).addExtraRenderer(U16Attributes.BYTE_COUNT_COMMENT));
+		lfh.append(LFH_EXTRA_FIELD_LENGTH.bind(true).addExtraRenderer(U16Attributes.BYTE_COUNT_COMMENT));
 		lfh.append(LFH_FILE_NAME.bind());
 		lfh.setResult(NAME_ZIP_LFH);
 		ZIP_LFH = lfh;

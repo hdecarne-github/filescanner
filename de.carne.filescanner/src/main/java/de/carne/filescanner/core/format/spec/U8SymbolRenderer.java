@@ -16,35 +16,12 @@
  */
 package de.carne.filescanner.core.format.spec;
 
-import de.carne.filescanner.util.Hexadecimal;
-
 /**
- * Number formats for a {@linkplain NumberAttributeType#U32} attribute.
+ * Renderer used for the display of {@linkplain NumberAttributeType#U16}
+ * attribute based value symbols.
  */
-public abstract class U32Format extends NumberFormat<Integer> {
+public class U8SymbolRenderer extends SymbolRenderer<Byte> {
 
-	/**
-	 * Decimal format.
-	 */
-	public static final U32Format DECIMAL = new U32Format() {
-
-		@Override
-		public String apply(Integer t) {
-			return java.text.NumberFormat.getNumberInstance().format(t);
-		}
-
-	};
-
-	/**
-	 * Hexadecimal format.
-	 */
-	public static final U32Format HEXADECIMAL = new U32Format() {
-
-		@Override
-		public String apply(Integer t) {
-			return Hexadecimal.formatL(new StringBuilder("0x"), t.intValue()).toString();
-		}
-
-	};
+	// Just for convenience
 
 }

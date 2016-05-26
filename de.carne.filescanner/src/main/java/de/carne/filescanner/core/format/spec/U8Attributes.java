@@ -19,17 +19,18 @@ package de.carne.filescanner.core.format.spec;
 import de.carne.filescanner.util.Hexadecimal;
 
 /**
- * Number formats for a {@linkplain NumberAttributeType#U16} attribute.
+ * Helper functions and the like for {@linkplain NumberAttributeType#U8}
+ * attributes.
  */
-public abstract class U16Format extends NumberFormat<Short> {
+public abstract class U8Attributes extends NumberFormat<Byte> {
 
 	/**
 	 * Decimal format.
 	 */
-	public static final U16Format DECIMAL = new U16Format() {
+	public static final U8Attributes DECIMAL = new U8Attributes() {
 
 		@Override
-		public String apply(Short t) {
+		public String apply(Byte t) {
 			return java.text.NumberFormat.getNumberInstance().format(t);
 		}
 
@@ -38,11 +39,11 @@ public abstract class U16Format extends NumberFormat<Short> {
 	/**
 	 * Hexadecimal format.
 	 */
-	public static final U16Format HEXADECIMAL = new U16Format() {
+	public static final U8Attributes HEXADECIMAL = new U8Attributes() {
 
 		@Override
-		public String apply(Short t) {
-			return Hexadecimal.formatL(new StringBuilder("0x"), t.shortValue()).toString();
+		public String apply(Byte t) {
+			return Hexadecimal.formatL(new StringBuilder("0x"), t.byteValue()).toString();
 		}
 
 	};

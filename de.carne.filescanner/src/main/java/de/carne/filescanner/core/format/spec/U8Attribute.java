@@ -19,17 +19,17 @@ package de.carne.filescanner.core.format.spec;
 import java.nio.ByteBuffer;
 
 /**
- * Defines a {@linkplain NumberAttributeType#U16} attribute.
+ * Defines a {@linkplain NumberAttributeType#U8} attribute.
  */
-public class U16Attribute extends NumberAttribute<Short> {
+public class U8Attribute extends NumberAttribute<Byte> {
 
 	/**
-	 * Construct {@code U16Attribute}.
+	 * Construct {@code U8Attribute}.
 	 *
 	 * @param name The attribute's name.
 	 */
-	public U16Attribute(String name) {
-		super(NumberAttributeType.U16, name, U16Attributes.HEXADECIMAL_FORMAT);
+	public U8Attribute(String name) {
+		super(NumberAttributeType.U8, name, U8Attributes.HEXADECIMAL);
 	}
 
 	/*
@@ -37,8 +37,8 @@ public class U16Attribute extends NumberAttribute<Short> {
 	 * @see de.carne.filescanner.core.format.DataAttribute#getValueType()
 	 */
 	@Override
-	public Class<Short> getValueType() {
-		return Short.class;
+	public Class<Byte> getValueType() {
+		return Byte.class;
 	}
 
 	/*
@@ -47,8 +47,8 @@ public class U16Attribute extends NumberAttribute<Short> {
 	 * ByteBuffer)
 	 */
 	@Override
-	public Short getValue(ByteBuffer buffer) {
-		return (isSA(buffer, matchSize()) ? Short.valueOf(buffer.getShort()) : null);
+	public Byte getValue(ByteBuffer buffer) {
+		return (isSA(buffer, matchSize()) ? Byte.valueOf(buffer.get()) : null);
 	}
 
 }

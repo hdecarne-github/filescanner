@@ -38,18 +38,17 @@ public abstract class FlagRenderer<T extends Number> extends AttributeRenderer<T
 	 */
 	@Override
 	public void render(T value, FileScannerResultRenderer renderer) throws IOException, InterruptedException {
-		renderer.renderBreak();
 		for (T flag : this) {
 			String symbol = this.symbolMap.get(flag);
 			boolean flagEnabled = testFlag(flag, value);
 
 			if (symbol != null) {
+				renderer.renderBreak();
 				renderer.setValueMode().renderText(formatFlag(flag, value));
 				renderer.setCommentMode().renderText(" // ").renderText(symbol);
-				renderer.renderBreak();
 			} else if (flagEnabled) {
-				renderer.setValueMode().renderText(formatFlag(flag, value));
 				renderer.renderBreak();
+				renderer.setValueMode().renderText(formatFlag(flag, value));
 			}
 		}
 	}
@@ -74,7 +73,7 @@ public abstract class FlagRenderer<T extends Number> extends AttributeRenderer<T
 
 	/**
 	 * Add a flag symbol.
-	 * 
+	 *
 	 * @param flag The flag to add the symbol for.
 	 * @param symbol The symbol to add.
 	 * @return The updated renderer.

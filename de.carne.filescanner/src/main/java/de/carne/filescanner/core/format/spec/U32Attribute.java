@@ -29,7 +29,7 @@ public class U32Attribute extends NumberAttribute<Integer> {
 	 * @param name The attribute's name.
 	 */
 	public U32Attribute(String name) {
-		super(NumberAttributeType.U32, name, U32Format.HEXADECIMAL);
+		super(NumberAttributeType.U32, name, U32Attributes.HEXADECIMAL_FORMAT);
 	}
 
 	/*

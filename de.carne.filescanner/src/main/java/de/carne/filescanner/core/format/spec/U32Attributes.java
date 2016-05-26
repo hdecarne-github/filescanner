@@ -16,25 +16,22 @@
  */
 package de.carne.filescanner.core.format.spec;
 
-import java.text.DateFormat;
-
-import de.carne.filescanner.util.Dos;
 import de.carne.filescanner.util.Hexadecimal;
 import de.carne.filescanner.util.Units;
 
 /**
- * Helper functions and the like for {@linkplain NumberAttributeType#U16}
+ * Helper functions and the like for {@linkplain NumberAttributeType#U32}
  * attributes.
  */
-public final class U16Attributes {
+public abstract class U32Attributes extends NumberFormat<Integer> {
 
 	/**
 	 * Decimal format.
 	 */
-	public static final NumberFormat<Short> DECIMAL_FORMAT = new NumberFormat<Short>() {
+	public static final U32Attributes DECIMAL_FORMAT = new U32Attributes() {
 
 		@Override
-		public String apply(Short t) {
+		public String apply(Integer t) {
 			return java.text.NumberFormat.getNumberInstance().format(t);
 		}
 
@@ -43,11 +40,11 @@ public final class U16Attributes {
 	/**
 	 * Hexadecimal format.
 	 */
-	public static final NumberFormat<Short> HEXADECIMAL_FORMAT = new NumberFormat<Short>() {
+	public static final U32Attributes HEXADECIMAL_FORMAT = new U32Attributes() {
 
 		@Override
-		public String apply(Short t) {
-			return Hexadecimal.formatL(new StringBuilder("0x"), t.shortValue()).toString();
+		public String apply(Integer t) {
+			return Hexadecimal.formatL(new StringBuilder("0x"), t.intValue()).toString();
 		}
 
 	};
@@ -55,19 +52,7 @@ public final class U16Attributes {
 	/**
 	 * Comment renderer for a byte count value.
 	 */
-	public static final CommentRenderer<Short> BYTE_COUNT_COMMENT = new CommentRenderer<>(
+	public static final CommentRenderer<Integer> BYTE_COUNT_COMMENT = new CommentRenderer<>(
 			v -> Units.formatByteValue(v.longValue()));
-
-	/**
-	 * Comment renderer for DOS date values.
-	 */
-	public static final CommentRenderer<Short> DOS_DATE_COMMENT = new CommentRenderer<>(
-			v -> DateFormat.getDateInstance().format(Dos.dosDateToDate(v.shortValue())));
-
-	/**
-	 * Comment renderer for DOS time values.
-	 */
-	public static final CommentRenderer<Short> DOS_TIME_COMMENT = new CommentRenderer<>(
-			v -> DateFormat.getTimeInstance().format(Dos.dosTimeToDate(v.shortValue())));
 
 }

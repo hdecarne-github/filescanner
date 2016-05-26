@@ -59,4 +59,15 @@ public class SymbolRenderer<T> extends AttributeRenderer<T> {
 		return this;
 	}
 
+	/**
+	 * Get a previously added symbol.
+	 * 
+	 * @param value The value to get the symbol for.
+	 * @return The associated symbol or {@code null} if not symbol has been
+	 *         added for that value so far.
+	 */
+	protected String getSymbol(T value) {
+		return this.symbolMap.get(value);
+	}
+
 }
