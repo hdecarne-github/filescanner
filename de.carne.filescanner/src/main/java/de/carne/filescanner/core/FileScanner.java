@@ -109,12 +109,22 @@ public final class FileScanner implements Closeable {
 
 		InputFileScannerResult result = new InputFileScannerResult(null, input);
 
-		this.status.onScanResult(this, result);
+		queueResultInputs(result);
+	}
 
-		Scanner scanner = new Scanner(result);
+	private void queueResultInputs(FileScannerResult result) {
+		if (result.type() != FileScannerResultType.INPUT) {
+			for (FileScannerResult child : result.children()) {
+				queueResultInputs(child);
+			}
+		} else {
+			this.status.onScanResult(this, result);
 
-		this.scannerCount.incrementAndGet();
-		this.threadPool.submit(scanner);
+			Scanner scanner = new Scanner(result);
+
+			this.scannerCount.incrementAndGet();
+			this.threadPool.submit(scanner);
+		}
 	}
 
 	/*
@@ -136,9 +146,9 @@ public final class FileScanner implements Closeable {
 
 	private class Scanner implements Callable<Scanner> {
 
-		private InputFileScannerResult result;
+		private FileScannerResult result;
 
-		public Scanner(InputFileScannerResult result) {
+		public Scanner(FileScannerResult result) {
 			this.result = result;
 		}
 
@@ -155,7 +165,7 @@ public final class FileScanner implements Closeable {
 	}
 
 	@SuppressWarnings("resource")
-	void scanInput(InputFileScannerResult inputResult) {
+	void scanInput(FileScannerResult inputResult) {
 		FileScannerStatsCollector currentStats = this.stats.recordInput(inputResult);
 
 		if (currentStats.scanCount() == 1) {
@@ -216,8 +226,8 @@ public final class FileScanner implements Closeable {
 	}
 
 	@SuppressWarnings("resource")
-	private FileScannerResult decodeInput(InputFileScannerResult inputResult, long position,
-			FormatMatcher formatMatcher) throws IOException {
+	private FileScannerResult decodeInput(FileScannerResult inputResult, long position, FormatMatcher formatMatcher)
+			throws IOException {
 		FileScannerInput input = inputResult.input();
 		List<Format> formats = formatMatcher.matchFormats(input, position);
 		FileScannerResult decoded = null;
@@ -225,6 +235,7 @@ public final class FileScanner implements Closeable {
 		for (Format format : formats) {
 			decoded = format.decodeInput(inputResult, position);
 			if (decoded != null) {
+				queueResultInputs(decoded);
 				break;
 			}
 		}

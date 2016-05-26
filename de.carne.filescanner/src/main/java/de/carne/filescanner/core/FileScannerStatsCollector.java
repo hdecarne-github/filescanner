@@ -49,7 +49,7 @@ final class FileScannerStatsCollector implements FileScannerStats {
 		}
 	}
 
-	public synchronized FileScannerStatsCollector recordInput(InputFileScannerResult result) {
+	public synchronized FileScannerStatsCollector recordInput(FileScannerResult result) {
 		this.scanCount++;
 		this.totalInputSize += result.size();
 		if (this.scanCount == 1) {
