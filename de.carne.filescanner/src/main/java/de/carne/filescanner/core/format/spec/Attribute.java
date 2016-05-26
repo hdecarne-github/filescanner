@@ -35,31 +35,9 @@ import de.carne.filescanner.core.format.ResultContext;
  */
 public abstract class Attribute<T> extends FormatSpec implements Supplier<T> {
 
-	/**
-	 * Possible bind scopes for an attribute.
-	 */
-	public static enum BindScope {
-
-		/**
-		 * Attribute is not bound.
-		 */
-		NONE,
-
-		/**
-		 * Attribute is bound with decode scope.
-		 */
-		DECODE,
-
-		/**
-		 * Attribute is bound with result scope.
-		 */
-		RESULT
-
-	}
-
 	private final String name;
 
-	private BindScope bindScope = BindScope.NONE;
+	private boolean bound = false;
 
 	private final ArrayList<AttributeRenderer<T>> extraRendererList = new ArrayList<>();
 
@@ -94,37 +72,10 @@ public abstract class Attribute<T> extends FormatSpec implements Supplier<T> {
 	 * Mark this attribute as locally bound.
 	 *
 	 * @return The updated data attribute spec.
-	 * @see #bind(boolean)
 	 */
 	public final Attribute<T> bind() {
-		return bind(false);
-	}
-
-	/**
-	 * Mark this attribute as bound.
-	 * <p>
-	 * The values of bound attributes are written to the decode context during
-	 * the spec's evaluation. Decode bound attributes are only available via the
-	 * eval phase. Result bound attributes are also available during the render
-	 * phase.
-	 * </p>
-	 *
-	 * @param result Whether this attribute is result bound ({@code true}) or
-	 *        only decode bound ({@code false}).
-	 * @return The updated data attribute spec.
-	 */
-	public final Attribute<T> bind(boolean result) {
-		this.bindScope = (result ? BindScope.RESULT : BindScope.DECODE);
+		this.bound = true;
 		return this;
-	}
-
-	/**
-	 * Get the attribute's bind scope.
-	 *
-	 * @return The attribute's bind scope.
-	 */
-	public final BindScope bindScope() {
-		return this.bindScope;
 	}
 
 	/**
@@ -133,7 +84,7 @@ public abstract class Attribute<T> extends FormatSpec implements Supplier<T> {
 	 * @return [@code true} if the attribute is bound.
 	 */
 	public final boolean isBound() {
-		return this.bindScope != BindScope.NONE;
+		return this.bound;
 	}
 
 	/**
@@ -161,7 +112,7 @@ public abstract class Attribute<T> extends FormatSpec implements Supplier<T> {
 	/**
 	 * Get the registered extra {@linkplain AttributeRenderer} for this
 	 * attribute.
-	 * 
+	 *
 	 * @return The registered extra {@linkplain AttributeRenderer} for this
 	 *         attribute.
 	 */
@@ -175,7 +126,7 @@ public abstract class Attribute<T> extends FormatSpec implements Supplier<T> {
 	 */
 	@Override
 	public T get() {
-		assert this.bindScope != BindScope.NONE;
+		assert this.bound;
 
 		return ResultContext.get().getAttribute(this);
 	}

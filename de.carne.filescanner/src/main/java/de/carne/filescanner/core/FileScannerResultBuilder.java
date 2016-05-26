@@ -125,9 +125,12 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 	}
 
 	/**
-	 * Add a new result to the builder.
+	 * Add a new {@linkplain FileScannerResultType#FORMAT} or
+	 * {@linkplain FileScannerResultType#ENCODED_INPUT} result to the builder.
 	 *
-	 * @param resultType The result type to build up.
+	 * @param resultType The result type to build up (either
+	 *        {@linkplain FileScannerResultType#FORMAT} or
+	 *        {@linkplain FileScannerResultType#ENCODED_INPUT}).
 	 * @param resultStart The result object's start position.
 	 * @param resultRenderable The result's {@linkplain Renderable}.
 	 * @return The builder for the added result object.
@@ -136,9 +139,25 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 			Renderable resultRenderable) {
 		assert type() != FileScannerResultType.INPUT;
 		assert resultType != null;
+		assert resultType == FileScannerResultType.FORMAT || resultType == FileScannerResultType.ENCODED_INPUT;
 		assert start() <= resultStart;
 
 		return new FileScannerResultBuilder(this, resultType, input(), order(), resultStart, "", resultRenderable);
+	}
+
+	/**
+	 * Add a new {@linkplain FileScannerResultType#INPUT} result to the builder.
+	 *
+	 * @param input The input to add.
+	 * @throws IOException if an I/O error occurs.
+	 */
+	public void addInput(FileScannerInput input) throws IOException {
+		assert input != null;
+
+		FileScannerResultBuilder result = new FileScannerResultBuilder(this, FileScannerResultType.INPUT, input,
+				order(), 0L, input.path().toString(), null);
+
+		result.updateEnd(input.size());
 	}
 
 	/**
@@ -150,22 +169,27 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 	 *
 	 * @param result The result object to add the buffered results to.
 	 * @return The decoded result object.
+	 * @throws IOException if an I/O error occurs.
 	 */
-	public FileScannerResult toResult(FileScannerResult result) {
+	public FileScannerResult toResult(FileScannerResult result) throws IOException {
 		FileScannerResult decoded = null;
 
 		if (size() > 0) {
-			decoded = new FinalFileScannerResult(result, this);
-			for (FileScannerResult child : children()) {
-				FileScannerResultBuilder childBuilder = ((FileScannerResultBuilder) child);
+			if (type() != FileScannerResultType.INPUT) {
+				decoded = new DecodedFileScannerResult(result, this);
+				for (FileScannerResult child : children()) {
+					FileScannerResultBuilder childBuilder = ((FileScannerResultBuilder) child);
 
-				childBuilder.toResult(decoded);
+					childBuilder.toResult(decoded);
+				}
+			} else {
+				decoded = new InputFileScannerResult(result, input());
 			}
 		}
 		return decoded;
 	}
 
-	private static class FinalFileScannerResult extends FileScannerResult {
+	private static class DecodedFileScannerResult extends FileScannerResult {
 
 		private final long end;
 
@@ -175,7 +199,7 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 
 		private final Renderable renderable;
 
-		FinalFileScannerResult(FileScannerResult parent, FileScannerResultBuilder builder) {
+		DecodedFileScannerResult(FileScannerResult parent, FileScannerResultBuilder builder) {
 			super(builder.type(), builder.input(), builder.order(), builder.start());
 			this.end = builder.end();
 			this.parent = parent;

@@ -127,7 +127,7 @@ public abstract class FormatSpec implements Decodable {
 
 		long decoded = specDecode(result, result.start());
 
-		result.updateTitle(this.resultTitleExpression.afterDecode());
+		result.updateTitle(this.resultTitleExpression.decode());
 		return decoded;
 	}
 

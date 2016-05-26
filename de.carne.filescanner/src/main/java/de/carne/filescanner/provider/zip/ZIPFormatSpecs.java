@@ -17,8 +17,11 @@
 package de.carne.filescanner.provider.zip;
 
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import de.carne.filescanner.core.format.spec.AStringAttribute;
+import de.carne.filescanner.core.format.spec.EncodedFormatSpec;
 import de.carne.filescanner.core.format.spec.StructFormatSpec;
 import de.carne.filescanner.core.format.spec.U16Attribute;
 import de.carne.filescanner.core.format.spec.U16Attributes;
@@ -26,6 +29,7 @@ import de.carne.filescanner.core.format.spec.U16FlagRenderer;
 import de.carne.filescanner.core.format.spec.U16SymbolRenderer;
 import de.carne.filescanner.core.format.spec.U32Attribute;
 import de.carne.filescanner.core.format.spec.U32Attributes;
+import de.carne.filescanner.core.input.DecodeParams;
 
 /**
  * ZIP format structures.
@@ -102,6 +106,8 @@ class ZIPFormatSpecs {
 
 	public static final U16Attribute LFH_COMPRESSION_METHOD = new U16Attribute("compression method");
 
+	public static final U32Attribute LFH_COMPRESSED_SIZE = new U32Attribute("compressed size");
+
 	public static final U16Attribute LFH_FILE_NAME_LENGTH = new U16Attribute("file name length");
 
 	public static final U16Attribute LFH_EXTRA_FIELD_LENGTH = new U16Attribute("extra field length");
@@ -121,10 +127,10 @@ class ZIPFormatSpecs {
 		lfh.append(new U16Attribute("last mod file time").addExtraRenderer(U16Attributes.DOS_TIME_COMMENT));
 		lfh.append(new U16Attribute("last mod file date").addExtraRenderer(U16Attributes.DOS_DATE_COMMENT));
 		lfh.append(new U32Attribute("crc-32"));
-		lfh.append(new U32Attribute("compressed size").addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
+		lfh.append(LFH_COMPRESSED_SIZE.bind().addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
 		lfh.append(new U32Attribute("uncompressed size").addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
-		lfh.append(LFH_FILE_NAME_LENGTH.bind(true).addExtraRenderer(U16Attributes.BYTE_COUNT_COMMENT));
-		lfh.append(LFH_EXTRA_FIELD_LENGTH.bind(true).addExtraRenderer(U16Attributes.BYTE_COUNT_COMMENT));
+		lfh.append(LFH_FILE_NAME_LENGTH.bind().addExtraRenderer(U16Attributes.BYTE_COUNT_COMMENT));
+		lfh.append(LFH_EXTRA_FIELD_LENGTH.bind().addExtraRenderer(U16Attributes.BYTE_COUNT_COMMENT));
 		lfh.append(LFH_FILE_NAME.bind());
 		lfh.setResult(NAME_ZIP_LFH);
 		ZIP_LFH = lfh;
@@ -136,7 +142,9 @@ class ZIPFormatSpecs {
 		StructFormatSpec zipEntry = new StructFormatSpec();
 
 		zipEntry.append(ZIP_LFH);
-		zipEntry.declareAttribute(LFH_COMPRESSION_METHOD).declareAttribute(LFH_FILE_NAME);
+		zipEntry.append(new EncodedFormatSpec(() -> getInputDecodeParams()));
+		zipEntry.declareAttribute(LFH_COMPRESSION_METHOD).declareAttribute(LFH_COMPRESSED_SIZE)
+				.declareAttribute(LFH_FILE_NAME);
 		zipEntry.setResult(NAME_ZIP_ENTRY, LFH_FILE_NAME);
 		ZIP_ENTRY = zipEntry;
 	}
@@ -149,6 +157,26 @@ class ZIPFormatSpecs {
 		zip.append(ZIP_ENTRY);
 		zip.setResult(NAME_ZIP);
 		ZIP = zip;
+	}
+
+	private static DecodeParams getInputDecodeParams() {
+		Short compressionMethod = LFH_COMPRESSION_METHOD.get();
+		Integer compressedSize = LFH_COMPRESSED_SIZE.get();
+		String fileName = LFH_FILE_NAME.get();
+		DecodeParams decodeParams = null;
+
+		if (compressionMethod != null && compressedSize != null && fileName != null) {
+			Path decodedPath = Paths.get(fileName);
+
+			switch (compressionMethod.shortValue()) {
+			case 0:
+				decodeParams = DecodeParams.newNullDecoderFactory(compressedSize.longValue(), decodedPath);
+			case 8:
+				decodeParams = DecodeParams.newDeflateDecoderFactory(compressedSize.longValue(), decodedPath);
+				break;
+			}
+		}
+		return decodeParams;
 	}
 
 }

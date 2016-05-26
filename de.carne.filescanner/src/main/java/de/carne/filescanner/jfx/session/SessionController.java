@@ -498,7 +498,7 @@ public class SessionController extends StageController {
 			this.scanProgressBar.setProgress(stats.progress());
 			long scanned = stats.scanned();
 			long elapsedSeconds = stats.elapsed() / 1000l;
-			long bps = (elapsedSeconds >= 1l ? scanned / elapsedSeconds : 0l);
+			long bps = (elapsedSeconds >= 1l ? scanned / elapsedSeconds : 0L);
 
 			this.scanStatusMessage
 					.setText(I18N.format(messageKey, Units.formatByteValue(scanned), Units.formatByteValue(bps)));

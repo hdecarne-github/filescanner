@@ -126,7 +126,7 @@ class FileViewSkin extends SkinBase<FileView> implements VirtualScrollRegion.Scr
 	public VirtualScrollLayout layoutVirtual(double viewWidth, double viewHeight) {
 		FileView skinnable = getSkinnable();
 		FileAccess file = skinnable.getFile();
-		long fileSize = 0l;
+		long fileSize = 0L;
 
 		if (file != null) {
 			try {

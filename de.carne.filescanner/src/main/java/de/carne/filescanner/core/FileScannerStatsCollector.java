@@ -26,13 +26,13 @@ final class FileScannerStatsCollector implements FileScannerStats {
 
 	private int finishedCount = 0;
 
-	private long totalInputSize = 0l;
+	private long totalInputSize = 0L;
 
-	private long scanned = 0l;
+	private long scanned = 0L;
 
-	private long startNanos = 0l;
+	private long startNanos = 0L;
 
-	private long elapsedNanos = 0l;
+	private long elapsedNanos = 0L;
 
 	public FileScannerStatsCollector() {
 		// Nothing to do here

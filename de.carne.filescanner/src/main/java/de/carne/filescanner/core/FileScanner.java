@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import de.carne.filescanner.core.input.DecodeCache;
 import de.carne.filescanner.spi.FileScannerInput;
 import de.carne.filescanner.spi.Format;
 import de.carne.util.logging.Log;
@@ -68,6 +69,8 @@ public final class FileScanner implements Closeable {
 
 	private final ExecutorService threadPool = Executors.newFixedThreadPool(THREAD_COUNT);
 
+	private final DecodeCache decodeCache = new DecodeCache();
+
 	private final FileScannerStatus status;
 
 	private final FileScannerStatsCollector stats = new FileScannerStatsCollector();
@@ -83,6 +86,15 @@ public final class FileScanner implements Closeable {
 		assert status != null;
 
 		this.status = status;
+	}
+
+	/**
+	 * Get this scanner's decode cache.
+	 *
+	 * @return This scanner's decode cache.
+	 */
+	public final DecodeCache decodeCache() {
+		return this.decodeCache;
 	}
 
 	/**
@@ -119,6 +131,7 @@ public final class FileScanner implements Closeable {
 			LOG.notice(null, "Closing still running scan; pending results will be ignored");
 			this.status.onScanCancelled(this, currentStats);
 		}
+		this.decodeCache.close();
 	}
 
 	private class Scanner implements Callable<Scanner> {
@@ -153,7 +166,7 @@ public final class FileScanner implements Closeable {
 
 		LOG.notice(null, "Scanning input ''{0}''...", input.path());
 
-		long scanPosition = 0l;
+		long scanPosition = 0L;
 		long inputSize = inputResult.size();
 		long lastProgressNanos = System.nanoTime();
 		long lastProgressPosition = scanPosition;

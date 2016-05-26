@@ -94,7 +94,7 @@ public class StructFormatSpec extends FormatSpec {
 		assert result != null;
 		assert position >= 0;
 
-		long decoded = 0l;
+		long decoded = 0L;
 
 		for (FormatSpec spec : this.specs) {
 			long specPosition = position + decoded;
@@ -124,7 +124,7 @@ public class StructFormatSpec extends FormatSpec {
 		assert position < result.end();
 		assert renderer != null;
 
-		long rendered = 0l;
+		long rendered = 0L;
 
 		for (FormatSpec spec : this.specs) {
 			if (!spec.isResult()) {
@@ -133,7 +133,7 @@ public class StructFormatSpec extends FormatSpec {
 				rendered += spec.specRender(result, renderPosition, renderer);
 			}
 		}
-		if (rendered == 0l) {
+		if (rendered == 0L) {
 			result.renderDefault(renderer);
 		}
 		return rendered;

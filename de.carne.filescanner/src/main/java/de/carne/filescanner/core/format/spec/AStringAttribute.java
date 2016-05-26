@@ -91,7 +91,7 @@ public class AStringAttribute extends StringAttribute {
 	 */
 	@Override
 	public long specDecode(FileScannerResultBuilder result, long position) throws IOException {
-		long decoded = this.sizeExpression.afterDecode().longValue();
+		long decoded = this.sizeExpression.decode().longValue();
 
 		if (isBound()) {
 			bindValue(decodeString(result, position, decoded).toString());
@@ -109,13 +109,13 @@ public class AStringAttribute extends StringAttribute {
 	@Override
 	public long specRender(FileScannerResult result, long position, FileScannerResultRenderer renderer)
 			throws IOException, InterruptedException {
-		long rendered = this.sizeExpression.afterDecode().longValue();
+		long decoded = this.sizeExpression.decode().longValue();
 
 		renderer.setNormalMode().renderText(name());
 		renderer.setOperatorMode().renderText(" = ");
-		renderString(result, position, rendered, renderer);
+		renderString(result, position, decoded, renderer);
 		renderer.renderBreakOrClose(isResult());
-		return rendered;
+		return decoded;
 	}
 
 }

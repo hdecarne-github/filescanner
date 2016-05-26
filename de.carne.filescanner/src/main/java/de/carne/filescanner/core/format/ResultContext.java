@@ -18,7 +18,6 @@ package de.carne.filescanner.core.format;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
@@ -52,13 +51,7 @@ public abstract class ResultContext {
 	 *        add.
 	 */
 	public void addResultAttributes(ResultContext context) {
-		for (Map.Entry<Attribute<?>, Object> contextEntry : context.contextAttributes.entrySet()) {
-			Attribute<?> attribute = contextEntry.getKey();
-
-			if (attribute.bindScope() == Attribute.BindScope.RESULT) {
-				this.contextAttributes.put(attribute, contextEntry.getValue());
-			}
-		}
+		this.contextAttributes.putAll(context.contextAttributes);
 	}
 
 	/**
@@ -95,7 +88,7 @@ public abstract class ResultContext {
 		Object value = null;
 
 		while (value == null && currentContext != null) {
-			value = this.contextAttributes.get(attribute);
+			value = currentContext.contextAttributes.get(attribute);
 			currentContext = currentContext.parent();
 		}
 		return attribute.getValueType().cast(value);

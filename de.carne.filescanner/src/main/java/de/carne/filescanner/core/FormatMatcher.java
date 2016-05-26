@@ -95,7 +95,7 @@ final class FormatMatcher {
 			}
 			// Only on position 0 (and for not yet evaluated formats) we perform
 			// input name matching
-			if (position == 0l && !match && !mismatch) {
+			if (position == 0L && !match && !mismatch) {
 				String inputName = input.path().toString();
 
 				for (Pattern inputNamePattern : format.inputNamePatterns()) {

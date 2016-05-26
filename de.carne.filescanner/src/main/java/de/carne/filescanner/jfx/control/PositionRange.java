@@ -32,7 +32,7 @@ public final class PositionRange {
 	 * Construct {@code PositionRange}.
 	 */
 	public PositionRange() {
-		this(0l, 0l);
+		this(0L, 0L);
 	}
 
 	/**
@@ -41,7 +41,7 @@ public final class PositionRange {
 	 * @param range The initial range (may be {@code null}).
 	 */
 	public PositionRange(PositionRange range) {
-		this((range != null ? range.start : 0l), (range != null ? range.end : 0l));
+		this((range != null ? range.start : 0L), (range != null ? range.end : 0L));
 	}
 
 	/**
@@ -75,7 +75,7 @@ public final class PositionRange {
 
 	/**
 	 * Check whether a position is within the range.
-	 * 
+	 *
 	 * @param position The position to check.
 	 * @return {@code true} if the position is within the range.
 	 */

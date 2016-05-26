@@ -72,11 +72,11 @@ public class ValueExpression<T> {
 	}
 
 	/**
-	 * Get this expression's value if the decode phase has already began.
+	 * Get this expression's value during or after the decode phase.
 	 *
 	 * @return The expression's value.
 	 */
-	public T afterDecode() {
+	public T decode() {
 		return (this.value != null ? this.value : this.valueLambda.get());
 	}
 

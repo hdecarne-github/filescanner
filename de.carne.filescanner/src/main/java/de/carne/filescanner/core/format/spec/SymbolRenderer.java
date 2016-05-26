@@ -17,7 +17,9 @@
 package de.carne.filescanner.core.format.spec;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Set;
 
 import de.carne.filescanner.spi.FileScannerResultRenderer;
 
@@ -60,8 +62,17 @@ public class SymbolRenderer<T> extends AttributeRenderer<T> {
 	}
 
 	/**
-	 * Get a previously added symbol.
+	 * Get the added values.
 	 * 
+	 * @return The added values.
+	 */
+	public Set<T> getValues() {
+		return Collections.unmodifiableSet(this.symbolMap.keySet());
+	}
+
+	/**
+	 * Get a previously added symbol.
+	 *
 	 * @param value The value to get the symbol for.
 	 * @return The associated symbol or {@code null} if not symbol has been
 	 *         added for that value so far.

@@ -14,56 +14,58 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.carne.filescanner.core;
+package de.carne.filescanner.core.input;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.file.Path;
+import java.nio.channels.ReadableByteChannel;
 
 import de.carne.filescanner.spi.FileScannerInput;
 
 /**
- *
+ * Helper class providing {@linkplain ReadableByteChannel} access to an input.
  */
-class NestedFileScannerInput extends FileScannerInput {
+class InputReadChannel implements ReadableByteChannel {
 
-	/**
-	 * @param scanner
-	 * @param path
-	 */
-	public NestedFileScannerInput(FileScanner scanner, Path path) {
-		super(scanner, path);
-		// TODO Auto-generated constructor stub
+	private final FileScannerInput input;
+
+	private long readPosition;
+
+	public InputReadChannel(FileScannerInput input, long readPosition) {
+		this.input = input;
+		this.readPosition = readPosition;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see de.carne.filescanner.spi.FileScannerInput#size()
+	 * @see java.nio.channels.Channel#isOpen()
 	 */
 	@Override
-	public long size() throws IOException {
-		// TODO Auto-generated method stub
-		return 0;
+	public boolean isOpen() {
+		return true;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see de.carne.filescanner.spi.FileScannerInput#read(java.nio.ByteBuffer,
-	 * long)
+	 * @see java.nio.channels.Channel#close()
 	 */
 	@Override
-	public int read(ByteBuffer dst, long position) throws IOException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.spi.FileScannerInput#close0()
-	 */
-	@Override
-	protected void close0() throws Exception {
+	public void close() throws IOException {
 		// Nothing to do here
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.nio.channels.ReadableByteChannel#read(java.nio.ByteBuffer)
+	 */
+	@Override
+	public synchronized int read(ByteBuffer dst) throws IOException {
+		int read = this.input.read(dst, this.readPosition);
+
+		if (read > 0) {
+			this.readPosition += read;
+		}
+		return read;
 	}
 
 }

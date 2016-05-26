@@ -25,6 +25,7 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.LinkedList;
 
 import de.carne.filescanner.core.FileScanner;
 import de.carne.filescanner.util.Units;
@@ -63,7 +64,7 @@ public abstract class FileScannerInput implements Closeable {
 				cacheAlignment = 0;
 			}
 		}
-		if (cacheAlignment == 0l) {
+		if (cacheAlignment == 0L) {
 			cacheAlignment = 0x1000;
 		}
 		LOG.notice(null, "Using cache alignment: {0}h ({1})", Integer.toString(cacheAlignment, 16),
@@ -108,18 +109,22 @@ public abstract class FileScannerInput implements Closeable {
 
 	private final Path path;
 
+	private final IOException ioStatus;
+
 	/**
 	 * Construct {@code FileScannerInput}.
 	 *
 	 * @param scanner The {@code FileScanner} scanning this input.
 	 * @param path The input's path.
+	 * @param ioStatus The input's I/O status (may be {@code null}).
 	 */
-	public FileScannerInput(FileScanner scanner, Path path) {
+	public FileScannerInput(FileScanner scanner, Path path, IOException ioStatus) {
 		assert scanner != null;
 		assert path != null;
 
 		this.scanner = scanner;
 		this.path = path;
+		this.ioStatus = ioStatus;
 	}
 
 	/**
@@ -127,7 +132,7 @@ public abstract class FileScannerInput implements Closeable {
 	 *
 	 * @return The {@code FileScanner} scanning this input.
 	 */
-	public FileScanner scanner() {
+	public final FileScanner scanner() {
 		return this.scanner;
 	}
 
@@ -136,8 +141,22 @@ public abstract class FileScannerInput implements Closeable {
 	 *
 	 * @return The input's path.
 	 */
-	public Path path() {
+	public final Path path() {
 		return this.path;
+	}
+
+	/**
+	 * Get the input's I/O status.
+	 * <p>
+	 * The I/O status is initially set during input creation and indicates
+	 * possible problems during input creation (e.g. erroneous data decoding for
+	 * encoded data streams).
+	 * </p>
+	 *
+	 * @return The input's I/O status. {@code null} if the status ok.
+	 */
+	public final IOException ioStatus() {
+		return this.ioStatus;
 	}
 
 	/**
@@ -211,11 +230,12 @@ public abstract class FileScannerInput implements Closeable {
 
 	private static class FileChannelInput extends FileScannerInput {
 
-		private final FileChannel file;
+		private final ThreadLocal<FileChannel> fileReadChannel = new ThreadLocal<>();
 
-		FileChannelInput(FileScanner scanner, Path path, FileChannel file) {
-			super(scanner, path);
-			this.file = file;
+		private final LinkedList<FileChannel> fileReadChannels = new LinkedList<>();
+
+		FileChannelInput(FileScanner scanner, Path path) {
+			super(scanner, path, null);
 		}
 
 		/*
@@ -224,7 +244,7 @@ public abstract class FileScannerInput implements Closeable {
 		 */
 		@Override
 		public long size() throws IOException {
-			return this.file.size();
+			return getReadChannel().size();
 		}
 
 		/*
@@ -235,7 +255,7 @@ public abstract class FileScannerInput implements Closeable {
 		 */
 		@Override
 		public int read(ByteBuffer dst, long position) throws IOException {
-			return this.file.read(dst, position);
+			return getReadChannel().read(dst, position);
 		}
 
 		/*
@@ -243,8 +263,34 @@ public abstract class FileScannerInput implements Closeable {
 		 * @see de.carne.filescanner.spi.FileScannerInput#close0()
 		 */
 		@Override
-		protected void close0() throws Exception {
-			this.file.close();
+		protected synchronized void close0() throws Exception {
+			IOException closeException = null;
+
+			for (FileChannel readChannel : this.fileReadChannels) {
+				try {
+					readChannel.close();
+				} catch (IOException e) {
+					if (closeException == null) {
+						closeException = e;
+					}
+				}
+			}
+			this.fileReadChannels.clear();
+			if (closeException != null) {
+				throw closeException;
+			}
+		}
+
+		@SuppressWarnings("resource")
+		private synchronized FileChannel getReadChannel() throws IOException {
+			FileChannel readChannel = this.fileReadChannel.get();
+
+			if (readChannel == null || !this.fileReadChannels.contains(readChannel)) {
+				readChannel = FileChannel.open(this.path(), StandardOpenOption.READ);
+				this.fileReadChannels.add(readChannel);
+				this.fileReadChannel.set(readChannel);
+			}
+			return readChannel;
 		}
 
 	}
@@ -260,7 +306,7 @@ public abstract class FileScannerInput implements Closeable {
 	public static FileScannerInput open(FileScanner scanner, Path path) throws IOException {
 		assert path != null;
 
-		return new FileChannelInput(scanner, path, FileChannel.open(path, StandardOpenOption.READ));
+		return new FileChannelInput(scanner, path);
 	}
 
 	/**
@@ -289,6 +335,71 @@ public abstract class FileScannerInput implements Closeable {
 		assert file != null;
 
 		return open(scanner, file.toPath());
+	}
+
+	int nestedRead(ByteBuffer dst, long position, long readLimit) throws IOException {
+		int maxRead = dst.remaining();
+		int read;
+
+		if (position + maxRead <= readLimit) {
+			read = read(dst, position);
+		} else {
+			ByteBuffer limitedDst = dst.duplicate();
+
+			limitedDst.limit((int) (readLimit - position));
+			read = read(limitedDst, position);
+			dst.position(limitedDst.position());
+		}
+		return read;
+	}
+
+	/**
+	 * Create a nested input based by this input.
+	 * 
+	 * @param start The start position of the nested input.
+	 * @param end The end position of the nested input.
+	 * @param nestedPath The path of the nested input.
+	 * @return The created input.
+	 * @throws IOException if an I/O error occurs.
+	 */
+	public FileScannerInput slice(long start, long end, Path nestedPath) throws IOException {
+		assert start >= 0;
+		assert end >= start;
+		assert nestedPath != null;
+
+		return new FileScannerInput(this.scanner, nestedPath, null) {
+
+			private final long nestedStart = start;
+
+			private final long nestedEnd = Math.min(end, FileScannerInput.this.size());
+
+			@Override
+			public long size() throws IOException {
+				return this.nestedEnd - this.nestedStart;
+			}
+
+			@Override
+			public int read(ByteBuffer dst, long position) throws IOException {
+				assert dst != null;
+				assert position >= 0;
+
+				long nestedPosition = this.nestedStart + position;
+				int read;
+
+				if (nestedPosition < this.nestedEnd) {
+					read = nestedRead(dst, nestedPosition, this.nestedEnd);
+				} else {
+					read = -1;
+				}
+				return read;
+			}
+
+			@Override
+			protected void close0() throws Exception {
+				// Nothing to do here
+			}
+
+		};
 	}
 
 	private class Cache {

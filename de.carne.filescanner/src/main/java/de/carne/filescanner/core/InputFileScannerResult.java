@@ -34,7 +34,7 @@ class InputFileScannerResult extends FileScannerResult {
 	private final FileScannerResult parent;
 
 	InputFileScannerResult(FileScannerResult parent, FileScannerInput input) throws IOException {
-		super(FileScannerResultType.INPUT, input, ByteOrder.nativeOrder(), 0l);
+		super(FileScannerResultType.INPUT, input, ByteOrder.nativeOrder(), 0L);
 
 		this.end = input.size();
 		this.parent = parent;
