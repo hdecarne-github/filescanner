@@ -24,7 +24,7 @@ import de.carne.filescanner.spi.FileScannerResultRenderer;
 /**
  * Map based attribute renderer (which maps values to symbols).
  *
- * @param <T> The attribute' data type.
+ * @param <T> The attribute's data type.
  */
 public class SymbolRenderer<T> extends AttributeRenderer<T> {
 

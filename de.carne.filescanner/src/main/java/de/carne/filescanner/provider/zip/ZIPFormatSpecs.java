@@ -22,6 +22,8 @@ import de.carne.filescanner.core.format.spec.AStringAttribute;
 import de.carne.filescanner.core.format.spec.StructFormatSpec;
 import de.carne.filescanner.core.format.spec.SymbolRenderer;
 import de.carne.filescanner.core.format.spec.U16Attribute;
+import de.carne.filescanner.core.format.spec.U16Attributes;
+import de.carne.filescanner.core.format.spec.U16FlagRenderer;
 import de.carne.filescanner.core.format.spec.U32Attribute;
 
 /**
@@ -35,7 +37,19 @@ class ZIPFormatSpecs {
 
 	public static final String NAME_ZIP_LFH = "Local file header";
 
-	public static final U16Attribute LFH_COMPRESSION_METHOD = new U16Attribute("compression method");
+	public static final U16FlagRenderer ZIP_GENERAL_PURPOSE_FLAG_SYMBOLS = new U16FlagRenderer();
+
+	static {
+		ZIP_GENERAL_PURPOSE_FLAG_SYMBOLS.addFlagSymbol((short) 0x2000, "Central directory encrypted");
+		ZIP_GENERAL_PURPOSE_FLAG_SYMBOLS.addFlagSymbol((short) 0x0800, "UTF-8 strings");
+		ZIP_GENERAL_PURPOSE_FLAG_SYMBOLS.addFlagSymbol((short) 0x0040, "Strong encryption");
+		ZIP_GENERAL_PURPOSE_FLAG_SYMBOLS.addFlagSymbol((short) 0x0020, "Compressed patched data");
+		ZIP_GENERAL_PURPOSE_FLAG_SYMBOLS.addFlagSymbol((short) 0x0010, "Enhanced deflating");
+		ZIP_GENERAL_PURPOSE_FLAG_SYMBOLS.addFlagSymbol((short) 0x0008,
+				"crc-32, compressed size and uncompressed size are in data descriptor");
+		ZIP_GENERAL_PURPOSE_FLAG_SYMBOLS.addFlagSymbol((short) 0x0006, "Decoder flag");
+		ZIP_GENERAL_PURPOSE_FLAG_SYMBOLS.addFlagSymbol((short) 0x0001, "Encryption");
+	}
 
 	public static final SymbolRenderer<Short> ZIP_COMPRESSION_METHOD_SYMBOLS = new SymbolRenderer<>();
 
@@ -62,8 +76,9 @@ class ZIPFormatSpecs {
 		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 19, "IBM LZ77");
 		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 97, "WavPack");
 		ZIP_COMPRESSION_METHOD_SYMBOLS.addSymbol((short) 98, "PPMd");
-		LFH_COMPRESSION_METHOD.addExtraRenderer(ZIP_COMPRESSION_METHOD_SYMBOLS);
 	}
+
+	public static final U16Attribute LFH_COMPRESSION_METHOD = new U16Attribute("compression method");
 
 	public static final U16Attribute LFH_FILE_NAME_LENGTH = new U16Attribute("file name length");
 
@@ -79,10 +94,10 @@ class ZIPFormatSpecs {
 
 		lfh.append(new U32Attribute("local file header signature").setFinalValue(0x04034b50));
 		lfh.append(new U16Attribute("version needed to extract"));
-		lfh.append(new U16Attribute("general purpose bit flag"));
-		lfh.append(LFH_COMPRESSION_METHOD.bind());
-		lfh.append(new U16Attribute("last mod file time"));
-		lfh.append(new U16Attribute("last mod file date"));
+		lfh.append(new U16Attribute("general purpose bit flag").addExtraRenderer(ZIP_GENERAL_PURPOSE_FLAG_SYMBOLS));
+		lfh.append(LFH_COMPRESSION_METHOD.bind().addExtraRenderer(ZIP_COMPRESSION_METHOD_SYMBOLS));
+		lfh.append(new U16Attribute("last mod file time").addExtraRenderer(U16Attributes.DOS_TIME_COMMENT));
+		lfh.append(new U16Attribute("last mod file date").addExtraRenderer(U16Attributes.DOS_DATE_COMMENT));
 		lfh.append(new U32Attribute("crc-32"));
 		lfh.append(new U32Attribute("compressed size"));
 		lfh.append(new U32Attribute("uncompressed size"));
