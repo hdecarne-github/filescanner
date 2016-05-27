@@ -26,11 +26,14 @@ import de.carne.filescanner.core.input.DecodeParams;
 import de.carne.filescanner.spi.FileScannerInput;
 import de.carne.filescanner.spi.FileScannerResultRenderer;
 import de.carne.nio.compression.spi.Decoder;
+import de.carne.util.logging.Log;
 
 /**
  * Encoded format spec defining a section of encoded data.
  */
 public class EncodedFormatSpec extends FormatSpec implements Supplier<String> {
+
+	private static final Log LOG = new Log(EncodedFormatSpec.class);
 
 	private final ValueExpression<DecodeParams> decodeParamsExpression;
 
@@ -92,17 +95,20 @@ public class EncodedFormatSpec extends FormatSpec implements Supplier<String> {
 
 		if (decodeParams != null) {
 			Decoder decoder = decodeParams.newDecoder();
+			long encodedSize = decodeParams.getEncodedSize();
 			FileScannerInput decodedInput;
 
 			if (decoder != null) {
 				decodedInput = result.input().scanner().decodeCache().decodeInput(result.input(), position, decoder,
 						decodeParams.getDecodedPath());
-				decoded = Math.max(decoder.totalIn(), decodeParams.getEncodedSize());
+				decoded = Math.max(decoder.totalIn(), encodedSize);
 			} else {
-
-				decodedInput = result.input().slice(position, position + Math.max(0L, decodeParams.getEncodedSize()),
-						decodeParams.getDecodedPath());
-				decoded = decodedInput.size();
+				decoded = Math.max(0L, encodedSize);
+				decodedInput = result.input().slice(position, position + decoded, decodeParams.getDecodedPath());
+			}
+			if (encodedSize >= 0 && decoded > encodedSize) {
+				LOG.warning(null, "Decoding exceeded the specified encoded size; {0} addional bytes read",
+						decoded - encodedSize);
 			}
 			result.addInput(decodedInput);
 		}

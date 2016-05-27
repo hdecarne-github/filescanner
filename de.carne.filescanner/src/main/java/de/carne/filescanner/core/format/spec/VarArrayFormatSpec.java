@@ -35,7 +35,7 @@ public class VarArrayFormatSpec extends FormatSpec {
 
 	/**
 	 * Construct {@code VarArrayFormatSpec}.
-	 * 
+	 *
 	 * @param spec The spec defining the array elements.
 	 * @param matchOnce Whether the minimum size of the array is {@code 0} (
 	 *        {@code false}) or {@code 1} ({@code true}).
@@ -113,7 +113,7 @@ public class VarArrayFormatSpec extends FormatSpec {
 	public long specRender(FileScannerResult result, long position, FileScannerResultRenderer renderer)
 			throws IOException, InterruptedException {
 		// TODO Auto-generated method stub
-		return 0;
+		return result.size();
 	}
 
 }
