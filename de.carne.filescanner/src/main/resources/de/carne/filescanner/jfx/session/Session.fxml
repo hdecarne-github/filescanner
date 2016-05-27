@@ -70,6 +70,43 @@
                   </ImageView>
                </graphic>
             </Button>
+            <Separator orientation="VERTICAL" />
+            <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onOpenFile">
+               <graphic>
+                  <ImageView pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../iconGotoNext16.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button layoutX="48.0" layoutY="10.0" mnemonicParsing="false" onAction="#onOpenFile">
+               <graphic>
+                  <ImageView pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../iconGotoPrevious16.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button layoutX="58.0" layoutY="10.0" mnemonicParsing="false" onAction="#onOpenFile">
+               <graphic>
+                  <ImageView pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../iconGotoStart16.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button layoutX="96.0" layoutY="10.0" mnemonicParsing="false" onAction="#onOpenFile">
+               <graphic>
+                  <ImageView pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../iconGotoEnd16.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
         </items>
       </ToolBar>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
