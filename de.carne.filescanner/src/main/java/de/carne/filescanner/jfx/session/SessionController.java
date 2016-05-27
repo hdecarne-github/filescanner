@@ -165,6 +165,50 @@ public class SessionController extends StageController {
 	}
 
 	@FXML
+	void onGotoNext(ActionEvent evt) {
+		TreeItem<FileScannerResult> selectedResult = this.resultsView.getSelectionModel().getSelectedItem();
+
+		if (selectedResult != null) {
+			TreeItem<FileScannerResult> nextSibling = selectedResult.nextSibling();
+
+			if (nextSibling != null) {
+				this.resultsView.getSelectionModel().select(nextSibling);
+			}
+		}
+	}
+
+	@FXML
+	void onGotoPrevious(ActionEvent evt) {
+		TreeItem<FileScannerResult> selectedResult = this.resultsView.getSelectionModel().getSelectedItem();
+
+		if (selectedResult != null) {
+			TreeItem<FileScannerResult> previousSibling = selectedResult.previousSibling();
+
+			if (previousSibling != null) {
+				this.resultsView.getSelectionModel().select(previousSibling);
+			}
+		}
+	}
+
+	@FXML
+	void onGotoStart(ActionEvent evt) {
+		PositionRange selection = this.fileView.getSelection();
+
+		if (selection != null) {
+			this.fileView.setPosition(selection.getStart());
+		}
+	}
+
+	@FXML
+	void onGotoEnd(ActionEvent evt) {
+		PositionRange selection = this.fileView.getSelection();
+
+		if (selection != null) {
+			this.fileView.setPosition(selection.getEnd());
+		}
+	}
+
+	@FXML
 	void onExit(ActionEvent evt) {
 		getStage().close();
 	}

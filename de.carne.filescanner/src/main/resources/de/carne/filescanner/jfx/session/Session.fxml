@@ -71,7 +71,7 @@
                </graphic>
             </Button>
             <Separator orientation="VERTICAL" />
-            <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onOpenFile">
+            <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onGotoNext">
                <graphic>
                   <ImageView pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -80,7 +80,7 @@
                   </ImageView>
                </graphic>
             </Button>
-            <Button layoutX="48.0" layoutY="10.0" mnemonicParsing="false" onAction="#onOpenFile">
+            <Button layoutX="48.0" layoutY="10.0" mnemonicParsing="false" onAction="#onGotoPrevious">
                <graphic>
                   <ImageView pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -89,7 +89,7 @@
                   </ImageView>
                </graphic>
             </Button>
-            <Button layoutX="58.0" layoutY="10.0" mnemonicParsing="false" onAction="#onOpenFile">
+            <Button layoutX="58.0" layoutY="10.0" mnemonicParsing="false" onAction="#onGotoStart">
                <graphic>
                   <ImageView pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -98,7 +98,7 @@
                   </ImageView>
                </graphic>
             </Button>
-            <Button layoutX="96.0" layoutY="10.0" mnemonicParsing="false" onAction="#onOpenFile">
+            <Button layoutX="96.0" layoutY="10.0" mnemonicParsing="false" onAction="#onGotoEnd">
                <graphic>
                   <ImageView pickOnBounds="true" preserveRatio="true">
                      <image>
