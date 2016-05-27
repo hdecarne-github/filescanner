@@ -55,6 +55,17 @@ public abstract class ResultContext {
 	}
 
 	/**
+	 * Declare a context attribute.
+	 *
+	 * @param attribute The attribute to declare.
+	 */
+	public <T> void declareAttribute(Attribute<T> attribute) {
+		assert attribute != null;
+
+		this.contextAttributes.put(attribute, null);
+	}
+
+	/**
 	 * Set a context attribute value.
 	 *
 	 * @param attribute The attribute to set.
@@ -69,8 +80,10 @@ public abstract class ResultContext {
 			currentContext = currentContext.parent();
 		}
 		if (currentContext == null) {
-			LOG.debug(null, "New context attribute ''{0}'' = {1}", attribute.name(), value);
+			LOG.debug(null, "Declare context attribute ''{0}'' = {1}", attribute.name(), value);
 			currentContext = this;
+		} else {
+			LOG.debug(null, "Set context attribute ''{0}'' = {1}", attribute.name(), value);
 		}
 		currentContext.contextAttributes.put(attribute, value);
 	}

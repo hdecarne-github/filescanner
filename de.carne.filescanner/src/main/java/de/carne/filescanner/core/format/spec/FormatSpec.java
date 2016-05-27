@@ -122,7 +122,7 @@ public abstract class FormatSpec implements Decodable {
 		ResultContext context = ResultContext.get();
 
 		for (Attribute<?> declaredAttribute : this.declaredAttributes) {
-			context.setAttribute(declaredAttribute, null);
+			context.declareAttribute(declaredAttribute);
 		}
 
 		long decoded = specDecode(result, result.start());

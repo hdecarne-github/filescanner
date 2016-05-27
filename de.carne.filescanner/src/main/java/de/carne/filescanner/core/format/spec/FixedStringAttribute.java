@@ -25,17 +25,17 @@ import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.spi.FileScannerResultRenderer;
 
 /**
- * Defines an array-like string attribute.
+ * Defines an fixed-length string attribute.
  * <p>
- * The actual size of the string has be defined statically or via a Lambda
+ * The actual length of the string has to be defined statically or via a Lambda
  * expression.
  * </p>
  */
-public class AStringAttribute extends StringAttribute {
+public class FixedStringAttribute extends StringAttribute {
 
 	private final NumberExpression<?> sizeExpression;
 
-	private AStringAttribute(String name, Charset charset, NumberExpression<?> sizeExpression) {
+	private FixedStringAttribute(String name, Charset charset, NumberExpression<?> sizeExpression) {
 		super(name, charset);
 
 		assert sizeExpression != null;
@@ -50,7 +50,7 @@ public class AStringAttribute extends StringAttribute {
 	 * @param charset The charset to use for string decoding.
 	 * @param staticSize The static string data size.
 	 */
-	public AStringAttribute(String name, Charset charset, Number staticSize) {
+	public FixedStringAttribute(String name, Charset charset, Number staticSize) {
 		this(name, charset, new NumberExpression<>(staticSize));
 	}
 
@@ -61,7 +61,7 @@ public class AStringAttribute extends StringAttribute {
 	 * @param charset The charset to use for string decoding.
 	 * @param sizeLambda The expression providing the string data size.
 	 */
-	public AStringAttribute(String name, Charset charset, Supplier<? extends Number> sizeLambda) {
+	public FixedStringAttribute(String name, Charset charset, Supplier<? extends Number> sizeLambda) {
 		this(name, charset, new NumberExpression<>(sizeLambda));
 	}
 

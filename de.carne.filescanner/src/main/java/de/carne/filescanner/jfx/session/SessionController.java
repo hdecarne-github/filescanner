@@ -18,6 +18,8 @@ package de.carne.filescanner.jfx.session;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URL;
 import java.util.List;
 import java.util.concurrent.ScheduledFuture;
@@ -120,6 +122,9 @@ public class SessionController extends StageController {
 
 	@FXML
 	FileView fileView;
+
+	@FXML
+	Label scanStatusInfo;
 
 	@FXML
 	ImageView scanStatusIcon;
@@ -294,6 +299,16 @@ public class SessionController extends StageController {
 	}
 
 	void onFileScannerException(FileScanner scanner, Throwable e) {
+		StringWriter text = new StringWriter();
+		PrintWriter printer = new PrintWriter(text);
+		String exceptionMessage = e.getLocalizedMessage();
+
+		if (Strings.notEmpty(exceptionMessage)) {
+			printer.println(exceptionMessage);
+		}
+		e.printStackTrace(printer);
+		printer.flush();
+		this.scanStatusInfo.getTooltip().setText(text.toString());
 		this.scanStatusIcon.setImage(Images.IMAGE_WARNING16);
 	}
 
@@ -470,6 +485,7 @@ public class SessionController extends StageController {
 
 			rootItem.getChildren().add(resultItem);
 			if (selectResultItem) {
+				resultItem.setExpanded(true);
 				this.resultsView.getSelectionModel().select(resultItem);
 				this.resultsView.requestFocus();
 			}

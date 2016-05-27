@@ -74,9 +74,10 @@ public final class DecodeCache implements AutoCloseable {
 		try (InputReadChannel inputReadChannel = new InputReadChannel(input, position)) {
 			ByteBuffer decodeBuffer = ByteBuffer.allocateDirect(FileScannerInput.CACHE_SIZE);
 
-			while (decoder.decode(decodeBuffer, inputReadChannel) >= 0) {
+			while (decoder.decode(decodeBuffer, inputReadChannel) > 0) {
 				decodeBuffer.flip();
 				decodeInputEnd += this.decodeCacheWriteChannel.write(decodeBuffer, decodeInputEnd);
+				decodeBuffer.clear();
 			}
 		} catch (IOException e) {
 			decodeInputIOStatus = e;
@@ -123,7 +124,7 @@ public final class DecodeCache implements AutoCloseable {
 		if (this.decodeCacheWriteChannel == null) {
 			this.decodeCachePath = Files.createTempFile(DecodeCache.class.getSimpleName(), null);
 			this.decodeCacheWriteChannel = FileChannel.open(this.decodeCachePath, StandardOpenOption.CREATE,
-					StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.DELETE_ON_CLOSE, StandardOpenOption.WRITE);
+					StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
 		}
 	}
 

@@ -20,7 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import de.carne.filescanner.core.format.spec.AStringAttribute;
+import de.carne.filescanner.core.format.spec.FixedStringAttribute;
 import de.carne.filescanner.core.format.spec.EncodedFormatSpec;
 import de.carne.filescanner.core.format.spec.StructFormatSpec;
 import de.carne.filescanner.core.format.spec.U16Attribute;
@@ -29,6 +29,7 @@ import de.carne.filescanner.core.format.spec.U16FlagRenderer;
 import de.carne.filescanner.core.format.spec.U16SymbolRenderer;
 import de.carne.filescanner.core.format.spec.U32Attribute;
 import de.carne.filescanner.core.format.spec.U32Attributes;
+import de.carne.filescanner.core.format.spec.VarArrayFormatSpec;
 import de.carne.filescanner.core.input.DecodeParams;
 
 /**
@@ -112,7 +113,7 @@ class ZIPFormatSpecs {
 
 	public static final U16Attribute LFH_EXTRA_FIELD_LENGTH = new U16Attribute("extra field length");
 
-	public static final AStringAttribute LFH_FILE_NAME = new AStringAttribute("file name", StandardCharsets.UTF_8,
+	public static final FixedStringAttribute LFH_FILE_NAME = new FixedStringAttribute("file name", StandardCharsets.UTF_8,
 			LFH_FILE_NAME_LENGTH);
 
 	public static final StructFormatSpec ZIP_LFH;
@@ -154,7 +155,7 @@ class ZIPFormatSpecs {
 	static {
 		StructFormatSpec zip = new StructFormatSpec();
 
-		zip.append(ZIP_ENTRY);
+		zip.append(new VarArrayFormatSpec(ZIP_ENTRY, true));
 		zip.setResult(NAME_ZIP);
 		ZIP = zip;
 	}
