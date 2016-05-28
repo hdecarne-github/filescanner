@@ -111,8 +111,12 @@ class FileViewSkin extends SkinBase<FileView> implements VirtualScrollRegion.Scr
 	}
 
 	void requestLayout(boolean resetContent) {
-		if (resetContent) {
+		if (resetContent || Double.isNaN(this.cachedViewPaneLineHeight)) {
 			this.scrollRegion.scrollTo(0.0, 0.0);
+		} else {
+			long line = getSkinnable().getPosition().longValue() / 16;
+
+			this.scrollRegion.scrollTo(0.0, line * this.cachedViewPaneLineHeight);
 		}
 		this.scrollRegion.requestLayout();
 	}

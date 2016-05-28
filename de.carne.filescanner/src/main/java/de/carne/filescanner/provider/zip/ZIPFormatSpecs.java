@@ -20,8 +20,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import de.carne.filescanner.core.format.spec.FixedStringAttribute;
 import de.carne.filescanner.core.format.spec.EncodedFormatSpec;
+import de.carne.filescanner.core.format.spec.FixedStringAttribute;
 import de.carne.filescanner.core.format.spec.StructFormatSpec;
 import de.carne.filescanner.core.format.spec.U16Attribute;
 import de.carne.filescanner.core.format.spec.U16Attributes;
@@ -42,6 +42,12 @@ class ZIPFormatSpecs {
 	public static final String NAME_ZIP_ENTRY = "ZIP entry [{0}]";
 
 	public static final String NAME_ZIP_LFH = "Local file header";
+
+	public static final String NAME_ZIP_CD = "Central directory";
+
+	public static final String NAME_ZIP_CDH = "Central directory header";
+
+	public static final String NAME_ZIP_EOCD = "End of central directory record";
 
 	public static final ZIPVersionRenderer ZIP_VERSION_SYMBOLS = new ZIPVersionRenderer();
 
@@ -113,8 +119,8 @@ class ZIPFormatSpecs {
 
 	public static final U16Attribute LFH_EXTRA_FIELD_LENGTH = new U16Attribute("extra field length");
 
-	public static final FixedStringAttribute LFH_FILE_NAME = new FixedStringAttribute("file name", StandardCharsets.UTF_8,
-			LFH_FILE_NAME_LENGTH);
+	public static final FixedStringAttribute LFH_FILE_NAME = new FixedStringAttribute("file name",
+			StandardCharsets.UTF_8, LFH_FILE_NAME_LENGTH);
 
 	public static final StructFormatSpec ZIP_LFH;
 
@@ -145,9 +151,45 @@ class ZIPFormatSpecs {
 		zipEntry.append(ZIP_LFH);
 		zipEntry.append(new EncodedFormatSpec(() -> getInputDecodeParams()));
 		zipEntry.declareAttribute(LFH_COMPRESSION_METHOD).declareAttribute(LFH_COMPRESSED_SIZE)
-				.declareAttribute(LFH_FILE_NAME);
+				.declareAttribute(LFH_FILE_NAME).declareAttribute(LFH_EXTRA_FIELD_LENGTH);
 		zipEntry.setResult(NAME_ZIP_ENTRY, LFH_FILE_NAME);
 		ZIP_ENTRY = zipEntry;
+	}
+
+	public static final StructFormatSpec ZIP_CDH;
+
+	static {
+		StructFormatSpec cdh = new StructFormatSpec();
+
+		cdh.append(new U32Attribute("central file header signature").setFinalValue(0x02014b50));
+		cdh.append(new U16Attribute("version made by").addExtraRenderer(ZIP_VERSION_SYMBOLS));
+		cdh.append(new U16Attribute("version needed to extract").addExtraRenderer(ZIP_VERSION_SYMBOLS));
+		cdh.append(new U16Attribute("general purpose bit flag").addExtraRenderer(ZIP_GENERAL_PURPOSE_FLAG_SYMBOLS));
+		cdh.append(new U16Attribute("compression method").addExtraRenderer(ZIP_COMPRESSION_METHOD_SYMBOLS));
+		cdh.append(new U16Attribute("last mod file time").addExtraRenderer(U16Attributes.DOS_TIME_COMMENT));
+		cdh.append(new U16Attribute("last mod file date").addExtraRenderer(U16Attributes.DOS_DATE_COMMENT));
+		cdh.append(new U32Attribute("crc-32"));
+		cdh.append(new U32Attribute("compressed size").addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
+		cdh.append(new U32Attribute("uncompressed size").addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
+		cdh.append(new U16Attribute("file name length").addExtraRenderer(U16Attributes.BYTE_COUNT_COMMENT));
+		cdh.append(new U16Attribute("extra field length").addExtraRenderer(U16Attributes.BYTE_COUNT_COMMENT));
+		cdh.append(new U16Attribute("file comment length").addExtraRenderer(U16Attributes.BYTE_COUNT_COMMENT));
+		cdh.append(new U16Attribute("disk number start"));
+		cdh.append(new U16Attribute("internal file attributes"));
+		cdh.append(new U32Attribute("external file attributes"));
+		cdh.append(new U32Attribute("relative offset of local header"));
+		cdh.setResult(NAME_ZIP_CDH);
+		ZIP_CDH = cdh;
+	}
+
+	public static final StructFormatSpec ZIP_CD;
+
+	static {
+		StructFormatSpec cd = new StructFormatSpec();
+
+		cd.append(new VarArrayFormatSpec(ZIP_CDH, true));
+		cd.setResult(NAME_ZIP_CD);
+		ZIP_CD = cd;
 	}
 
 	public static final StructFormatSpec ZIP;
@@ -156,6 +198,7 @@ class ZIPFormatSpecs {
 		StructFormatSpec zip = new StructFormatSpec();
 
 		zip.append(new VarArrayFormatSpec(ZIP_ENTRY, true));
+		zip.append(ZIP_CD);
 		zip.setResult(NAME_ZIP);
 		ZIP = zip;
 	}
