@@ -55,6 +55,28 @@ public class U16FlagRenderer extends FlagRenderer<Short> {
 	/*
 	 * (non-Javadoc)
 	 * @see
+	 * de.carne.filescanner.core.format.spec.FlagRenderer#testFlag(java.lang.
+	 * Number, java.lang.Number)
+	 */
+	@Override
+	protected boolean testFlag(Short flag, Short value) {
+		return (value.shortValue() & flag.shortValue()) != 0;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * de.carne.filescanner.core.format.spec.FlagRenderer#foldFlag(java.lang.
+	 * Number, java.lang.Number)
+	 */
+	@Override
+	protected Short foldFlag(Short flag1, Short flag2) {
+		return Short.valueOf((short) (flag1.shortValue() | flag2.shortValue()));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
 	 * de.carne.filescanner.core.format.spec.FlagRenderer#formatFlag(java.lang.
 	 * Number, java.lang.Number)
 	 */
@@ -65,7 +87,7 @@ public class U16FlagRenderer extends FlagRenderer<Short> {
 		short flagValue = flag.shortValue();
 
 		while (shiftFlag != 0) {
-			if (shiftFlag == flagValue) {
+			if ((shiftFlag & flagValue) != 0) {
 				buffer.append((flagValue & value.shortValue()) != 0 ? '1' : '0');
 			} else {
 				buffer.append('.');
@@ -73,17 +95,6 @@ public class U16FlagRenderer extends FlagRenderer<Short> {
 			shiftFlag >>>= 1;
 		}
 		return buffer.toString();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.spec.FlagRenderer#testFlag(java.lang.
-	 * Number, java.lang.Number)
-	 */
-	@Override
-	protected boolean testFlag(Short flag, Short value) {
-		return (value.shortValue() & flag.shortValue()) != 0;
 	}
 
 }

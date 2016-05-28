@@ -218,6 +218,8 @@ class ZIPFormatSpecs {
 			case 8:
 				decodeParams = DecodeParams.newDeflateDecoderFactory(compressedSize.longValue(), decodedPath);
 				break;
+			default:
+				decodeParams = DecodeParams.newUnsupportedDecoderFactory(compressedSize.longValue(), decodedPath);
 			}
 		}
 		return decodeParams;

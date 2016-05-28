@@ -38,29 +38,38 @@ public abstract class FlagRenderer<T extends Number> extends AttributeRenderer<T
 	 */
 	@Override
 	public void render(T value, FileScannerResultRenderer renderer) throws IOException, InterruptedException {
-		for (T flag : this) {
-			String symbol = this.symbolMap.get(flag);
-			boolean flagEnabled = testFlag(flag, value);
+		T foldedFlag = null;
 
-			if (symbol != null) {
-				renderer.renderBreak();
-				renderer.setValueMode().renderText(formatFlag(flag, value));
-				renderer.setCommentMode().renderText(" // ").renderText(symbol);
-			} else if (flagEnabled) {
-				renderer.renderBreak();
-				renderer.setValueMode().renderText(formatFlag(flag, value));
+		for (T flag : this) {
+			if (this.symbolMap.containsKey(flag)) {
+				if (foldedFlag != null) {
+					renderFlag(foldedFlag, value, renderer);
+					foldedFlag = null;
+				}
+				renderFlag(flag, value, renderer);
+			} else {
+				foldedFlag = (foldedFlag != null ? foldFlag(foldedFlag, flag) : flag);
 			}
+		}
+		if (foldedFlag != null) {
+			renderFlag(foldedFlag, value, renderer);
+			foldedFlag = null;
 		}
 	}
 
-	/**
-	 * Format a single flag.
-	 *
-	 * @param flag The flag to format.
-	 * @param value The current flag-set value to format.
-	 * @return The formatted flag.
-	 */
-	protected abstract String formatFlag(T flag, T value);
+	private void renderFlag(T flag, T value, FileScannerResultRenderer renderer)
+			throws IOException, InterruptedException {
+		String symbol = this.symbolMap.get(flag);
+
+		if (symbol != null) {
+			renderer.renderBreak();
+			renderer.setValueMode().renderText(formatFlag(flag, value));
+			renderer.setCommentMode().renderText(" // ").renderText(symbol);
+		} else if (testFlag(flag, value)) {
+			renderer.renderBreak();
+			renderer.setValueMode().renderText(formatFlag(flag, value));
+		}
+	}
 
 	/**
 	 * Test whether a single flag is set or not.
@@ -70,6 +79,24 @@ public abstract class FlagRenderer<T extends Number> extends AttributeRenderer<T
 	 * @return {@code true} if the flag is set.
 	 */
 	protected abstract boolean testFlag(T flag, T value);
+
+	/**
+	 * Fold two flags into one.
+	 * 
+	 * @param flag1 The 1st flag to fold.
+	 * @param flag2 The 2nd flag to fold.
+	 * @return The folded flag.
+	 */
+	protected abstract T foldFlag(T flag1, T flag2);
+
+	/**
+	 * Format a single flag.
+	 *
+	 * @param flag The flag to format.
+	 * @param value The current flag-set value to format.
+	 * @return The formatted flag.
+	 */
+	protected abstract String formatFlag(T flag, T value);
 
 	/**
 	 * Add a flag symbol.

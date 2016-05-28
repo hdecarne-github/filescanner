@@ -17,6 +17,8 @@
 package de.carne.filescanner.core.input;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,7 +52,11 @@ public abstract class DecodeParams {
 	}
 
 	/**
-	 * Create Null decoder parameter object.
+	 * Create {@code null} decoder parameter object.
+	 * <p>
+	 * This parameter object represents the pass-through decoder for non-encoded
+	 * stored data.
+	 * </p>
 	 *
 	 * @param encodedSize The number of encoded bytes or {@code -1} if
 	 *        undefined.
@@ -63,6 +69,42 @@ public abstract class DecodeParams {
 			@Override
 			public Decoder newDecoder() {
 				return null;
+			}
+
+			@Override
+			public void render(FileScannerResultRenderer renderer) throws IOException, InterruptedException {
+				// Nothing to do here
+			}
+
+		};
+	}
+
+	/**
+	 * Create decoder parameter object for an unsupported encodings.
+	 *
+	 * @param encodedSize The number of encoded bytes or {@code -1} if
+	 *        undefined.
+	 * @param decodedPath The decoded path.
+	 * @return The created factory.
+	 */
+	public static DecodeParams newUnsupportedDecoderFactory(long encodedSize, Path decodedPath) {
+		return new DecodeParams("Unsupported encoded data", encodedSize, decodedPath) {
+
+			@Override
+			public Decoder newDecoder() {
+				return new Decoder() {
+
+					@Override
+					public int decode(ByteBuffer dst, ReadableByteChannel src) throws IOException {
+						return -1;
+					}
+
+					@Override
+					public String name() {
+						return "Unsupported encoding";
+					}
+
+				};
 			}
 
 			@Override
