@@ -19,6 +19,8 @@ package de.carne.filescanner.core.format.spec;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import de.carne.filescanner.core.format.ResultContext;
@@ -38,6 +40,8 @@ public abstract class Attribute<T> extends FormatSpec implements Supplier<T> {
 	private final String name;
 
 	private boolean bound = false;
+
+	private final ArrayList<Function<T, Boolean>> validators = new ArrayList<>();
 
 	private final ArrayList<AttributeRenderer<T>> extraRendererList = new ArrayList<>();
 
@@ -94,6 +98,60 @@ public abstract class Attribute<T> extends FormatSpec implements Supplier<T> {
 	 */
 	protected final void bindValue(T value) {
 		ResultContext.get().setAttribute(this, value);
+	}
+
+	/**
+	 * Add an validator for this attribute.
+	 *
+	 * @param validator The validator to add.
+	 * @return The updated data attribute spec.
+	 */
+	public final Attribute<T> addValidator(Function<T, Boolean> validator) {
+		assert validator != null;
+
+		this.validators.add(validator);
+		return this;
+	}
+
+	/**
+	 * Add a valid value for this attribute.
+	 *
+	 * @param validValue The valid value to add.
+	 * @return The updated data attribute spec.
+	 */
+	public final Attribute<T> addValidValue(T validValue) {
+		return addValidator(v -> v.equals(validValue));
+	}
+
+	/**
+	 * Add a set of valid values for this attribute.
+	 *
+	 * @param validValues The valid values to add.
+	 * @return The updated data attribute spec.
+	 */
+	public final Attribute<T> addValidValues(Set<T> validValues) {
+		return addValidator(v -> validValues.size() == 0 || validValues.contains(v));
+	}
+
+	/**
+	 * Evaluate the validators defined for this attribute.
+	 * 
+	 * @param value The attribute value to validate.
+	 * @return {@code true} if all validators accept the value or if no
+	 *         validator has been added yet.
+	 */
+	protected boolean validateValue(T value) {
+		boolean valid = true;
+
+		for (Function<T, Boolean> validator : this.validators) {
+			Boolean validatorResult = validator.apply(value);
+
+			if (!validatorResult.booleanValue()) {
+				valid = false;
+				break;
+			}
+		}
+		return valid;
 	}
 
 	/**

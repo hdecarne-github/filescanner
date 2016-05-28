@@ -34,8 +34,6 @@ public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 
 	private final NumberFormat<T> format;
 
-	private T finalValue = null;
-
 	/**
 	 * Construct {@code NumberAttribute}.
 	 *
@@ -72,7 +70,7 @@ public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 
 		T value = getValue(buffer);
 
-		return (value != null && (this.finalValue == null || this.finalValue.equals(value)));
+		return (value != null && validateValue(value));
 	}
 
 	/*
@@ -124,26 +122,5 @@ public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 	 *         insufficient.
 	 */
 	public abstract T getValue(ByteBuffer buffer);
-
-	/**
-	 * Make attribute final (with a specific value).
-	 *
-	 * @param finalValue The final value.
-	 * @return The updated number attribute spec.
-	 */
-	public final NumberAttribute<T> setFinalValue(T finalValue) {
-		this.finalValue = finalValue;
-		return this;
-	}
-
-	/**
-	 * Get the attribute's final value.
-	 *
-	 * @return The attribute's final value or {@code null} if the attribute is
-	 *         not final.
-	 */
-	public final T getFinalValue() {
-		return this.finalValue;
-	}
 
 }
