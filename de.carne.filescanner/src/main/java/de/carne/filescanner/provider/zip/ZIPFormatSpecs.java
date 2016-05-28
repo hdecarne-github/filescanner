@@ -20,8 +20,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import de.carne.filescanner.core.format.spec.FixedStringAttribute;
 import de.carne.filescanner.core.format.spec.EncodedFormatSpec;
+import de.carne.filescanner.core.format.spec.FixedStringAttribute;
 import de.carne.filescanner.core.format.spec.StructFormatSpec;
 import de.carne.filescanner.core.format.spec.U16Attribute;
 import de.carne.filescanner.core.format.spec.U16Attributes;
@@ -113,8 +113,8 @@ class ZIPFormatSpecs {
 
 	public static final U16Attribute LFH_EXTRA_FIELD_LENGTH = new U16Attribute("extra field length");
 
-	public static final FixedStringAttribute LFH_FILE_NAME = new FixedStringAttribute("file name", StandardCharsets.UTF_8,
-			LFH_FILE_NAME_LENGTH);
+	public static final FixedStringAttribute LFH_FILE_NAME = new FixedStringAttribute("file name",
+			StandardCharsets.UTF_8, LFH_FILE_NAME_LENGTH);
 
 	public static final StructFormatSpec ZIP_LFH;
 
@@ -175,6 +175,8 @@ class ZIPFormatSpecs {
 			case 8:
 				decodeParams = DecodeParams.newDeflateDecoderFactory(compressedSize.longValue(), decodedPath);
 				break;
+			default:
+				decodeParams = DecodeParams.newUnsupportedDecoderFactory(compressedSize.longValue(), decodedPath);
 			}
 		}
 		return decodeParams;
