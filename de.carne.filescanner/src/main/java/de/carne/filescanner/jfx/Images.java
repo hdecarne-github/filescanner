@@ -67,14 +67,29 @@ public final class Images {
 	public static final Image IMAGE_ERROR32 = getImage(Images.class, "iconError32.png");
 
 	/**
-	 * Notice icon (16x16)
+	 * Log Notice icon (16x16)
 	 */
-	public static final Image IMAGE_NOTICE16 = getImage(Images.class, "iconNotice16.png");
+	public static final Image IMAGE_LOG_NOTICE16 = getImage(Images.class, "iconLogNotice16.png");
 
 	/**
-	 * Debug icon (16x16)
+	 * Log Notice icon (16x16)
 	 */
-	public static final Image IMAGE_DEBUG16 = getImage(Images.class, "iconDebug16.png");
+	public static final Image IMAGE_LOG_ERROR16 = getImage(Images.class, "iconLogError16.png");
+
+	/**
+	 * Log Notice icon (16x16)
+	 */
+	public static final Image IMAGE_LOG_WARNING16 = getImage(Images.class, "iconLogWarning16.png");
+
+	/**
+	 * Log Info icon (16x16)
+	 */
+	public static final Image IMAGE_LOG_INFO16 = getImage(Images.class, "iconLogInfo16.png");
+
+	/**
+	 * Log Debug icon (16x16)
+	 */
+	public static final Image IMAGE_LOG_DEBUG16 = getImage(Images.class, "iconLogDebug16.png");
 
 	/**
 	 * Help icon (16x16)
@@ -117,9 +132,14 @@ public final class Images {
 	public static final Image IMAGE_INPUT_RESULT16 = getImage(Images.class, "iconInputResult16.png");
 
 	/**
-	 * Format result icon (16x16)
+	 * Format1 (format) result icon (16x16)
 	 */
-	public static final Image IMAGE_FORMAT_RESULT16 = getImage(Images.class, "iconFormatResult16.png");
+	public static final Image IMAGE_FORMAT1_RESULT16 = getImage(Images.class, "iconFormat1Result16.png");
+
+	/**
+	 * Format2 (format structure) result icon (16x16)
+	 */
+	public static final Image IMAGE_FORMAT2_RESULT16 = getImage(Images.class, "iconFormat2Result16.png");
 
 	/**
 	 * Encoded input result icon (16x16)

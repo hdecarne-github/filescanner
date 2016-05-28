@@ -49,11 +49,11 @@ public class FileScannerApplication extends Application implements Main {
 		ApplicationLoader.registerURLStreamHandlerFactory(HtmlResultRendererURLHandler.PROTOCOL_RENDERER,
 				HtmlResultRendererURLHandler.URL_STREAM_HANDLER_FACTORY);
 
-		LogImages.registerImage(Log.LEVEL_NOTICE, Images.IMAGE_NOTICE16);
-		LogImages.registerImage(Log.LEVEL_ERROR, Images.IMAGE_ERROR16);
-		LogImages.registerImage(Log.LEVEL_WARNING, Images.IMAGE_WARNING16);
-		LogImages.registerImage(Log.LEVEL_INFO, Images.IMAGE_INFO16);
-		LogImages.registerImage(Log.LEVEL_DEBUG, Images.IMAGE_DEBUG16);
+		LogImages.registerImage(Log.LEVEL_NOTICE, Images.IMAGE_LOG_NOTICE16);
+		LogImages.registerImage(Log.LEVEL_ERROR, Images.IMAGE_LOG_ERROR16);
+		LogImages.registerImage(Log.LEVEL_WARNING, Images.IMAGE_LOG_WARNING16);
+		LogImages.registerImage(Log.LEVEL_INFO, Images.IMAGE_LOG_INFO16);
+		LogImages.registerImage(Log.LEVEL_DEBUG, Images.IMAGE_LOG_DEBUG16);
 
 		MessageBoxImages.registerImage(MessageBoxStyle.ICON_INFO, Images.IMAGE_INFO16);
 		MessageBoxImages.registerImage(MessageBoxStyle.ICON_INFO, Images.IMAGE_INFO32);

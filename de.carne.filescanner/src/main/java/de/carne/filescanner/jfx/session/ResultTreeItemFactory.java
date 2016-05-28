@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.carne.filescanner.core.FileScannerResult;
+import de.carne.filescanner.core.FileScannerResultType;
 import de.carne.filescanner.jfx.Images;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
@@ -103,7 +104,8 @@ final class ResultTreeItemFactory {
 			image = Images.IMAGE_INPUT_RESULT16;
 			break;
 		case FORMAT:
-			image = Images.IMAGE_FORMAT_RESULT16;
+			image = (result.parent().type() == FileScannerResultType.INPUT ? Images.IMAGE_FORMAT1_RESULT16
+					: Images.IMAGE_FORMAT2_RESULT16);
 			break;
 		case ENCODED_INPUT:
 			image = Images.IMAGE_ENCODED_INPUT_RESULT16;

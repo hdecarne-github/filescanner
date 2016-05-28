@@ -127,10 +127,11 @@ class ZIPFormatSpecs {
 	static {
 		StructFormatSpec lfh = new StructFormatSpec();
 
-		lfh.append(new U32Attribute("local file header signature").setFinalValue(0x04034b50));
+		lfh.append(new U32Attribute("local file header signature").addValidValue(0x04034b50));
 		lfh.append(new U16Attribute("version needed to extract").addExtraRenderer(ZIP_VERSION_SYMBOLS));
 		lfh.append(new U16Attribute("general purpose bit flag").addExtraRenderer(ZIP_GENERAL_PURPOSE_FLAG_SYMBOLS));
-		lfh.append(LFH_COMPRESSION_METHOD.bind().addExtraRenderer(ZIP_COMPRESSION_METHOD_SYMBOLS));
+		lfh.append(LFH_COMPRESSION_METHOD.bind().addValidValues(ZIP_COMPRESSION_METHOD_SYMBOLS.getValues())
+				.addExtraRenderer(ZIP_COMPRESSION_METHOD_SYMBOLS));
 		lfh.append(new U16Attribute("last mod file time").addExtraRenderer(U16Attributes.DOS_TIME_COMMENT));
 		lfh.append(new U16Attribute("last mod file date").addExtraRenderer(U16Attributes.DOS_DATE_COMMENT));
 		lfh.append(new U32Attribute("crc-32"));
@@ -161,11 +162,12 @@ class ZIPFormatSpecs {
 	static {
 		StructFormatSpec cdh = new StructFormatSpec();
 
-		cdh.append(new U32Attribute("central file header signature").setFinalValue(0x02014b50));
+		cdh.append(new U32Attribute("central file header signature").addValidValue(0x02014b50));
 		cdh.append(new U16Attribute("version made by").addExtraRenderer(ZIP_VERSION_SYMBOLS));
 		cdh.append(new U16Attribute("version needed to extract").addExtraRenderer(ZIP_VERSION_SYMBOLS));
 		cdh.append(new U16Attribute("general purpose bit flag").addExtraRenderer(ZIP_GENERAL_PURPOSE_FLAG_SYMBOLS));
-		cdh.append(new U16Attribute("compression method").addExtraRenderer(ZIP_COMPRESSION_METHOD_SYMBOLS));
+		cdh.append(new U16Attribute("compression method").addValidValues(ZIP_COMPRESSION_METHOD_SYMBOLS.getValues())
+				.addExtraRenderer(ZIP_COMPRESSION_METHOD_SYMBOLS));
 		cdh.append(new U16Attribute("last mod file time").addExtraRenderer(U16Attributes.DOS_TIME_COMMENT));
 		cdh.append(new U16Attribute("last mod file date").addExtraRenderer(U16Attributes.DOS_DATE_COMMENT));
 		cdh.append(new U32Attribute("crc-32"));
