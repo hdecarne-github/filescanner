@@ -254,7 +254,7 @@ public class SessionController extends StageController {
 	@FXML
 	void onDragOver(DragEvent evt) {
 		if (evt.getDragboard().getContentTypes().contains(DataFormat.FILES)) {
-			evt.acceptTransferModes(TransferMode.ANY);
+			evt.acceptTransferModes(TransferMode.COPY);
 			evt.consume();
 		}
 	}

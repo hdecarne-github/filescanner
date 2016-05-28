@@ -40,6 +40,10 @@ public abstract class FormatSpec implements Decodable {
 
 	private StringExpression resultTitleExpression = null;
 
+	public boolean isStatic() {
+		return false;
+	}
+
 	/**
 	 * Get this spec's match size.
 	 * <p>

@@ -22,7 +22,9 @@ import java.util.HashMap;
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.core.format.spec.Attribute;
+import de.carne.filescanner.core.format.spec.FormatSpec;
 import de.carne.filescanner.spi.FileScannerResultRenderer;
+import de.carne.util.Pair;
 import de.carne.util.logging.Log;
 
 /**
@@ -37,6 +39,8 @@ public abstract class ResultContext {
 
 	private final HashMap<Attribute<?>, Object> contextAttributes = new HashMap<>();
 
+	private final HashMap<Long, Pair<Long, FormatSpec>> decodeResults = new HashMap<>();
+
 	/**
 	 * Get the parent context.
 	 *
@@ -50,8 +54,9 @@ public abstract class ResultContext {
 	 * @param context The context containing the result scoped attributes to
 	 *        add.
 	 */
-	public void addResultAttributes(ResultContext context) {
+	public final void addResultAttributes(ResultContext context) {
 		this.contextAttributes.putAll(context.contextAttributes);
+		this.decodeResults.putAll(context.decodeResults);
 	}
 
 	/**
@@ -59,7 +64,7 @@ public abstract class ResultContext {
 	 *
 	 * @param attribute The attribute to declare.
 	 */
-	public <T> void declareAttribute(Attribute<T> attribute) {
+	public final <T> void declareAttribute(Attribute<T> attribute) {
 		assert attribute != null;
 
 		this.contextAttributes.put(attribute, null);
@@ -71,7 +76,7 @@ public abstract class ResultContext {
 	 * @param attribute The attribute to set.
 	 * @param value The attribute value to set.
 	 */
-	public <T> void setAttribute(Attribute<T> attribute, T value) {
+	public final <T> void setAttribute(Attribute<T> attribute, T value) {
 		assert attribute != null;
 
 		ResultContext currentContext = this;
@@ -94,7 +99,7 @@ public abstract class ResultContext {
 	 * @param attribute The attribute to get.
 	 * @return The set attribute value or {@code null} if none has been set.
 	 */
-	public <T> T getAttribute(Attribute<T> attribute) {
+	public final <T> T getAttribute(Attribute<T> attribute) {
 		assert attribute != null;
 
 		ResultContext currentContext = this;
@@ -105,6 +110,19 @@ public abstract class ResultContext {
 			currentContext = currentContext.parent();
 		}
 		return attribute.getValueType().cast(value);
+	}
+
+	public final void recordDecodeResult(long position, long decoded, FormatSpec spec) {
+		this.decodeResults.put(position, new Pair<>(decoded, spec));
+	}
+
+	public final Pair<Long, FormatSpec> getDecodeResult(long position) {
+		Pair<Long, FormatSpec> decodeResult = this.decodeResults.get(position);
+
+		if (decodeResult == null) {
+			throw new IllegalStateException("Decode position not recorded: " + Long.toHexString(position));
+		}
+		return decodeResult;
 	}
 
 	/**
