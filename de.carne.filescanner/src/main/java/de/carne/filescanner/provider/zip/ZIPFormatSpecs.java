@@ -256,6 +256,7 @@ class ZIPFormatSpecs {
 			switch (compressionMethod.shortValue()) {
 			case 0:
 				decodeParams = DecodeParams.newNullDecoderFactory(compressedSize.longValue(), decodedPath);
+				break;
 			case 8:
 				decodeParams = DecodeParams.newDeflateDecoderFactory(compressedSize.longValue(), decodedPath);
 				break;

@@ -195,7 +195,7 @@ public abstract class FileScannerInput implements Closeable {
 			cache = new Cache(LOG);
 			CACHE.set(cache);
 		}
-		return cache.read(position, size, order);
+		return cache.read(this, position, size, order);
 	}
 
 	/**
@@ -355,7 +355,7 @@ public abstract class FileScannerInput implements Closeable {
 
 	/**
 	 * Create a nested input based by this input.
-	 * 
+	 *
 	 * @param start The start position of the nested input.
 	 * @param end The end position of the nested input.
 	 * @param nestedPath The path of the nested input.
@@ -402,11 +402,13 @@ public abstract class FileScannerInput implements Closeable {
 		};
 	}
 
-	private class Cache {
+	private static class Cache {
 
 		private final Log log;
 
 		private final ByteBuffer cacheBuffer = ByteBuffer.allocateDirect(CACHE_SIZE);
+
+		private FileScannerInput cacheInput = null;
 
 		private long cachePosition = -1l;
 
@@ -414,18 +416,20 @@ public abstract class FileScannerInput implements Closeable {
 			this.log = log;
 		}
 
-		public ByteBuffer read(long position, int size, ByteOrder order) throws IOException {
+		public ByteBuffer read(FileScannerInput input, long position, int size, ByteOrder order) throws IOException {
 			long readPosition = position & ~(CACHE_ALIGNMENT - 1);
 			int readSize = (int) (position - readPosition) + size;
 			ByteBuffer buffer;
 
 			if (readSize <= CACHE_SIZE) {
-				if (this.cachePosition < 0 || readPosition < this.cachePosition
+				if (!input.equals(this.cacheInput) || readPosition < this.cachePosition
 						|| (this.cachePosition + CACHE_SIZE) < (readPosition + readSize)) {
+					this.cacheInput = null;
 					this.cachePosition = -1l;
 					this.cacheBuffer.clear();
-					FileScannerInput.this.read(this.cacheBuffer, readPosition);
+					input.read(this.cacheBuffer, readPosition);
 					this.cacheBuffer.flip();
+					this.cacheInput = input;
 					this.cachePosition = readPosition;
 				}
 				buffer = this.cacheBuffer.asReadOnlyBuffer().order(order);
@@ -434,10 +438,10 @@ public abstract class FileScannerInput implements Closeable {
 
 				buffer.position(Math.min(bufferPosition, buffer.remaining()));
 			} else {
-				this.log.warning(null, "Excessive read request ({1}); ignoring cache", Units.formatByteValue(readSize));
+				this.log.warning(null, "Excessive read request ({0}); ignoring cache", Units.formatByteValue(readSize));
 
 				buffer = ByteBuffer.allocate(size).order(order);
-				FileScannerInput.this.read(buffer, position);
+				input.read(buffer, position);
 				buffer.flip();
 			}
 			return buffer;
