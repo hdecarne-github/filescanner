@@ -109,6 +109,15 @@ public abstract class FileScannerResultRenderer {
 	}
 
 	/**
+	 * Check whether this renderer has generated any output so far.
+	 * 
+	 * @return {@code true} if the renderer has generated output.
+	 */
+	public final boolean hasOutput() {
+		return this.prepared;
+	}
+
+	/**
 	 * Set rendering mode for the following render operations.
 	 *
 	 * @param mode The mode to set.

@@ -206,9 +206,11 @@ class ZIPFormatSpecs {
 		eocd.append(new U16Attribute("number of the disk with the start of the central directory"));
 		eocd.append(new U16Attribute("total number of entries in the central directory on this disk"));
 		eocd.append(new U16Attribute("total number of entries in the central directory"));
-		eocd.append(new U32Attribute("size of the central directory"));
-		eocd.append(new U32Attribute("offset of start of central directory with respect to the starting disk number"));
+		eocd.append(
+				new U32Attribute("size of the central directory").addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
+		eocd.append(new U32Attribute("offset of start of central directory"));
 		eocd.append(EOCD_ZIP_COMMENT_LENGTH.bind().addExtraRenderer(U16Attributes.BYTE_COUNT_COMMENT));
+		eocd.setResult(NAME_ZIP_EOCD);
 		ZIP_EOCD = eocd;
 	}
 
@@ -217,8 +219,8 @@ class ZIPFormatSpecs {
 	static {
 		StructFormatSpec cd = new StructFormatSpec();
 
-		cd.append(new VarArrayFormatSpec(ZIP_CDH, true));
-		// cd.append(ZIP_EOCD);
+		cd.append(new VarArrayFormatSpec(ZIP_CDH, 1));
+		cd.append(ZIP_EOCD);
 		cd.declareAttribute(CDH_FILE_NAME);
 		cd.setResult(NAME_ZIP_CD, CDH_FILE_NAME);
 		ZIP_CD = cd;
@@ -229,7 +231,7 @@ class ZIPFormatSpecs {
 	static {
 		StructFormatSpec zip = new StructFormatSpec();
 
-		zip.append(new VarArrayFormatSpec(ZIP_ENTRY, true));
+		zip.append(new VarArrayFormatSpec(ZIP_ENTRY, 1));
 		zip.append(ZIP_CD);
 		zip.setResult(NAME_ZIP);
 		ZIP = zip;

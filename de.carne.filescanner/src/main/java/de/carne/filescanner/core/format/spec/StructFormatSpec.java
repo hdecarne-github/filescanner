@@ -47,6 +47,23 @@ public class StructFormatSpec extends FormatSpec {
 
 	/*
 	 * (non-Javadoc)
+	 * @see de.carne.filescanner.core.format.spec.FormatSpec#isFixedSize()
+	 */
+	@Override
+	public boolean isFixedSize() {
+		boolean fixedSize = true;
+
+		for (FormatSpec spec : this.specs) {
+			if (!spec.isFixedSize()) {
+				fixedSize = false;
+				break;
+			}
+		}
+		return fixedSize;
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see de.carne.filescanner.core.format.FormatSpec#matchSize()
 	 */
 	@Override
@@ -60,6 +77,9 @@ public class StructFormatSpec extends FormatSpec {
 				break;
 			}
 			matchSize += specMatchSize;
+			if (!spec.isFixedSize()) {
+				break;
+			}
 		}
 		return matchSize;
 	}
@@ -71,17 +91,21 @@ public class StructFormatSpec extends FormatSpec {
 	 */
 	@Override
 	public boolean matches(ByteBuffer buffer) {
-		assert buffer != null;
-
-		int matchCount = 0;
+		boolean matches = false;
 
 		for (FormatSpec spec : this.specs) {
-			if (spec.matchSize() == 0 || !spec.matches(buffer)) {
+			if (spec.matchSize() == 0) {
 				break;
 			}
-			matchCount++;
+			matches = spec.matches(buffer);
+			if (!matches) {
+				break;
+			}
+			if (!spec.isFixedSize()) {
+				break;
+			}
 		}
-		return matchCount > 0;
+		return matches;
 	}
 
 	/*
@@ -91,52 +115,50 @@ public class StructFormatSpec extends FormatSpec {
 	 */
 	@Override
 	public long specDecode(FileScannerResultBuilder result, long position) throws IOException {
-		assert result != null;
-		assert position >= 0;
-
 		long decoded = 0L;
 
 		for (FormatSpec spec : this.specs) {
 			long specPosition = position + decoded;
+			long specDecoded;
 
 			if (spec.isResult()) {
 				FileScannerResultBuilder specResult = result.addResult(spec.resultType(), specPosition, spec);
 
-				decoded += ResultContext.setupAndDecode(spec, specResult);
+				specDecoded = ResultContext.setupAndDecode(spec, specResult);
 			} else {
-				decoded += spec.specDecode(result, specPosition);
+				specDecoded = spec.specDecode(result, specPosition);
 			}
+			recordResultSection(result, specPosition, specDecoded, spec);
+			decoded += specDecoded;
 		}
 		return decoded;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.FormatSpec#specRender(de.carne.
-	 * filescanner.core.FileScannerResult, long,
+	 * @see
+	 * de.carne.filescanner.core.format.spec.FormatSpec#specRender(de.carne.
+	 * filescanner.core.FileScannerResult, long, long,
 	 * de.carne.filescanner.spi.FileScannerResultRenderer)
 	 */
 	@Override
-	public long specRender(FileScannerResult result, long position, FileScannerResultRenderer renderer)
+	public void specRender(FileScannerResult result, long start, long end, FileScannerResultRenderer renderer)
 			throws IOException, InterruptedException {
-		assert result != null;
-		assert result.start() <= position;
-		assert position < result.end();
-		assert renderer != null;
-
-		long rendered = 0L;
+		long renderPosition = start;
 
 		for (FormatSpec spec : this.specs) {
-			if (!spec.isResult()) {
-				long renderPosition = position + rendered;
+			long nextRenderPosition = renderPosition + getResultSectionSize(result, renderPosition, spec);
 
-				rendered += spec.specRender(result, renderPosition, renderer);
+			assert nextRenderPosition <= end;
+
+			if (!spec.isResult()) {
+				spec.specRender(result, renderPosition, nextRenderPosition, renderer);
 			}
+			renderPosition = nextRenderPosition;
 		}
-		if (rendered == 0L) {
+		if (!renderer.hasOutput()) {
 			result.renderDefault(renderer);
 		}
-		return rendered;
 	}
 
 }

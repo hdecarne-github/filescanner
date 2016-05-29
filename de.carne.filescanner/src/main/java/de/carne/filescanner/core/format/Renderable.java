@@ -22,7 +22,7 @@ import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.spi.FileScannerResultRenderer;
 
 /**
- * This interface defines functions render a format and it's nested structures.
+ * This interface defines the functions to render a format.
  */
 public interface Renderable {
 

@@ -52,6 +52,15 @@ public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 
 	/*
 	 * (non-Javadoc)
+	 * @see de.carne.filescanner.core.format.spec.FormatSpec#isFixedSize()
+	 */
+	@Override
+	public boolean isFixedSize() {
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see de.carne.filescanner.core.format.FormatSpec#matchSize()
 	 */
 	@Override
@@ -94,14 +103,14 @@ public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 	 * (non-Javadoc)
 	 * @see
 	 * de.carne.filescanner.core.format.spec.FormatSpec#specRender(de.carne.
-	 * filescanner.core.FileScannerResult, long,
+	 * filescanner.core.FileScannerResult, long, long,
 	 * de.carne.filescanner.spi.FileScannerResultRenderer)
 	 */
 	@Override
-	public long specRender(FileScannerResult result, long position, FileScannerResultRenderer renderer)
+	public void specRender(FileScannerResult result, long start, long end, FileScannerResultRenderer renderer)
 			throws IOException, InterruptedException {
 		int typeSize = this.type.size();
-		ByteBuffer buffer = ensureSA(result.cachedRead(position, typeSize), typeSize);
+		ByteBuffer buffer = ensureSA(result.cachedRead(start, typeSize), typeSize);
 		T value = getValue(buffer);
 
 		renderer.setNormalMode().renderText(name());
@@ -111,7 +120,6 @@ public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 			extraRenderer.render(value, renderer);
 		}
 		renderer.renderBreakOrClose(isResult());
-		return typeSize;
 	}
 
 	/**

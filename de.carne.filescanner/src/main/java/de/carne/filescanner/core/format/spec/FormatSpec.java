@@ -21,26 +21,38 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.core.FileScannerResultType;
 import de.carne.filescanner.core.format.Decodable;
+import de.carne.filescanner.core.format.RenderableData;
 import de.carne.filescanner.core.format.ResultContext;
 import de.carne.filescanner.spi.FileScannerInput;
 import de.carne.filescanner.spi.FileScannerResultRenderer;
+import de.carne.filescanner.util.Hexadecimal;
 
 /**
  * Base class for spec based format definitions.
  */
-public abstract class FormatSpec implements Decodable {
+public abstract class FormatSpec implements Decodable, RenderableData {
 
 	private final ArrayList<Attribute<?>> declaredAttributes = new ArrayList<>();
 
 	private StringExpression resultTitleExpression = null;
 
-	public boolean isStatic() {
+	/**
+	 * Whether this spec's data size is fixed or format dependent.
+	 * <p>
+	 * If this function returns {@code true} the {@linkplain #matchSize()}
+	 * function can be used to get the actual size.
+	 * </p>
+	 *
+	 * @return {@code true} if this spec's data size is fixed.
+	 */
+	public boolean isFixedSize() {
 		return false;
 	}
 
@@ -136,17 +148,33 @@ public abstract class FormatSpec implements Decodable {
 	}
 
 	/**
-	 * Render a previously decoded result by interpreting this spec.
+	 * Render previously decoded data by interpreting this spec.
 	 *
-	 * @param result The result object to render.
-	 * @param position The position to start rendering at.
+	 * @param result The result object containing the data to render.
+	 * @param start The start position of the data to render.
+	 * @param end The end position of the data to render.
 	 * @param renderer The renderer to use.
-	 * @return The number of rendered bytes.
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	public abstract long specRender(FileScannerResult result, long position, FileScannerResultRenderer renderer)
+	public abstract void specRender(FileScannerResult result, long start, long end, FileScannerResultRenderer renderer)
 			throws IOException, InterruptedException;
+
+	/*
+	 * (non-Javadoc)
+	 * @see de.carne.filescanner.core.format.RenderableData#renderData(de.carne.
+	 * filescanner.core.FileScannerResult, long, long,
+	 * de.carne.filescanner.spi.FileScannerResultRenderer)
+	 */
+	@Override
+	public void renderData(FileScannerResult result, long start, long end, FileScannerResultRenderer renderer)
+			throws IOException, InterruptedException {
+		assert result.start() <= start;
+		assert start <= end;
+		assert end <= result.end();
+
+		specRender(result, start, end, renderer);
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -158,7 +186,7 @@ public abstract class FormatSpec implements Decodable {
 	@Override
 	public void render(FileScannerResult result, FileScannerResultRenderer renderer)
 			throws IOException, InterruptedException {
-		specRender(result, result.start(), renderer);
+		specRender(result, result.start(), result.end(), renderer);
 	}
 
 	/**
@@ -230,6 +258,81 @@ public abstract class FormatSpec implements Decodable {
 	 */
 	public final boolean isResult() {
 		return this.resultTitleExpression != null;
+	}
+
+	/**
+	 * Record a result section during decoding.
+	 * 
+	 * @param result The corresponding result object.
+	 * @param position The result section's position.
+	 * @param size The result section's size.
+	 * @param spec The result section's spec.
+	 */
+	protected final void recordResultSection(FileScannerResult result, long position, long size, FormatSpec spec) {
+		assert position >= 0;
+		assert size >= 0;
+		assert spec != null;
+
+		if (!spec.isFixedSize() && !spec.isResult()) {
+			result.context().recordResultSection(position, size, spec);
+		}
+	}
+
+	/**
+	 * Get a previously recorded result section's size.
+	 * 
+	 * @param result The corresponding result object.
+	 * @param position The result section's position.
+	 * @param spec The result section's size.
+	 * @return The result section's size.
+	 */
+	protected final long getResultSectionSize(FileScannerResult result, long position, FormatSpec spec) {
+		assert result != null;
+		assert result.start() <= position;
+		assert position <= result.end();
+		assert spec != null;
+
+		long size;
+
+		if (spec.isFixedSize()) {
+			size = spec.matchSize();
+		} else if (spec.isResult()) {
+			FileScannerResult positionResult = getResultByPosition(result, position);
+
+			if (positionResult == null) {
+				throw new IllegalStateException("Unknown result position: " + Hexadecimal.formatL(position));
+			}
+			size = positionResult.size();
+		} else {
+			size = result.context().getResultSection(position).size();
+		}
+		return size;
+	}
+
+	private FileScannerResult getResultByPosition(FileScannerResult result, long position) {
+		List<FileScannerResult> children = result.children();
+		int startIndex = 0;
+		int endIndex = children.size();
+		FileScannerResult found = null;
+
+		while (found == null) {
+			if (startIndex == endIndex) {
+				break;
+			}
+
+			int medianIndex = startIndex + (endIndex - startIndex) / 2;
+			FileScannerResult medianChild = children.get(medianIndex);
+			long medianChildStart = medianChild.start();
+
+			if (medianChildStart == position) {
+				found = medianChild;
+			} else if (medianChildStart < position) {
+				startIndex = medianIndex + 1;
+			} else {
+				endIndex = medianIndex;
+			}
+		}
+		return found;
 	}
 
 	/**

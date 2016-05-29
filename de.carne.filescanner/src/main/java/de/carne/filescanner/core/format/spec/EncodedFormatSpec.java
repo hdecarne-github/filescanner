@@ -119,18 +119,17 @@ public class EncodedFormatSpec extends FormatSpec implements Supplier<String> {
 	 * (non-Javadoc)
 	 * @see
 	 * de.carne.filescanner.core.format.spec.FormatSpec#specRender(de.carne.
-	 * filescanner.core.FileScannerResult, long,
+	 * filescanner.core.FileScannerResult, long, long,
 	 * de.carne.filescanner.spi.FileScannerResultRenderer)
 	 */
 	@Override
-	public long specRender(FileScannerResult result, long position, FileScannerResultRenderer renderer)
+	public void specRender(FileScannerResult result, long start, long end, FileScannerResultRenderer renderer)
 			throws IOException, InterruptedException {
 		DecodeParams decodeParams = this.decodeParamsExpression.decode();
 
 		if (decodeParams != null) {
 			decodeParams.render(renderer);
 		}
-		return result.size();
 	}
 
 }

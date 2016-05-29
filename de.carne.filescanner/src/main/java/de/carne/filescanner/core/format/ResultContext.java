@@ -22,9 +22,8 @@ import java.util.HashMap;
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.core.format.spec.Attribute;
-import de.carne.filescanner.core.format.spec.FormatSpec;
 import de.carne.filescanner.spi.FileScannerResultRenderer;
-import de.carne.util.Pair;
+import de.carne.filescanner.util.Hexadecimal;
 import de.carne.util.logging.Log;
 
 /**
@@ -39,7 +38,7 @@ public abstract class ResultContext {
 
 	private final HashMap<Attribute<?>, Object> contextAttributes = new HashMap<>();
 
-	private final HashMap<Long, Pair<Long, FormatSpec>> decodeResults = new HashMap<>();
+	private final HashMap<Long, ResultSection> resultSections = new HashMap<>();
 
 	/**
 	 * Get the parent context.
@@ -56,7 +55,7 @@ public abstract class ResultContext {
 	 */
 	public final void addResultAttributes(ResultContext context) {
 		this.contextAttributes.putAll(context.contextAttributes);
-		this.decodeResults.putAll(context.decodeResults);
+		this.resultSections.putAll(context.resultSections);
 	}
 
 	/**
@@ -112,17 +111,35 @@ public abstract class ResultContext {
 		return attribute.getValueType().cast(value);
 	}
 
-	public final void recordDecodeResult(long position, long decoded, FormatSpec spec) {
-		this.decodeResults.put(position, new Pair<>(decoded, spec));
+	/**
+	 * Record a result section for later rendering.
+	 *
+	 * @param position The position of the result section.
+	 * @param size The size of the result section.
+	 * @param renderable The {@linkplain RenderableData} to use for rendering.
+	 */
+	public final void recordResultSection(long position, long size, RenderableData renderable) {
+		assert position >= 0L;
+		assert size >= 0L;
+		assert renderable != null;
+
+		this.resultSections.put(position, new ResultSection(size, renderable));
 	}
 
-	public final Pair<Long, FormatSpec> getDecodeResult(long position) {
-		Pair<Long, FormatSpec> decodeResult = this.decodeResults.get(position);
+	/**
+	 * Get a previously registered result section.
+	 * 
+	 * @param position The position of the result section.
+	 * @return The result section object.
+	 * @see #recordResultSection(long, long, RenderableData)
+	 */
+	public final ResultSection getResultSection(long position) {
+		ResultSection resultSection = this.resultSections.get(position);
 
-		if (decodeResult == null) {
-			throw new IllegalStateException("Decode position not recorded: " + Long.toHexString(position));
+		if (resultSection == null) {
+			throw new IllegalStateException("Result section position not recorded: " + Hexadecimal.formatL(position));
 		}
-		return decodeResult;
+		return resultSection;
 	}
 
 	/**

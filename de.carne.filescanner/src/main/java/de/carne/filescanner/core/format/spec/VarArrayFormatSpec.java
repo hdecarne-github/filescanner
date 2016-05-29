@@ -31,21 +31,46 @@ public class VarArrayFormatSpec extends FormatSpec {
 
 	private final FormatSpec spec;
 
-	private final boolean matchOnce;
+	private final int minOccurrence;
+
+	private final int maxOccurrence;
 
 	/**
 	 * Construct {@code VarArrayFormatSpec}.
 	 *
 	 * @param spec The spec defining the array elements.
-	 * @param matchOnce Whether the minimum size of the array is {@code 0} (
-	 *        {@code false}) or {@code 1} ({@code true}).
+	 * @param minOccurrence The minimum occurrence of the spec.
 	 */
-	public VarArrayFormatSpec(FormatSpec spec, boolean matchOnce) {
+	public VarArrayFormatSpec(FormatSpec spec, int minOccurrence) {
+		this(spec, minOccurrence, 0);
+	}
+
+	/**
+	 * Construct {@code VarArrayFormatSpec}.
+	 *
+	 * @param spec The spec defining the array elements.
+	 * @param minOccurrence The minimum occurrence of the spec.
+	 * @param maxOccurrence The maximum occurrence of the space or {@code 0} if
+	 *        undefined.
+	 */
+	public VarArrayFormatSpec(FormatSpec spec, int minOccurrence, int maxOccurrence) {
 		assert spec != null;
 		assert spec.matchSize() > 0;
+		assert minOccurrence >= 0;
+		assert maxOccurrence == 0 || maxOccurrence >= minOccurrence;
 
 		this.spec = spec;
-		this.matchOnce = matchOnce;
+		this.minOccurrence = minOccurrence;
+		this.maxOccurrence = maxOccurrence;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see de.carne.filescanner.core.format.spec.FormatSpec#isFixedSize()
+	 */
+	@Override
+	public boolean isFixedSize() {
+		return this.minOccurrence > 0 && this.minOccurrence == this.maxOccurrence && this.spec.isFixedSize();
 	}
 
 	/*
@@ -54,7 +79,7 @@ public class VarArrayFormatSpec extends FormatSpec {
 	 */
 	@Override
 	public int matchSize() {
-		return (this.matchOnce ? this.spec.matchSize() : 0);
+		return (this.spec.isFixedSize() ? this.minOccurrence : 1) * this.spec.matchSize();
 	}
 
 	/*
@@ -64,7 +89,14 @@ public class VarArrayFormatSpec extends FormatSpec {
 	 */
 	@Override
 	public boolean matches(ByteBuffer buffer) {
-		return this.spec.matches(buffer);
+		boolean matches = this.spec.matches(buffer);
+
+		if (matches && this.spec.isFixedSize()) {
+			for (int occurrence = 2; matches && occurrence <= this.minOccurrence; occurrence++) {
+				matches = this.spec.matches(buffer);
+			}
+		}
+		return matches;
 	}
 
 	/*
@@ -97,6 +129,7 @@ public class VarArrayFormatSpec extends FormatSpec {
 			if (specDecoded == 0L) {
 				break;
 			}
+			recordResultSection(result, specPosition, specDecoded, this.spec);
 			decoded += specDecoded;
 		}
 		return decoded;
@@ -106,14 +139,13 @@ public class VarArrayFormatSpec extends FormatSpec {
 	 * (non-Javadoc)
 	 * @see
 	 * de.carne.filescanner.core.format.spec.FormatSpec#specRender(de.carne.
-	 * filescanner.core.FileScannerResult, long,
+	 * filescanner.core.FileScannerResult, long, long,
 	 * de.carne.filescanner.spi.FileScannerResultRenderer)
 	 */
 	@Override
-	public long specRender(FileScannerResult result, long position, FileScannerResultRenderer renderer)
+	public void specRender(FileScannerResult result, long start, long end, FileScannerResultRenderer renderer)
 			throws IOException, InterruptedException {
-		// TODO Auto-generated method stub
-		return result.size();
+		result.renderDefault(renderer);
 	}
 
 }

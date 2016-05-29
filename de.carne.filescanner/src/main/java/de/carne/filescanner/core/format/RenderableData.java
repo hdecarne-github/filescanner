@@ -18,20 +18,25 @@ package de.carne.filescanner.core.format;
 
 import java.io.IOException;
 
-import de.carne.filescanner.core.FileScannerResultBuilder;
+import de.carne.filescanner.core.FileScannerResult;
+import de.carne.filescanner.spi.FileScannerResultRenderer;
 
 /**
- * This interface defines the functions used to decode and render a format.
+ * This interface defines the functions to render selected data of a format.
  */
-public interface Decodable extends Renderable {
+public interface RenderableData {
 
 	/**
-	 * Decode scanner result.
+	 * Render the scanner result.
 	 *
-	 * @param result The result builder to decode into.
-	 * @return The number of decoded bytes.
+	 * @param result The result object containing the data to render.
+	 * @param start The start position of the data to render.
+	 * @param end The end position of the data to render.
+	 * @param renderer The renderer to use.
 	 * @throws IOException if an I/O error occurs.
+	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	public long decode(FileScannerResultBuilder result) throws IOException;
+	public void renderData(FileScannerResult result, long start, long end, FileScannerResultRenderer renderer)
+			throws IOException, InterruptedException;
 
 }

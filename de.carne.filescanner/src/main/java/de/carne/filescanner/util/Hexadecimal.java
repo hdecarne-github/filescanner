@@ -41,6 +41,16 @@ public final class Hexadecimal {
 	}
 
 	/**
+	 * Format a {@code byte} value using lower case characters.
+	 *
+	 * @param b The value to format.
+	 * @return The formatted value.
+	 */
+	public static String formatL(byte b) {
+		return formatL(new StringBuilder(), b).toString();
+	}
+
+	/**
 	 * Format a {@code byte} value using upper case characters.
 	 *
 	 * @param buffer The buffer to format into.
@@ -51,6 +61,16 @@ public final class Hexadecimal {
 		buffer.append(UPPER_NIBBLE_MAP[(b >> 4) & 0xf]);
 		buffer.append(UPPER_NIBBLE_MAP[b & 0xf]);
 		return buffer;
+	}
+
+	/**
+	 * Format a {@code byte} value using upper case characters.
+	 *
+	 * @param b The value to format.
+	 * @return The formatted value.
+	 */
+	public static String formatU(byte b) {
+		return formatU(new StringBuilder(), b).toString();
 	}
 
 	/**
@@ -189,6 +209,16 @@ public final class Hexadecimal {
 	}
 
 	/**
+	 * Format a {@code long} value using lower case characters.
+	 *
+	 * @param l The value to format.
+	 * @return The formatted value.
+	 */
+	public static String formatL(long l) {
+		return formatL(new StringBuilder(), l).toString();
+	}
+
+	/**
 	 * Format a {@code long} value using upper case characters.
 	 *
 	 * @param buffer The buffer to format into.
@@ -213,6 +243,16 @@ public final class Hexadecimal {
 		buffer.append(UPPER_NIBBLE_MAP[(int) ((l >>> 4) & 0xfl)]);
 		buffer.append(UPPER_NIBBLE_MAP[(int) (l & 0xfl)]);
 		return buffer;
+	}
+
+	/**
+	 * Format a {@code long} value using upper case characters.
+	 *
+	 * @param l The value to format.
+	 * @return The formatted value.
+	 */
+	public static String formatU(long l) {
+		return formatU(new StringBuilder(), l).toString();
 	}
 
 }
