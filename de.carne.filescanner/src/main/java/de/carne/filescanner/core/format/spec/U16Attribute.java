@@ -34,7 +34,7 @@ public class U16Attribute extends NumberAttribute<Short> {
 
 	/*
 	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.DataAttribute#getValueType()
+	 * @see de.carne.filescanner.core.format.ResultAttribute#getValueType()
 	 */
 	@Override
 	public Class<Short> getValueType() {

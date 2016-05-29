@@ -34,7 +34,7 @@ public class U32Attribute extends NumberAttribute<Integer> {
 
 	/*
 	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.DataAttribute#getValueType()
+	 * @see de.carne.filescanner.core.format.ResultAttribute#getValueType()
 	 */
 	@Override
 	public Class<Integer> getValueType() {

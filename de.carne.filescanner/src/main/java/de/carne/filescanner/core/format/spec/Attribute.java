@@ -21,8 +21,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
+import de.carne.filescanner.core.format.ResultAttribute;
 import de.carne.filescanner.core.format.ResultContext;
 
 /**
@@ -35,7 +35,7 @@ import de.carne.filescanner.core.format.ResultContext;
  *
  * @param <T> The attribute' data type.
  */
-public abstract class Attribute<T> extends FormatSpec implements Supplier<T> {
+public abstract class Attribute<T> extends FormatSpec implements ResultAttribute<T> {
 
 	private final String name;
 
@@ -55,22 +55,6 @@ public abstract class Attribute<T> extends FormatSpec implements Supplier<T> {
 
 		this.name = name;
 	}
-
-	/**
-	 * Get the attribute's name.
-	 *
-	 * @return The attribute's name.
-	 */
-	public final String name() {
-		return this.name;
-	}
-
-	/**
-	 * Get the attribute's value type.
-	 *
-	 * @return The attribute's value type.
-	 */
-	public abstract Class<T> getValueType();
 
 	/**
 	 * Mark this attribute as locally bound.
@@ -135,7 +119,7 @@ public abstract class Attribute<T> extends FormatSpec implements Supplier<T> {
 
 	/**
 	 * Evaluate the validators defined for this attribute.
-	 * 
+	 *
 	 * @param value The attribute value to validate.
 	 * @return {@code true} if all validators accept the value or if no
 	 *         validator has been added yet.
@@ -176,6 +160,15 @@ public abstract class Attribute<T> extends FormatSpec implements Supplier<T> {
 	 */
 	protected final List<AttributeRenderer<T>> getExtraRenderer() {
 		return Collections.unmodifiableList(this.extraRendererList);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see de.carne.filescanner.core.format.ResultAttribute#name()
+	 */
+	@Override
+	public final String name() {
+		return this.name;
 	}
 
 	/*

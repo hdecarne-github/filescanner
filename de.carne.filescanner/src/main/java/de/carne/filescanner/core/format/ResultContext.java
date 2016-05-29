@@ -36,7 +36,7 @@ public abstract class ResultContext {
 
 	private static final ThreadLocal<ResultContext> RESULT_CONTEXT = new ThreadLocal<>();
 
-	private final HashMap<Attribute<?>, Object> contextAttributes = new HashMap<>();
+	private final HashMap<ResultAttribute<?>, Object> resultAttributes = new HashMap<>();
 
 	private final HashMap<Long, ResultSection> resultSections = new HashMap<>();
 
@@ -54,7 +54,7 @@ public abstract class ResultContext {
 	 *        add.
 	 */
 	public final void addResultAttributes(ResultContext context) {
-		this.contextAttributes.putAll(context.contextAttributes);
+		this.resultAttributes.putAll(context.resultAttributes);
 		this.resultSections.putAll(context.resultSections);
 	}
 
@@ -63,10 +63,10 @@ public abstract class ResultContext {
 	 *
 	 * @param attribute The attribute to declare.
 	 */
-	public final <T> void declareAttribute(Attribute<T> attribute) {
+	public final <T> void declareAttribute(ResultAttribute<T> attribute) {
 		assert attribute != null;
 
-		this.contextAttributes.put(attribute, null);
+		this.resultAttributes.put(attribute, null);
 	}
 
 	/**
@@ -75,12 +75,12 @@ public abstract class ResultContext {
 	 * @param attribute The attribute to set.
 	 * @param value The attribute value to set.
 	 */
-	public final <T> void setAttribute(Attribute<T> attribute, T value) {
+	public final <T> void setAttribute(ResultAttribute<T> attribute, T value) {
 		assert attribute != null;
 
 		ResultContext currentContext = this;
 
-		while (currentContext != null && !currentContext.contextAttributes.containsKey(attribute)) {
+		while (currentContext != null && !currentContext.resultAttributes.containsKey(attribute)) {
 			currentContext = currentContext.parent();
 		}
 		if (currentContext == null) {
@@ -89,7 +89,7 @@ public abstract class ResultContext {
 		} else {
 			LOG.debug(null, "Set context attribute ''{0}'' = {1}", attribute.name(), value);
 		}
-		currentContext.contextAttributes.put(attribute, value);
+		currentContext.resultAttributes.put(attribute, value);
 	}
 
 	/**
@@ -105,7 +105,7 @@ public abstract class ResultContext {
 		Object value = null;
 
 		while (value == null && currentContext != null) {
-			value = currentContext.contextAttributes.get(attribute);
+			value = currentContext.resultAttributes.get(attribute);
 			currentContext = currentContext.parent();
 		}
 		return attribute.getValueType().cast(value);
@@ -128,7 +128,7 @@ public abstract class ResultContext {
 
 	/**
 	 * Get a previously registered result section.
-	 * 
+	 *
 	 * @param position The position of the result section.
 	 * @return The result section object.
 	 * @see #recordResultSection(long, long, RenderableData)

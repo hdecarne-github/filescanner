@@ -34,7 +34,7 @@ public class U8Attribute extends NumberAttribute<Byte> {
 
 	/*
 	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.DataAttribute#getValueType()
+	 * @see de.carne.filescanner.core.format.ResultAttribute#getValueType()
 	 */
 	@Override
 	public Class<Byte> getValueType() {
