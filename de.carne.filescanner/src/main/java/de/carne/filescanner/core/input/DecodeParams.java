@@ -85,10 +85,13 @@ public abstract class DecodeParams {
 	 * @param encodedSize The number of encoded bytes or {@code -1} if
 	 *        undefined.
 	 * @param decodedPath The decoded path.
+	 * @param name The name of the unsupported decoder.
 	 * @return The created factory.
 	 */
-	public static DecodeParams newUnsupportedDecoderFactory(long encodedSize, Path decodedPath) {
+	public static DecodeParams newUnsupportedDecoderFactory(long encodedSize, Path decodedPath, String name) {
 		return new DecodeParams("Unsupported encoded data", encodedSize, decodedPath) {
+
+			private final String decoderName = name;
 
 			@Override
 			public Decoder newDecoder() {
@@ -109,7 +112,9 @@ public abstract class DecodeParams {
 
 			@Override
 			public void render(FileScannerResultRenderer renderer) throws IOException, InterruptedException {
-				// Nothing to do here
+				renderer.setNormalMode().renderText("Compression");
+				renderer.setOperatorMode().renderText(" = ");
+				renderer.setValueMode().renderText(this.decoderName);
 			}
 
 		};
@@ -140,19 +145,18 @@ public abstract class DecodeParams {
 
 			@Override
 			public void render(FileScannerResultRenderer renderer) throws IOException, InterruptedException {
+				renderer.setNormalMode().renderText("Compression");
+				renderer.setOperatorMode().renderText(" = ");
+				renderer.setValueMode().renderText(DeflateName.NAME);
+
 				ArrayList<DeflateMode> modeList = new ArrayList<>(modeSet);
 
 				Collections.sort(modeList);
-				renderer.setNormalMode().renderText(DeflateName.NAME);
-				if (modeList.size() > 0) {
-					renderer.renderText(": ");
-					renderer.setKeywordMode();
-					for (DeflateMode mode : modeList) {
-						if (mode != modeList.get(0)) {
-							renderer.renderText(", ");
-						}
-						renderer.renderText(mode.name());
-					}
+				for (DeflateMode mode : modeList) {
+					renderer.renderBreak();
+					renderer.setNormalMode().renderText("Compression mode");
+					renderer.setOperatorMode().renderText(" = ");
+					renderer.setValueMode().renderText(mode.name());
 				}
 			}
 

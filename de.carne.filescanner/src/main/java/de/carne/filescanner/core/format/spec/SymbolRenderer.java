@@ -63,7 +63,7 @@ public class SymbolRenderer<T> extends AttributeRenderer<T> {
 
 	/**
 	 * Get the added values.
-	 * 
+	 *
 	 * @return The added values.
 	 */
 	public Set<T> getValues() {
@@ -77,8 +77,21 @@ public class SymbolRenderer<T> extends AttributeRenderer<T> {
 	 * @return The associated symbol or {@code null} if not symbol has been
 	 *         added for that value so far.
 	 */
-	protected String getSymbol(T value) {
+	public String getSymbol(T value) {
 		return this.symbolMap.get(value);
+	}
+
+	/**
+	 * Get a previously added symbol.
+	 *
+	 * @param value The value to get the symbol for.
+	 * @param defaultSymbol The default symbol to return in case the value is
+	 *        unknown.
+	 * @return The associated symbol or the submitted default symbol if not
+	 *         symbol has been added for that value so far.
+	 */
+	public String getSymbol(T value, String defaultSymbol) {
+		return this.symbolMap.getOrDefault(value, defaultSymbol);
 	}
 
 }

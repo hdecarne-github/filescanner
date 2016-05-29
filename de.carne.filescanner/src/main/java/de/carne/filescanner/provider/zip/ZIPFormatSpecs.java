@@ -253,7 +253,8 @@ class ZIPFormatSpecs {
 				decodeParams = DecodeParams.newDeflateDecoderFactory(compressedSize.longValue(), decodedPath);
 				break;
 			default:
-				decodeParams = DecodeParams.newUnsupportedDecoderFactory(compressedSize.longValue(), decodedPath);
+				decodeParams = DecodeParams.newUnsupportedDecoderFactory(compressedSize.longValue(), decodedPath,
+						ZIP_COMPRESSION_METHOD_SYMBOLS.getSymbol(compressionMethod, "Unknown"));
 			}
 		}
 		return decodeParams;
