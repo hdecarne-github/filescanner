@@ -29,6 +29,8 @@ import de.carne.filescanner.core.format.spec.U16FlagRenderer;
 import de.carne.filescanner.core.format.spec.U16SymbolRenderer;
 import de.carne.filescanner.core.format.spec.U32Attribute;
 import de.carne.filescanner.core.format.spec.U32Attributes;
+import de.carne.filescanner.core.format.spec.U8ArrayAttribute;
+import de.carne.filescanner.core.format.spec.U8Attributes;
 import de.carne.filescanner.core.format.spec.VarArrayFormatSpec;
 import de.carne.filescanner.core.input.DecodeParams;
 
@@ -140,6 +142,7 @@ class ZIPFormatSpecs {
 		lfh.append(LFH_FILE_NAME_LENGTH.bind().addExtraRenderer(U16Attributes.BYTE_COUNT_COMMENT));
 		lfh.append(LFH_EXTRA_FIELD_LENGTH.bind().addExtraRenderer(U16Attributes.BYTE_COUNT_COMMENT));
 		lfh.append(LFH_FILE_NAME.bind());
+		lfh.append(new U8ArrayAttribute("extra field", U8Attributes.HEXADECIMAL_FORMAT, LFH_EXTRA_FIELD_LENGTH));
 		lfh.setResult(NAME_ZIP_LFH);
 		ZIP_LFH = lfh;
 	}
@@ -152,7 +155,7 @@ class ZIPFormatSpecs {
 		zipEntry.append(ZIP_LFH);
 		zipEntry.append(new EncodedFormatSpec(() -> getInputDecodeParams()));
 		zipEntry.declareAttribute(LFH_COMPRESSION_METHOD).declareAttribute(LFH_COMPRESSED_SIZE)
-				.declareAttribute(LFH_FILE_NAME).declareAttribute(LFH_EXTRA_FIELD_LENGTH);
+				.declareAttribute(LFH_FILE_NAME);
 		zipEntry.setResult(NAME_ZIP_ENTRY, LFH_FILE_NAME);
 		ZIP_ENTRY = zipEntry;
 	}
@@ -185,11 +188,13 @@ class ZIPFormatSpecs {
 		cdh.append(CDH_FILE_NAME_LENGTH.bind().addExtraRenderer(U16Attributes.BYTE_COUNT_COMMENT));
 		cdh.append(CDH_EXTRA_FIELD_LENGTH.bind().addExtraRenderer(U16Attributes.BYTE_COUNT_COMMENT));
 		cdh.append(CDH_FILE_COMMENT_LENGTH.bind().addExtraRenderer(U16Attributes.BYTE_COUNT_COMMENT));
-		cdh.append(new U16Attribute("disk number start"));
+		cdh.append(new U16Attribute("disk number start", U16Attributes.DECIMAL_FORMAT));
 		cdh.append(new U16Attribute("internal file attributes"));
 		cdh.append(new U32Attribute("external file attributes"));
 		cdh.append(new U32Attribute("relative offset of local header"));
 		cdh.append(CDH_FILE_NAME.bind());
+		cdh.append(new U8ArrayAttribute("extra field", U8Attributes.HEXADECIMAL_FORMAT, CDH_EXTRA_FIELD_LENGTH));
+		cdh.append(new FixedStringAttribute("file comment", StandardCharsets.UTF_8, CDH_FILE_COMMENT_LENGTH));
 		cdh.setResult(NAME_ZIP_CDH, CDH_FILE_NAME);
 		ZIP_CDH = cdh;
 	}
@@ -202,10 +207,12 @@ class ZIPFormatSpecs {
 		StructFormatSpec eocd = new StructFormatSpec();
 
 		eocd.append(new U32Attribute("end of central dir signature").addValidValue(0x06054b50));
-		eocd.append(new U16Attribute("number of this disk"));
-		eocd.append(new U16Attribute("number of the disk with the start of the central directory"));
-		eocd.append(new U16Attribute("total number of entries in the central directory on this disk"));
-		eocd.append(new U16Attribute("total number of entries in the central directory"));
+		eocd.append(new U16Attribute("number of this disk", U16Attributes.DECIMAL_FORMAT));
+		eocd.append(new U16Attribute("number of the disk with the start of the central directory",
+				U16Attributes.DECIMAL_FORMAT));
+		eocd.append(new U16Attribute("total number of entries in the central directory on this disk",
+				U16Attributes.DECIMAL_FORMAT));
+		eocd.append(new U16Attribute("total number of entries in the central directory", U16Attributes.DECIMAL_FORMAT));
 		eocd.append(
 				new U32Attribute("size of the central directory").addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
 		eocd.append(new U32Attribute("offset of start of central directory"));

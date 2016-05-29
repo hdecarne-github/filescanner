@@ -29,7 +29,17 @@ public class U32Attribute extends NumberAttribute<Integer> {
 	 * @param name The attribute's name.
 	 */
 	public U32Attribute(String name) {
-		super(NumberAttributeType.U32, name, U32Attributes.HEXADECIMAL_FORMAT);
+		this(name, U32Attributes.HEXADECIMAL_FORMAT);
+	}
+
+	/**
+	 * Construct {@code U32Attribute}.
+	 *
+	 * @param name The attribute's name.
+	 * @param format The attribute's primary format.
+	 */
+	public U32Attribute(String name, NumberFormat<Integer> format) {
+		super(NumberAttributeType.U32, name, format);
 	}
 
 	/*
@@ -48,7 +58,7 @@ public class U32Attribute extends NumberAttribute<Integer> {
 	 */
 	@Override
 	public Integer getValue(ByteBuffer buffer) {
-		return (isSA(buffer, matchSize()) ? Integer.valueOf(buffer.getInt()) : null);
+		return (isSA(buffer, type().size()) ? Integer.valueOf(buffer.getInt()) : null);
 	}
 
 }

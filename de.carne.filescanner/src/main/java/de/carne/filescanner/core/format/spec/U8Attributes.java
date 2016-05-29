@@ -22,12 +22,12 @@ import de.carne.filescanner.util.Hexadecimal;
  * Helper functions and the like for {@linkplain NumberAttributeType#U8}
  * attributes.
  */
-public abstract class U8Attributes extends NumberFormat<Byte> {
+public final class U8Attributes {
 
 	/**
 	 * Decimal format.
 	 */
-	public static final U8Attributes DECIMAL = new U8Attributes() {
+	public static final NumberFormat<Byte> DECIMAL_FORMAT = new NumberFormat<Byte>() {
 
 		@Override
 		public String apply(Byte t) {
@@ -39,7 +39,7 @@ public abstract class U8Attributes extends NumberFormat<Byte> {
 	/**
 	 * Hexadecimal format.
 	 */
-	public static final U8Attributes HEXADECIMAL = new U8Attributes() {
+	public static final NumberFormat<Byte> HEXADECIMAL_FORMAT = new NumberFormat<Byte>() {
 
 		@Override
 		public String apply(Byte t) {

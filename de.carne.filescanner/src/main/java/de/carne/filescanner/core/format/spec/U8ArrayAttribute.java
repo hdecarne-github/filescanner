@@ -17,29 +17,33 @@
 package de.carne.filescanner.core.format.spec;
 
 import java.nio.ByteBuffer;
+import java.util.function.Supplier;
 
 /**
- * Defines a {@linkplain NumberAttributeType#U8} attribute.
+ * Defines a {@linkplain NumberAttributeType#U8} array attribute.
  */
-public class U8Attribute extends NumberAttribute<Byte> {
+public class U8ArrayAttribute extends NumberArrayAttribute<Byte> {
 
 	/**
-	 * Construct {@code U8Attribute}.
+	 * Construct {@code U8ArrayAttribute}.
 	 *
-	 * @param name The attribute's name.
+	 * @param name The array attribute's name.
+	 * @param format The array attribute's primary format.
+	 * @param size The static array size.
 	 */
-	public U8Attribute(String name) {
-		this(name, U8Attributes.HEXADECIMAL_FORMAT);
+	public U8ArrayAttribute(String name, NumberFormat<Byte> format, Number size) {
+		super(NumberAttributeType.U8, name, format, size);
 	}
 
 	/**
-	 * Construct {@code U8Attribute}.
+	 * Construct {@code U8ArrayAttribute}.
 	 *
-	 * @param name The attribute's name.
-	 * @param format The attribute's primary format.
+	 * @param name The array attribute's name.
+	 * @param format The array attribute's primary format.
+	 * @param sizeLambda The expression providing the array size.
 	 */
-	public U8Attribute(String name, NumberFormat<Byte> format) {
-		super(NumberAttributeType.U8, name, format);
+	public U8ArrayAttribute(String name, NumberFormat<Byte> format, Supplier<? extends Number> sizeLambda) {
+		super(NumberAttributeType.U8, name, format, sizeLambda);
 	}
 
 	/*
@@ -47,17 +51,17 @@ public class U8Attribute extends NumberAttribute<Byte> {
 	 * @see de.carne.filescanner.core.format.ResultAttribute#getValueType()
 	 */
 	@Override
-	public Class<Byte> getValueType() {
-		return Byte.class;
+	public Class<Byte[]> getValueType() {
+		return Byte[].class;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.DataAttribute#getValue(java.nio.
-	 * ByteBuffer)
+	 * @see de.carne.filescanner.core.format.spec.NumberArrayAttribute#
+	 * getElementValue(java.nio.ByteBuffer)
 	 */
 	@Override
-	public Byte getValue(ByteBuffer buffer) {
+	public Byte getElementValue(ByteBuffer buffer) {
 		return (isSA(buffer, type().size()) ? Byte.valueOf(buffer.get()) : null);
 	}
 

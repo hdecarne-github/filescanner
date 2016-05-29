@@ -48,10 +48,10 @@ public class FixedStringAttribute extends StringAttribute {
 	 *
 	 * @param name The attribute's name.
 	 * @param charset The charset to use for string decoding.
-	 * @param staticSize The static string data size.
+	 * @param size The static string data size.
 	 */
-	public FixedStringAttribute(String name, Charset charset, Number staticSize) {
-		this(name, charset, new NumberExpression<>(staticSize));
+	public FixedStringAttribute(String name, Charset charset, Number size) {
+		this(name, charset, new NumberExpression<>(size));
 	}
 
 	/**
@@ -63,6 +63,17 @@ public class FixedStringAttribute extends StringAttribute {
 	 */
 	public FixedStringAttribute(String name, Charset charset, Supplier<? extends Number> sizeLambda) {
 		this(name, charset, new NumberExpression<>(sizeLambda));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see de.carne.filescanner.core.format.spec.FormatSpec#isFixedSize()
+	 */
+	@Override
+	public boolean isFixedSize() {
+		Number sizeValue = this.sizeExpression.beforeDecode();
+
+		return sizeValue != null && sizeValue.longValue() < MAX_MATCH_SIZE;
 	}
 
 	/*

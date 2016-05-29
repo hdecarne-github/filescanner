@@ -113,7 +113,6 @@ public abstract class StringAttribute extends Attribute<String> {
 			buffer.append(" omitted");
 			renderer.setCommentMode().renderText(buffer.toString());
 		}
-		renderer.renderBreakOrClose(isResult());
 	}
 
 }

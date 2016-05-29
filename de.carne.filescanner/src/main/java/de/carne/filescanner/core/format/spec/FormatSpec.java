@@ -262,7 +262,7 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 
 	/**
 	 * Record a result section during decoding.
-	 * 
+	 *
 	 * @param result The corresponding result object.
 	 * @param position The result section's position.
 	 * @param size The result section's size.
@@ -280,7 +280,7 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 
 	/**
 	 * Get a previously recorded result section's size.
-	 * 
+	 *
 	 * @param result The corresponding result object.
 	 * @param position The result section's position.
 	 * @param spec The result section's size.
@@ -408,6 +408,15 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 		if (!((position + size) <= inputSize)) {
 			throw new EOFException("Insufficent input data: Requested " + size + ", got " + (inputSize - position));
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "FormatSpec " + (this.resultTitleExpression != null ? this.resultTitleExpression : "<anonymous>");
 	}
 
 }

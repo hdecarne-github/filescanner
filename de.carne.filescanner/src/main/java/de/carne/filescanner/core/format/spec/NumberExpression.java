@@ -28,10 +28,10 @@ public class NumberExpression<T extends Number> extends ValueExpression<T> {
 	/**
 	 * Construct {@code NumberExpression} with static value.
 	 *
-	 * @param staticValue This expressions static value.
+	 * @param value This expressions static value.
 	 */
-	public NumberExpression(T staticValue) {
-		super(staticValue);
+	public NumberExpression(T value) {
+		super(value);
 	}
 
 	/**

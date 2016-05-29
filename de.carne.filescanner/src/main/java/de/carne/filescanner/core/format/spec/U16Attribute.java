@@ -29,7 +29,17 @@ public class U16Attribute extends NumberAttribute<Short> {
 	 * @param name The attribute's name.
 	 */
 	public U16Attribute(String name) {
-		super(NumberAttributeType.U16, name, U16Attributes.HEXADECIMAL_FORMAT);
+		this(name, U16Attributes.HEXADECIMAL_FORMAT);
+	}
+
+	/**
+	 * Construct {@code U16Attribute}.
+	 *
+	 * @param name The attribute's name.
+	 * @param format The attribute's primary format.
+	 */
+	public U16Attribute(String name, NumberFormat<Short> format) {
+		super(NumberAttributeType.U16, name, format);
 	}
 
 	/*
@@ -48,7 +58,7 @@ public class U16Attribute extends NumberAttribute<Short> {
 	 */
 	@Override
 	public Short getValue(ByteBuffer buffer) {
-		return (isSA(buffer, matchSize()) ? Short.valueOf(buffer.getShort()) : null);
+		return (isSA(buffer, type().size()) ? Short.valueOf(buffer.getShort()) : null);
 	}
 
 }

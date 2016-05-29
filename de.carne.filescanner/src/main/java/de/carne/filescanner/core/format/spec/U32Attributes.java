@@ -23,12 +23,12 @@ import de.carne.filescanner.util.Units;
  * Helper functions and the like for {@linkplain NumberAttributeType#U32}
  * attributes.
  */
-public abstract class U32Attributes extends NumberFormat<Integer> {
+public final class U32Attributes {
 
 	/**
 	 * Decimal format.
 	 */
-	public static final U32Attributes DECIMAL_FORMAT = new U32Attributes() {
+	public static final NumberFormat<Integer> DECIMAL_FORMAT = new NumberFormat<Integer>() {
 
 		@Override
 		public String apply(Integer t) {
@@ -40,7 +40,7 @@ public abstract class U32Attributes extends NumberFormat<Integer> {
 	/**
 	 * Hexadecimal format.
 	 */
-	public static final U32Attributes HEXADECIMAL_FORMAT = new U32Attributes() {
+	public static final NumberFormat<Integer> HEXADECIMAL_FORMAT = new NumberFormat<Integer>() {
 
 		@Override
 		public String apply(Integer t) {

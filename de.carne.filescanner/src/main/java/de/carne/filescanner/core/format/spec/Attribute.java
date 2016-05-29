@@ -182,4 +182,13 @@ public abstract class Attribute<T> extends FormatSpec implements ResultAttribute
 		return ResultContext.get().getAttribute(this);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Attribute '" + this.name + "'";
+	}
+
 }
