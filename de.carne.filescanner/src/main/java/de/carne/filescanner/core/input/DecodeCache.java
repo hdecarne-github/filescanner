@@ -112,6 +112,13 @@ public final class DecodeCache implements AutoCloseable {
 					closeException = e;
 				}
 			}
+			try {
+				Files.delete(this.decodeCachePath);
+			} catch (IOException e) {
+				if (closeException == null) {
+					closeException = e;
+				}
+			}
 			this.decodeCacheWriteChannel = null;
 		}
 		if (closeException != null) {
@@ -125,6 +132,8 @@ public final class DecodeCache implements AutoCloseable {
 			this.decodeCachePath = Files.createTempFile(DecodeCache.class.getSimpleName(), null);
 			this.decodeCacheWriteChannel = FileChannel.open(this.decodeCachePath, StandardOpenOption.CREATE,
 					StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
+
+			LOG.info(null, "Created decode cache file ''{0}''", this.decodeCachePath);
 		}
 	}
 
