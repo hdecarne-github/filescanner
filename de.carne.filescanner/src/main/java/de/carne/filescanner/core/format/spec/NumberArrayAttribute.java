@@ -23,6 +23,7 @@ import java.util.function.Supplier;
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.spi.FileScannerResultRenderer;
+import de.carne.filescanner.util.Units;
 
 /**
  * This class defines Number based attribute arrays of fixed size.
@@ -146,22 +147,38 @@ public abstract class NumberArrayAttribute<T extends Number> extends Attribute<T
 		renderer.setNormalMode().renderText(name());
 		renderer.setOperatorMode().renderText(" = ");
 
-		long size = end - start;
-		int readSize = (int) Math.min(size, MAX_MATCH_SIZE);
-		int readCount = readSize / this.type.size();
-		ByteBuffer buffer = result.cachedRead(start, readSize);
+		StringBuilder formatBuffer = new StringBuilder();
 
-		renderer.setValueMode();
+		formatBuffer.append("[");
+
+		long totalSize = end - start;
+		int readSize = (int) Math.min(totalSize, MAX_MATCH_SIZE);
+		int readCount = readSize / this.type.size();
+		ByteBuffer readBuffer = result.cachedRead(start, readSize);
+
 		for (int elementIndex = 0; elementIndex < readCount; elementIndex++) {
-			T elementValue = getElementValue(buffer);
+			T elementValue = getElementValue(readBuffer);
 
 			if (elementValue == null) {
 				break;
 			}
 			if (elementIndex > 0) {
-				renderer.renderText(" ");
+				formatBuffer.append(", ");
 			}
-			renderer.renderText(this.format.apply(elementValue));
+			formatBuffer.append(this.format.apply(elementValue));
+		}
+		if (readSize < totalSize) {
+			formatBuffer.append(", \u2026");
+		}
+		formatBuffer.append("]");
+		renderer.setValueMode();
+		renderer.renderText(formatBuffer.toString());
+		if (readSize < totalSize) {
+			formatBuffer.setLength(0);
+			formatBuffer.append(" // remaining ");
+			formatBuffer.append(Units.formatByteValue(totalSize - MAX_MATCH_SIZE));
+			formatBuffer.append(" omitted");
+			renderer.setCommentMode().renderText(formatBuffer.toString());
 		}
 		renderer.renderBreakOrClose(isResult());
 	}
