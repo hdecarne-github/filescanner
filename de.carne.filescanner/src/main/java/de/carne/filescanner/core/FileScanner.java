@@ -118,6 +118,11 @@ public final class FileScanner implements Closeable {
 				queueResultInputs(child);
 			}
 		} else {
+			FileScannerStatsCollector currentStats = this.stats.recordInput(result);
+
+			if (currentStats.scanCount() == 1) {
+				this.status.onScanStart(this, currentStats);
+			}
 			this.status.onScanResult(this, result);
 
 			Scanner scanner = new Scanner(result);
@@ -166,12 +171,6 @@ public final class FileScanner implements Closeable {
 
 	@SuppressWarnings("resource")
 	void scanInput(FileScannerResult inputResult) {
-		FileScannerStatsCollector currentStats = this.stats.recordInput(inputResult);
-
-		if (currentStats.scanCount() == 1) {
-			this.status.onScanStart(this, currentStats);
-		}
-
 		FileScannerInput input = inputResult.input();
 
 		LOG.notice(null, "Scanning input ''{0}''...", input.path());
@@ -196,8 +195,7 @@ public final class FileScanner implements Closeable {
 				if ((currentNanos - lastProgressNanos) > PROGRESS_INTERVAL) {
 					long scannedDelta = scanPosition - lastProgressPosition;
 
-					currentStats = this.stats.recordScanned(scannedDelta, false);
-					this.status.onScanProgress(this, currentStats);
+					this.status.onScanProgress(this, this.stats.recordScanned(scannedDelta, false));
 					lastProgressNanos = currentNanos;
 					lastProgressPosition = scanPosition;
 				}
@@ -218,7 +216,8 @@ public final class FileScanner implements Closeable {
 			this.status.onScanException(this, e);
 		}
 		// Report reached progress end possible completion
-		currentStats = this.stats.recordScanned(scanPosition - lastProgressPosition, true);
+		FileScannerStatsCollector currentStats = this.stats.recordScanned(scanPosition - lastProgressPosition, true);
+
 		this.status.onScanProgress(this, currentStats);
 		if (this.scannerCount.get() == currentStats.finishedCount()) {
 			this.status.onScanFinished(this, currentStats);
