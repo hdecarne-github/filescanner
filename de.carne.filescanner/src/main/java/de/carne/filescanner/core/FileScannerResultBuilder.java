@@ -206,7 +206,7 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 			this.parent.addChild(this);
 			this.title = builder.title();
 			this.renderable = builder.renderable();
-			this.context().addResultAttributes(builder.context());
+			this.context().addResults(builder.context());
 		}
 
 		/*

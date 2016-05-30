@@ -128,7 +128,7 @@ public class StructFormatSpec extends FormatSpec {
 			} else {
 				specDecoded = spec.specDecode(result, specPosition);
 			}
-			recordResultSection(result, specPosition, specDecoded, spec);
+			recordResultSection(result, specDecoded, spec);
 			decoded += specDecoded;
 		}
 		return decoded;
@@ -145,9 +145,10 @@ public class StructFormatSpec extends FormatSpec {
 	public void specRender(FileScannerResult result, long start, long end, FileScannerResultRenderer renderer)
 			throws IOException, InterruptedException {
 		long renderPosition = start;
+		int sectionIndex = 0;
 
 		for (FormatSpec spec : this.specs) {
-			long nextRenderPosition = renderPosition + getResultSectionSize(result, renderPosition, spec);
+			long nextRenderPosition = renderPosition + getResultSectionSize(result, sectionIndex);
 
 			assert nextRenderPosition <= end;
 
@@ -155,6 +156,7 @@ public class StructFormatSpec extends FormatSpec {
 				spec.specRender(result, renderPosition, nextRenderPosition, renderer);
 			}
 			renderPosition = nextRenderPosition;
+			sectionIndex++;
 		}
 		if (!renderer.hasOutput()) {
 			result.renderDefault(renderer);

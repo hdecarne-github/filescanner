@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Supplier;
 
 import de.carne.filescanner.core.FileScannerResult;
@@ -32,7 +31,6 @@ import de.carne.filescanner.core.format.RenderableData;
 import de.carne.filescanner.core.format.ResultContext;
 import de.carne.filescanner.spi.FileScannerInput;
 import de.carne.filescanner.spi.FileScannerResultRenderer;
-import de.carne.filescanner.util.Hexadecimal;
 
 /**
  * Base class for spec based format definitions.
@@ -268,71 +266,24 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 	 * @param size The result section's size.
 	 * @param spec The result section's spec.
 	 */
-	protected final void recordResultSection(FileScannerResult result, long position, long size, FormatSpec spec) {
-		assert position >= 0;
+	protected final void recordResultSection(FileScannerResult result, long size, FormatSpec spec) {
 		assert size >= 0;
 		assert spec != null;
 
-		if (!spec.isFixedSize() && !spec.isResult()) {
-			result.context().recordResultSection(position, size, spec);
-		}
+		result.context().recordResultSection(size, spec);
 	}
 
 	/**
 	 * Get a previously recorded result section's size.
 	 *
 	 * @param result The corresponding result object.
-	 * @param position The result section's position.
-	 * @param spec The result section's size.
+	 * @param index The index of the result section to retrieve.
 	 * @return The result section's size.
 	 */
-	protected final long getResultSectionSize(FileScannerResult result, long position, FormatSpec spec) {
+	protected final long getResultSectionSize(FileScannerResult result, int index) {
 		assert result != null;
-		assert result.start() <= position;
-		assert position <= result.end();
-		assert spec != null;
 
-		long size;
-
-		if (spec.isFixedSize()) {
-			size = spec.matchSize();
-		} else if (spec.isResult()) {
-			FileScannerResult positionResult = getResultByPosition(result, position);
-
-			if (positionResult == null) {
-				throw new IllegalStateException("Unknown result position: " + Hexadecimal.formatL(position));
-			}
-			size = positionResult.size();
-		} else {
-			size = result.context().getResultSection(position).size();
-		}
-		return size;
-	}
-
-	private FileScannerResult getResultByPosition(FileScannerResult result, long position) {
-		List<FileScannerResult> children = result.children();
-		int startIndex = 0;
-		int endIndex = children.size();
-		FileScannerResult found = null;
-
-		while (found == null) {
-			if (startIndex == endIndex) {
-				break;
-			}
-
-			int medianIndex = startIndex + (endIndex - startIndex) / 2;
-			FileScannerResult medianChild = children.get(medianIndex);
-			long medianChildStart = medianChild.start();
-
-			if (medianChildStart == position) {
-				found = medianChild;
-			} else if (medianChildStart < position) {
-				startIndex = medianIndex + 1;
-			} else {
-				endIndex = medianIndex;
-			}
-		}
-		return found;
+		return result.context().getResultSection(index).size();
 	}
 
 	/**

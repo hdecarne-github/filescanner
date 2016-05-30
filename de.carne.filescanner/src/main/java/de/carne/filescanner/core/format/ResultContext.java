@@ -17,13 +17,13 @@
 package de.carne.filescanner.core.format;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.core.format.spec.Attribute;
 import de.carne.filescanner.spi.FileScannerResultRenderer;
-import de.carne.filescanner.util.Hexadecimal;
 import de.carne.util.logging.Log;
 
 /**
@@ -38,7 +38,7 @@ public abstract class ResultContext {
 
 	private final HashMap<ResultAttribute<?>, Object> resultAttributes = new HashMap<>();
 
-	private final HashMap<Long, ResultSection> resultSections = new HashMap<>();
+	private final ArrayList<ResultSection> resultSections = new ArrayList<>();
 
 	/**
 	 * Get the parent context.
@@ -48,14 +48,13 @@ public abstract class ResultContext {
 	protected abstract ResultContext parent();
 
 	/**
-	 * Add all result scoped attributes from another context.
+	 * Add all result information from another context.
 	 *
-	 * @param context The context containing the result scoped attributes to
-	 *        add.
+	 * @param context The context to copy the information from.
 	 */
-	public final void addResultAttributes(ResultContext context) {
+	public final void addResults(ResultContext context) {
 		this.resultAttributes.putAll(context.resultAttributes);
-		this.resultSections.putAll(context.resultSections);
+		this.resultSections.addAll(context.resultSections);
 	}
 
 	/**
@@ -114,32 +113,25 @@ public abstract class ResultContext {
 	/**
 	 * Record a result section for later rendering.
 	 *
-	 * @param position The position of the result section.
 	 * @param size The size of the result section.
 	 * @param renderable The {@linkplain RenderableData} to use for rendering.
 	 */
-	public final void recordResultSection(long position, long size, RenderableData renderable) {
-		assert position >= 0L;
+	public final void recordResultSection(long size, RenderableData renderable) {
 		assert size >= 0L;
 		assert renderable != null;
 
-		this.resultSections.put(position, new ResultSection(size, renderable));
+		this.resultSections.add(new ResultSection(size, renderable));
 	}
 
 	/**
-	 * Get a previously registered result section.
+	 * Get a previously recorded result section.
 	 *
-	 * @param position The position of the result section.
+	 * @param index The index of the result section to retrieve.
 	 * @return The result section object.
-	 * @see #recordResultSection(long, long, RenderableData)
+	 * @see #recordResultSection(long, RenderableData)
 	 */
-	public final ResultSection getResultSection(long position) {
-		ResultSection resultSection = this.resultSections.get(position);
-
-		if (resultSection == null) {
-			throw new IllegalStateException("Result section position not recorded: " + Hexadecimal.formatL(position));
-		}
-		return resultSection;
+	public final ResultSection getResultSection(int index) {
+		return this.resultSections.get(index);
 	}
 
 	/**

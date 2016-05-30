@@ -129,7 +129,6 @@ public class VarArrayFormatSpec extends FormatSpec {
 			if (specDecoded == 0L) {
 				break;
 			}
-			recordResultSection(result, specPosition, specDecoded, this.spec);
 			decoded += specDecoded;
 		}
 		return decoded;
