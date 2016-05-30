@@ -59,7 +59,7 @@ public final class DecodeCache implements AutoCloseable {
 	 * @return The created scanner input.
 	 * @throws IOException if an I/O error occurs.
 	 */
-	public synchronized FileScannerInput decodeInput(FileScannerInput input, long position, Decoder decoder, Path path)
+	public synchronized Input decodeInput(FileScannerInput input, long position, Decoder decoder, Path path)
 			throws IOException {
 		assert input != null;
 		assert position >= 0;
@@ -69,7 +69,7 @@ public final class DecodeCache implements AutoCloseable {
 
 		long decodeInputStart = this.decodeCacheWriteChannel.size();
 		long decodeInputEnd = decodeInputStart;
-		IOException decodeInputIOStatus = null;
+		IOException decodetatus = null;
 
 		try (InputReadChannel inputReadChannel = new InputReadChannel(input, position)) {
 			ByteBuffer decodeBuffer = ByteBuffer.allocateDirect(FileScannerInput.CACHE_SIZE);
@@ -80,10 +80,9 @@ public final class DecodeCache implements AutoCloseable {
 				decodeBuffer.clear();
 			}
 		} catch (IOException e) {
-			decodeInputIOStatus = e;
+			decodetatus = e;
 		}
-		return new DecodeCacheFileScannerInput(input.scanner(), path, decodeInputIOStatus, decodeInputStart,
-				decodeInputEnd);
+		return new Input(input.scanner(), path, decodeInputStart, decodeInputEnd, decodetatus);
 	}
 
 	/*
@@ -167,17 +166,32 @@ public final class DecodeCache implements AutoCloseable {
 		return read;
 	}
 
-	private class DecodeCacheFileScannerInput extends FileScannerInput {
+	/**
+	 * {@linkplain FileScannerInput} access to the decoded data.
+	 */
+	public class Input extends FileScannerInput {
 
 		private final long decodeCacheStart;
 
 		private final long decodeCacheEnd;
 
-		public DecodeCacheFileScannerInput(FileScanner scanner, Path path, IOException ioStatus, long decodeCacheStart,
-				long decodeCacheEnd) {
-			super(scanner, path, ioStatus);
+		private final Exception decodeStatus;
+
+		Input(FileScanner scanner, Path path, long decodeCacheStart, long decodeCacheEnd, Exception decodeStatus) {
+			super(scanner, path);
 			this.decodeCacheStart = decodeCacheStart;
 			this.decodeCacheEnd = decodeCacheEnd;
+			this.decodeStatus = decodeStatus;
+		}
+
+		/**
+		 * Get the input's decode status.
+		 *
+		 * @return {@code null} if the decoding was successful or the decoding
+		 *         exception otherwise.
+		 */
+		public Exception decodeStatus() {
+			return this.decodeStatus;
 		}
 
 		/*

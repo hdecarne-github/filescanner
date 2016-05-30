@@ -23,6 +23,8 @@ import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultType;
 import de.carne.filescanner.jfx.Images;
 import javafx.collections.ObservableList;
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -36,8 +38,8 @@ final class ResultTreeItemFactory {
 
 		private boolean synced = false;
 
-		ResultTreeItem(FileScannerResult result, Image image) {
-			super(result, new ImageView(image));
+		ResultTreeItem(FileScannerResult result, Node graphic) {
+			super(result, graphic);
 		}
 
 		public void syncChildren() {
@@ -86,7 +88,7 @@ final class ResultTreeItemFactory {
 	}
 
 	public ResultTreeItem create(FileScannerResult result) {
-		ResultTreeItem resultItem = new ResultTreeItem(result, getResultImage(result));
+		ResultTreeItem resultItem = new ResultTreeItem(result, getResultGraphic(result));
 
 		this.itemMap.put(result, resultItem);
 		return resultItem;
@@ -96,7 +98,7 @@ final class ResultTreeItemFactory {
 		return this.itemMap.get(result);
 	}
 
-	private static Image getResultImage(FileScannerResult result) {
+	private static Node getResultGraphic(FileScannerResult result) {
 		Image image;
 
 		switch (result.type()) {
@@ -113,7 +115,15 @@ final class ResultTreeItemFactory {
 		default:
 			throw new IllegalStateException("Unexpected result type: " + result.type());
 		}
-		return image;
+
+		Node graphic;
+
+		if (result.decodeStatus() == null) {
+			graphic = new ImageView(image);
+		} else {
+			graphic = new Group(new ImageView(image), new ImageView(Images.IMAGE_ERROR_OVERLAY16));
+		}
+		return graphic;
 	}
 
 }

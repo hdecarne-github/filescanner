@@ -22,6 +22,7 @@ import java.util.function.Supplier;
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.core.FileScannerResultType;
+import de.carne.filescanner.core.input.DecodeCache;
 import de.carne.filescanner.core.input.DecodeParams;
 import de.carne.filescanner.spi.FileScannerInput;
 import de.carne.filescanner.spi.FileScannerResultRenderer;
@@ -97,20 +98,25 @@ public class EncodedFormatSpec extends FormatSpec implements Supplier<String> {
 			Decoder decoder = decodeParams.newDecoder();
 			long encodedSize = decodeParams.getEncodedSize();
 			FileScannerInput decodedInput;
+			Exception decodeStatus;
 
 			if (decoder != null) {
-				decodedInput = result.input().scanner().decodeCache().decodeInput(result.input(), position, decoder,
-						decodeParams.getDecodedPath());
+				DecodeCache.Input decodedInput2 = result.input().scanner().decodeCache().decodeInput(result.input(),
+						position, decoder, decodeParams.getDecodedPath());
 				decoded = Math.max(decoder.totalIn(), encodedSize);
+				decodedInput = decodedInput2;
+				decodeStatus = decodedInput2.decodeStatus();
 			} else {
 				decoded = Math.max(0L, encodedSize);
 				decodedInput = result.input().slice(position, position + decoded, decodeParams.getDecodedPath());
+				decodeStatus = null;
 			}
 			if (encodedSize >= 0 && decoded > encodedSize) {
 				LOG.warning(null, "Decoding exceeded the specified encoded size; {0} addional bytes read",
 						decoded - encodedSize);
 			}
 			result.addInput(decodedInput);
+			result.updateDecodeStatus(decodeStatus);
 		}
 		return decoded;
 	}

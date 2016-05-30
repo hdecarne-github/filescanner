@@ -109,22 +109,18 @@ public abstract class FileScannerInput implements Closeable {
 
 	private final Path path;
 
-	private final IOException ioStatus;
-
 	/**
 	 * Construct {@code FileScannerInput}.
 	 *
 	 * @param scanner The {@code FileScanner} scanning this input.
 	 * @param path The input's path.
-	 * @param ioStatus The input's I/O status (may be {@code null}).
 	 */
-	public FileScannerInput(FileScanner scanner, Path path, IOException ioStatus) {
+	public FileScannerInput(FileScanner scanner, Path path) {
 		assert scanner != null;
 		assert path != null;
 
 		this.scanner = scanner;
 		this.path = path;
-		this.ioStatus = ioStatus;
 	}
 
 	/**
@@ -143,20 +139,6 @@ public abstract class FileScannerInput implements Closeable {
 	 */
 	public final Path path() {
 		return this.path;
-	}
-
-	/**
-	 * Get the input's I/O status.
-	 * <p>
-	 * The I/O status is initially set during input creation and indicates
-	 * possible problems during input creation (e.g. erroneous data decoding for
-	 * encoded data streams).
-	 * </p>
-	 *
-	 * @return The input's I/O status. {@code null} if the status ok.
-	 */
-	public final IOException ioStatus() {
-		return this.ioStatus;
 	}
 
 	/**
@@ -235,7 +217,7 @@ public abstract class FileScannerInput implements Closeable {
 		private final LinkedList<FileChannel> fileReadChannels = new LinkedList<>();
 
 		FileChannelInput(FileScanner scanner, Path path) {
-			super(scanner, path, null);
+			super(scanner, path);
 		}
 
 		/*
@@ -367,7 +349,7 @@ public abstract class FileScannerInput implements Closeable {
 		assert end >= start;
 		assert nestedPath != null;
 
-		return new FileScannerInput(this.scanner, nestedPath, null) {
+		return new FileScannerInput(this.scanner, nestedPath) {
 
 			private final long nestedStart = start;
 

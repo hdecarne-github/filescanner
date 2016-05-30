@@ -54,6 +54,15 @@ class InputFileScannerResult extends FileScannerResult {
 
 	/*
 	 * (non-Javadoc)
+	 * @see de.carne.filescanner.core.FileScannerResult#decodeStatus()
+	 */
+	@Override
+	public Exception decodeStatus() {
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see de.carne.filescanner.core.FileScannerResult#parent()
 	 */
 	@Override

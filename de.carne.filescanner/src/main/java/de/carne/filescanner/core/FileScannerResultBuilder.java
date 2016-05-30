@@ -37,6 +37,8 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 
 	private long end;
 
+	private Exception decodeStatus = null;
+
 	private final FileScannerResultBuilder parent;
 
 	private String title;
@@ -84,6 +86,24 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 		assert start() <= updatedEnd;
 
 		this.end = updatedEnd;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see de.carne.filescanner.core.FileScannerResult#decodeStatus()
+	 */
+	@Override
+	public Exception decodeStatus() {
+		return this.decodeStatus;
+	}
+
+	/**
+	 * Update the result's decode status.
+	 *
+	 * @param updateDecodeStatus The updated decode status to set.
+	 */
+	public void updateDecodeStatus(Exception updateDecodeStatus) {
+		this.decodeStatus = updateDecodeStatus;
 	}
 
 	/*
@@ -193,6 +213,8 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 
 		private final long end;
 
+		private final Exception decodeStatus;
+
 		private final FileScannerResult parent;
 
 		private final String title;
@@ -202,6 +224,7 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 		DecodedFileScannerResult(FileScannerResult parent, FileScannerResultBuilder builder) {
 			super(builder.type(), builder.input(), builder.order(), builder.start());
 			this.end = builder.end();
+			this.decodeStatus = builder.decodeStatus();
 			this.parent = parent;
 			this.parent.addChild(this);
 			this.title = builder.title();
@@ -216,6 +239,15 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 		@Override
 		public long end() {
 			return this.end;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see de.carne.filescanner.core.FileScannerResult#decodeStatus()
+		 */
+		@Override
+		public Exception decodeStatus() {
+			return this.decodeStatus;
 		}
 
 		/*

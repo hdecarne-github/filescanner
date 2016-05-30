@@ -67,6 +67,11 @@ public final class Images {
 	public static final Image IMAGE_ERROR32 = getImage(Images.class, "iconError32.png");
 
 	/**
+	 * Error Overlay icon (16x16)
+	 */
+	public static final Image IMAGE_ERROR_OVERLAY16 = getImage(Images.class, "iconErrorOverlay16.png");
+
+	/**
 	 * Log Notice icon (16x16)
 	 */
 	public static final Image IMAGE_LOG_NOTICE16 = getImage(Images.class, "iconLogNotice16.png");

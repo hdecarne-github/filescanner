@@ -185,6 +185,14 @@ public abstract class FileScannerResult {
 	}
 
 	/**
+	 * Get the result's decode status.
+	 * 
+	 * @return {@code null} if the decoding was successful or the decoding
+	 *         exception otherwise.
+	 */
+	public abstract Exception decodeStatus();
+
+	/**
 	 * Get the parent result.
 	 *
 	 * @return The parent result or {@code null} if this is a root result.
