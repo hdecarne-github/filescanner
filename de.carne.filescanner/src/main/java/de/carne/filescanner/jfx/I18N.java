@@ -1,7 +1,7 @@
 /*
  * I18N resource strings
  *
- * Generated on 07.05.2016 10:09:54
+ * Generated on May 30, 2016 11:18:04 PM
  */
 package de.carne.filescanner.jfx;
 
@@ -18,7 +18,13 @@ public final class I18N {
 	 */
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle(I18N.class.getName());
 
-	private static String format(String key, Object... arguments) {
+	/**
+	 * Format a resource string.
+	 * @param key The resource key.
+	 * @param arguments Format arguments.
+	 * @return The formated string.
+	 */
+	public static String format(String key, Object... arguments) {
 		String pattern = BUNDLE.getString(key);
 
 		return (arguments.length > 0 ? MessageFormat.format(pattern, arguments) : pattern);
@@ -46,27 +52,6 @@ public final class I18N {
 	}
 
 	/**
-	 * Resource key {@code STR_VM_INFO}
-	 * <p>
-	 * Java VM Version: {0} Vendor: ''{1}''
-	 * </p>
-	 */
-	public static final String STR_VM_INFO = "STR_VM_INFO";
-
-	/**
-	 * Resource string {@code STR_VM_INFO}
-	 * <p>
-	 * Java VM Version: {0} Vendor: ''{1}''
-	 * </p>
-	 *
-	 * @param arguments Format arguments.
-	 * @return The formated string.
-	 */
-	public static String formatSTR_VM_INFO(Object... arguments) {
-		return format(STR_VM_INFO, arguments);
-	}
-
-	/**
 	 * Resource key {@code STR_VERBOSE_ENABLED_MESSAGE}
 	 * <p>
 	 * Verbose logging enabled
@@ -88,6 +73,27 @@ public final class I18N {
 	}
 
 	/**
+	 * Resource key {@code STR_VM_HEAP_INFO}
+	 * <p>
+	 * Maximum heap size: {0}
+	 * </p>
+	 */
+	public static final String STR_VM_HEAP_INFO = "STR_VM_HEAP_INFO";
+
+	/**
+	 * Resource string {@code STR_VM_HEAP_INFO}
+	 * <p>
+	 * Maximum heap size: {0}
+	 * </p>
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formated string.
+	 */
+	public static String formatSTR_VM_HEAP_INFO(Object... arguments) {
+		return format(STR_VM_HEAP_INFO, arguments);
+	}
+
+	/**
 	 * Resource key {@code STR_DEBUG_ENABLED_MESSAGE}
 	 * <p>
 	 * Debug logging enabled
@@ -106,6 +112,27 @@ public final class I18N {
 	 */
 	public static String formatSTR_DEBUG_ENABLED_MESSAGE(Object... arguments) {
 		return format(STR_DEBUG_ENABLED_MESSAGE, arguments);
+	}
+
+	/**
+	 * Resource key {@code STR_VM_VERSION_INFO}
+	 * <p>
+	 * Java VM Version: {0} Vendor: ''{1}''
+	 * </p>
+	 */
+	public static final String STR_VM_VERSION_INFO = "STR_VM_VERSION_INFO";
+
+	/**
+	 * Resource string {@code STR_VM_VERSION_INFO}
+	 * <p>
+	 * Java VM Version: {0} Vendor: ''{1}''
+	 * </p>
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formated string.
+	 */
+	public static String formatSTR_VM_VERSION_INFO(Object... arguments) {
+		return format(STR_VM_VERSION_INFO, arguments);
 	}
 
 	/**

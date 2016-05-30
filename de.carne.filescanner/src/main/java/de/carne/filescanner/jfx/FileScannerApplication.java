@@ -26,6 +26,7 @@ import de.carne.ApplicationLoader;
 import de.carne.Main;
 import de.carne.filescanner.core.transfer.HtmlResultRendererURLHandler;
 import de.carne.filescanner.jfx.session.SessionController;
+import de.carne.filescanner.util.Units;
 import de.carne.jfx.StageController;
 import de.carne.jfx.logview.LogImages;
 import de.carne.jfx.messagebox.MessageBoxImages;
@@ -152,7 +153,12 @@ public class FileScannerApplication extends Application implements Main {
 		String vmVersion = System.getProperty("java.version");
 		String vmVendor = System.getProperty("java.vendor");
 
-		LOG.notice(I18N.BUNDLE, I18N.STR_VM_INFO, vmVersion, vmVendor);
+		LOG.notice(I18N.BUNDLE, I18N.STR_VM_VERSION_INFO, vmVersion, vmVendor);
+
+		Runtime runtime = Runtime.getRuntime();
+		long maxMemory = runtime.maxMemory();
+
+		LOG.notice(I18N.BUNDLE, I18N.STR_VM_HEAP_INFO, Units.formatByteValue(maxMemory));
 	}
 
 	private void logLoaderInfo() {
