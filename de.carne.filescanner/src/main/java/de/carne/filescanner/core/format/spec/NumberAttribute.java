@@ -19,6 +19,7 @@ package de.carne.filescanner.core.format.spec;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import de.carne.filescanner.core.DecodeStatusException;
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.spi.FileScannerResultRenderer;
@@ -52,7 +53,7 @@ public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 
 	/**
 	 * Get the attribute's type.
-	 * 
+	 *
 	 * @return The attribute's type.
 	 */
 	public final NumberAttributeType type() {
@@ -98,14 +99,20 @@ public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 	 */
 	@Override
 	public long specDecode(FileScannerResultBuilder result, long position) throws IOException {
-		int typeSize = this.type.size();
+		T value = getValue(result.input().cachedRead(position, this.type.size(), result.order()));
+		long decoded = 0L;
 
-		if (isBound()) {
-			ByteBuffer buffer = ensureSA(result.input().cachedRead(position, typeSize, result.order()), typeSize);
-
-			bindValue(getValue(buffer));
+		if (value == null) {
+			result.updateDecodeStatus(DecodeStatusException.fatal("Unexpected end of data"));
+		} else if (!validateValue(value)) {
+			result.updateDecodeStatus(DecodeStatusException.fatal("Invalid data"));
+		} else {
+			decoded = this.type.size();
+			if (isBound()) {
+				bindValue(value);
+			}
 		}
-		return typeSize;
+		return decoded;
 	}
 
 	/*
@@ -119,14 +126,16 @@ public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 	public void specRender(FileScannerResult result, long start, long end, FileScannerResultRenderer renderer)
 			throws IOException, InterruptedException {
 		int typeSize = this.type.size();
-		ByteBuffer buffer = ensureSA(result.cachedRead(start, typeSize), typeSize);
+		ByteBuffer buffer = result.cachedRead(start, typeSize);
 		T value = getValue(buffer);
 
-		renderer.setNormalMode().renderText(name());
-		renderer.setOperatorMode().renderText(" = ");
-		renderer.setValueMode().renderText(this.format.apply(value));
-		for (AttributeRenderer<T> extraRenderer : getExtraRenderer()) {
-			extraRenderer.render(value, renderer);
+		if (value != null) {
+			renderer.setNormalMode().renderText(name());
+			renderer.setOperatorMode().renderText(" = ");
+			renderer.setValueMode().renderText(this.format.apply(value));
+			for (AttributeRenderer<T> extraRenderer : getExtraRenderer()) {
+				extraRenderer.render(value, renderer);
+			}
 		}
 		renderer.renderBreakOrClose(isResult());
 	}

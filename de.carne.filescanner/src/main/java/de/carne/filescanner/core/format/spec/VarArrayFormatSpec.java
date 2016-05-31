@@ -19,6 +19,7 @@ package de.carne.filescanner.core.format.spec;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import de.carne.filescanner.core.DecodeStatusException;
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.core.format.ResultContext;
@@ -123,10 +124,17 @@ public class VarArrayFormatSpec extends FormatSpec {
 				FileScannerResultBuilder specResult = result.addResult(this.spec.resultType(), specPosition, this.spec);
 
 				specDecoded = ResultContext.setupAndDecode(this.spec, specResult);
+				result.updateDecodeStatus(specResult.decodeStatus());
 			} else {
 				specDecoded = this.spec.specDecode(result, specPosition);
 			}
 			if (specDecoded == 0L) {
+				result.updateDecodeStatus(DecodeStatusException.fatal("No data decoded"));
+			}
+
+			DecodeStatusException decodeStatus = result.decodeStatus();
+
+			if (decodeStatus != null && decodeStatus.isFatal()) {
 				break;
 			}
 			decoded += specDecoded;

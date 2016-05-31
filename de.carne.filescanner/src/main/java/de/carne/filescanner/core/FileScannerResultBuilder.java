@@ -100,10 +100,14 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 	/**
 	 * Update the result's decode status.
 	 *
-	 * @param updateDecodeStatus The updated decode status to set.
+	 * @param updateDecodeStatus The updated decode status to consider.
 	 */
 	public void updateDecodeStatus(DecodeStatusException updateDecodeStatus) {
-		this.decodeStatus = updateDecodeStatus;
+		if (updateDecodeStatus != null) {
+			if (this.decodeStatus == null || (!this.decodeStatus.isFatal() && updateDecodeStatus.isFatal())) {
+				this.decodeStatus = updateDecodeStatus;
+			}
+		}
 	}
 
 	/*

@@ -16,7 +16,6 @@
  */
 package de.carne.filescanner.core.format.spec;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.text.MessageFormat;
@@ -29,6 +28,7 @@ import de.carne.filescanner.core.FileScannerResultType;
 import de.carne.filescanner.core.format.Decodable;
 import de.carne.filescanner.core.format.RenderableData;
 import de.carne.filescanner.core.format.ResultContext;
+import de.carne.filescanner.core.format.ResultSection;
 import de.carne.filescanner.spi.FileScannerInput;
 import de.carne.filescanner.spi.FileScannerResultRenderer;
 
@@ -274,16 +274,17 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 	}
 
 	/**
-	 * Get a previously recorded result section's size.
+	 * Get a previously recorded result section.
 	 *
 	 * @param result The corresponding result object.
 	 * @param index The index of the result section to retrieve.
-	 * @return The result section's size.
+	 * @return The result section object or {@code null} if the submitted index
+	 *         has not been recorded.
 	 */
-	protected final long getResultSectionSize(FileScannerResult result, int index) {
+	protected final ResultSection getResultSectionSize(FileScannerResult result, int index) {
 		assert result != null;
 
-		return result.context().getResultSection(index).size();
+		return result.context().getResultSection(index);
 	}
 
 	/**
@@ -302,25 +303,6 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 	}
 
 	/**
-	 * Ensure that a buffer contains sufficient data.
-	 *
-	 * @param buffer The buffer to check.
-	 * @param size The required number of remaining bytes.
-	 * @return The successfully checked buffer.
-	 * @throws EOFException if the buffer does not contain the required number
-	 *         of bytes.
-	 */
-	protected static final ByteBuffer ensureSA(ByteBuffer buffer, int size) throws EOFException {
-		assert buffer != null;
-		assert size >= 0;
-
-		if (!(size <= buffer.remaining())) {
-			throw new EOFException("Insufficent buffer data: Requested " + size + ", got " + buffer.remaining());
-		}
-		return buffer;
-	}
-
-	/**
 	 * Check whether an input contains sufficient data.
 	 *
 	 * @param input The input to check.
@@ -336,29 +318,6 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 		assert size >= 0;
 
 		return (position + size) <= input.size();
-	}
-
-	/**
-	 * Ensure that an input contains sufficient data.
-	 *
-	 * @param input The input to check.
-	 * @param position The input position to check with.
-	 * @param size The required number of remaining bytes.
-	 * @throws EOFException if the input does not contain the required number of
-	 *         bytes.
-	 * @throws IOException if an I/O error occurs.
-	 */
-	protected static final void ensureSA(FileScannerInput input, long position, long size)
-			throws EOFException, IOException {
-		assert input != null;
-		assert position >= 0;
-		assert size >= 0;
-
-		long inputSize = input.size();
-
-		if (!((position + size) <= inputSize)) {
-			throw new EOFException("Insufficent input data: Requested " + size + ", got " + (inputSize - position));
-		}
 	}
 
 	/*

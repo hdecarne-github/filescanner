@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.function.Supplier;
 
+import de.carne.filescanner.core.DecodeStatusException;
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.spi.FileScannerResultRenderer;
@@ -102,10 +103,22 @@ public class FixedStringAttribute extends StringAttribute {
 	 */
 	@Override
 	public long specDecode(FileScannerResultBuilder result, long position) throws IOException {
-		long decoded = this.sizeExpression.decode().longValue();
+		long stringSize = this.sizeExpression.decode().longValue();
+		long decoded = 0L;
 
-		if (isBound()) {
-			bindValue(decodeString(result, position, decoded).toString());
+		if (!isSA(result.input(), position, stringSize)) {
+			result.updateDecodeStatus(DecodeStatusException.fatal("Unexpected end of data"));
+		} else {
+			String value = decodeString(result, position, stringSize).toString();
+
+			if (!validateValue(value)) {
+				result.updateDecodeStatus(DecodeStatusException.fatal("Invalid data"));
+			} else {
+				decoded = stringSize;
+				if (isBound()) {
+					bindValue(value);
+				}
+			}
 		}
 		return decoded;
 	}

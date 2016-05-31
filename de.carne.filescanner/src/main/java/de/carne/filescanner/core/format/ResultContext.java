@@ -127,11 +127,12 @@ public abstract class ResultContext {
 	 * Get a previously recorded result section.
 	 *
 	 * @param index The index of the result section to retrieve.
-	 * @return The result section object.
+	 * @return The result section object or {@code null} if the submitted index
+	 *         has not been recorded.
 	 * @see #recordResultSection(long, RenderableData)
 	 */
 	public final ResultSection getResultSection(int index) {
-		return this.resultSections.get(index);
+		return (index < this.resultSections.size() ? this.resultSections.get(index) : null);
 	}
 
 	/**

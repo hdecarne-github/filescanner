@@ -20,9 +20,11 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
+import de.carne.filescanner.core.DecodeStatusException;
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.core.format.ResultContext;
+import de.carne.filescanner.core.format.ResultSection;
 import de.carne.filescanner.spi.FileScannerResultRenderer;
 
 /**
@@ -125,8 +127,15 @@ public class StructFormatSpec extends FormatSpec {
 				FileScannerResultBuilder specResult = result.addResult(spec.resultType(), specPosition, spec);
 
 				specDecoded = ResultContext.setupAndDecode(spec, specResult);
+				result.updateDecodeStatus(specResult.decodeStatus());
 			} else {
 				specDecoded = spec.specDecode(result, specPosition);
+			}
+
+			DecodeStatusException decodeStatus = result.decodeStatus();
+
+			if (decodeStatus != null && decodeStatus.isFatal()) {
+				break;
 			}
 			recordResultSection(result, specDecoded, spec);
 			decoded += specDecoded;
@@ -148,7 +157,13 @@ public class StructFormatSpec extends FormatSpec {
 		int sectionIndex = 0;
 
 		for (FormatSpec spec : this.specs) {
-			long nextRenderPosition = renderPosition + getResultSectionSize(result, sectionIndex);
+			ResultSection section = getResultSectionSize(result, sectionIndex);
+
+			if (section == null) {
+				break;
+			}
+
+			long nextRenderPosition = renderPosition + section.size();
 
 			assert nextRenderPosition <= end;
 

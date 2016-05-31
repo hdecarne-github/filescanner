@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.function.Supplier;
 
+import de.carne.filescanner.core.DecodeStatusException;
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.spi.FileScannerResultRenderer;
@@ -131,7 +132,15 @@ public abstract class NumberArrayAttribute<T extends Number> extends Attribute<T
 	 */
 	@Override
 	public long specDecode(FileScannerResultBuilder result, long position) throws IOException {
-		return this.sizeExpression.decode().longValue() * this.type.size();
+		long totalSize = this.sizeExpression.decode().longValue() * this.type.size();
+		long decoded = 0L;
+
+		if (!isSA(result.input(), position, totalSize)) {
+			result.updateDecodeStatus(DecodeStatusException.fatal("Unexpected end of data"));
+		} else {
+			decoded = totalSize;
+		}
+		return decoded;
 	}
 
 	/*
