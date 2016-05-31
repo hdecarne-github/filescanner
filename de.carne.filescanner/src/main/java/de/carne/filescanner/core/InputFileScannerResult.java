@@ -57,7 +57,7 @@ class InputFileScannerResult extends FileScannerResult {
 	 * @see de.carne.filescanner.core.FileScannerResult#decodeStatus()
 	 */
 	@Override
-	public Exception decodeStatus() {
+	public DecodeStatusException decodeStatus() {
 		return null;
 	}
 

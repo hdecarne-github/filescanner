@@ -19,6 +19,7 @@ package de.carne.filescanner.core.format.spec;
 import java.io.IOException;
 import java.util.function.Supplier;
 
+import de.carne.filescanner.core.DecodeStatusException;
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.core.FileScannerResultType;
@@ -116,7 +117,7 @@ public class EncodedFormatSpec extends FormatSpec implements Supplier<String> {
 						decoded - encodedSize);
 			}
 			result.addInput(decodedInput);
-			result.updateDecodeStatus(decodeStatus);
+			result.updateDecodeStatus(DecodeStatusException.fromException(decodeStatus, encodedSize < 0));
 		}
 		return decoded;
 	}
