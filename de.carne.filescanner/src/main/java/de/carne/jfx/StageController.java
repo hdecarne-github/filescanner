@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 import de.carne.jfx.messagebox.MessageBoxController;
 import de.carne.jfx.messagebox.MessageBoxResult;
 import de.carne.jfx.messagebox.MessageBoxStyle;
+import de.carne.util.Exceptions;
 import de.carne.util.logging.Log;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -304,7 +305,7 @@ public abstract class StageController {
 			messageBoxController.getStage().showAndWait();
 			result = messageBoxController.getResult();
 		} catch (IOException e) {
-			LOG.error(e, I18N.BUNDLE, I18N.STR_MESSAGEBOX_EXCEPTION_MESSAGE, message, e.getLocalizedMessage());
+			LOG.error(e, I18N.BUNDLE, I18N.STR_MESSAGEBOX_EXCEPTION_MESSAGE, message, Exceptions.toMessage(e));
 		}
 		return result;
 	}
@@ -315,7 +316,7 @@ public abstract class StageController {
 	 * @param unexpected The exception to report.
 	 */
 	public void reportUnexpectedException(Throwable unexpected) {
-		LOG.error(unexpected, I18N.BUNDLE, I18N.STR_UNEXPECTED_EXCEPTION_MESSAGE, unexpected.getLocalizedMessage());
+		LOG.error(unexpected, I18N.BUNDLE, I18N.STR_UNEXPECTED_EXCEPTION_MESSAGE, Exceptions.toMessage(unexpected));
 	}
 
 	void onCloseRequest(WindowEvent evt) {

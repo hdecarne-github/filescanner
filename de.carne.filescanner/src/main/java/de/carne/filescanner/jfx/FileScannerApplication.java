@@ -31,6 +31,7 @@ import de.carne.jfx.StageController;
 import de.carne.jfx.logview.LogImages;
 import de.carne.jfx.messagebox.MessageBoxImages;
 import de.carne.jfx.messagebox.MessageBoxStyle;
+import de.carne.util.Exceptions;
 import de.carne.util.logging.Log;
 import de.carne.util.logging.LogConfig;
 import javafx.application.Application;
@@ -67,7 +68,7 @@ public class FileScannerApplication extends Application implements Main {
 	}
 
 	void handleUncaughtException(Thread t, Throwable e, UncaughtExceptionHandler next) {
-		LOG.error(e, I18N.BUNDLE, I18N.STR_UNEXPECTED_EXCEPTION_MESSAGE, e.getLocalizedMessage());
+		LOG.error(e, I18N.BUNDLE, I18N.STR_UNEXPECTED_EXCEPTION_MESSAGE, Exceptions.toMessage(e));
 		if (next != null) {
 			next.uncaughtException(t, e);
 		}

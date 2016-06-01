@@ -29,6 +29,7 @@ import de.carne.filescanner.spi.FileScannerInput;
 import de.carne.filescanner.spi.FileScannerResultRenderer;
 import de.carne.filescanner.util.Hexadecimal;
 import de.carne.filescanner.util.Units;
+import de.carne.util.Exceptions;
 
 /**
  * A {@code FileScanner} result object.
@@ -239,6 +240,26 @@ public abstract class FileScannerResult {
 	 */
 	public void render(FileScannerResultRenderer renderer) throws IOException, InterruptedException {
 		renderDefault(renderer);
+		renderer.close();
+	}
+
+	/**
+	 * Render the current decode status (if not {@code null}).
+	 * 
+	 * @param renderer The renderer to use.
+	 * @throws IOException if an I/O error occurs.
+	 * @throws InterruptedException if he render thread is interrupted.
+	 */
+	public void renderDecodeStatus(FileScannerResultRenderer renderer) throws IOException, InterruptedException {
+		DecodeStatusException decodeStatus = decodeStatus();
+
+		if (decodeStatus != null && !decodeStatus.isNested()) {
+			if (renderer.hasOutput()) {
+				renderer.renderBreak();
+			}
+			renderer.setLabelMode().renderText("--- Decoding failure ---").renderBreak();
+			renderer.setErrorMode().renderText(Exceptions.toMessage(decodeStatus));
+		}
 	}
 
 	/**
@@ -253,6 +274,9 @@ public abstract class FileScannerResult {
 	 * @throws InterruptedException if he render thread is interrupted.
 	 */
 	public void renderDefault(FileScannerResultRenderer renderer) throws IOException, InterruptedException {
+		if (renderer.hasOutput()) {
+			renderer.renderBreak();
+		}
 		renderer.setNormalMode().renderText("start");
 		renderer.setOperatorMode().renderText(" = ");
 		renderer.setValueMode().renderText(Hexadecimal.formatL(new StringBuilder("0x"), start()).toString());
@@ -264,7 +288,7 @@ public abstract class FileScannerResult {
 		renderer.setNormalMode().renderText("size");
 		renderer.setOperatorMode().renderText(" = ");
 		renderer.setValueMode().renderText(Units.formatByteValue(size()));
-		renderer.close();
+		renderDecodeStatus(renderer);
 	}
 
 	/**

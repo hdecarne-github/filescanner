@@ -44,6 +44,7 @@ import de.carne.jfx.StageController;
 import de.carne.jfx.aboutinfo.AboutInfoController;
 import de.carne.jfx.logview.LogViewTriggerProperty;
 import de.carne.jfx.messagebox.MessageBoxStyle;
+import de.carne.util.Exceptions;
 import de.carne.util.Strings;
 import de.carne.util.logging.Log;
 import javafx.application.Platform;
@@ -345,7 +346,7 @@ public class SessionController extends StageController {
 	void onFileScannerException(FileScanner scanner, Throwable e) {
 		StringWriter text = new StringWriter();
 		PrintWriter printer = new PrintWriter(text);
-		String exceptionMessage = e.getLocalizedMessage();
+		String exceptionMessage = Exceptions.toMessage(e);
 
 		if (Strings.notEmpty(exceptionMessage)) {
 			printer.println(exceptionMessage);

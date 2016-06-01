@@ -82,19 +82,19 @@ public class U16FlagRenderer extends FlagRenderer<Short> {
 	 */
 	@Override
 	protected String formatFlag(Short flag, Short value) {
-		StringBuilder buffer = new StringBuilder();
+		StringBuilder formatBuffer = new StringBuilder();
 		short shiftFlag = MSB;
 		short flagValue = flag.shortValue();
 
 		while (shiftFlag != 0) {
 			if ((shiftFlag & flagValue) != 0) {
-				buffer.append((flagValue & value.shortValue()) != 0 ? '1' : '0');
+				formatBuffer.append((flagValue & value.shortValue()) != 0 ? '1' : '0');
 			} else {
-				buffer.append('.');
+				formatBuffer.append('.');
 			}
 			shiftFlag >>>= 1;
 		}
-		return buffer.toString();
+		return formatBuffer.toString();
 	}
 
 }

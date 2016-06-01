@@ -27,6 +27,7 @@ import java.util.Properties;
 import java.util.prefs.AbstractPreferences;
 import java.util.prefs.BackingStoreException;
 
+import de.carne.util.Exceptions;
 import de.carne.util.logging.Log;
 
 /**
@@ -180,7 +181,7 @@ class PropertiesPreferences extends AbstractPreferences {
 			try (InputStream propertiesStream = Files.newInputStream(this.propertiesPath, StandardOpenOption.READ)) {
 				this.properties.load(propertiesStream);
 			} catch (IOException e) {
-				LOG.warning(e, null, e.getLocalizedMessage());
+				LOG.warning(e, null, Exceptions.toMessage(e));
 			}
 		}
 	}

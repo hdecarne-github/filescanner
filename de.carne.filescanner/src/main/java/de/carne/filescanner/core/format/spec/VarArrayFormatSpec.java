@@ -153,6 +153,7 @@ public class VarArrayFormatSpec extends FormatSpec {
 	public void specRender(FileScannerResult result, long start, long end, FileScannerResultRenderer renderer)
 			throws IOException, InterruptedException {
 		result.renderDefault(renderer);
+		renderer.renderBreakOrClose(isResult());
 	}
 
 }
