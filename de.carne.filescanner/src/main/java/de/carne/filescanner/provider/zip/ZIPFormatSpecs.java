@@ -48,6 +48,8 @@ class ZIPFormatSpecs {
 
 	public static final String NAME_ZIP_LFH = "Local file header";
 
+	public static final String NAME_ZIP_DD = "Data Descriptor";
+
 	public static final String NAME_ZIP_CD = "Central directory";
 
 	public static final String NAME_ZIP_CDH = "Central directory header [{0}]";
@@ -154,6 +156,21 @@ class ZIPFormatSpecs {
 		ZIP_LFH = lfh;
 	}
 
+	public static final StructFormatSpec ZIP_DD;
+
+	static {
+		StructFormatSpec dd = new StructFormatSpec();
+
+		dd.append(new U32Attribute("local file header signature").addValidValue(0x08074b50));
+		dd.append(new U32Attribute("crc-32"));
+		dd.append(new U32Attribute("compressed size", U32Attributes.DECIMAL_FORMAT)
+				.addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
+		dd.append(new U32Attribute("uncompressed size", U32Attributes.DECIMAL_FORMAT)
+				.addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
+		dd.setResult(NAME_ZIP_DD);
+		ZIP_DD = dd;
+	}
+
 	public static final StructFormatSpec ZIP_ENTRY;
 
 	static {
@@ -161,6 +178,7 @@ class ZIPFormatSpecs {
 
 		zipEntry.append(ZIP_LFH);
 		zipEntry.append(new EncodedFormatSpec(() -> getInputDecodeParams()));
+		zipEntry.append(new VarArrayFormatSpec(ZIP_DD, 0, 1));
 		zipEntry.declareAttribute(LFH_COMPRESSION_METHOD).declareAttribute(LFH_COMPRESSED_SIZE)
 				.declareAttribute(LFH_FILE_NAME);
 		zipEntry.setResult(NAME_ZIP_ENTRY, LFH_FILE_NAME);
@@ -263,6 +281,12 @@ class ZIPFormatSpecs {
 		DecodeParams decodeParams = null;
 
 		if (compressionMethod != null && compressedSize != null && fileName != null) {
+			long encodedSize = compressedSize.longValue();
+
+			if (encodedSize == 0L) {
+				encodedSize = -1L;
+			}
+
 			Path decodedPath = Paths.get(fileName);
 
 			switch (compressionMethod.shortValue()) {
