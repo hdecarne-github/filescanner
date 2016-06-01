@@ -129,17 +129,19 @@ public class LogViewController extends StageController {
 
 	void publishLogRecord(LogRecord record) {
 		if (Platform.isFxApplicationThread()) {
-			ObservableList<LogRecordModel> logItems = this.ctlLogTable.getItems();
-			int selectedItemIndex = this.ctlLogTable.getSelectionModel().getSelectedIndex();
-			boolean updateSelection = selectedItemIndex < 0 || (selectedItemIndex + 1) == logItems.size();
+			if (getStage().isShowing()) {
+				ObservableList<LogRecordModel> logItems = this.ctlLogTable.getItems();
+				int selectedItemIndex = this.ctlLogTable.getSelectionModel().getSelectedIndex();
+				boolean updateSelection = selectedItemIndex < 0 || (selectedItemIndex + 1) == logItems.size();
 
-			logItems.add(new LogRecordModel(record));
-			while (logItems.size() > LogBufferHandler.BUFFER_SIZE) {
-				logItems.remove(0);
-			}
-			if (updateSelection) {
-				this.ctlLogTable.getSelectionModel().selectLast();
-				this.ctlLogTable.scrollTo(this.ctlLogTable.getSelectionModel().getSelectedIndex());
+				logItems.add(new LogRecordModel(record));
+				while (logItems.size() > LogBufferHandler.BUFFER_SIZE) {
+					logItems.remove(0);
+				}
+				if (updateSelection) {
+					this.ctlLogTable.getSelectionModel().selectLast();
+					this.ctlLogTable.scrollTo(this.ctlLogTable.getSelectionModel().getSelectedIndex());
+				}
 			}
 		} else {
 			CountDownLatch latch = new CountDownLatch(1);
