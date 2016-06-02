@@ -82,7 +82,7 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 
 	};
 
-	private static final String STREAM_PREFIX = "stream";
+	private static final String STREAM_PREFIX = "#stream";
 
 	// Do not use URL as the key, as this will degrade performance
 	private static final HashMap<String, StreamHandler> URL_MAP = new HashMap<>();
@@ -162,8 +162,8 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 	 *
 	 * @param result The {@code FileScannerResult} to render.
 	 * @param fastTimeout The time in milliseconds this function waits for a
-	 *        fast result. If this parameter is 0 the fast result is not checked
-	 *        at all.
+	 *        fast result. If this parameter is {@code 0} the fast result is not
+	 *        checked at all.
 	 * @return The created {@linkplain RenderResult} for accessing the renderer
 	 *         output.
 	 * @throws IOException if an I/O error occurs.
@@ -171,7 +171,7 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 	public static RenderResult open(FileScannerResult result, int fastTimeout) throws IOException {
 		assert result != null;
 
-		URL baseURL = new URL(PROTOCOL_RENDERER, UUID.randomUUID().toString(), "");
+		URL baseURL = new URL(PROTOCOL_RENDERER, "", UUID.randomUUID().toString());
 
 		LOG.debug(null, "Creating renderer URL: ''{0}''", baseURL);
 
@@ -195,7 +195,7 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 	}
 
 	URL openStream(StreamHandler handler) throws IOException {
-		URL streamURL = new URL(PROTOCOL_RENDERER, this.baseURL.getHost(), STREAM_PREFIX + this.streamIndex);
+		URL streamURL = new URL(PROTOCOL_RENDERER, "", this.baseURL.getFile() + STREAM_PREFIX + this.streamIndex);
 		String streamURLString = streamURL.toExternalForm();
 
 		LOG.debug(null, "Creating stream URL: ''0}''", streamURLString);
@@ -270,6 +270,7 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 
 	static StreamHandler getStreamHandler(URL u) throws IOException {
 		String urlString = u.toExternalForm();
+
 		LOG.debug(null, "Accessing renderer URL ''{0}''", urlString);
 
 		StreamHandler streamHandler = URL_MAP.get(urlString);
