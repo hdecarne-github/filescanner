@@ -126,8 +126,8 @@ abstract class HtmlResultRenderer extends FileScannerResultRenderer {
 	@Override
 	protected void writeRefImage(Mode mode, StreamHandler streamHandler, long position)
 			throws IOException, InterruptedException {
-		// TODO Auto-generated method stub
-		super.writeRefImage(mode, streamHandler, position);
+		write("<a href=\"#", Hexadecimal.formatL(position), "\"><img src=\"",
+				this.urlHandler.openStream(streamHandler).toExternalForm(), "\"/></a>");
 	}
 
 	/*
@@ -152,8 +152,8 @@ abstract class HtmlResultRenderer extends FileScannerResultRenderer {
 	@Override
 	protected void writeRefVideo(Mode mode, StreamHandler streamHandler, long position)
 			throws IOException, InterruptedException {
-		// TODO Auto-generated method stub
-		super.writeRefVideo(mode, streamHandler, position);
+		write("<a href=\"#", Hexadecimal.formatL(position), "\"><video src=\"",
+				this.urlHandler.openStream(streamHandler).toExternalForm(), "\"/></a>");
 	}
 
 	protected abstract void write(String... artefacts) throws IOException, InterruptedException;
