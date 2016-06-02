@@ -19,6 +19,7 @@ package de.carne.filescanner.core.transfer;
 import java.io.IOException;
 
 import de.carne.filescanner.spi.FileScannerResultRenderer;
+import de.carne.filescanner.util.Hexadecimal;
 
 /**
  * Base class for all {@code FileScannerResultRenderer} implementations that
@@ -100,8 +101,7 @@ abstract class HtmlResultRenderer extends FileScannerResultRenderer {
 	 */
 	@Override
 	protected void writeRefText(Mode mode, String text, long position) throws IOException, InterruptedException {
-		// TODO Auto-generated method stub
-		super.writeRefText(mode, text, position);
+		write("<a href=\"#", Hexadecimal.formatL(position), "\">", text, "</a>");
 	}
 
 	/*

@@ -232,6 +232,46 @@ public abstract class FileScannerResult {
 	public abstract String title();
 
 	/**
+	 * Map a position to the nearest result.
+	 *
+	 * @param position The position to map.
+	 * @return The mapped result or {@code null} if the position is not located
+	 *         within this result.
+	 */
+	public synchronized FileScannerResult mapPosition(long position) {
+		FileScannerResult mappedResult = null;
+
+		if (this.start <= position && position < end()) {
+			mappedResult = this;
+			if (this.type != FileScannerResultType.ENCODED_INPUT) {
+				int startIndex = 0;
+				int endIndex = this.children.size();
+
+				while (true) {
+					if (startIndex == endIndex) {
+						break;
+					}
+
+					int medianIndex = startIndex + (endIndex - startIndex) / 2;
+					FileScannerResult medianChild = this.children.get(medianIndex);
+					long medianChildStart = medianChild.start;
+					long medianChildEnd = medianChild.end();
+
+					if (medianChildStart <= position && position < medianChildEnd) {
+						mappedResult = medianChild.mapPosition(position);
+						break;
+					} else if (position < medianChildStart) {
+						endIndex = medianIndex;
+					} else {
+						startIndex = medianIndex + 1;
+					}
+				}
+			}
+		}
+		return mappedResult;
+	}
+
+	/**
 	 * Render the result for user display.
 	 *
 	 * @param renderer The renderer to use.
@@ -245,7 +285,7 @@ public abstract class FileScannerResult {
 
 	/**
 	 * Render the current decode status (if not {@code null}).
-	 * 
+	 *
 	 * @param renderer The renderer to use.
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if he render thread is interrupted.

@@ -28,6 +28,18 @@ public final class Hexadecimal {
 			'B', 'C', 'D', 'E', 'F' };
 
 	/**
+	 * Parse a hexadecimal formatted long value.
+	 *
+	 * @param s The string to parse.
+	 * @return The parsed long value.
+	 * @throws NumberFormatException if the submitted {@code String} cannot be
+	 *         parsed.
+	 */
+	public static long parseLong(String s) throws NumberFormatException {
+		return Long.parseUnsignedLong(s, 16);
+	}
+
+	/**
 	 * Format a {@code byte} value using lower case characters.
 	 *
 	 * @param buffer The buffer to format into.

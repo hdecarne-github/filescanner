@@ -26,9 +26,17 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.prefs.Preferences;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.events.Event;
+import org.w3c.dom.events.EventListener;
+import org.w3c.dom.events.EventTarget;
+import org.w3c.dom.html.HTMLAnchorElement;
+
 import de.carne.ApplicationLoader;
 import de.carne.filescanner.core.FileScanner;
 import de.carne.filescanner.core.FileScannerResult;
+import de.carne.filescanner.core.FileScannerResultType;
 import de.carne.filescanner.core.FileScannerStats;
 import de.carne.filescanner.core.FileScannerStatus;
 import de.carne.filescanner.core.transfer.HtmlResultRendererURLHandler;
@@ -39,6 +47,7 @@ import de.carne.filescanner.jfx.control.FileViewType;
 import de.carne.filescanner.jfx.control.PositionRange;
 import de.carne.filescanner.jfx.session.ResultTreeItemFactory.ResultTreeItem;
 import de.carne.filescanner.spi.FileScannerInput;
+import de.carne.filescanner.util.Hexadecimal;
 import de.carne.filescanner.util.Units;
 import de.carne.jfx.StageController;
 import de.carne.jfx.aboutinfo.AboutInfoController;
@@ -50,6 +59,8 @@ import de.carne.util.logging.Log;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Worker;
+import javafx.concurrent.Worker.State;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -309,6 +320,46 @@ public class SessionController extends StageController {
 		}
 	}
 
+	void onResultViewLoaded() {
+		Document document = this.resultView.getEngine().getDocument();
+		NodeList nodeList = document.getElementsByTagName("a");
+
+		for (int itemIndex = 0; itemIndex < nodeList.getLength(); itemIndex++) {
+			HTMLAnchorElement anchor = (HTMLAnchorElement) nodeList.item(itemIndex);
+			String href = anchor.getHref();
+
+			if (href != null && href.startsWith("#")) {
+				EventTarget eventTarget = (EventTarget) anchor;
+
+				eventTarget.addEventListener("click", new EventListener() {
+
+					@Override
+					public void handleEvent(Event evt) {
+						onPositionAnchorClick((HTMLAnchorElement) evt.getTarget());
+						evt.preventDefault();
+					}
+
+				}, false);
+			}
+		}
+	}
+
+	void onPositionAnchorClick(HTMLAnchorElement anchor) {
+		String href = anchor.getHref();
+
+		if (href.startsWith("#")) {
+			try {
+				long position = Hexadecimal.parseLong(href.substring(1));
+
+				gotoResultPosition(position);
+			} catch (NumberFormatException e) {
+				LOG.warning(e, null, "Invalid HREF: ''{0}''", href);
+			}
+		} else {
+			LOG.warning(null, "Unexpected HREF: ''{0}''", href);
+		}
+	}
+
 	void onFileScannerStart(FileScanner scanner, FileScannerStats stats) {
 		if (scanner.equals(this.fileScanner)) {
 			this.scanStatusIcon.setImage(Images.IMAGE_SUCCESS16);
@@ -410,6 +461,18 @@ public class SessionController extends StageController {
 					}
 
 				});
+
+		// Register handler for internal links
+		this.resultView.getEngine().getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
+
+			@Override
+			public void changed(ObservableValue<? extends State> observable, State oldValue, State newValue) {
+				if (Worker.State.SUCCEEDED.equals(newValue)) {
+					onResultViewLoaded();
+				}
+			}
+
+		});
 	}
 
 	private void setupFileViewType(FileViewType fileViewType) {
@@ -535,6 +598,42 @@ public class SessionController extends StageController {
 				this.resultsView.requestFocus();
 			}
 		}
+	}
+
+	private void gotoResultPosition(long position) {
+		TreeItem<FileScannerResult> resultItem = this.resultsView.getSelectionModel().getSelectedItem();
+
+		if (resultItem != null) {
+			FileScannerResult result = resultItem.getValue();
+			FileScannerResult resultParent;
+
+			while ((resultParent = result.parent()) != null && resultParent.type() != FileScannerResultType.INPUT) {
+				result = resultParent;
+			}
+
+			FileScannerResult positionResult = result.mapPosition(position - result.start());
+
+			if (positionResult != null) {
+				TreeItem<FileScannerResult> positionItem = gotoResultPositionHelper(positionResult);
+
+				this.resultsView.getSelectionModel().select(positionItem);
+				this.resultsView.scrollTo(this.resultsView.getSelectionModel().getSelectedIndex());
+				this.resultsView.requestFocus();
+			}
+		}
+	}
+
+	private TreeItem<FileScannerResult> gotoResultPositionHelper(FileScannerResult positionResult) {
+		TreeItem<FileScannerResult> positionItem = this.resultItemFactory.get(positionResult);
+
+		if (positionItem == null) {
+			TreeItem<FileScannerResult> parentItem = gotoResultPositionHelper(positionResult.parent());
+
+			// Trigger item factory
+			parentItem.getChildren();
+			positionItem = this.resultItemFactory.get(positionResult);
+		}
+		return positionItem;
 	}
 
 	private void closeCurrentFileScanner() {

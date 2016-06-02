@@ -60,6 +60,15 @@ public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 		return this.type;
 	}
 
+	/**
+	 * Get the attribute's format.
+	 *
+	 * @return The attribute's format.
+	 */
+	public final NumberFormat<T> format() {
+		return this.format;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see de.carne.filescanner.core.format.spec.FormatSpec#isFixedSize()

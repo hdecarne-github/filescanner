@@ -29,6 +29,7 @@ import de.carne.filescanner.core.format.spec.U16FlagRenderer;
 import de.carne.filescanner.core.format.spec.U16SymbolRenderer;
 import de.carne.filescanner.core.format.spec.U32Attribute;
 import de.carne.filescanner.core.format.spec.U32Attributes;
+import de.carne.filescanner.core.format.spec.U32PositionAttribute;
 import de.carne.filescanner.core.format.spec.U8ArrayAttribute;
 import de.carne.filescanner.core.format.spec.U8Attributes;
 import de.carne.filescanner.core.format.spec.VarArrayFormatSpec;
@@ -221,7 +222,7 @@ class ZIPFormatSpecs {
 		cdh.append(new U16Attribute("disk number start", U16Attributes.DECIMAL_FORMAT));
 		cdh.append(new U16Attribute("internal file attributes"));
 		cdh.append(new U32Attribute("external file attributes"));
-		cdh.append(new U32Attribute("relative offset of local header"));
+		cdh.append(new U32PositionAttribute("relative offset of local header"));
 		cdh.append(CDH_FILE_NAME.bind());
 		cdh.append(new U8ArrayAttribute("extra field", U8Attributes.HEXADECIMAL_FORMAT, CDH_EXTRA_FIELD_LENGTH));
 		cdh.append(new FixedStringAttribute("file comment", StandardCharsets.UTF_8, CDH_FILE_COMMENT_LENGTH));
@@ -245,7 +246,7 @@ class ZIPFormatSpecs {
 		eocd.append(new U16Attribute("total number of entries in the central directory", U16Attributes.DECIMAL_FORMAT));
 		eocd.append(
 				new U32Attribute("size of the central directory").addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
-		eocd.append(new U32Attribute("offset of start of central directory"));
+		eocd.append(new U32PositionAttribute("offset of start of central directory"));
 		eocd.append(EOCD_ZIP_COMMENT_LENGTH.bind().addExtraRenderer(U16Attributes.BYTE_COUNT_COMMENT));
 		eocd.setResult(NAME_ZIP_EOCD);
 		ZIP_EOCD = eocd;
