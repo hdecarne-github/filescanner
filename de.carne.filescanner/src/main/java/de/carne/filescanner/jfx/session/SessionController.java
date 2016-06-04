@@ -71,6 +71,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.TextField;
@@ -112,9 +113,9 @@ public class SessionController extends StageController {
 
 	private final SearchIndex searchIndex = new SearchIndex();
 
-	private Future<?> updatedSearchIndexFuture = null;
+	private Future<?> updateSearchIndexFuture = null;
 
-	private final SimpleBooleanProperty autoIndexingProperty = new SimpleBooleanProperty(true);
+	private final SimpleBooleanProperty autoIndexProperty = new SimpleBooleanProperty(true);
 
 	private final SimpleBooleanProperty searchIndexReady = new SimpleBooleanProperty(this.searchIndex.isReady());
 
@@ -126,6 +127,15 @@ public class SessionController extends StageController {
 
 	@FXML
 	MenuBar systemMenuBar;
+
+	@FXML
+	CheckMenuItem autoIndexMenuItem;
+
+	@FXML
+	MenuItem searchNextMenuItem;
+
+	@FXML
+	MenuItem searchPreviousMenuItem;
 
 	@FXML
 	RadioMenuItem binaryFileViewMenuItem;
@@ -195,6 +205,13 @@ public class SessionController extends StageController {
 		if (file != null) {
 			openFile(file);
 			recordInitialDirectoryPreference(file);
+		}
+	}
+
+	@FXML
+	void onAutoIndex(ActionEvent evt) {
+		if (this.autoIndexProperty.get()) {
+			rebuildSearchIndex();
 		}
 	}
 
@@ -322,9 +339,9 @@ public class SessionController extends StageController {
 	}
 
 	void closeSession() {
-		if (this.updatedSearchIndexFuture != null) {
-			this.updatedSearchIndexFuture.cancel(true);
-			this.updatedSearchIndexFuture = null;
+		if (this.updateSearchIndexFuture != null) {
+			this.updateSearchIndexFuture.cancel(true);
+			this.updateSearchIndexFuture = null;
 		}
 		this.updateSystemStatusFuture.cancel(false);
 		this.updateSystemStatusFuture = null;
@@ -416,7 +433,7 @@ public class SessionController extends StageController {
 		if (scanner.equals(this.fileScanner)) {
 			this.cancelScanButton.setDisable(true);
 			updateScanStatusMessage(I18N.STR_SCAN_STATUS_FINISHED, stats);
-			if (this.autoIndexingProperty.get()) {
+			if (this.autoIndexProperty.get()) {
 				rebuildSearchIndex();
 			}
 		}
@@ -469,6 +486,9 @@ public class SessionController extends StageController {
 
 		// Control setup (menu, views, ...)
 		setupFileViewType(getFileViewTypePreference());
+		this.autoIndexMenuItem.selectedProperty().bindBidirectional(this.autoIndexProperty);
+		this.searchNextMenuItem.disableProperty().bind(Bindings.not(this.searchIndexReady));
+		this.searchPreviousMenuItem.disableProperty().bind(Bindings.not(this.searchIndexReady));
 		this.toggleLogMenuItem.selectedProperty().bindBidirectional(this.logViewTriggerProperty);
 		this.searchQueryInput.disableProperty().bind(Bindings.not(this.searchIndexReady));
 		this.searchNextButton.disableProperty().bind(Bindings.not(this.searchIndexReady));
@@ -565,7 +585,7 @@ public class SessionController extends StageController {
 	 * Disable automatic indexing of scan results.
 	 */
 	public void disableIndexing() {
-		this.autoIndexingProperty.set(false);
+		this.autoIndexProperty.set(false);
 	}
 
 	/**
@@ -649,8 +669,9 @@ public class SessionController extends StageController {
 	private void rebuildSearchIndex() {
 		TreeItem<FileScannerResult> rootItem = this.resultsView.getRoot();
 
-		if (rootItem != null) {
-			this.updatedSearchIndexFuture = getExecutorService().submit(new Task<Void>() {
+		if (rootItem != null && this.fileScanner != null && this.fileScanner.isFinished()
+				&& this.updateSearchIndexFuture == null && !this.searchIndex.isReady()) {
+			this.updateSearchIndexFuture = getExecutorService().submit(new Task<Void>() {
 
 				private final FileScannerResult result = rootItem.getValue();
 
@@ -678,17 +699,17 @@ public class SessionController extends StageController {
 		try {
 			this.searchIndex.rebuild(result);
 		} catch (InterruptedException e) {
-
+			// Ignore
 		}
 	}
 
 	void rebuildSearchIndexSucceeded() {
-		this.updatedSearchIndexFuture = null;
+		this.updateSearchIndexFuture = null;
 		this.searchIndexReady.set(this.searchIndex.isReady());
 	}
 
 	void rebuildSearchIndexFailed(Throwable e) {
-		this.updatedSearchIndexFuture = null;
+		this.updateSearchIndexFuture = null;
 		this.searchIndexReady.set(this.searchIndex.isReady());
 	}
 

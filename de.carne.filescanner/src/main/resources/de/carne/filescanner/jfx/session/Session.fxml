@@ -25,7 +25,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.web.WebView?>
 
-<VBox onDragDropped="#onDragDropped" onDragOver="#onDragOver" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.carne.filescanner.jfx.session.SessionController">
+<VBox onDragDropped="#onDragDropped" onDragOver="#onDragOver" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.92" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.carne.filescanner.jfx.session.SessionController">
   <children>
     <MenuBar fx:id="systemMenuBar" VBox.vgrow="NEVER">
       <menus>
@@ -35,20 +35,90 @@
                      <items>
                   <MenuItem mnemonicParsing="false" onAction="#onNewSession" text="%_STR_NEW_SESSION_MENU_ITEM" />
                      </items></Menu>
-            <MenuItem mnemonicParsing="false" onAction="#onOpenFile" text="%_STR_OPEN_FILE_MENU_ITEM" />
-            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" onAction="#onOpenFile" text="%_STR_OPEN_FILE_MENU_ITEM">
+                     <graphic>
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../iconFile16.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></MenuItem>
+                  <CheckMenuItem fx:id="autoIndexMenuItem" mnemonicParsing="false" onAction="#onAutoIndex" text="%_STR_AUTO_INDEX_MENU_ITEM" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" onAction="#onExit" text="%_STR_EXIT_MENU_ITEM" />
           </items>
         </Menu>
+            <Menu mnemonicParsing="false" text="%_STR_EDIT_MENU">
+               <items>
+                  <MenuItem mnemonicParsing="false" text="%_STR_COPY_MENU_ITEM">
+                     <graphic>
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../iconCopy16.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" text="%_STR_EXPORT_MENU_ITEM">
+                     <graphic>
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../iconExport16.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </MenuItem>
+               </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="%_STR_NAVIGATE_MENU">
+               <items>
+                  <MenuItem fx:id="searchNextMenuItem" mnemonicParsing="false" onAction="#onSearchNext" text="%_STR_SEARCH_NEXT_MENU_ITEM">
+                     <graphic>
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../iconSearchNext16.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </MenuItem>
+                  <MenuItem fx:id="searchPreviousMenuItem" mnemonicParsing="false" onAction="#onSearchPrevious" text="%_STR_SEARCH_PREVIOUS_MENU_ITEM">
+                     <graphic>
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../iconSearchPrevious16.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#onGotoEnd" text="%_STR_GOTO_END_MENU_ITEM">
+                     <graphic>
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../iconGotoEnd16.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#onGotoStart" text="%_STR_GOTO_START_MENU_ITEM">
+                     <graphic>
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../iconGotoStart16.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </MenuItem>
+               </items>
+            </Menu>
             <Menu mnemonicParsing="false" text="%_STR_VIEW_MENU">
                <items>
                   <RadioMenuItem fx:id="binaryFileViewMenuItem" mnemonicParsing="false" onAction="#onBinaryFileViewSelected" text="%_STR_BINARY_FILE_VIEW_MENU_ITEM">
                      <toggleGroup>
-                        <ToggleGroup fx:id="FILE_VIEW_TYPE_GROUP" />
+                        <ToggleGroup fx:id="FILE_VIEW_TYPE_GROUP2" />
                      </toggleGroup>
                   </RadioMenuItem>
-                  <RadioMenuItem fx:id="octalFileViewMenuItem" mnemonicParsing="false" onAction="#onOctalFileViewSelected" text="%_STR_OCTAL_FILE_VIEW_MENU_ITEM" toggleGroup="$FILE_VIEW_TYPE_GROUP" />
-                  <RadioMenuItem fx:id="hexadecimalFileViewMenuItem" mnemonicParsing="false" onAction="#onHexadecimalFileViewSelected" selected="true" text="%_STR_HEXADECIMAL_FILE_VIEW_MENU_ITEM" toggleGroup="$FILE_VIEW_TYPE_GROUP" />
+                  <RadioMenuItem fx:id="octalFileViewMenuItem" mnemonicParsing="false" onAction="#onOctalFileViewSelected" text="%_STR_OCTAL_FILE_VIEW_MENU_ITEM" toggleGroup="$FILE_VIEW_TYPE_GROUP2" />
+                  <RadioMenuItem fx:id="hexadecimalFileViewMenuItem" mnemonicParsing="false" onAction="#onHexadecimalFileViewSelected" selected="true" text="%_STR_HEXADECIMAL_FILE_VIEW_MENU_ITEM" toggleGroup="$FILE_VIEW_TYPE_GROUP2" />
                </items>
             </Menu>
         <Menu mnemonicParsing="false" text="%_STR_HELP_MENU">
@@ -77,7 +147,7 @@
                <graphic>
                   <ImageView pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../iconGotoNext16.png" />
+                        <Image url="@../iconSearchNext16.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -86,16 +156,7 @@
                <graphic>
                   <ImageView pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../iconGotoPrevious16.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button layoutX="58.0" layoutY="10.0" mnemonicParsing="false" onAction="#onGotoStart">
-               <graphic>
-                  <ImageView pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../iconGotoStart16.png" />
+                        <Image url="@../iconSearchPrevious16.png" />
                      </image>
                   </ImageView>
                </graphic>
@@ -105,6 +166,15 @@
                   <ImageView pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../iconGotoEnd16.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button layoutX="58.0" layoutY="10.0" mnemonicParsing="false" onAction="#onGotoStart">
+               <graphic>
+                  <ImageView pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../iconGotoStart16.png" />
                      </image>
                   </ImageView>
                </graphic>
