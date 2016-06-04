@@ -1,7 +1,7 @@
 /*
  * I18N resource strings
  *
- * Generated on 04.06.2016 07:52:08
+ * Generated on Jun 4, 2016 4:43:36 PM
  */
 package de.carne.filescanner.jfx;
 

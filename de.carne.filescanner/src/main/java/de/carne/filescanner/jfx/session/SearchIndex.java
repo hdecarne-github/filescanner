@@ -188,21 +188,23 @@ class SearchIndex implements AutoCloseable {
 	}
 
 	public synchronized FileScannerResult searchNext(FileScannerResult start, String queryString) throws IOException {
-		return (Strings.notEmpty(queryString) ? search(start, queryString, true) : null);
+		return search(start, queryString, true);
 	}
 
 	public synchronized FileScannerResult searchPrevious(FileScannerResult start, String queryString)
 			throws IOException {
-		return (Strings.notEmpty(queryString) ? search(start, queryString, false) : null);
+		return search(start, queryString, false);
 	}
 
 	private FileScannerResult search(FileScannerResult start, String queryString, boolean next) throws IOException {
 		SimpleQueryParser searchQueryParser = new SimpleQueryParser(createAnalyzer(), CONTENT_FIELD);
-		Query searchQuery = searchQueryParser.parse(queryString);
+		Query searchQuery = (Strings.notEmpty(queryString) ? searchQueryParser.parse(queryString) : null);
 		BooleanQuery.Builder queryBuilder = new BooleanQuery.Builder();
 		int startId = start.getData(Integer.class).intValue();
 
-		queryBuilder.add(searchQuery, Occur.MUST);
+		if (searchQuery != null) {
+			queryBuilder.add(searchQuery, Occur.MUST);
+		}
 		if (next) {
 			queryBuilder.add(IntPoint.newRangeQuery(ID_INDEX_FIELD, startId + 1, Integer.MAX_VALUE), Occur.MUST);
 		} else {
