@@ -33,7 +33,7 @@ public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 
 	private final NumberAttributeType type;
 
-	private final NumberFormat<T> format;
+	private NumberFormat<T> format;
 
 	/**
 	 * Construct {@code NumberAttribute}.
@@ -67,6 +67,19 @@ public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 	 */
 	public final NumberFormat<T> format() {
 		return this.format;
+	}
+
+	/**
+	 * Set the attribute's format.
+	 *
+	 * @param format The format to set.
+	 * @return The updated attribute.
+	 */
+	public final NumberAttribute<T> setFormat(NumberFormat<T> format) {
+		assert format != null;
+
+		this.format = format;
+		return this;
 	}
 
 	/*

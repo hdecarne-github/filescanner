@@ -31,7 +31,6 @@ import de.carne.filescanner.core.format.spec.U32Attribute;
 import de.carne.filescanner.core.format.spec.U32Attributes;
 import de.carne.filescanner.core.format.spec.U32PositionAttribute;
 import de.carne.filescanner.core.format.spec.U8ArrayAttribute;
-import de.carne.filescanner.core.format.spec.U8Attributes;
 import de.carne.filescanner.core.format.spec.VarArrayFormatSpec;
 import de.carne.filescanner.core.input.DecodeParams;
 import de.carne.filescanner.core.input.DeflateDecodeParams;
@@ -152,7 +151,7 @@ class ZIPFormatSpecs {
 		lfh.append(LFH_FILE_NAME_LENGTH.bind().addExtraRenderer(U16Attributes.BYTE_COUNT_COMMENT));
 		lfh.append(LFH_EXTRA_FIELD_LENGTH.bind().addExtraRenderer(U16Attributes.BYTE_COUNT_COMMENT));
 		lfh.append(LFH_FILE_NAME.bind());
-		lfh.append(new U8ArrayAttribute("extra field", U8Attributes.HEXADECIMAL_FORMAT, LFH_EXTRA_FIELD_LENGTH));
+		lfh.append(new U8ArrayAttribute("extra field", LFH_EXTRA_FIELD_LENGTH));
 		lfh.setResult(NAME_ZIP_LFH);
 		ZIP_LFH = lfh;
 	}
@@ -224,7 +223,7 @@ class ZIPFormatSpecs {
 		cdh.append(new U32Attribute("external file attributes"));
 		cdh.append(new U32PositionAttribute("relative offset of local header"));
 		cdh.append(CDH_FILE_NAME.bind());
-		cdh.append(new U8ArrayAttribute("extra field", U8Attributes.HEXADECIMAL_FORMAT, CDH_EXTRA_FIELD_LENGTH));
+		cdh.append(new U8ArrayAttribute("extra field", CDH_EXTRA_FIELD_LENGTH));
 		cdh.append(new FixedStringAttribute("file comment", StandardCharsets.UTF_8, CDH_FILE_COMMENT_LENGTH));
 		cdh.setResult(NAME_ZIP_CDH, CDH_FILE_NAME);
 		ZIP_CDH = cdh;

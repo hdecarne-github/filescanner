@@ -28,22 +28,20 @@ public class U8ArrayAttribute extends NumberArrayAttribute<Byte> {
 	 * Construct {@code U8ArrayAttribute}.
 	 *
 	 * @param name The array attribute's name.
-	 * @param format The array attribute's primary format.
 	 * @param size The static array size.
 	 */
-	public U8ArrayAttribute(String name, NumberFormat<Byte> format, Number size) {
-		super(NumberAttributeType.U8, name, format, size);
+	public U8ArrayAttribute(String name, Number size) {
+		super(NumberAttributeType.U8, name, size, U8Attributes.HEXADECIMAL_FORMAT);
 	}
 
 	/**
 	 * Construct {@code U8ArrayAttribute}.
 	 *
 	 * @param name The array attribute's name.
-	 * @param format The array attribute's primary format.
 	 * @param sizeLambda The expression providing the array size.
 	 */
-	public U8ArrayAttribute(String name, NumberFormat<Byte> format, Supplier<? extends Number> sizeLambda) {
-		super(NumberAttributeType.U8, name, format, sizeLambda);
+	public U8ArrayAttribute(String name, Supplier<? extends Number> sizeLambda) {
+		super(NumberAttributeType.U8, name, sizeLambda, U8Attributes.HEXADECIMAL_FORMAT);
 	}
 
 	/*

@@ -44,54 +44,76 @@ public abstract class NumberArrayAttribute<T extends Number> extends Attribute<T
 
 	private final NumberAttributeType type;
 
-	private final NumberFormat<T> format;
-
 	private final NumberExpression<?> sizeExpression;
 
-	private NumberArrayAttribute(NumberAttributeType type, String name, NumberFormat<T> format,
-			NumberExpression<?> sizeExpression) {
+	private NumberFormat<T> format;
+
+	private NumberArrayAttribute(NumberAttributeType type, String name, NumberExpression<?> sizeExpression,
+			NumberFormat<T> format) {
 		super(name);
 		assert type != null;
-		assert format != null;
 		assert sizeExpression != null;
+		assert format != null;
 
 		this.type = type;
-		this.format = format;
 		this.sizeExpression = sizeExpression;
+		this.format = format;
 	}
 
 	/**
 	 * Construct {@code NumberArrayAttribute}.
 	 *
-	 * @param type The array attribute element's type.
+	 * @param type The array element's type.
 	 * @param name The array attribute's name.
-	 * @param format The array attribute's primary format.
 	 * @param size The static array size.
+	 * @param format The array element's primary format.
 	 */
-	protected NumberArrayAttribute(NumberAttributeType type, String name, NumberFormat<T> format, Number size) {
-		this(type, name, format, new NumberExpression<>(size));
+	protected NumberArrayAttribute(NumberAttributeType type, String name, Number size, NumberFormat<T> format) {
+		this(type, name, new NumberExpression<>(size), format);
 	}
 
 	/**
 	 * Construct {@code NumberArrayAttribute}.
 	 *
-	 * @param type The array attribute element's type.
+	 * @param type The array element's type.
 	 * @param name The array attribute's name.
-	 * @param format The array attribute's primary format.
 	 * @param sizeLambda The expression providing the array size.
+	 * @param format The array element's primary format.
 	 */
-	protected NumberArrayAttribute(NumberAttributeType type, String name, NumberFormat<T> format,
-			Supplier<? extends Number> sizeLambda) {
-		this(type, name, format, new NumberExpression<>(sizeLambda));
+	protected NumberArrayAttribute(NumberAttributeType type, String name, Supplier<? extends Number> sizeLambda,
+			NumberFormat<T> format) {
+		this(type, name, new NumberExpression<>(sizeLambda), format);
 	}
 
 	/**
-	 * Get the array attribute element's date type.
+	 * Get the array element's date type.
 	 *
-	 * @return The array attribute element's date type.
+	 * @return The array element's date type.
 	 */
 	public final NumberAttributeType type() {
 		return this.type;
+	}
+
+	/**
+	 * Get the array element's format.
+	 *
+	 * @return The array element's format.
+	 */
+	public final NumberFormat<T> format() {
+		return this.format;
+	}
+
+	/**
+	 * Set the array element's format.
+	 *
+	 * @param format The format to set.
+	 * @return The updated array attribute.
+	 */
+	public final NumberArrayAttribute<T> setFormat(NumberFormat<T> format) {
+		assert format != null;
+
+		this.format = format;
+		return this;
 	}
 
 	/*
