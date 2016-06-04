@@ -17,6 +17,7 @@
 package de.carne.filescanner.core.transfer;
 
 import java.io.IOException;
+import java.net.URL;
 
 import de.carne.filescanner.spi.FileScannerResultRenderer;
 import de.carne.filescanner.util.Hexadecimal;
@@ -25,13 +26,7 @@ import de.carne.filescanner.util.Hexadecimal;
  * Base class for all {@code FileScannerResultRenderer} implementations that
  * generate HTML output.
  */
-abstract class HtmlResultRenderer extends FileScannerResultRenderer {
-
-	private final HtmlResultRendererURLHandler urlHandler;
-
-	public HtmlResultRenderer(HtmlResultRendererURLHandler urlHandler) {
-		this.urlHandler = urlHandler;
-	}
+public abstract class HtmlResultRenderer extends FileScannerResultRenderer {
 
 	/*
 	 * (non-Javadoc)
@@ -113,7 +108,7 @@ abstract class HtmlResultRenderer extends FileScannerResultRenderer {
 	 */
 	@Override
 	protected void writeImage(Mode mode, StreamHandler streamHandler) throws IOException, InterruptedException {
-		write("<img src=\"", this.urlHandler.openStream(streamHandler).toExternalForm(), "\"/>");
+		write("<img src=\"", registerStreamHandler(streamHandler).toExternalForm(), "\"/>");
 	}
 
 	/*
@@ -127,7 +122,7 @@ abstract class HtmlResultRenderer extends FileScannerResultRenderer {
 	protected void writeRefImage(Mode mode, StreamHandler streamHandler, long position)
 			throws IOException, InterruptedException {
 		write("<a href=\"#", Hexadecimal.formatL(position), "\"><img src=\"",
-				this.urlHandler.openStream(streamHandler).toExternalForm(), "\"/></a>");
+				registerStreamHandler(streamHandler).toExternalForm(), "\"/></a>");
 	}
 
 	/*
@@ -139,7 +134,7 @@ abstract class HtmlResultRenderer extends FileScannerResultRenderer {
 	 */
 	@Override
 	protected void writeVideo(Mode mode, StreamHandler streamHandler) throws IOException, InterruptedException {
-		write("<video src=\"", this.urlHandler.openStream(streamHandler).toExternalForm(), "\"/>");
+		write("<video src=\"", registerStreamHandler(streamHandler).toExternalForm(), "\"/>");
 	}
 
 	/*
@@ -153,9 +148,27 @@ abstract class HtmlResultRenderer extends FileScannerResultRenderer {
 	protected void writeRefVideo(Mode mode, StreamHandler streamHandler, long position)
 			throws IOException, InterruptedException {
 		write("<a href=\"#", Hexadecimal.formatL(position), "\"><video src=\"",
-				this.urlHandler.openStream(streamHandler).toExternalForm(), "\"/></a>");
+				registerStreamHandler(streamHandler).toExternalForm(), "\"/></a>");
 	}
 
-	protected abstract void write(String... artefacts) throws IOException, InterruptedException;
+	/**
+	 * Register a {@linkplain StreamHandler} an make it accessible via an
+	 * {@linkplain URL}.
+	 *
+	 * @param streamHandler The {@linkplain StreamHandler} to register.
+	 * @return The registered {@linkplain URL}.
+	 * @throws IOException if an I/O error occurs.
+	 * @throws InterruptedException if the render thread was interrupted.
+	 */
+	protected abstract URL registerStreamHandler(StreamHandler streamHandler) throws IOException, InterruptedException;
+
+	/**
+	 * Write one or more text artifacts.
+	 *
+	 * @param artifacts The text artifacts to write.
+	 * @throws IOException if an I/O error occurs.
+	 * @throws InterruptedException if the render thread was interrupted.
+	 */
+	protected abstract void write(String... artifacts) throws IOException, InterruptedException;
 
 }

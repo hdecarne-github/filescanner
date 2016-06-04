@@ -22,13 +22,13 @@ import java.io.IOException;
  * {@code HtmlResultRenderer} writing it's output to a string buffer while
  * obeying to a time limit.
  */
-class BufferHtmlResultRenderer extends HtmlResultRenderer {
+class TimeoutHtmlResultRenderer extends URLHtmlResultRenderer {
 
 	private final long nanoLimit;
 
 	private final StringBuilder buffer = new StringBuilder();
 
-	BufferHtmlResultRenderer(HtmlResultRendererURLHandler urlHandler, int fastTimeout) {
+	TimeoutHtmlResultRenderer(HtmlResultRendererURLHandler urlHandler, int fastTimeout) {
 		super(urlHandler);
 		this.nanoLimit = System.nanoTime() + (fastTimeout * 1000000L);
 	}
@@ -40,12 +40,12 @@ class BufferHtmlResultRenderer extends HtmlResultRenderer {
 	 * String[])
 	 */
 	@Override
-	protected void write(String... artefacts) throws IOException, InterruptedException {
+	protected void write(String... artifacts) throws IOException, InterruptedException {
 		if ((this.nanoLimit - System.nanoTime()) < 0) {
 			throw new InterruptedException();
 		}
-		for (String artefact : artefacts) {
-			this.buffer.append(artefact);
+		for (String artifact : artifacts) {
+			this.buffer.append(artifact);
 		}
 	}
 

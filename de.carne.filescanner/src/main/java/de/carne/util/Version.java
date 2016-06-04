@@ -54,7 +54,7 @@ public final class Version {
 				attributes = codeJar.getManifest().getMainAttributes();
 			}
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			Exceptions.rethrowAsRuntime(e);
 		}
 		PROJECT_ID = getAttributeValue(attributes, "X-Version-ProjectId");
 		PROJECT_NAME = getAttributeValue(attributes, "X-Version-ProjectName");

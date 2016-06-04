@@ -17,35 +17,35 @@
 package de.carne.filescanner.core.transfer;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
 
 /**
- * {@code HtmlResultRenderer} writing it's output to a pipe (for asynchronous
- * rendering).
+ * {@linkplain TextResultRenderer} implementation writing it's output to a
+ * string buffer.
  */
-class PipeHtmlResultRenderer extends URLHtmlResultRenderer {
+public class StringTextResultRenderer extends TextResultRenderer {
 
-	private final OutputStreamWriter out;
-
-	public PipeHtmlResultRenderer(HtmlResultRendererURLHandler urlHandler, OutputStream out) {
-		super(urlHandler);
-		this.out = new OutputStreamWriter(out, StandardCharsets.UTF_8);
-	}
+	private StringBuilder buffer = new StringBuilder();
 
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * de.carne.filescanner.core.transfer.HtmlResultRenderer#write(java.lang.
+	 * de.carne.filescanner.core.transfer.TextResultRenderer#write(java.lang.
 	 * String[])
 	 */
 	@Override
 	protected void write(String... artifacts) throws IOException, InterruptedException {
 		for (String artifact : artifacts) {
-			this.out.write(artifact);
+			this.buffer.append(artifact);
 		}
-		this.out.flush();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return this.buffer.toString();
 	}
 
 }

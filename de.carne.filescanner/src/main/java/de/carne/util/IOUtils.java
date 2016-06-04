@@ -21,6 +21,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 
 /**
  * Utility class providing I/O related functions.
@@ -71,6 +76,31 @@ public final class IOUtils {
 			copied += read;
 		}
 		return copied;
+	}
+
+	/**
+	 * Delete a directory (and any contained file or sub-directory).
+	 *
+	 * @param directory The directory to delete.
+	 * @throws IOException if an I/O error occurs.
+	 */
+	public static void deleteDirectory(Path directory) throws IOException {
+		assert directory != null;
+
+		Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
+
+			@Override
+			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+				Files.delete(file);
+				return FileVisitResult.CONTINUE;
+			}
+
+			@Override
+			public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+				Files.delete(dir);
+				return FileVisitResult.CONTINUE;
+			}
+		});
 	}
 
 }

@@ -93,8 +93,24 @@ public final class FileScanner implements Closeable {
 	 *
 	 * @return This scanner's decode cache.
 	 */
-	public final DecodeCache decodeCache() {
+	public DecodeCache decodeCache() {
 		return this.decodeCache;
+	}
+
+	/**
+	 * Check whether this scanner is finished with scanning.
+	 * <p>
+	 * A scan is considered finished if there are no running scans and if it at
+	 * least on input has been submitted for scanning.
+	 * </p>
+	 *
+	 * @see FileScannerStatus#onScanFinished(FileScanner, FileScannerStats)
+	 * @return {@code true} if this scanner is finished with scanning.
+	 */
+	public boolean isFinished() {
+		int finishedCount = this.stats.recordScanned(0, false).finishedCount();
+
+		return finishedCount > 0 && this.scannerCount.get() == finishedCount;
 	}
 
 	/**

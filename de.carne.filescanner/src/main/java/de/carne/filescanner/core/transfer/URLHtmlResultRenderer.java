@@ -17,35 +17,29 @@
 package de.carne.filescanner.core.transfer;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
+import java.net.URL;
 
 /**
- * {@code HtmlResultRenderer} writing it's output to a pipe (for asynchronous
- * rendering).
+ * Base class for renderers used by {@linkplain HtmlResultRendererURLHandler}
+ * class.
  */
-class PipeHtmlResultRenderer extends URLHtmlResultRenderer {
+abstract class URLHtmlResultRenderer extends HtmlResultRenderer {
 
-	private final OutputStreamWriter out;
+	private final HtmlResultRendererURLHandler urlHandler;
 
-	public PipeHtmlResultRenderer(HtmlResultRendererURLHandler urlHandler, OutputStream out) {
-		super(urlHandler);
-		this.out = new OutputStreamWriter(out, StandardCharsets.UTF_8);
+	protected URLHtmlResultRenderer(HtmlResultRendererURLHandler urlHandler) {
+		this.urlHandler = urlHandler;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.transfer.HtmlResultRenderer#write(java.lang.
-	 * String[])
+	 * @see de.carne.filescanner.core.transfer.HtmlResultRenderer#
+	 * registerStreamHandler(de.carne.filescanner.spi.FileScannerResultRenderer.
+	 * StreamHandler)
 	 */
 	@Override
-	protected void write(String... artifacts) throws IOException, InterruptedException {
-		for (String artifact : artifacts) {
-			this.out.write(artifact);
-		}
-		this.out.flush();
+	protected URL registerStreamHandler(StreamHandler streamHandler) throws IOException, InterruptedException {
+		return this.urlHandler.registerStreamHandler(streamHandler);
 	}
 
 }

@@ -22,6 +22,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.List;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.prefs.Preferences;
@@ -57,8 +58,11 @@ import de.carne.util.Exceptions;
 import de.carne.util.Strings;
 import de.carne.util.logging.Log;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
 import javafx.concurrent.Worker.State;
 import javafx.event.ActionEvent;
@@ -69,6 +73,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.RadioMenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.ImageView;
@@ -101,9 +106,17 @@ public class SessionController extends StageController {
 
 	private static final URL EMPTY_RESULT_VIEW_DOC = SessionController.class.getResource("EmptyResultView.html");
 
-	private ScheduledFuture<?> systemStatusFuture = null;
+	private ScheduledFuture<?> updateSystemStatusFuture = null;
 
 	private FileScanner fileScanner = null;
+
+	private final SearchIndex searchIndex = new SearchIndex();
+
+	private Future<?> updatedSearchIndexFuture = null;
+
+	private final SimpleBooleanProperty autoIndexingProperty = new SimpleBooleanProperty(true);
+
+	private final SimpleBooleanProperty searchIndexReady = new SimpleBooleanProperty(this.searchIndex.isReady());
 
 	private final ResultTreeItemFactory resultItemFactory = new ResultTreeItemFactory();
 
@@ -125,6 +138,15 @@ public class SessionController extends StageController {
 
 	@FXML
 	CheckMenuItem toggleLogMenuItem;
+
+	@FXML
+	TextField searchQueryInput;
+
+	@FXML
+	Button searchNextButton;
+
+	@FXML
+	Button searchPreviousButton;
 
 	@FXML
 	TreeView<FileScannerResult> resultsView;
@@ -177,28 +199,46 @@ public class SessionController extends StageController {
 	}
 
 	@FXML
-	void onGotoNext(ActionEvent evt) {
-		TreeItem<FileScannerResult> selectedResult = this.resultsView.getSelectionModel().getSelectedItem();
+	void onSearchNext(ActionEvent evt) {
+		try {
+			if (this.searchIndex.isReady()) {
+				TreeItem<FileScannerResult> selectedResult = this.resultsView.getSelectionModel().getSelectedItem();
+				String searchQuery = this.searchQueryInput.getText();
+				FileScannerResult foundResult;
 
-		if (selectedResult != null) {
-			TreeItem<FileScannerResult> nextSibling = selectedResult.nextSibling();
-
-			if (nextSibling != null) {
-				this.resultsView.getSelectionModel().select(nextSibling);
+				if (selectedResult != null) {
+					foundResult = this.searchIndex.searchNext(selectedResult.getValue(), searchQuery);
+				} else {
+					foundResult = this.searchIndex.searchNext(null, searchQuery);
+				}
+				if (foundResult != null) {
+					gotoResult(foundResult);
+				}
 			}
+		} catch (Exception e) {
+			reportUnexpectedException(e);
 		}
 	}
 
 	@FXML
-	void onGotoPrevious(ActionEvent evt) {
-		TreeItem<FileScannerResult> selectedResult = this.resultsView.getSelectionModel().getSelectedItem();
+	void onSearchPrevious(ActionEvent evt) {
+		try {
+			if (this.searchIndex.isReady()) {
+				TreeItem<FileScannerResult> selectedResult = this.resultsView.getSelectionModel().getSelectedItem();
+				String searchQuery = this.searchQueryInput.getText();
+				FileScannerResult foundResult;
 
-		if (selectedResult != null) {
-			TreeItem<FileScannerResult> previousSibling = selectedResult.previousSibling();
-
-			if (previousSibling != null) {
-				this.resultsView.getSelectionModel().select(previousSibling);
+				if (selectedResult != null) {
+					foundResult = this.searchIndex.searchPrevious(selectedResult.getValue(), searchQuery);
+				} else {
+					foundResult = this.searchIndex.searchPrevious(null, searchQuery);
+				}
+				if (foundResult != null) {
+					gotoResult(foundResult);
+				}
 			}
+		} catch (Exception e) {
+			reportUnexpectedException(e);
 		}
 	}
 
@@ -259,7 +299,7 @@ public class SessionController extends StageController {
 
 	@FXML
 	void onCancelScan(ActionEvent evt) {
-		closeCurrentFileScanner();
+		closeCurrentSession();
 		this.cancelScanButton.setDisable(true);
 	}
 
@@ -282,9 +322,13 @@ public class SessionController extends StageController {
 	}
 
 	void closeSession() {
-		this.systemStatusFuture.cancel(false);
-		this.systemStatusFuture = null;
-		closeCurrentFileScanner();
+		if (this.updatedSearchIndexFuture != null) {
+			this.updatedSearchIndexFuture.cancel(true);
+			this.updatedSearchIndexFuture = null;
+		}
+		this.updateSystemStatusFuture.cancel(false);
+		this.updateSystemStatusFuture = null;
+		closeCurrentSession();
 		clearResults();
 		syncPreferences();
 	}
@@ -372,6 +416,9 @@ public class SessionController extends StageController {
 		if (scanner.equals(this.fileScanner)) {
 			this.cancelScanButton.setDisable(true);
 			updateScanStatusMessage(I18N.STR_SCAN_STATUS_FINISHED, stats);
+			if (this.autoIndexingProperty.get()) {
+				rebuildSearchIndex();
+			}
 		}
 	}
 
@@ -423,13 +470,16 @@ public class SessionController extends StageController {
 		// Control setup (menu, views, ...)
 		setupFileViewType(getFileViewTypePreference());
 		this.toggleLogMenuItem.selectedProperty().bindBidirectional(this.logViewTriggerProperty);
+		this.searchQueryInput.disableProperty().bind(Bindings.not(this.searchIndexReady));
+		this.searchNextButton.disableProperty().bind(Bindings.not(this.searchIndexReady));
+		this.searchPreviousButton.disableProperty().bind(Bindings.not(this.searchIndexReady));
 		this.resultView.getEngine().setUserStyleSheetLocation(RESULT_VIEW_STYLE_URL.toExternalForm());
 		this.resultView.getEngine().load(EMPTY_RESULT_VIEW_DOC.toExternalForm());
 		this.cancelScanButton.setDisable(true);
 		updateScanStatusMessage(I18N.STR_SCAN_STATUS_NONE, null);
 
 		// Periodic status update
-		this.systemStatusFuture = getExecutorService().scheduleAtFixedRate(new Runnable() {
+		this.updateSystemStatusFuture = getExecutorService().scheduleAtFixedRate(new Runnable() {
 
 			@Override
 			public void run() {
@@ -512,6 +562,13 @@ public class SessionController extends StageController {
 	}
 
 	/**
+	 * Disable automatic indexing of scan results.
+	 */
+	public void disableIndexing() {
+		this.autoIndexingProperty.set(false);
+	}
+
+	/**
 	 * Open file and start scanning it.
 	 *
 	 * @param fileName The file to open.
@@ -523,7 +580,7 @@ public class SessionController extends StageController {
 	}
 
 	private void openFile(File file) {
-		closeCurrentFileScanner();
+		closeCurrentSession();
 		clearResults();
 
 		LOG.debug(null, "Open file ''{0}''...", file);
@@ -581,23 +638,58 @@ public class SessionController extends StageController {
 			}
 
 		} else {
-			TreeItem<FileScannerResult> rootItem = this.resultsView.getRoot();
-			boolean selectResultItem = false;
-
-			if (rootItem == null) {
-				this.resultsView.setRoot(rootItem = new TreeItem<>(null));
-				selectResultItem = true;
-			}
-
 			ResultTreeItem resultItem = this.resultItemFactory.create(result);
-
-			rootItem.getChildren().add(resultItem);
-			if (selectResultItem) {
-				resultItem.setExpanded(true);
-				this.resultsView.getSelectionModel().select(resultItem);
-				this.resultsView.requestFocus();
-			}
+			this.resultsView.setRoot(resultItem);
+			resultItem.setExpanded(true);
+			this.resultsView.getSelectionModel().select(resultItem);
+			this.resultsView.requestFocus();
 		}
+	}
+
+	private void rebuildSearchIndex() {
+		TreeItem<FileScannerResult> rootItem = this.resultsView.getRoot();
+
+		if (rootItem != null) {
+			this.updatedSearchIndexFuture = getExecutorService().submit(new Task<Void>() {
+
+				private final FileScannerResult result = rootItem.getValue();
+
+				@Override
+				protected Void call() throws Exception {
+					rebuildSearchIndex(this.result);
+					return null;
+				}
+
+				@Override
+				protected void succeeded() {
+					rebuildSearchIndexSucceeded();
+				}
+
+				@Override
+				protected void failed() {
+					rebuildSearchIndexFailed(getException());
+				}
+
+			});
+		}
+	}
+
+	void rebuildSearchIndex(FileScannerResult result) throws IOException {
+		try {
+			this.searchIndex.rebuild(result);
+		} catch (InterruptedException e) {
+
+		}
+	}
+
+	void rebuildSearchIndexSucceeded() {
+		this.updatedSearchIndexFuture = null;
+		this.searchIndexReady.set(this.searchIndex.isReady());
+	}
+
+	void rebuildSearchIndexFailed(Throwable e) {
+		this.updatedSearchIndexFuture = null;
+		this.searchIndexReady.set(this.searchIndex.isReady());
 	}
 
 	private void gotoResultPosition(long position) {
@@ -614,20 +706,24 @@ public class SessionController extends StageController {
 			FileScannerResult positionResult = result.mapPosition(position - result.start());
 
 			if (positionResult != null) {
-				TreeItem<FileScannerResult> positionItem = gotoResultPositionHelper(positionResult);
-
-				this.resultsView.getSelectionModel().select(positionItem);
-				this.resultsView.scrollTo(this.resultsView.getSelectionModel().getSelectedIndex());
-				this.resultsView.requestFocus();
+				gotoResult(positionResult);
 			}
 		}
 	}
 
-	private TreeItem<FileScannerResult> gotoResultPositionHelper(FileScannerResult positionResult) {
+	private void gotoResult(FileScannerResult result) {
+		TreeItem<FileScannerResult> positionItem = gotoResultHelper(result);
+
+		this.resultsView.getSelectionModel().select(positionItem);
+		this.resultsView.scrollTo(this.resultsView.getSelectionModel().getSelectedIndex());
+		this.resultsView.requestFocus();
+	}
+
+	private TreeItem<FileScannerResult> gotoResultHelper(FileScannerResult positionResult) {
 		TreeItem<FileScannerResult> positionItem = this.resultItemFactory.get(positionResult);
 
 		if (positionItem == null) {
-			TreeItem<FileScannerResult> parentItem = gotoResultPositionHelper(positionResult.parent());
+			TreeItem<FileScannerResult> parentItem = gotoResultHelper(positionResult.parent());
 
 			// Trigger item factory
 			parentItem.getChildren();
@@ -636,7 +732,9 @@ public class SessionController extends StageController {
 		return positionItem;
 	}
 
-	private void closeCurrentFileScanner() {
+	private void closeCurrentSession() {
+		this.searchIndex.close();
+		this.searchIndexReady.set(false);
 		if (this.fileScanner != null) {
 			this.fileScanner.close();
 			this.fileScanner = null;

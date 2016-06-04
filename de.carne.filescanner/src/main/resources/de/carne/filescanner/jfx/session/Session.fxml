@@ -13,6 +13,7 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
@@ -71,7 +72,8 @@
                </graphic>
             </Button>
             <Separator orientation="VERTICAL" />
-            <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onGotoNext">
+            <TextField fx:id="searchQueryInput" />
+            <Button fx:id="searchNextButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSearchNext">
                <graphic>
                   <ImageView pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -80,7 +82,7 @@
                   </ImageView>
                </graphic>
             </Button>
-            <Button layoutX="48.0" layoutY="10.0" mnemonicParsing="false" onAction="#onGotoPrevious">
+            <Button fx:id="searchPreviousButton" layoutX="48.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSearchPrevious">
                <graphic>
                   <ImageView pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -115,7 +117,7 @@
               <items>
                 <AnchorPane minHeight="0.0" minWidth="0.0">
                      <children>
-                        <TreeView fx:id="resultsView" showRoot="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <TreeView fx:id="resultsView" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                      </children></AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0">
                      <children>

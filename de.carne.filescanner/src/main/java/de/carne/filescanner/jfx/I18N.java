@@ -1,7 +1,7 @@
 /*
  * I18N resource strings
  *
- * Generated on 31.05.2016 23:21:37
+ * Generated on 04.06.2016 07:52:08
  */
 package de.carne.filescanner.jfx;
 
@@ -133,6 +133,27 @@ public final class I18N {
 	 */
 	public static String formatSTR_VM_VERSION_INFO(Object... arguments) {
 		return format(STR_VM_VERSION_INFO, arguments);
+	}
+
+	/**
+	 * Resource key {@code STR_INDEXING_DISABLED_MESSAGE}
+	 * <p>
+	 * Result indexing disabled
+	 * </p>
+	 */
+	public static final String STR_INDEXING_DISABLED_MESSAGE = "STR_INDEXING_DISABLED_MESSAGE";
+
+	/**
+	 * Resource string {@code STR_INDEXING_DISABLED_MESSAGE}
+	 * <p>
+	 * Result indexing disabled
+	 * </p>
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formated string.
+	 */
+	public static String formatSTR_INDEXING_DISABLED_MESSAGE(Object... arguments) {
+		return format(STR_INDEXING_DISABLED_MESSAGE, arguments);
 	}
 
 	/**

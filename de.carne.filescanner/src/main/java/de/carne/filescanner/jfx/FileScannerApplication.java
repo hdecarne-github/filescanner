@@ -44,8 +44,12 @@ public class FileScannerApplication extends Application implements Main {
 
 	private static final Log LOG = new Log(FileScannerApplication.class);
 
+	private static final String PARAMTER_PREFIX = "-";
+
 	private static final String PARAMETER_VERBOSE = "--verbose";
 	private static final String PARAMETER_DEBUG = "--debug";
+
+	private static final String PARAMETER_DISABLE_INDEXING = "--disable-indexing";
 
 	static {
 		ApplicationLoader.registerURLStreamHandlerFactory(HtmlResultRendererURLHandler.PROTOCOL_RENDERER,
@@ -100,9 +104,6 @@ public class FileScannerApplication extends Application implements Main {
 			}
 
 		});
-
-		String openFile = processParameters();
-
 		LOG.debug(null, "Starting JavaFX GUI...");
 
 		SessionController session = StageController.setupPrimaryStage(stage, SessionController.class);
@@ -110,9 +111,7 @@ public class FileScannerApplication extends Application implements Main {
 		session.getStage().show();
 		logVMInfo();
 		logLoaderInfo();
-		if (openFile != null) {
-			session.openFile(openFile);
-		}
+		processParameters(session);
 	}
 
 	/*
@@ -124,7 +123,7 @@ public class FileScannerApplication extends Application implements Main {
 		LOG.debug(null, "JavaFX GUI stopped");
 	}
 
-	private String processParameters() {
+	private void processParameters(SessionController session) {
 		Parameters parameters = getParameters();
 
 		for (Map.Entry<String, String> parameter : parameters.getNamed().entrySet()) {
@@ -141,13 +140,18 @@ public class FileScannerApplication extends Application implements Main {
 			} else if (PARAMETER_DEBUG.equals(parameter)) {
 				LogConfig.applyConfig(LogConfig.CONFIG_DEBUG);
 				LOG.notice(I18N.BUNDLE, I18N.STR_DEBUG_ENABLED_MESSAGE);
-			} else if (openFile == null) {
+			} else if (PARAMETER_DISABLE_INDEXING.equals(parameter)) {
+				session.disableIndexing();
+				LOG.notice(I18N.BUNDLE, I18N.STR_INDEXING_DISABLED_MESSAGE);
+			} else if (openFile == null && !parameter.startsWith(PARAMTER_PREFIX)) {
 				openFile = parameter;
 			} else {
 				LOG.warning(I18N.BUNDLE, I18N.STR_INVALID_PARAMETER_MESSAGE, parameter);
 			}
 		}
-		return openFile;
+		if (openFile != null) {
+			session.openFile(openFile);
+		}
 	}
 
 	private void logVMInfo() {

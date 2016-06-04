@@ -97,6 +97,8 @@ public abstract class FileScannerResult {
 
 	private final ArrayList<FileScannerResult> children = new ArrayList<>();
 
+	private Object data;
+
 	FileScannerResult(FileScannerResultType type, FileScannerInput input, ByteOrder order, long start) {
 		assert type != null;
 		assert input != null;
@@ -230,6 +232,26 @@ public abstract class FileScannerResult {
 	 * @return The result's title.
 	 */
 	public abstract String title();
+
+	/**
+	 * Set application data for this result.
+	 * 
+	 * @param data The data to set.
+	 */
+	public synchronized final <T> void setData(T data) {
+		this.data = data;
+	}
+
+	/**
+	 * Get previously set application data.
+	 * 
+	 * @param dataType The application data type.
+	 * @return The application data.
+	 * @see #setData(Object)
+	 */
+	public synchronized final <T> T getData(Class<T> dataType) {
+		return dataType.cast(this.data);
+	}
 
 	/**
 	 * Map a position to the nearest result.

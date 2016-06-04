@@ -22,6 +22,19 @@ package de.carne.util;
 public final class Exceptions {
 
 	/**
+	 * Re-throw exception as {@linkplain RuntimeException} either directly or by
+	 * wrapping it into a {@linkplain RuntimeException}.
+	 *
+	 * @param e The causing exception to re-throw.
+	 */
+	public static void rethrowAsRuntime(Throwable e) {
+		if (e instanceof RuntimeException) {
+			throw (RuntimeException) e;
+		}
+		throw new RuntimeException(e);
+	}
+
+	/**
 	 * Get the exception message.
 	 * <p>
 	 * This function implements a best effort approach to get the exception

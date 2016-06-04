@@ -34,12 +34,12 @@ repositories {
 }
 
 dependencies {
-	compile(
-		'de.carne:Compression:0.1.0-SNAPSHOT'
-	)
-	testCompile(
-		'junit:junit:4.12'
-	)
+	compile('de.carne:Compression:0.1.0-SNAPSHOT')
+	compile('org.apache.lucene:lucene-analyzers-common:6.0.1')
+	compile ('org.apache.lucene:lucene-queryparser:6.0.1') {
+		exclude module: 'lucene-sandbox'
+	}
+	testCompile('junit:junit:4.12')
 }
 
 jar {

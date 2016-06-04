@@ -183,7 +183,7 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 
 		if (fastTimeout > 0) {
 			try {
-				BufferHtmlResultRenderer buffer = new BufferHtmlResultRenderer(urlHandler, fastTimeout);
+				TimeoutHtmlResultRenderer buffer = new TimeoutHtmlResultRenderer(urlHandler, fastTimeout);
 
 				result.render(buffer);
 				fastResult = buffer.toString();
@@ -194,7 +194,7 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 		return new RenderResult(baseURL, fastResult);
 	}
 
-	URL openStream(StreamHandler handler) throws IOException {
+	URL registerStreamHandler(StreamHandler handler) throws IOException {
 		URL streamURL = new URL(PROTOCOL_RENDERER, "", this.baseURL.getFile() + STREAM_PREFIX + this.streamIndex);
 		String streamURLString = streamURL.toExternalForm();
 

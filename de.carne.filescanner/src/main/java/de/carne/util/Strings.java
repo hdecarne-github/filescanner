@@ -22,6 +22,11 @@ package de.carne.util;
 public final class Strings {
 
 	/**
+	 * The current VM's newline string.
+	 */
+	public static final String NEWLINE = System.getProperty("line.separator");
+
+	/**
 	 * Check whether a string is empty (null or "").
 	 *
 	 * @param s The string to check.
