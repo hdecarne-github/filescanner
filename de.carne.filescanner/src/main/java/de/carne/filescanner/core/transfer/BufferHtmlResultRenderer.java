@@ -30,7 +30,7 @@ class BufferHtmlResultRenderer extends HtmlResultRenderer {
 
 	BufferHtmlResultRenderer(HtmlResultRendererURLHandler urlHandler, int fastTimeout) {
 		super(urlHandler);
-		this.nanoLimit = System.nanoTime() + (fastTimeout * 1000000);
+		this.nanoLimit = System.nanoTime() + (fastTimeout * 1000000L);
 	}
 
 	/*
