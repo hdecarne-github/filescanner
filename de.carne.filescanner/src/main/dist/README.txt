@@ -15,7 +15,9 @@ certmgr.jar [--verbose|--debug] [file]
 	Enable verbose logging.
 --debug
 	Enable debug logging.
-	
+--disable-indexing
+	Disable automatic index creation.
+		
 file
 	The file to scan.
 

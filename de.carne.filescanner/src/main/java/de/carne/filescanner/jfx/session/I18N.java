@@ -1,7 +1,7 @@
 /*
  * I18N resource strings
  *
- * Generated on Jun 4, 2016 6:08:50 PM
+ * Generated on Jun 4, 2016 9:19:46 PM
  */
 package de.carne.filescanner.jfx.session;
 
@@ -75,7 +75,7 @@ public final class I18N {
 	/**
 	 * Resource key {@code STR_ABOUT_INFO2}
 	 * <p>
-	 * This program makes use of the Farm-Fresh icon set (http:&frasl;&frasl;www.fatcow.com&frasl;free-icons) .<br/>© Copyright 2009-2014 FatCow Web Hosting. All rights reserved.<br/>http:&frasl;&frasl;www.fatcow.com<br/><br/>These icons are licensed under a Creative Commons Attribution 3.0 License.<br/>http:&frasl;&frasl;creativecommons.org&frasl;licenses&frasl;by&frasl;3.0&frasl;us&frasl;.
+	 * The Farm-Fresh icons (http:&frasl;&frasl;www.fatcow.com&frasl;free-icons) are<br/>© Copyright 2009-2014 FatCow Web Hosting. All rights reserved.<br/>http:&frasl;&frasl;www.fatcow.com<br/>These icons are licensed under a Creative Commons Attribution 3.0 License.<br/>http:&frasl;&frasl;creativecommons.org&frasl;licenses&frasl;by&frasl;3.0&frasl;us&frasl;.<br/><br/>The Eclipse icons are subject to the Eclipse Public License<br/>(http:&frasl;&frasl;www.eclipse.org&frasl;legal&frasl;epl-v10.html").<br/><br/>The application icon is © Copyright 2009-2016 MazeNL77<br/>(http:&frasl;&frasl;mazenl77.deviantart.com).<br/><br/>See the license file for further details.
 	 * </p>
 	 */
 	public static final String STR_ABOUT_INFO2 = "STR_ABOUT_INFO2";
@@ -83,7 +83,7 @@ public final class I18N {
 	/**
 	 * Resource string {@code STR_ABOUT_INFO2}
 	 * <p>
-	 * This program makes use of the Farm-Fresh icon set (http:&frasl;&frasl;www.fatcow.com&frasl;free-icons) .<br/>© Copyright 2009-2014 FatCow Web Hosting. All rights reserved.<br/>http:&frasl;&frasl;www.fatcow.com<br/><br/>These icons are licensed under a Creative Commons Attribution 3.0 License.<br/>http:&frasl;&frasl;creativecommons.org&frasl;licenses&frasl;by&frasl;3.0&frasl;us&frasl;.
+	 * The Farm-Fresh icons (http:&frasl;&frasl;www.fatcow.com&frasl;free-icons) are<br/>© Copyright 2009-2014 FatCow Web Hosting. All rights reserved.<br/>http:&frasl;&frasl;www.fatcow.com<br/>These icons are licensed under a Creative Commons Attribution 3.0 License.<br/>http:&frasl;&frasl;creativecommons.org&frasl;licenses&frasl;by&frasl;3.0&frasl;us&frasl;.<br/><br/>The Eclipse icons are subject to the Eclipse Public License<br/>(http:&frasl;&frasl;www.eclipse.org&frasl;legal&frasl;epl-v10.html").<br/><br/>The application icon is © Copyright 2009-2016 MazeNL77<br/>(http:&frasl;&frasl;mazenl77.deviantart.com).<br/><br/>See the license file for further details.
 	 * </p>
 	 *
 	 * @param arguments Format arguments.
