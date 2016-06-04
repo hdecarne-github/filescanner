@@ -132,10 +132,22 @@ public class SessionController extends StageController {
 	CheckMenuItem autoIndexMenuItem;
 
 	@FXML
+	MenuItem copySelectionMenuItem;
+
+	@FXML
+	MenuItem exportSelectionMenuItem;
+
+	@FXML
 	MenuItem searchNextMenuItem;
 
 	@FXML
 	MenuItem searchPreviousMenuItem;
+
+	@FXML
+	MenuItem gotoEndMenuItem;
+
+	@FXML
+	MenuItem gotoStartMenuItem;
 
 	@FXML
 	RadioMenuItem binaryFileViewMenuItem;
@@ -153,10 +165,22 @@ public class SessionController extends StageController {
 	TextField searchQueryInput;
 
 	@FXML
+	Button copySelectionButton;
+
+	@FXML
+	Button exportSelectionButton;
+
+	@FXML
 	Button searchNextButton;
 
 	@FXML
 	Button searchPreviousButton;
+
+	@FXML
+	Button gotoEndButton;
+
+	@FXML
+	Button gotoStartButton;
 
 	@FXML
 	TreeView<FileScannerResult> resultsView;
@@ -216,20 +240,31 @@ public class SessionController extends StageController {
 	}
 
 	@FXML
+	void onCopySelection(ActionEvent evt) {
+
+	}
+
+	@FXML
+	void onExportSelection(ActionEvent evt) {
+
+	}
+
+	@FXML
 	void onSearchNext(ActionEvent evt) {
 		try {
 			if (this.searchIndex.isReady()) {
 				TreeItem<FileScannerResult> selectedResult = this.resultsView.getSelectionModel().getSelectedItem();
 				String searchQuery = this.searchQueryInput.getText();
-				FileScannerResult foundResult;
+				FileScannerResult foundResult = null;
 
 				if (selectedResult != null) {
 					foundResult = this.searchIndex.searchNext(selectedResult.getValue(), searchQuery);
-				} else {
+				}
+				if (foundResult == null) {
 					foundResult = this.searchIndex.searchNext(null, searchQuery);
 				}
 				if (foundResult != null) {
-					gotoResult(foundResult);
+					gotoResult(foundResult, false);
 				}
 			}
 		} catch (Exception e) {
@@ -243,15 +278,16 @@ public class SessionController extends StageController {
 			if (this.searchIndex.isReady()) {
 				TreeItem<FileScannerResult> selectedResult = this.resultsView.getSelectionModel().getSelectedItem();
 				String searchQuery = this.searchQueryInput.getText();
-				FileScannerResult foundResult;
+				FileScannerResult foundResult = null;
 
 				if (selectedResult != null) {
 					foundResult = this.searchIndex.searchPrevious(selectedResult.getValue(), searchQuery);
-				} else {
+				}
+				if (foundResult == null) {
 					foundResult = this.searchIndex.searchPrevious(null, searchQuery);
 				}
 				if (foundResult != null) {
-					gotoResult(foundResult);
+					gotoResult(foundResult, false);
 				}
 			}
 		} catch (Exception e) {
@@ -487,12 +523,28 @@ public class SessionController extends StageController {
 		// Control setup (menu, views, ...)
 		setupFileViewType(getFileViewTypePreference());
 		this.autoIndexMenuItem.selectedProperty().bindBidirectional(this.autoIndexProperty);
+		this.copySelectionMenuItem.disableProperty()
+				.bind(Bindings.isNull(this.resultsView.getSelectionModel().selectedItemProperty()));
+		this.exportSelectionMenuItem.disableProperty()
+				.bind(Bindings.isNull(this.resultsView.getSelectionModel().selectedItemProperty()));
 		this.searchNextMenuItem.disableProperty().bind(Bindings.not(this.searchIndexReady));
 		this.searchPreviousMenuItem.disableProperty().bind(Bindings.not(this.searchIndexReady));
+		this.gotoEndMenuItem.disableProperty()
+				.bind(Bindings.isNull(this.resultsView.getSelectionModel().selectedItemProperty()));
+		this.gotoStartMenuItem.disableProperty()
+				.bind(Bindings.isNull(this.resultsView.getSelectionModel().selectedItemProperty()));
 		this.toggleLogMenuItem.selectedProperty().bindBidirectional(this.logViewTriggerProperty);
+		this.copySelectionButton.disableProperty()
+				.bind(Bindings.isNull(this.resultsView.getSelectionModel().selectedItemProperty()));
+		this.exportSelectionButton.disableProperty()
+				.bind(Bindings.isNull(this.resultsView.getSelectionModel().selectedItemProperty()));
 		this.searchQueryInput.disableProperty().bind(Bindings.not(this.searchIndexReady));
 		this.searchNextButton.disableProperty().bind(Bindings.not(this.searchIndexReady));
 		this.searchPreviousButton.disableProperty().bind(Bindings.not(this.searchIndexReady));
+		this.gotoEndButton.disableProperty()
+				.bind(Bindings.isNull(this.resultsView.getSelectionModel().selectedItemProperty()));
+		this.gotoStartButton.disableProperty()
+				.bind(Bindings.isNull(this.resultsView.getSelectionModel().selectedItemProperty()));
 		this.resultView.getEngine().setUserStyleSheetLocation(RESULT_VIEW_STYLE_URL.toExternalForm());
 		this.resultView.getEngine().load(EMPTY_RESULT_VIEW_DOC.toExternalForm());
 		this.cancelScanButton.setDisable(true);
@@ -727,17 +779,19 @@ public class SessionController extends StageController {
 			FileScannerResult positionResult = result.mapPosition(position - result.start());
 
 			if (positionResult != null) {
-				gotoResult(positionResult);
+				gotoResult(positionResult, true);
 			}
 		}
 	}
 
-	private void gotoResult(FileScannerResult result) {
+	private void gotoResult(FileScannerResult result, boolean requestFocus) {
 		TreeItem<FileScannerResult> positionItem = gotoResultHelper(result);
 
 		this.resultsView.getSelectionModel().select(positionItem);
 		this.resultsView.scrollTo(this.resultsView.getSelectionModel().getSelectedIndex());
-		this.resultsView.requestFocus();
+		if (requestFocus) {
+			this.resultsView.requestFocus();
+		}
 	}
 
 	private TreeItem<FileScannerResult> gotoResultHelper(FileScannerResult positionResult) {

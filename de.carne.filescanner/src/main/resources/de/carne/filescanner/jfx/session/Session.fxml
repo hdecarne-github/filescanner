@@ -50,7 +50,7 @@
         </Menu>
             <Menu mnemonicParsing="false" text="%_STR_EDIT_MENU">
                <items>
-                  <MenuItem mnemonicParsing="false" text="%_STR_COPY_MENU_ITEM">
+                  <MenuItem fx:id="copySelectionMenuItem" mnemonicParsing="false" onAction="#onCopySelection" text="%_STR_COPY_MENU_ITEM">
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -59,7 +59,7 @@
                         </ImageView>
                      </graphic>
                   </MenuItem>
-                  <MenuItem mnemonicParsing="false" text="%_STR_EXPORT_MENU_ITEM">
+                  <MenuItem fx:id="exportSelectionMenuItem" mnemonicParsing="false" onAction="#onExportSelection" text="%_STR_EXPORT_MENU_ITEM">
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -90,7 +90,7 @@
                         </ImageView>
                      </graphic>
                   </MenuItem>
-                  <MenuItem mnemonicParsing="false" onAction="#onGotoEnd" text="%_STR_GOTO_END_MENU_ITEM">
+                  <MenuItem fx:id="gotoEndMenuItem" mnemonicParsing="false" onAction="#onGotoEnd" text="%_STR_GOTO_END_MENU_ITEM">
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -99,7 +99,7 @@
                         </ImageView>
                      </graphic>
                   </MenuItem>
-                  <MenuItem mnemonicParsing="false" onAction="#onGotoStart" text="%_STR_GOTO_START_MENU_ITEM">
+                  <MenuItem fx:id="gotoStartMenuItem" mnemonicParsing="false" onAction="#onGotoStart" text="%_STR_GOTO_START_MENU_ITEM">
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -141,8 +141,27 @@
                   </ImageView>
                </graphic>
             </Button>
+            <Separator layoutX="46.0" layoutY="10.0" orientation="VERTICAL" />
+            <Button fx:id="copySelectionButton" layoutX="56.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCopySelection">
+               <graphic>
+                  <ImageView pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../iconCopy16.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="exportSelectionButton" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onExportSelection">
+               <graphic>
+                  <ImageView pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../iconExport16.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
             <Separator orientation="VERTICAL" />
-            <TextField fx:id="searchQueryInput" />
+            <TextField fx:id="searchQueryInput" onAction="#onSearchNext" />
             <Button fx:id="searchNextButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSearchNext">
                <graphic>
                   <ImageView pickOnBounds="true" preserveRatio="true">
@@ -161,7 +180,7 @@
                   </ImageView>
                </graphic>
             </Button>
-            <Button layoutX="96.0" layoutY="10.0" mnemonicParsing="false" onAction="#onGotoEnd">
+            <Button fx:id="gotoEndButton" layoutX="96.0" layoutY="10.0" mnemonicParsing="false" onAction="#onGotoEnd">
                <graphic>
                   <ImageView pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -170,7 +189,7 @@
                   </ImageView>
                </graphic>
             </Button>
-            <Button layoutX="58.0" layoutY="10.0" mnemonicParsing="false" onAction="#onGotoStart">
+            <Button fx:id="gotoStartButton" layoutX="58.0" layoutY="10.0" mnemonicParsing="false" onAction="#onGotoStart">
                <graphic>
                   <ImageView pickOnBounds="true" preserveRatio="true">
                      <image>
