@@ -241,12 +241,20 @@ public class SessionController extends StageController {
 
 	@FXML
 	void onCopySelection(ActionEvent evt) {
+		TreeItem<FileScannerResult> selectedResult = this.resultsView.getSelectionModel().getSelectedItem();
 
+		if (selectedResult != null) {
+
+		}
 	}
 
 	@FXML
 	void onExportSelection(ActionEvent evt) {
+		TreeItem<FileScannerResult> selectedResult = this.resultsView.getSelectionModel().getSelectedItem();
 
+		if (selectedResult != null) {
+
+		}
 	}
 
 	@FXML

@@ -1,7 +1,7 @@
 /*
  * I18N resource strings
  *
- * Generated on Jun 4, 2016 9:19:46 PM
+ * Generated on 05.06.2016 06:11:52
  */
 package de.carne.filescanner.jfx.session;
 
@@ -75,7 +75,7 @@ public final class I18N {
 	/**
 	 * Resource key {@code STR_ABOUT_INFO2}
 	 * <p>
-	 * The Farm-Fresh icons (http:&frasl;&frasl;www.fatcow.com&frasl;free-icons) are<br/>© Copyright 2009-2014 FatCow Web Hosting. All rights reserved.<br/>http:&frasl;&frasl;www.fatcow.com<br/>These icons are licensed under a Creative Commons Attribution 3.0 License.<br/>http:&frasl;&frasl;creativecommons.org&frasl;licenses&frasl;by&frasl;3.0&frasl;us&frasl;.<br/><br/>The Eclipse icons are subject to the Eclipse Public License<br/>(http:&frasl;&frasl;www.eclipse.org&frasl;legal&frasl;epl-v10.html").<br/><br/>The application icon is © Copyright 2009-2016 MazeNL77<br/>(http:&frasl;&frasl;mazenl77.deviantart.com).<br/><br/>See the license file for further details.
+	 * The Farm-Fresh icons (http:&frasl;&frasl;www.fatcow.com&frasl;free-icons) are<br/>Â© Copyright 2009-2014 FatCow Web Hosting. All rights reserved.<br/>http:&frasl;&frasl;www.fatcow.com<br/>These icons are licensed under a Creative Commons Attribution 3.0 License.<br/>http:&frasl;&frasl;creativecommons.org&frasl;licenses&frasl;by&frasl;3.0&frasl;us&frasl;.<br/><br/>The Eclipse icons are subject to the Eclipse Public License<br/>(http:&frasl;&frasl;www.eclipse.org&frasl;legal&frasl;epl-v10.html").<br/><br/>The application icon is Â© Copyright 2009-2016 MazeNL77<br/>(http:&frasl;&frasl;mazenl77.deviantart.com).<br/><br/>See the license file for further details.
 	 * </p>
 	 */
 	public static final String STR_ABOUT_INFO2 = "STR_ABOUT_INFO2";
@@ -83,7 +83,7 @@ public final class I18N {
 	/**
 	 * Resource string {@code STR_ABOUT_INFO2}
 	 * <p>
-	 * The Farm-Fresh icons (http:&frasl;&frasl;www.fatcow.com&frasl;free-icons) are<br/>© Copyright 2009-2014 FatCow Web Hosting. All rights reserved.<br/>http:&frasl;&frasl;www.fatcow.com<br/>These icons are licensed under a Creative Commons Attribution 3.0 License.<br/>http:&frasl;&frasl;creativecommons.org&frasl;licenses&frasl;by&frasl;3.0&frasl;us&frasl;.<br/><br/>The Eclipse icons are subject to the Eclipse Public License<br/>(http:&frasl;&frasl;www.eclipse.org&frasl;legal&frasl;epl-v10.html").<br/><br/>The application icon is © Copyright 2009-2016 MazeNL77<br/>(http:&frasl;&frasl;mazenl77.deviantart.com).<br/><br/>See the license file for further details.
+	 * The Farm-Fresh icons (http:&frasl;&frasl;www.fatcow.com&frasl;free-icons) are<br/>Â© Copyright 2009-2014 FatCow Web Hosting. All rights reserved.<br/>http:&frasl;&frasl;www.fatcow.com<br/>These icons are licensed under a Creative Commons Attribution 3.0 License.<br/>http:&frasl;&frasl;creativecommons.org&frasl;licenses&frasl;by&frasl;3.0&frasl;us&frasl;.<br/><br/>The Eclipse icons are subject to the Eclipse Public License<br/>(http:&frasl;&frasl;www.eclipse.org&frasl;legal&frasl;epl-v10.html").<br/><br/>The application icon is Â© Copyright 2009-2016 MazeNL77<br/>(http:&frasl;&frasl;mazenl77.deviantart.com).<br/><br/>See the license file for further details.
 	 * </p>
 	 *
 	 * @param arguments Format arguments.
@@ -96,7 +96,7 @@ public final class I18N {
 	/**
 	 * Resource key {@code STR_ABOUT_INFO1}
 	 * <p>
-	 * Copyright © 2007-2016 Holger de Carne and contributors,<br/>All Rights Reserved.<br/><br/>This program is free software: you can redistribute it and&frasl;or modify<br/>it under the terms of the GNU General Public License as published by<br/>the Free Software Foundation, either version 3 of the License, or<br/>(at your option) any later version.<br/><br/>This program is distributed in the hope that it will be useful,<br/>but WITHOUT ANY WARRANTY; without even the implied warranty of<br/>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the<br/>GNU General Public License for more details.<br/><br/>You should have received a copy of the GNU General Public License<br/>along with this program.  If not, see http:&frasl;&frasl;www.gnu.org&frasl;licenses.
+	 * Copyright Â© 2007-2016 Holger de Carne and contributors,<br/>All Rights Reserved.<br/><br/>This program is free software: you can redistribute it and&frasl;or modify<br/>it under the terms of the GNU General Public License as published by<br/>the Free Software Foundation, either version 3 of the License, or<br/>(at your option) any later version.<br/><br/>This program is distributed in the hope that it will be useful,<br/>but WITHOUT ANY WARRANTY; without even the implied warranty of<br/>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the<br/>GNU General Public License for more details.<br/><br/>You should have received a copy of the GNU General Public License<br/>along with this program.  If not, see http:&frasl;&frasl;www.gnu.org&frasl;licenses.
 	 * </p>
 	 */
 	public static final String STR_ABOUT_INFO1 = "STR_ABOUT_INFO1";
@@ -104,7 +104,7 @@ public final class I18N {
 	/**
 	 * Resource string {@code STR_ABOUT_INFO1}
 	 * <p>
-	 * Copyright © 2007-2016 Holger de Carne and contributors,<br/>All Rights Reserved.<br/><br/>This program is free software: you can redistribute it and&frasl;or modify<br/>it under the terms of the GNU General Public License as published by<br/>the Free Software Foundation, either version 3 of the License, or<br/>(at your option) any later version.<br/><br/>This program is distributed in the hope that it will be useful,<br/>but WITHOUT ANY WARRANTY; without even the implied warranty of<br/>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the<br/>GNU General Public License for more details.<br/><br/>You should have received a copy of the GNU General Public License<br/>along with this program.  If not, see http:&frasl;&frasl;www.gnu.org&frasl;licenses.
+	 * Copyright Â© 2007-2016 Holger de Carne and contributors,<br/>All Rights Reserved.<br/><br/>This program is free software: you can redistribute it and&frasl;or modify<br/>it under the terms of the GNU General Public License as published by<br/>the Free Software Foundation, either version 3 of the License, or<br/>(at your option) any later version.<br/><br/>This program is distributed in the hope that it will be useful,<br/>but WITHOUT ANY WARRANTY; without even the implied warranty of<br/>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the<br/>GNU General Public License for more details.<br/><br/>You should have received a copy of the GNU General Public License<br/>along with this program.  If not, see http:&frasl;&frasl;www.gnu.org&frasl;licenses.
 	 * </p>
 	 *
 	 * @param arguments Format arguments.
