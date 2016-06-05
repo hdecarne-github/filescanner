@@ -42,6 +42,27 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 	private StringExpression resultTitleExpression = null;
 
 	/**
+	 * Interface for custom result rendering.
+	 */
+	public interface RenderHandler {
+
+		/**
+		 * Render the scanner result.
+		 *
+		 * @param spec The format spec used to decode the result.
+		 * @param result The result object to render.
+		 * @param renderer The renderer to use.
+		 * @throws IOException if an I/O error occurs.
+		 * @throws InterruptedException if the render thread was interrupted.
+		 */
+		public void render(FormatSpec spec, FileScannerResult result, FileScannerResultRenderer renderer)
+				throws IOException, InterruptedException;
+
+	}
+
+	private RenderHandler resultRenderHandler = null;
+
+	/**
 	 * Whether this spec's data size is fixed or format dependent.
 	 * <p>
 	 * If this function returns {@code true} the {@linkplain #matchSize()}
@@ -184,7 +205,11 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 	@Override
 	public void render(FileScannerResult result, FileScannerResultRenderer renderer)
 			throws IOException, InterruptedException {
-		specRender(result, result.start(), result.end(), renderer);
+		if (this.resultRenderHandler != null) {
+			this.resultRenderHandler.render(this, result, renderer);
+		} else {
+			specRender(result, result.start(), result.end(), renderer);
+		}
 	}
 
 	/**
@@ -256,6 +281,26 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 	 */
 	public final boolean isResult() {
 		return this.resultTitleExpression != null;
+	}
+
+	/**
+	 * Set a custom render handler for result display.
+	 *
+	 * @param handler The handler to use for result rendering.
+	 * @return The updated format spec.
+	 */
+	public final FormatSpec setResultRenderHandler(RenderHandler handler) {
+		this.resultRenderHandler = handler;
+		return this;
+	}
+
+	/**
+	 * Get the custom render handler for result display.
+	 *
+	 * @return The handler or {@code null} if none has been set.
+	 */
+	public final RenderHandler getResultRenderHandler() {
+		return this.resultRenderHandler;
 	}
 
 	/**

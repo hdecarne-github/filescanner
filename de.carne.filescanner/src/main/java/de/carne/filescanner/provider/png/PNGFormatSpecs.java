@@ -49,6 +49,8 @@ class PNGFormatSpecs {
 		PNG_CHUNK_FLAGS.addFlagSymbol(0x00000020, "Safe-to-copy");
 	}
 
+	public static final PNGImageRenderHandler PNG_RENDER_HANDLER = new PNGImageRenderHandler();
+
 	public static final StructFormatSpec PNG_SIGNATURE;
 
 	static {
@@ -84,6 +86,7 @@ class PNGFormatSpecs {
 		png.append(PNG_SIGNATURE);
 		png.append(new VarArrayFormatSpec(PNG_CHUNK_GENERIC, 1));
 		png.setResult(NAME_PNG);
+		png.setResultRenderHandler(PNG_RENDER_HANDLER);
 		PNG = png;
 	}
 
