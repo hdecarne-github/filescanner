@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+
+<GridPane hgap="8.0" prefHeight="400.0" prefWidth="400.0" vgap="8.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.carne.filescanner.jfx.preferences.PreferencesController">
+  <children>
+  <Label text="%_STR_ACTIVE_FORMATS" textAlignment="LEFT" wrapText="true">
+    <font>
+      <Font size="12.0" />
+    </font>
+  </Label>
+      <ListView fx:id="enabledFormatsList" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
+    <HBox alignment="TOP_RIGHT" spacing="8.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="2">
+      <children>
+      <Button minWidth="80.0" mnemonicParsing="false" onAction="#onSave" text="%_STR_SAVE_BUTTON" HBox.hgrow="NEVER">
+        <HBox.margin>
+          <Insets left="14.0" />
+        </HBox.margin>
+      </Button>
+        <Button cancelButton="true" minWidth="80.0" mnemonicParsing="false" onAction="#onCancel" text="%_STR_CANCEL_BUTTON" HBox.hgrow="NEVER">
+          <HBox.margin>
+            <Insets />
+          </HBox.margin>
+        </Button>
+      </children>
+    </HBox>
+  </children>
+  <columnConstraints>
+    <ColumnConstraints hgrow="NEVER" />
+    <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" />
+  </columnConstraints>
+  <rowConstraints>
+      <RowConstraints valignment="CENTER" vgrow="NEVER" />
+      <RowConstraints valignment="CENTER" vgrow="ALWAYS" />
+    <RowConstraints valignment="CENTER" vgrow="NEVER" />
+  </rowConstraints>
+   <padding>
+      <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+   </padding>
+</GridPane>

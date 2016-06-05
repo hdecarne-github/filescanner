@@ -46,6 +46,7 @@ import de.carne.filescanner.jfx.Images;
 import de.carne.filescanner.jfx.control.FileView;
 import de.carne.filescanner.jfx.control.FileViewType;
 import de.carne.filescanner.jfx.control.PositionRange;
+import de.carne.filescanner.jfx.preferences.PreferencesController;
 import de.carne.filescanner.jfx.session.ResultTreeItemFactory.ResultTreeItem;
 import de.carne.filescanner.spi.FileScannerInput;
 import de.carne.filescanner.util.Hexadecimal;
@@ -239,7 +240,13 @@ public class SessionController extends StageController {
 
 	@FXML
 	void onScanPrefs(ActionEvent evt) {
+		try {
+			PreferencesController preferences = openStage(PreferencesController.class);
 
+			preferences.getStage().showAndWait();
+		} catch (IOException e) {
+			reportUnexpectedException(e);
+		}
 	}
 
 	@FXML

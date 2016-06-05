@@ -33,6 +33,8 @@ import de.carne.filescanner.spi.Format;
  */
 final class FormatMatcher {
 
+	private final Collection<Format> enabledFormats = FileScannerPreferences.getEnabledFormats();
+
 	private final ByteBuffer matchBuffer;
 
 	public FormatMatcher() {
@@ -44,13 +46,12 @@ final class FormatMatcher {
 		input.read(this.matchBuffer, position);
 		this.matchBuffer.flip();
 
-		Collection<Format> formats = Format.getFormats();
-		ArrayList<Format> trailerMatches = new ArrayList<>(formats.size());
-		ArrayList<Format> headerMatches = new ArrayList<>(formats.size());
-		ArrayList<Format> inputPathMatches = new ArrayList<>(formats.size());
-		ArrayList<Format> unknownMatches = new ArrayList<>(formats.size());
+		ArrayList<Format> trailerMatches = new ArrayList<>(this.enabledFormats.size());
+		ArrayList<Format> headerMatches = new ArrayList<>(this.enabledFormats.size());
+		ArrayList<Format> inputPathMatches = new ArrayList<>(this.enabledFormats.size());
+		ArrayList<Format> unknownMatches = new ArrayList<>(this.enabledFormats.size());
 
-		for (Format format : Format.getFormats()) {
+		for (Format format : this.enabledFormats) {
 			// Record whether this format is an explicit mismatch
 			// We consider a format a mismatch if it defines header order
 			// trailer specs and none of them matches.
@@ -111,7 +112,7 @@ final class FormatMatcher {
 			}
 		}
 
-		ArrayList<Format> matches = new ArrayList<>(formats.size());
+		ArrayList<Format> matches = new ArrayList<>(this.enabledFormats.size());
 
 		matches.addAll(trailerMatches);
 		matches.addAll(matches.size(), headerMatches);
@@ -120,10 +121,10 @@ final class FormatMatcher {
 		return matches;
 	}
 
-	private static int maxHeaderSize() {
+	private int maxHeaderSize() {
 		int maxHeaderSize = 0;
 
-		for (Format format : Format.getFormats()) {
+		for (Format format : this.enabledFormats) {
 			for (FormatSpec headerSpec : format.headerSpecs()) {
 				maxHeaderSize = Math.max(maxHeaderSize, headerSpec.matchSize());
 			}
