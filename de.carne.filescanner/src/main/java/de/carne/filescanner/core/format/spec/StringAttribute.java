@@ -32,7 +32,7 @@ import de.carne.filescanner.util.Units;
 public abstract class StringAttribute extends Attribute<String> {
 
 	/**
-	 * The maximum size to use for matching and actual string decoding.
+	 * The maximum size to use for string matching, decoding and rendering.
 	 */
 	public static final int MAX_MATCH_SIZE = 1024;
 

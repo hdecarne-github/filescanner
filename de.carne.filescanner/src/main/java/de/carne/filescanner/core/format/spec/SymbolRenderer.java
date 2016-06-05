@@ -40,7 +40,7 @@ public class SymbolRenderer<T> extends AttributeRenderer<T> {
 	 */
 	@Override
 	public void render(T value, FileScannerResultRenderer renderer) throws IOException, InterruptedException {
-		String symbol = this.symbolMap.get(value);
+		String symbol = getSymbol(value);
 
 		if (symbol != null) {
 			renderer.setCommentMode().renderText(" // ").renderText(symbol);
@@ -91,7 +91,12 @@ public class SymbolRenderer<T> extends AttributeRenderer<T> {
 	 *         symbol has been added for that value so far.
 	 */
 	public String getSymbol(T value, String defaultSymbol) {
-		return this.symbolMap.getOrDefault(value, defaultSymbol);
+		String symbol = getSymbol(value);
+
+		if (symbol == null) {
+			symbol = defaultSymbol;
+		}
+		return symbol;
 	}
 
 }

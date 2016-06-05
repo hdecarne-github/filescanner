@@ -38,9 +38,14 @@ import de.carne.filescanner.util.Units;
 public abstract class NumberArrayAttribute<T extends Number> extends Attribute<T[]> {
 
 	/**
-	 * The maximum size to use for matching and actual data decoding.
+	 * The maximum size to use for data matching.
 	 */
 	public static final int MAX_MATCH_SIZE = 1024;
+
+	/**
+	 * The maximum size to use for data rendering.
+	 */
+	public static final int MAX_RENDER_SIZE = 16;
 
 	private final NumberAttributeType type;
 
@@ -213,18 +218,19 @@ public abstract class NumberArrayAttribute<T extends Number> extends Attribute<T
 		formatBuffer.append("[");
 
 		long totalSize = end - start;
-		int readSize = (int) Math.min(totalSize, MAX_MATCH_SIZE);
+		int readSize = (int) Math.min(totalSize, MAX_RENDER_SIZE);
 		int readCount = readSize / this.type.size();
 		ByteBuffer readBuffer = result.cachedRead(start, readSize);
 		T[] elements = getValues(readBuffer, readCount);
 
 		if (elements != null) {
+			boolean firstElement = true;
+
 			for (T elementValue : elements) {
-				if (elementValue == null) {
-					break;
-				}
-				if (elementValue != elements[0]) {
+				if (!firstElement) {
 					formatBuffer.append(", ");
+				} else {
+					firstElement = false;
 				}
 				formatBuffer.append(this.format.apply(elementValue));
 			}
@@ -238,7 +244,7 @@ public abstract class NumberArrayAttribute<T extends Number> extends Attribute<T
 		if (readSize < totalSize) {
 			formatBuffer.setLength(0);
 			formatBuffer.append(" // remaining ");
-			formatBuffer.append(Units.formatByteValue(totalSize - MAX_MATCH_SIZE));
+			formatBuffer.append(Units.formatByteValue(totalSize - MAX_RENDER_SIZE));
 			formatBuffer.append(" omitted");
 			renderer.setCommentMode().renderText(formatBuffer.toString());
 		}

@@ -56,8 +56,6 @@ class FileViewSkin extends SkinBase<FileView> implements VirtualScrollRegion.Scr
 	 */
 	private static final int MAX_FORMAT_LINE_LENGTH = 16 + 3 + (16 * 8) + 15 + 2 + 16;
 
-	private static final char NON_PRINTABLE_CHAR = '.';
-
 	private final ByteBuffer readBuffer = ByteBuffer.allocateDirect(16);
 
 	private final VirtualScrollRegion<TextFlow> scrollRegion;
@@ -308,7 +306,7 @@ class FileViewSkin extends SkinBase<FileView> implements VirtualScrollRegion.Scr
 			if (buffer.hasRemaining()) {
 				byte byteValue = buffer.get();
 
-				Printer.format(stringBuffer, byteValue, NON_PRINTABLE_CHAR);
+				Printer.format(stringBuffer, byteValue);
 			} else {
 				stringBuffer.append(' ');
 			}

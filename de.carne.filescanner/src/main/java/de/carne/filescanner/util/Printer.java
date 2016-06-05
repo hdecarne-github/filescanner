@@ -82,6 +82,11 @@ public final class Printer {
 	};
 
 	/**
+	 * The default non-printable character.
+	 */
+	public static final char DEFAULT_NON_PRINTABLE_CHAR = '.';
+
+	/**
 	 * Format {@code byte} value.
 	 *
 	 * @param buffer The buffer to format into.
@@ -94,6 +99,21 @@ public final class Printer {
 
 		buffer.append(mapped != '\0' ? mapped : nonPrintable);
 		return buffer;
+	}
+
+	/**
+	 * Format {@code byte} value.
+	 * <p>
+	 * The same as calling {@linkplain #format(StringBuilder, byte, char)} with
+	 * {@linkplain #DEFAULT_NON_PRINTABLE_CHAR} as the non-printable character.
+	 * </p>
+	 *
+	 * @param buffer The buffer to format into.
+	 * @param b The value to format.
+	 * @return The updated buffer.
+	 */
+	public static StringBuilder format(StringBuilder buffer, byte b) {
+		return format(buffer, b, DEFAULT_NON_PRINTABLE_CHAR);
 	}
 
 	/**
