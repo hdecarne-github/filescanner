@@ -238,6 +238,11 @@ public class SessionController extends StageController {
 	}
 
 	@FXML
+	void onScanPrefs(ActionEvent evt) {
+
+	}
+
+	@FXML
 	void onCopySelection(ActionEvent evt) {
 		TreeItem<FileScannerResult> selectedResult = this.resultsView.getSelectionModel().getSelectedItem();
 
@@ -552,6 +557,7 @@ public class SessionController extends StageController {
 				.bind(Bindings.isNull(this.resultsView.getSelectionModel().selectedItemProperty()));
 		this.gotoStartButton.disableProperty()
 				.bind(Bindings.isNull(this.resultsView.getSelectionModel().selectedItemProperty()));
+		this.resultView.setContextMenuEnabled(false);
 		this.resultView.getEngine().load(EMPTY_RESULT_VIEW_DOC.toExternalForm());
 		this.cancelScanButton.setDisable(true);
 		updateScanStatusMessage(I18N.STR_SCAN_STATUS_NONE, null);

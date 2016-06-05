@@ -178,7 +178,7 @@ class ZIPFormatSpecs {
 
 		zipEntry.append(ZIP_LFH);
 		zipEntry.append(new EncodedFormatSpec(() -> getInputDecodeParams()));
-		zipEntry.append(new VarArrayFormatSpec(ZIP_DD, 0, 1));
+		zipEntry.append(new VarArrayFormatSpec(ZIP_DD, null, 0, 1));
 		zipEntry.declareAttribute(LFH_COMPRESSION_METHOD).declareAttribute(LFH_COMPRESSED_SIZE)
 				.declareAttribute(LFH_FILE_NAME);
 		zipEntry.setResult(NAME_ZIP_ENTRY, LFH_FILE_NAME);
@@ -256,7 +256,7 @@ class ZIPFormatSpecs {
 	static {
 		StructFormatSpec cd = new StructFormatSpec();
 
-		cd.append(new VarArrayFormatSpec(ZIP_CDH, 1));
+		cd.append(new VarArrayFormatSpec(ZIP_CDH, null, 1));
 		cd.append(ZIP_EOCD);
 		cd.declareAttribute(CDH_FILE_NAME);
 		cd.setResult(NAME_ZIP_CD, CDH_FILE_NAME);
@@ -268,7 +268,7 @@ class ZIPFormatSpecs {
 	static {
 		StructFormatSpec zip = new StructFormatSpec();
 
-		zip.append(new VarArrayFormatSpec(ZIP_ENTRY, 1));
+		zip.append(new VarArrayFormatSpec(ZIP_ENTRY, null, 1));
 		zip.append(ZIP_CD);
 		zip.setResult(NAME_ZIP);
 		ZIP = zip;

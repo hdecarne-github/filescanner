@@ -63,19 +63,38 @@ class PNGFormatSpecs {
 	}
 
 	public static final U32Attribute CHUNK_LENGTH = new U32Attribute("Length", U32Attributes.DECIMAL_FORMAT);
-	public static final U32Attribute CHUNK_TYPE = new U32Attribute("Chunk Type");
+	public static final U8ArrayAttribute CHUNK_DATA = new U8ArrayAttribute("Chunk Data", CHUNK_LENGTH);
+	public static final U32Attribute CHUNK_CRC = new U32Attribute("CRC");
+
+	public static final U32Attribute CHUNK_TYPE_GENERIC = new U32Attribute("Chunk Type");
+	public static final U32Attribute CHUNK_TYPE_IEND = new U32Attribute(CHUNK_TYPE_GENERIC.name());
+
 	public static final StructFormatSpec PNG_CHUNK_GENERIC;
 
 	static {
 		StructFormatSpec chunkGeneric = new StructFormatSpec();
 
 		chunkGeneric.append(CHUNK_LENGTH.bind().addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
-		chunkGeneric
-				.append(CHUNK_TYPE.bind().addExtraRenderer(PNG_CHUNK_TYPE_SYMBOLS).addExtraRenderer(PNG_CHUNK_FLAGS));
-		chunkGeneric.append(new U8ArrayAttribute("Chunk Data", CHUNK_LENGTH));
-		chunkGeneric.append(new U32Attribute("CRC"));
-		chunkGeneric.setResult(NAME_CHUNK, () -> PNGChunkTypeRenderer.formatChunkType(CHUNK_TYPE.get()));
+		chunkGeneric.append(
+				CHUNK_TYPE_GENERIC.bind().addExtraRenderer(PNG_CHUNK_TYPE_SYMBOLS).addExtraRenderer(PNG_CHUNK_FLAGS));
+		chunkGeneric.append(CHUNK_DATA);
+		chunkGeneric.append(CHUNK_CRC);
+		chunkGeneric.setResult(NAME_CHUNK, () -> PNGChunkTypeRenderer.formatChunkType(CHUNK_TYPE_GENERIC.get()));
 		PNG_CHUNK_GENERIC = chunkGeneric;
+	}
+
+	public static final StructFormatSpec PNG_CHUNK_IEND;
+
+	static {
+		StructFormatSpec chunkIEND = new StructFormatSpec();
+
+		chunkIEND.append(CHUNK_LENGTH);
+		chunkIEND.append(CHUNK_TYPE_IEND.bind().addValidValue(0x49454e44).addExtraRenderer(PNG_CHUNK_TYPE_SYMBOLS)
+				.addExtraRenderer(PNG_CHUNK_FLAGS));
+		chunkIEND.append(CHUNK_DATA);
+		chunkIEND.append(CHUNK_CRC);
+		chunkIEND.setResult(NAME_CHUNK, () -> PNGChunkTypeRenderer.formatChunkType(CHUNK_TYPE_IEND.get()));
+		PNG_CHUNK_IEND = chunkIEND;
 	}
 
 	public static final StructFormatSpec PNG;
@@ -84,7 +103,7 @@ class PNGFormatSpecs {
 		StructFormatSpec png = new StructFormatSpec();
 
 		png.append(PNG_SIGNATURE);
-		png.append(new VarArrayFormatSpec(PNG_CHUNK_GENERIC, 1));
+		png.append(new VarArrayFormatSpec(PNG_CHUNK_GENERIC, PNG_CHUNK_IEND, 1));
 		png.setResult(NAME_PNG);
 		png.setResultRenderHandler(PNG_RENDER_HANDLER);
 		PNG = png;

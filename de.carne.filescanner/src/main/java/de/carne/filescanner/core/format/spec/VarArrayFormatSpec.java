@@ -32,6 +32,8 @@ public class VarArrayFormatSpec extends FormatSpec {
 
 	private final FormatSpec spec;
 
+	private final FormatSpec stopSpec;
+
 	private final int minOccurrence;
 
 	private final int maxOccurrence;
@@ -40,27 +42,31 @@ public class VarArrayFormatSpec extends FormatSpec {
 	 * Construct {@code VarArrayFormatSpec}.
 	 *
 	 * @param spec The spec defining the array elements.
+	 * @param stopSpec The optional spec indicating the last entry in the array.
 	 * @param minOccurrence The minimum occurrence of the spec.
 	 */
-	public VarArrayFormatSpec(FormatSpec spec, int minOccurrence) {
-		this(spec, minOccurrence, 0);
+	public VarArrayFormatSpec(FormatSpec spec, FormatSpec stopSpec, int minOccurrence) {
+		this(spec, stopSpec, minOccurrence, 0);
 	}
 
 	/**
 	 * Construct {@code VarArrayFormatSpec}.
 	 *
 	 * @param spec The spec defining the array elements.
+	 * @param stopSpec The optional spec indicating the last entry in the array.
 	 * @param minOccurrence The minimum occurrence of the spec.
 	 * @param maxOccurrence The maximum occurrence of the space or {@code 0} if
 	 *        undefined.
 	 */
-	public VarArrayFormatSpec(FormatSpec spec, int minOccurrence, int maxOccurrence) {
+	public VarArrayFormatSpec(FormatSpec spec, FormatSpec stopSpec, int minOccurrence, int maxOccurrence) {
 		assert spec != null;
 		assert spec.matchSize() > 0;
+		assert stopSpec == null || stopSpec.matchSize() <= spec.matchSize();
 		assert minOccurrence >= 0;
 		assert maxOccurrence == 0 || maxOccurrence >= minOccurrence;
 
 		this.spec = spec;
+		this.stopSpec = stopSpec;
 		this.minOccurrence = minOccurrence;
 		this.maxOccurrence = maxOccurrence;
 	}
@@ -113,20 +119,26 @@ public class VarArrayFormatSpec extends FormatSpec {
 		while (true) {
 			long specPosition = position + decoded;
 			ByteBuffer matchBuffer = result.cachedRead(specPosition, this.spec.matchSize());
+			FormatSpec matchingSpec;
 
-			if (!this.spec.matches(matchBuffer)) {
+			if (this.stopSpec != null && this.stopSpec.matches(matchBuffer)) {
+				matchingSpec = this.stopSpec;
+			} else if (this.spec.matches(matchBuffer)) {
+				matchingSpec = this.spec;
+			} else {
 				break;
 			}
 
 			long specDecoded;
 
-			if (this.spec.isResult()) {
-				FileScannerResultBuilder specResult = result.addResult(this.spec.resultType(), specPosition, this.spec);
+			if (matchingSpec.isResult()) {
+				FileScannerResultBuilder specResult = result.addResult(matchingSpec.resultType(), specPosition,
+						matchingSpec);
 
-				specDecoded = ResultContext.setupAndDecode(this.spec, specResult);
+				specDecoded = ResultContext.setupAndDecode(matchingSpec, specResult);
 				result.updateDecodeStatus(specResult.decodeStatus());
 			} else {
-				specDecoded = this.spec.specDecode(result, specPosition);
+				specDecoded = matchingSpec.specDecode(result, specPosition);
 			}
 			if (specDecoded == 0L) {
 				result.updateDecodeStatus(DecodeStatusException.fatal("No data decoded"));
@@ -138,6 +150,9 @@ public class VarArrayFormatSpec extends FormatSpec {
 				break;
 			}
 			decoded += specDecoded;
+			if (matchingSpec == this.stopSpec) {
+				break;
+			}
 		}
 		return decoded;
 	}
