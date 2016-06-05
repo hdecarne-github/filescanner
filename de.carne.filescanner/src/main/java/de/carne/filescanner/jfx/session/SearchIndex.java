@@ -200,7 +200,15 @@ class SearchIndex implements AutoCloseable {
 		SimpleQueryParser searchQueryParser = new SimpleQueryParser(createAnalyzer(), CONTENT_FIELD);
 		Query searchQuery = (Strings.notEmpty(queryString) ? searchQueryParser.parse(queryString) : null);
 		BooleanQuery.Builder queryBuilder = new BooleanQuery.Builder();
-		int startId = start.getData(Integer.class).intValue();
+		int startId;
+
+		if (start != null) {
+			startId = start.getData(Integer.class).intValue();
+		} else if (next) {
+			startId = -1;
+		} else {
+			startId = this.idMap.size();
+		}
 
 		if (searchQuery != null) {
 			queryBuilder.add(searchQuery, Occur.MUST);

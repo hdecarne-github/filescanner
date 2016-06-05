@@ -50,10 +50,6 @@ public class MappingStreamHandler implements StreamHandler {
 			return this.end;
 		}
 
-		public final long size() {
-			return this.end - this.start;
-		}
-
 		public abstract int read(long position, byte[] b, int off, int len) throws IOException;
 
 	}
@@ -214,8 +210,9 @@ public class MappingStreamHandler implements StreamHandler {
 					break;
 				}
 
-				int mappingReadLen = (int) Math.min(len - read, mapping.size());
-				int mappingRead = mapping.read(position + read, b, off + read, mappingReadLen);
+				long mappingReadPosition = position + read;
+				int mappingReadLen = (int) Math.min(len - read, mapping.end() - mappingReadPosition);
+				int mappingRead = mapping.read(mappingReadPosition, b, off + read, mappingReadLen);
 
 				if (mappingRead != mappingReadLen) {
 					throw new IncompleteReadException(mappingReadLen, mappingRead);
