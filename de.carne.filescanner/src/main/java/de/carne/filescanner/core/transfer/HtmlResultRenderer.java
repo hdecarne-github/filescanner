@@ -18,6 +18,7 @@ package de.carne.filescanner.core.transfer;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Set;
 
 import de.carne.filescanner.spi.FileScannerResultRenderer;
 import de.carne.filescanner.util.Hexadecimal;
@@ -28,13 +29,33 @@ import de.carne.filescanner.util.Hexadecimal;
  */
 public abstract class HtmlResultRenderer extends FileScannerResultRenderer {
 
+	private final String styleSheetLocation;
+
+	/**
+	 * Construct {@code HtmlResultRenderer}.
+	 *
+	 * @param styleSheetLocation Optional reference to a style sheet.
+	 */
+	protected HtmlResultRenderer(String styleSheetLocation) {
+		this.styleSheetLocation = styleSheetLocation;
+	}
+
 	/*
 	 * (non-Javadoc)
-	 * @see de.carne.filescanner.spi.FileScannerResultRenderer#writePreamble()
+	 * @see
+	 * de.carne.filescanner.spi.FileScannerResultRenderer#writePreamble(java.
+	 * util.Set)
 	 */
 	@Override
-	protected void writePreamble() throws IOException, InterruptedException {
-		write("<!DOCTYPE HTML>\n<html>\n<head>\n<meta charset=\"utf-8\">\n</head>\n<body>\n");
+	protected void writePreamble(Set<Feature> features) throws IOException, InterruptedException {
+		write("<!DOCTYPE HTML>\n<html>\n<head>\n<meta charset=\"utf-8\">\n");
+		if (this.styleSheetLocation != null) {
+			write("<link rel=\"stylesheet\" href=\"" + this.styleSheetLocation + "\"");
+		}
+
+		String bodyStyle = (features.contains(Feature.TRANSPARENCY) ? " class=\"transparent\"" : "");
+
+		write("</head>\n<body" + bodyStyle + ">\n");
 	}
 
 	/*

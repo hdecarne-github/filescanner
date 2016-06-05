@@ -84,20 +84,26 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 
 	private static final String STREAM_PREFIX = "#stream";
 
-	// Do not use URL as the key, as this will degrade performance
-	private static final HashMap<String, StreamHandler> URL_MAP = new HashMap<>();
+	private static final HashMap<String, StreamHandler> LOCATION_MAP = new HashMap<>();
 
 	private static final ExecutorService THREAD_POOL = Executors.newCachedThreadPool();
 
-	private FileScannerResult result;
+	private final FileScannerResult result;
 
-	private URL baseURL;
+	private final String baseLocation;
+
+	private final String styleSheetLocation;
 
 	private int streamIndex = 0;
 
-	private HtmlResultRendererURLHandler(FileScannerResult result, URL baseURL) {
+	private HtmlResultRendererURLHandler(FileScannerResult result, String baseLocation, String styleSheetLocation) {
 		this.result = result;
-		this.baseURL = baseURL;
+		this.baseLocation = baseLocation;
+		this.styleSheetLocation = styleSheetLocation;
+	}
+
+	final String getStyleSheetLocation() {
+		return this.styleSheetLocation;
 	}
 
 	/**
@@ -109,12 +115,12 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 	 */
 	public static class RenderResult {
 
-		private final URL baseURL;
+		private final String baseLocation;
 
 		private final String fastResult;
 
-		RenderResult(URL baseURL, String fastResult) {
-			this.baseURL = baseURL;
+		RenderResult(String baseURL, String fastResult) {
+			this.baseLocation = baseURL;
 			this.fastResult = fastResult;
 		}
 
@@ -143,16 +149,17 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 		}
 
 		/**
-		 * Get the render result URL.
+		 * Get the render result location.
 		 * <p>
-		 * The render result URL is always defined and can be used to access the
-		 * render result via URL access (e.g. from a browser like control).
+		 * The render result location is always defined and can be used to
+		 * access the render result via URL access (e.g. from a browser like
+		 * control).
 		 * </p>
 		 *
 		 * @return The render result URL.
 		 */
-		public URL getURLResult() {
-			return this.baseURL;
+		public String getResultLocation() {
+			return this.baseLocation;
 		}
 
 	}
@@ -161,6 +168,8 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 	 * Open a renderer.
 	 *
 	 * @param result The {@code FileScannerResult} to render.
+	 * @param styleSheetLocation The optional style sheet location to use for
+	 *        rendering.
 	 * @param fastTimeout The time in milliseconds this function waits for a
 	 *        fast result. If this parameter is {@code 0} the fast result is not
 	 *        checked at all.
@@ -168,16 +177,18 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 	 *         output.
 	 * @throws IOException if an I/O error occurs.
 	 */
-	public static RenderResult open(FileScannerResult result, int fastTimeout) throws IOException {
+	public static RenderResult open(FileScannerResult result, String styleSheetLocation, int fastTimeout)
+			throws IOException {
 		assert result != null;
 
-		URL baseURL = new URL(PROTOCOL_RENDERER, "", UUID.randomUUID().toString());
+		String baseLocation = new URL(PROTOCOL_RENDERER, "", UUID.randomUUID().toString()).toExternalForm();
 
-		LOG.debug(null, "Creating renderer URL: ''{0}''", baseURL);
+		LOG.debug(null, "Creating renderer URL: ''{0}''", baseLocation);
 
-		HtmlResultRendererURLHandler urlHandler = new HtmlResultRendererURLHandler(result, baseURL);
+		HtmlResultRendererURLHandler urlHandler = new HtmlResultRendererURLHandler(result, baseLocation,
+				styleSheetLocation);
 
-		URL_MAP.put(baseURL.toExternalForm(), urlHandler);
+		LOCATION_MAP.put(baseLocation, urlHandler);
 
 		String fastResult = null;
 
@@ -191,16 +202,16 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 				LOG.info(null, "Fast rendering timout ({0} ms) reached; continue with URL result only", fastTimeout);
 			}
 		}
-		return new RenderResult(baseURL, fastResult);
+		return new RenderResult(baseLocation, fastResult);
 	}
 
 	URL registerStreamHandler(StreamHandler handler) throws IOException {
-		URL streamURL = new URL(PROTOCOL_RENDERER, "", this.baseURL.getFile() + STREAM_PREFIX + this.streamIndex);
-		String streamURLString = streamURL.toExternalForm();
+		URL streamURL = new URL(this.baseLocation + STREAM_PREFIX + this.streamIndex);
+		String streamLocation = streamURL.toExternalForm();
 
-		LOG.debug(null, "Creating stream URL: ''0}''", streamURLString);
+		LOG.debug(null, "Creating stream URL: ''0}''", streamLocation);
 
-		URL_MAP.put(streamURLString, handler);
+		LOCATION_MAP.put(streamLocation, handler);
 		this.streamIndex++;
 		return streamURL;
 	}
@@ -216,14 +227,14 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 	public static void close(RenderResult result) {
 		assert result != null;
 
-		String baseURLString = result.getURLResult().toExternalForm();
+		String baseLocation = result.getResultLocation();
 
-		Iterator<Map.Entry<String, StreamHandler>> entryIterator = URL_MAP.entrySet().iterator();
+		Iterator<Map.Entry<String, StreamHandler>> entryIterator = LOCATION_MAP.entrySet().iterator();
 
 		while (entryIterator.hasNext()) {
 			String entryURLString = entryIterator.next().getKey();
 
-			if (entryURLString.startsWith(baseURLString)) {
+			if (entryURLString.startsWith(baseLocation)) {
 				LOG.debug(null, "Releasing renderer URL ''{0}''", entryURLString);
 
 				entryIterator.remove();
@@ -273,7 +284,7 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 
 		LOG.debug(null, "Accessing renderer URL ''{0}''", urlString);
 
-		StreamHandler streamHandler = URL_MAP.get(urlString);
+		StreamHandler streamHandler = LOCATION_MAP.get(urlString);
 
 		if (streamHandler == null) {
 			throw new FileNotFoundException(urlString);

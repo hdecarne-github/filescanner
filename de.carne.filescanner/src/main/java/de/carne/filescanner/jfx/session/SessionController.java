@@ -100,10 +100,8 @@ public class SessionController extends StageController {
 
 	private static final int RESULT_VIEW_FAST_TIMEOUT = 250;
 
-	// WebEngine does not accept custom URL handlers; hence we provide resource
-	// access via the direct URL
-	private static final URL RESULT_VIEW_STYLE_URL = ApplicationLoader
-			.getDirectURL(SessionController.class.getResource("ResultView.css"));
+	private static final String RESULT_VIEW_STYLE_SHEET_LOCATION = ApplicationLoader
+			.getDirectURL(SessionController.class.getResource("ResultView.css")).toExternalForm();
 
 	private static final URL EMPTY_RESULT_VIEW_DOC = SessionController.class.getResource("EmptyResultView.html");
 
@@ -410,11 +408,12 @@ public class SessionController extends StageController {
 				this.resultViewObject = null;
 			}
 			try {
-				this.resultViewObject = HtmlResultRendererURLHandler.open(result, RESULT_VIEW_FAST_TIMEOUT);
+				this.resultViewObject = HtmlResultRendererURLHandler.open(result, RESULT_VIEW_STYLE_SHEET_LOCATION,
+						RESULT_VIEW_FAST_TIMEOUT);
 				if (this.resultViewObject.isFast()) {
 					this.resultView.getEngine().loadContent(this.resultViewObject.getFastResult());
 				} else {
-					this.resultView.getEngine().load(this.resultViewObject.getURLResult().toExternalForm());
+					this.resultView.getEngine().load(this.resultViewObject.getResultLocation());
 				}
 			} catch (IOException e) {
 				LOG.error(e, I18N.BUNDLE, I18N.STR_OPEN_RENDERER_ERROR);
@@ -553,7 +552,6 @@ public class SessionController extends StageController {
 				.bind(Bindings.isNull(this.resultsView.getSelectionModel().selectedItemProperty()));
 		this.gotoStartButton.disableProperty()
 				.bind(Bindings.isNull(this.resultsView.getSelectionModel().selectedItemProperty()));
-		this.resultView.getEngine().setUserStyleSheetLocation(RESULT_VIEW_STYLE_URL.toExternalForm());
 		this.resultView.getEngine().load(EMPTY_RESULT_VIEW_DOC.toExternalForm());
 		this.cancelScanButton.setDisable(true);
 		updateScanStatusMessage(I18N.STR_SCAN_STATUS_NONE, null);

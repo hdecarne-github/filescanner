@@ -18,6 +18,9 @@ package de.carne.filescanner.spi;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -28,6 +31,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * </p>
  */
 public abstract class FileScannerResultRenderer {
+
+	/**
+	 * Render features.
+	 */
+	public static enum Feature {
+
+		/**
+		 * Render with transparency support.
+		 */
+		TRANSPARENCY
+
+	}
 
 	/**
 	 * Render modes.
@@ -89,6 +104,7 @@ public abstract class FileScannerResultRenderer {
 
 	private AtomicBoolean open = new AtomicBoolean(true);
 	private boolean prepared = false;
+	private final HashSet<Feature> enabledFeatures = new HashSet<>();
 	private Mode currentMode = null;
 	private Mode nextMode = Mode.NORMAL;
 
@@ -103,18 +119,31 @@ public abstract class FileScannerResultRenderer {
 			throw new IOException("Renderer closed");
 		}
 		if (!this.prepared) {
-			writePreamble();
+			writePreamble(Collections.unmodifiableSet(this.enabledFeatures));
 			this.prepared = true;
 		}
 	}
 
 	/**
 	 * Check whether this renderer has generated any output so far.
-	 * 
+	 *
 	 * @return {@code true} if the renderer has generated output.
 	 */
 	public final boolean hasOutput() {
 		return this.prepared;
+	}
+
+	/**
+	 * Enable a specific rendering feature.
+	 *
+	 * @param feature The feature to enable.
+	 * @return The updated renderer.
+	 */
+	public final FileScannerResultRenderer enableFeature(Feature feature) {
+		assert feature != null;
+
+		this.enabledFeatures.add(feature);
+		return this;
 	}
 
 	/**
@@ -392,10 +421,11 @@ public abstract class FileScannerResultRenderer {
 	 * rendering process.
 	 * </p>
 	 *
+	 * @param features The enabled features for this renderer.
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	protected void writePreamble() throws IOException, InterruptedException {
+	protected void writePreamble(Set<Feature> features) throws IOException, InterruptedException {
 		// default is to write nothing
 	}
 

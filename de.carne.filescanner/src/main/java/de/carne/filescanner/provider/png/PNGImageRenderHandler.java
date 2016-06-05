@@ -23,6 +23,7 @@ import de.carne.filescanner.core.format.spec.FormatSpec;
 import de.carne.filescanner.core.format.spec.FormatSpec.RenderHandler;
 import de.carne.filescanner.core.transfer.MappingStreamHandler;
 import de.carne.filescanner.spi.FileScannerResultRenderer;
+import de.carne.filescanner.spi.FileScannerResultRenderer.Feature;
 
 /**
  * Custom render handler for PNG image display.
@@ -44,6 +45,7 @@ public class PNGImageRenderHandler implements RenderHandler {
 			MappingStreamHandler mapping = new MappingStreamHandler();
 
 			mapping.mapResult(result);
+			renderer.enableFeature(Feature.TRANSPARENCY);
 			renderer.renderImage(mapping);
 			renderer.close();
 		} else {

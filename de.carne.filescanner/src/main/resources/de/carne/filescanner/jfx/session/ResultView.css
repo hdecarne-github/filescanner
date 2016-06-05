@@ -3,6 +3,9 @@ body {
 	font-size: 12.0pt;
 	white-space: nowrap;
 }
+.transparent {
+	background-image: url("ResultViewTransparentBG.png");
+}
 .normal {
 }
 .value {
