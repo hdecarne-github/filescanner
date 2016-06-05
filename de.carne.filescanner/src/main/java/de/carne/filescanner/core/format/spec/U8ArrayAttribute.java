@@ -55,12 +55,21 @@ public class U8ArrayAttribute extends NumberArrayAttribute<Byte> {
 
 	/*
 	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.spec.NumberArrayAttribute#
-	 * getElementValue(java.nio.ByteBuffer)
+	 * @see
+	 * de.carne.filescanner.core.format.spec.NumberArrayAttribute#getValues(java
+	 * .nio.ByteBuffer, int)
 	 */
 	@Override
-	public Byte getElementValue(ByteBuffer buffer) {
-		return (isSA(buffer, type().size()) ? Byte.valueOf(buffer.get()) : null);
+	public Byte[] getValues(ByteBuffer buffer, int size) {
+		Byte[] values = null;
+
+		if (isSA(buffer, size * type().size())) {
+			values = new Byte[size];
+			for (int valueIndex = 0; valueIndex < size; valueIndex++) {
+				values[valueIndex] = buffer.get();
+			}
+		}
+		return values;
 	}
 
 }

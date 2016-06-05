@@ -148,6 +148,36 @@ public abstract class NumberArrayAttribute<T extends Number> extends Attribute<T
 
 	/*
 	 * (non-Javadoc)
+	 * @see de.carne.filescanner.core.format.spec.FormatSpec#matches(java.nio.
+	 * ByteBuffer)
+	 */
+	@Override
+	public boolean matches(ByteBuffer buffer) {
+		Number sizeValue = this.sizeExpression.beforeDecode();
+		boolean matches = false;
+
+		if (sizeValue != null) {
+			long sizeLong = sizeValue.longValue() * this.type.size();
+
+			if (sizeLong < MAX_MATCH_SIZE) {
+				int size = sizeValue.intValue();
+
+				if (isSA(buffer, size * this.type.size())) {
+					if (hasValidators()) {
+						T[] values = getValues(buffer, size);
+
+						matches = values != null && validateValue(values);
+					} else {
+						matches = true;
+					}
+				}
+			}
+		}
+		return matches;
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see
 	 * de.carne.filescanner.core.format.spec.FormatSpec#specDecode(de.carne.
 	 * filescanner.core.FileScannerResultBuilder, long)
@@ -186,17 +216,18 @@ public abstract class NumberArrayAttribute<T extends Number> extends Attribute<T
 		int readSize = (int) Math.min(totalSize, MAX_MATCH_SIZE);
 		int readCount = readSize / this.type.size();
 		ByteBuffer readBuffer = result.cachedRead(start, readSize);
+		T[] elements = getValues(readBuffer, readCount);
 
-		for (int elementIndex = 0; elementIndex < readCount; elementIndex++) {
-			T elementValue = getElementValue(readBuffer);
-
-			if (elementValue == null) {
-				break;
+		if (elements != null) {
+			for (T elementValue : elements) {
+				if (elementValue == null) {
+					break;
+				}
+				if (elementValue != elements[0]) {
+					formatBuffer.append(", ");
+				}
+				formatBuffer.append(this.format.apply(elementValue));
 			}
-			if (elementIndex > 0) {
-				formatBuffer.append(", ");
-			}
-			formatBuffer.append(this.format.apply(elementValue));
 		}
 		if (readSize < totalSize) {
 			formatBuffer.append(", \u2026");
@@ -215,12 +246,13 @@ public abstract class NumberArrayAttribute<T extends Number> extends Attribute<T
 	}
 
 	/**
-	 * Get the a single attribute array element's value.
+	 * Get the array values.
 	 *
-	 * @param buffer The buffer to get the value from.
-	 * @return The attribute array element's value or {@code null} if the
-	 *         buffer's data is insufficient.
+	 * @param buffer The buffer to get the values from.
+	 * @param size The number of values to get.
+	 * @return The attribute array values or {@code null} if the buffer's data
+	 *         is insufficient.
 	 */
-	public abstract T getElementValue(ByteBuffer buffer);
+	public abstract T[] getValues(ByteBuffer buffer, int size);
 
 }

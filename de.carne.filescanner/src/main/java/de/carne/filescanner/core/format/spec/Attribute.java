@@ -17,6 +17,7 @@
 package de.carne.filescanner.core.format.spec;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -104,7 +105,16 @@ public abstract class Attribute<T> extends FormatSpec implements ResultAttribute
 	 * @return The updated data attribute spec.
 	 */
 	public final Attribute<T> addValidValue(T validValue) {
-		return addValidator(v -> v.equals(validValue));
+		assert validValue != null;
+
+		Function<T, Boolean> validator;
+
+		if (validValue.getClass().isArray()) {
+			validator = v -> Arrays.equals((Object[]) v, (Object[]) validValue);
+		} else {
+			validator = v -> v.equals(validValue);
+		}
+		return addValidator(validator);
 	}
 
 	/**
@@ -115,6 +125,16 @@ public abstract class Attribute<T> extends FormatSpec implements ResultAttribute
 	 */
 	public final Attribute<T> addValidValues(Set<T> validValues) {
 		return addValidator(v -> validValues.size() == 0 || validValues.contains(v));
+	}
+
+	/**
+	 * Check whether any validators are defined for this attribute.
+	 *
+	 * @return {@code true} if at least one validator has been defined for this
+	 *         attribute.
+	 */
+	protected boolean hasValidators() {
+		return !this.validators.isEmpty();
 	}
 
 	/**

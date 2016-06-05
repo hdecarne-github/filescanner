@@ -107,8 +107,6 @@ public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 	 */
 	@Override
 	public boolean matches(ByteBuffer buffer) {
-		assert buffer != null;
-
 		T value = getValue(buffer);
 
 		return (value != null && validateValue(value));
