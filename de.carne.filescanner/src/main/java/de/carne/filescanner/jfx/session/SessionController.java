@@ -267,6 +267,7 @@ public class SessionController extends StageController {
 			try {
 				ExportController export = openStage(ExportController.class);
 
+				export.beginExport(selectedResult.getValue());
 				export.getStage().show();
 			} catch (IOException e) {
 				reportUnexpectedException(e);

@@ -132,6 +132,21 @@ public final class Images {
 	public static final Image IMAGE_FILESCANNER48 = getImage(Images.class, "iconFileScanner48.png");
 
 	/**
+	 * FileScanner icon (128x128)
+	 */
+	public static final Image IMAGE_FILESCANNER128 = getImage(Images.class, "iconFileScanner128.png");
+
+	/**
+	 * Export icon (16x16)
+	 */
+	public static final Image IMAGE_EXPORT16 = getImage(Images.class, "iconExport16.png");
+
+	/**
+	 * Export icon (32x32)
+	 */
+	public static final Image IMAGE_EXPORT32 = getImage(Images.class, "iconExport32.png");
+
+	/**
 	 * Input result icon (16x16)
 	 */
 	public static final Image IMAGE_INPUT_RESULT16 = getImage(Images.class, "iconInputResult16.png");
@@ -150,11 +165,6 @@ public final class Images {
 	 * Encoded input result icon (16x16)
 	 */
 	public static final Image IMAGE_ENCODED_INPUT_RESULT16 = getImage(Images.class, "iconEncodedInputResult16.png");
-
-	/**
-	 * FileScanner icon (128x128)
-	 */
-	public static final Image IMAGE_FILESCANNER128 = getImage(Images.class, "iconFileScanner128.png");
 
 	private static Image getImage(Class<?> resourceClass, String resourceName) {
 		Image image;

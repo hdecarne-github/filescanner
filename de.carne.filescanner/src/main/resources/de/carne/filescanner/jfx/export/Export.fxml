@@ -16,19 +16,9 @@
 
 <GridPane hgap="8.0" prefHeight="180.0" prefWidth="400.0" vgap="8.0" xmlns="http://javafx.com/javafx/8.0.92" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.carne.filescanner.jfx.export.ExportController">
   <children>
-      <Label layoutX="18.0" layoutY="47.0" text="%_STR_SELECTION_LABEL" textAlignment="LEFT" wrapText="true">
-         <font>
-            <Font size="12.0" />
-         </font>
-      </Label>
-      <HBox spacing="4.0" GridPane.columnIndex="1" GridPane.columnSpan="2147483647">
+      <HBox fx:id="resultDisplay" spacing="4.0" GridPane.columnSpan="2147483647">
          <children>
-            <ImageView fx:id="resultIcon" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../iconExport16.png" />
-               </image>
-            </ImageView>
-            <Label fx:id="resultDescription" text="Label" />
+            <Label fx:id="resultDescription" text="%STR_RESULT_DESCRIPTION" />
          </children>
       </HBox>
   <Label text="%_STR_EXPORT_TYPE_LABEL" textAlignment="LEFT" wrapText="true" GridPane.rowIndex="1">

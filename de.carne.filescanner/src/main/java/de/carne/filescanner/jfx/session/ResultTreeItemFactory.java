@@ -20,14 +20,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.carne.filescanner.core.FileScannerResult;
-import de.carne.filescanner.core.FileScannerResultType;
-import de.carne.filescanner.jfx.Images;
+import de.carne.filescanner.jfx.ResultGraphics;
 import javafx.collections.ObservableList;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
 /**
  * Helper class for efficient handling of a possibly huge number of tree items.
@@ -88,7 +84,7 @@ final class ResultTreeItemFactory {
 	}
 
 	public ResultTreeItem create(FileScannerResult result) {
-		ResultTreeItem resultItem = new ResultTreeItem(result, getResultGraphic(result));
+		ResultTreeItem resultItem = new ResultTreeItem(result, ResultGraphics.get(result));
 
 		this.itemMap.put(result, resultItem);
 		return resultItem;
@@ -96,34 +92,6 @@ final class ResultTreeItemFactory {
 
 	public ResultTreeItem get(FileScannerResult result) {
 		return this.itemMap.get(result);
-	}
-
-	private static Node getResultGraphic(FileScannerResult result) {
-		Image image;
-
-		switch (result.type()) {
-		case INPUT:
-			image = Images.IMAGE_INPUT_RESULT16;
-			break;
-		case FORMAT:
-			image = (result.parent().type() == FileScannerResultType.INPUT ? Images.IMAGE_FORMAT1_RESULT16
-					: Images.IMAGE_FORMAT2_RESULT16);
-			break;
-		case ENCODED_INPUT:
-			image = Images.IMAGE_ENCODED_INPUT_RESULT16;
-			break;
-		default:
-			throw new IllegalStateException("Unexpected result type: " + result.type());
-		}
-
-		Node graphic;
-
-		if (result.decodeStatus() == null) {
-			graphic = new ImageView(image);
-		} else {
-			graphic = new Group(new ImageView(image), new ImageView(Images.IMAGE_ERROR_OVERLAY16));
-		}
-		return graphic;
 	}
 
 }

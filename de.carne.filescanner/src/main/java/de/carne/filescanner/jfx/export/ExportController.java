@@ -18,6 +18,10 @@ package de.carne.filescanner.jfx.export;
 
 import java.io.IOException;
 
+import de.carne.filescanner.core.FileScannerResult;
+import de.carne.filescanner.jfx.Images;
+import de.carne.filescanner.jfx.ResultGraphics;
+import de.carne.filescanner.util.Units;
 import de.carne.jfx.StageController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -25,7 +29,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 /**
@@ -33,8 +37,10 @@ import javafx.stage.Stage;
  */
 public class ExportController extends StageController {
 
+	private FileScannerResult result = null;
+
 	@FXML
-	ImageView resultIcon;
+	HBox resultDisplay;
 
 	@FXML
 	Label resultDescription;
@@ -70,8 +76,23 @@ public class ExportController extends StageController {
 	@Override
 	protected void setupStage(Stage controllerStage) throws IOException {
 		super.setupStage(controllerStage);
+		controllerStage.getIcons().addAll(Images.IMAGE_EXPORT16, Images.IMAGE_EXPORT32);
 		controllerStage.setTitle(I18N.formatSTR_EXPORT_TITLE());
 		getStage().sizeToScene();
+	}
+
+	/**
+	 * Begin the result export.
+	 * 
+	 * @param resultParam The scanner result to export.
+	 */
+	public void beginExport(FileScannerResult resultParam) {
+		assert resultParam != null;
+
+		this.result = resultParam;
+		this.resultDisplay.getChildren().add(0, ResultGraphics.get(this.result));
+		this.resultDescription.setText(
+				I18N.formatSTR_RESULT_DESCRIPTION(this.result.title(), Units.formatByteValue(this.result.size())));
 	}
 
 }

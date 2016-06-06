@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<GridPane hgap="8.0" prefHeight="400.0" prefWidth="400.0" vgap="8.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.carne.filescanner.jfx.preferences.PreferencesController">
+<GridPane hgap="8.0" prefHeight="300.0" prefWidth="400.0" vgap="8.0" xmlns="http://javafx.com/javafx/8.0.92" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.carne.filescanner.jfx.preferences.PreferencesController">
   <children>
   <Label text="%_STR_ACTIVE_FORMATS" textAlignment="LEFT" wrapText="true">
     <font>

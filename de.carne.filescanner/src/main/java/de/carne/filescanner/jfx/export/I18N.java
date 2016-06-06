@@ -1,7 +1,7 @@
 /*
  * I18N resource strings
  *
- * Generated on Jun 6, 2016 3:52:55 PM
+ * Generated on Jun 6, 2016 7:59:55 PM
  */
 package de.carne.filescanner.jfx.export;
 
@@ -28,6 +28,27 @@ public final class I18N {
 		String pattern = BUNDLE.getString(key);
 
 		return (arguments.length > 0 ? MessageFormat.format(pattern, arguments) : pattern);
+	}
+
+	/**
+	 * Resource key {@code STR_RESULT_DESCRIPTION}
+	 * <p>
+	 * {0} ({1})
+	 * </p>
+	 */
+	public static final String STR_RESULT_DESCRIPTION = "STR_RESULT_DESCRIPTION";
+
+	/**
+	 * Resource string {@code STR_RESULT_DESCRIPTION}
+	 * <p>
+	 * {0} ({1})
+	 * </p>
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formated string.
+	 */
+	public static String formatSTR_RESULT_DESCRIPTION(Object... arguments) {
+		return format(STR_RESULT_DESCRIPTION, arguments);
 	}
 
 	/**

@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.prefs.BackingStoreException;
 
 import de.carne.filescanner.core.FileScannerPreferences;
+import de.carne.filescanner.jfx.Images;
 import de.carne.filescanner.spi.Format;
 import de.carne.jfx.StageController;
 import javafx.beans.value.ObservableValue;
@@ -75,6 +76,7 @@ public class PreferencesController extends StageController {
 	@Override
 	protected void setupStage(Stage controllerStage) throws IOException {
 		super.setupStage(controllerStage);
+		controllerStage.getIcons().addAll(Images.IMAGE_FILESCANNER16, Images.IMAGE_FILESCANNER32);
 		controllerStage.setTitle(I18N.formatSTR_PREFERENCES_TITLE());
 		this.enabledFormatsList.setCellFactory(
 				CheckBoxListCell.forListView(new Callback<EnabledFormatModel, ObservableValue<Boolean>>() {
