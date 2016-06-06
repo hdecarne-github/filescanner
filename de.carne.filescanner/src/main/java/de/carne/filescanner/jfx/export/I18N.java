@@ -1,9 +1,9 @@
 /*
  * I18N resource strings
  *
- * Generated on Jun 6, 2016 7:26:59 AM
+ * Generated on Jun 6, 2016 3:52:55 PM
  */
-package de.carne.filescanner.jfx.preferences;
+package de.carne.filescanner.jfx.export;
 
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
@@ -31,24 +31,24 @@ public final class I18N {
 	}
 
 	/**
-	 * Resource key {@code STR_PREFERENCES_TITLE}
+	 * Resource key {@code STR_EXPORT_TITLE}
 	 * <p>
-	 * FileScanner Preferences
+	 * Export
 	 * </p>
 	 */
-	public static final String STR_PREFERENCES_TITLE = "STR_PREFERENCES_TITLE";
+	public static final String STR_EXPORT_TITLE = "STR_EXPORT_TITLE";
 
 	/**
-	 * Resource string {@code STR_PREFERENCES_TITLE}
+	 * Resource string {@code STR_EXPORT_TITLE}
 	 * <p>
-	 * FileScanner Preferences
+	 * Export
 	 * </p>
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formated string.
 	 */
-	public static String formatSTR_PREFERENCES_TITLE(Object... arguments) {
-		return format(STR_PREFERENCES_TITLE, arguments);
+	public static String formatSTR_EXPORT_TITLE(Object... arguments) {
+		return format(STR_EXPORT_TITLE, arguments);
 	}
 
 }

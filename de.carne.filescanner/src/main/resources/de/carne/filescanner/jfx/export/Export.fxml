@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+
+<GridPane hgap="8.0" prefHeight="180.0" prefWidth="400.0" vgap="8.0" xmlns="http://javafx.com/javafx/8.0.92" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.carne.filescanner.jfx.export.ExportController">
+  <children>
+      <Label layoutX="18.0" layoutY="47.0" text="%_STR_SELECTION_LABEL" textAlignment="LEFT" wrapText="true">
+         <font>
+            <Font size="12.0" />
+         </font>
+      </Label>
+      <HBox spacing="4.0" GridPane.columnIndex="1" GridPane.columnSpan="2147483647">
+         <children>
+            <ImageView fx:id="resultIcon" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../iconExport16.png" />
+               </image>
+            </ImageView>
+            <Label fx:id="resultDescription" text="Label" />
+         </children>
+      </HBox>
+  <Label text="%_STR_EXPORT_TYPE_LABEL" textAlignment="LEFT" wrapText="true" GridPane.rowIndex="1">
+    <font>
+      <Font size="12.0" />
+    </font>
+  </Label>
+      <ChoiceBox fx:id="exportTypeSelection" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
+      <Label layoutX="18.0" layoutY="22.0" text="%_STR_EXPORT_DESTINATION_LABEL" textAlignment="LEFT" wrapText="true" GridPane.rowIndex="2">
+         <font>
+            <Font size="12.0" />
+         </font>
+      </Label>
+      <TextField fx:id="exportDestinationInput" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      <Button mnemonicParsing="false" onAction="#onChooseDestination" GridPane.columnIndex="2" GridPane.rowIndex="2">
+         <graphic>
+            <ImageView pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../iconFile16.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Label layoutX="18.0" layoutY="22.0" text="%_STR_EXPORT_PROGRESS_LABEL" textAlignment="LEFT" wrapText="true" GridPane.rowIndex="3">
+         <font>
+            <Font size="12.0" />
+         </font>
+      </Label>
+      <ProgressBar fx:id="exportProgress" progress="0.0" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="3" />
+    <HBox alignment="TOP_RIGHT" spacing="8.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="4">
+      <children>
+      <Button minWidth="80.0" mnemonicParsing="false" onAction="#onStart" text="%_STR_START_BUTTON" HBox.hgrow="NEVER">
+        <HBox.margin>
+          <Insets left="14.0" />
+        </HBox.margin>
+      </Button>
+        <Button cancelButton="true" minWidth="80.0" mnemonicParsing="false" onAction="#onCancel" text="%_STR_CANCEL_BUTTON" HBox.hgrow="NEVER">
+          <HBox.margin>
+            <Insets />
+          </HBox.margin>
+        </Button>
+      </children>
+    </HBox>
+  </children>
+  <columnConstraints>
+    <ColumnConstraints hgrow="NEVER" />
+    <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" />
+      <ColumnConstraints hgrow="NEVER" />
+  </columnConstraints>
+  <rowConstraints>
+      <RowConstraints valignment="TOP" vgrow="ALWAYS" />
+      <RowConstraints valignment="CENTER" vgrow="NEVER" />
+      <RowConstraints valignment="CENTER" vgrow="NEVER" />
+      <RowConstraints valignment="CENTER" vgrow="NEVER" />
+    <RowConstraints valignment="CENTER" vgrow="NEVER" />
+  </rowConstraints>
+   <padding>
+      <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+   </padding>
+</GridPane>

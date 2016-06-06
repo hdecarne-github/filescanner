@@ -46,6 +46,7 @@ import de.carne.filescanner.jfx.Images;
 import de.carne.filescanner.jfx.control.FileView;
 import de.carne.filescanner.jfx.control.FileViewType;
 import de.carne.filescanner.jfx.control.PositionRange;
+import de.carne.filescanner.jfx.export.ExportController;
 import de.carne.filescanner.jfx.preferences.PreferencesController;
 import de.carne.filescanner.jfx.session.ResultTreeItemFactory.ResultTreeItem;
 import de.carne.filescanner.spi.FileScannerInput;
@@ -263,7 +264,13 @@ public class SessionController extends StageController {
 		TreeItem<FileScannerResult> selectedResult = this.resultsView.getSelectionModel().getSelectedItem();
 
 		if (selectedResult != null) {
+			try {
+				ExportController export = openStage(ExportController.class);
 
+				export.getStage().show();
+			} catch (IOException e) {
+				reportUnexpectedException(e);
+			}
 		}
 	}
 
