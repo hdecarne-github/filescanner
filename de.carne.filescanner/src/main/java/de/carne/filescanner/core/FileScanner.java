@@ -64,8 +64,6 @@ public final class FileScanner implements Closeable {
 		THREAD_COUNT = threadCount;
 	}
 
-	private static final long PROGRESS_INTERVAL = 1000000000l;
-
 	private final ExecutorService threadPool = Executors.newFixedThreadPool(THREAD_COUNT);
 
 	private final DecodeCache decodeCache = new DecodeCache();
@@ -107,7 +105,7 @@ public final class FileScanner implements Closeable {
 	 * @return {@code true} if this scanner is finished with scanning.
 	 */
 	public boolean isFinished() {
-		int finishedCount = this.stats.recordScanned(0, false).finishedCount();
+		int finishedCount = this.stats.get().finishedCount();
 
 		return finishedCount > 0 && this.scannerCount.get() == finishedCount;
 	}
@@ -151,7 +149,7 @@ public final class FileScanner implements Closeable {
 	public void close() {
 		this.threadPool.shutdownNow();
 
-		FileScannerStatsCollector currentStats = this.stats.recordScanned(0, false);
+		FileScannerStatsCollector currentStats = this.stats.get();
 
 		if (this.scannerCount.get() != currentStats.finishedCount()) {
 			LOG.notice(null, "Closing still running scan; pending results will be ignored");
@@ -184,8 +182,7 @@ public final class FileScanner implements Closeable {
 
 		long scanPosition = 0L;
 		long inputSize = inputResult.size();
-		long lastProgressNanos = System.nanoTime();
-		long lastProgressPosition = scanPosition;
+		long lastScanPosition = scanPosition;
 		FormatMatcher formatMatcher = new FormatMatcher();
 
 		try {
@@ -196,16 +193,14 @@ public final class FileScanner implements Closeable {
 					throw new InterruptedException();
 				}
 
-				// Report progress (from time to time)
-				long currentNanos = System.nanoTime();
+				// Record and report progress (the latter from time to time)
+				long scannedDelta = scanPosition - lastScanPosition;
+				FileScannerStats progressStats = this.stats.recordScanned(scannedDelta, false);
 
-				if ((currentNanos - lastProgressNanos) > PROGRESS_INTERVAL) {
-					long scannedDelta = scanPosition - lastProgressPosition;
-
-					this.status.onScanProgress(this, this.stats.recordScanned(scannedDelta, false));
-					lastProgressNanos = currentNanos;
-					lastProgressPosition = scanPosition;
+				if (progressStats != null) {
+					this.status.onScanProgress(this, progressStats);
 				}
+				lastScanPosition = scanPosition;
 
 				// Do the actual decoding
 				FileScannerResult decoded = decodeInput(inputResult, scanPosition, formatMatcher);
@@ -223,7 +218,7 @@ public final class FileScanner implements Closeable {
 			this.status.onScanException(this, e);
 		}
 		// Report reached progress end possible completion
-		FileScannerStatsCollector currentStats = this.stats.recordScanned(scanPosition - lastProgressPosition, true);
+		FileScannerStatsCollector currentStats = this.stats.recordScanned(scanPosition - lastScanPosition, true);
 
 		this.status.onScanProgress(this, currentStats);
 		if (this.scannerCount.get() == currentStats.finishedCount()) {

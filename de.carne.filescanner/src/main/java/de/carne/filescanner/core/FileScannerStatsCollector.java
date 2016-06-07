@@ -22,6 +22,8 @@ package de.carne.filescanner.core;
  */
 final class FileScannerStatsCollector implements FileScannerStats {
 
+	private static final long PROGRESS_INTERVAL = 1000000000l;
+
 	private int scanCount = 0;
 
 	private int finishedCount = 0;
@@ -33,6 +35,8 @@ final class FileScannerStatsCollector implements FileScannerStats {
 	private long startNanos = 0L;
 
 	private long elapsedNanos = 0L;
+
+	private long lastProgressNanos = 0L;
 
 	public FileScannerStatsCollector() {
 		// Nothing to do here
@@ -49,6 +53,10 @@ final class FileScannerStatsCollector implements FileScannerStats {
 		}
 	}
 
+	public synchronized FileScannerStatsCollector get() {
+		return new FileScannerStatsCollector(this);
+	}
+
 	public synchronized FileScannerStatsCollector recordInput(FileScannerResult result) {
 		this.scanCount++;
 		this.totalInputSize += result.size();
@@ -63,7 +71,17 @@ final class FileScannerStatsCollector implements FileScannerStats {
 			this.finishedCount++;
 		}
 		this.scanned += scannedDelta;
-		return new FileScannerStatsCollector(this);
+
+		long currentNanos = System.nanoTime();
+		boolean triggerProgress;
+
+		if (finished || currentNanos - this.lastProgressNanos >= PROGRESS_INTERVAL) {
+			this.lastProgressNanos = currentNanos;
+			triggerProgress = true;
+		} else {
+			triggerProgress = false;
+		}
+		return (triggerProgress ? new FileScannerStatsCollector(this) : null);
 	}
 
 	public int scanCount() {
