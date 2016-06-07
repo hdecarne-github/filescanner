@@ -67,10 +67,6 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 		this.renderable = renderable;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.FileScannerResult#end()
-	 */
 	@Override
 	public long end() {
 		return Math.max(this.end, getChildrenEnd());
@@ -87,10 +83,6 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 		this.end = updatedEnd;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.FileScannerResult#decodeStatus()
-	 */
 	@Override
 	public DecodeStatusException decodeStatus() {
 		return this.decodeStatus;
@@ -109,19 +101,11 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.FileScannerResult#parent()
-	 */
 	@Override
 	public FileScannerResult parent() {
 		return this.parent;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.FileScannerResult#title()
-	 */
 	@Override
 	public String title() {
 		return this.title;
@@ -235,47 +219,26 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 			this.context().addResults(builder.context());
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see de.carne.filescanner.core.FileScannerResult#end()
-		 */
 		@Override
 		public long end() {
 			return this.end;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see de.carne.filescanner.core.FileScannerResult#decodeStatus()
-		 */
 		@Override
 		public DecodeStatusException decodeStatus() {
 			return this.decodeStatus;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see de.carne.filescanner.core.FileScannerResult#parent()
-		 */
 		@Override
 		public FileScannerResult parent() {
 			return this.parent;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see de.carne.filescanner.core.FileScannerResult#title()
-		 */
 		@Override
 		public String title() {
 			return this.title;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see de.carne.filescanner.core.FileScannerResult#render(de.carne.
-		 * filescanner.spi.FileScannerResultRenderer)
-		 */
 		@Override
 		public void render(FileScannerResultRenderer renderer) throws IOException, InterruptedException {
 			if (this.renderable != null) {

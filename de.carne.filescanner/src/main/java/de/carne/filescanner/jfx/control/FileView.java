@@ -39,19 +39,11 @@ public class FileView extends Control {
 		getStyleClass().add("file-view");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see javafx.scene.control.Control#createDefaultSkin()
-	 */
 	@Override
 	protected Skin<?> createDefaultSkin() {
 		return new FileViewSkin(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see javafx.scene.layout.Region#getUserAgentStylesheet()
-	 */
 	@Override
 	public String getUserAgentStylesheet() {
 		return USER_AGENT_STYLESHEET;

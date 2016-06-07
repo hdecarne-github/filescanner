@@ -42,48 +42,26 @@ class InputFileScannerResult extends FileScannerResult {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.FileScannerResult#end()
-	 */
 	@Override
 	public long end() {
 		return this.end;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.FileScannerResult#decodeStatus()
-	 */
 	@Override
 	public DecodeStatusException decodeStatus() {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.FileScannerResult#parent()
-	 */
 	@Override
 	public FileScannerResult parent() {
 		return this.parent;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.FileScannerResult#title()
-	 */
 	@Override
 	public String title() {
 		return input().path().getFileName().toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.FileScannerResult#render(de.carne.filescanner.
-	 * spi.FileScannerResultRenderer)
-	 */
 	@Override
 	public void render(FileScannerResultRenderer renderer) throws IOException, InterruptedException {
 		renderer.setNormalMode().renderText("path");

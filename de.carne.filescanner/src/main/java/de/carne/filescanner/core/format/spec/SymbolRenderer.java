@@ -32,12 +32,6 @@ public class SymbolRenderer<T> extends AttributeRenderer<T> {
 
 	private final HashMap<T, String> symbolMap = new HashMap<>();
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.spec.AttributeRenderer#render(java.lang.
-	 * Object, de.carne.filescanner.spi.FileScannerResultRenderer)
-	 */
 	@Override
 	public void render(T value, FileScannerResultRenderer renderer) throws IOException, InterruptedException {
 		String symbol = getSymbol(value);

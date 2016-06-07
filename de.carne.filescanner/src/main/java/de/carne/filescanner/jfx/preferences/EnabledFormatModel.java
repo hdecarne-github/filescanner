@@ -60,10 +60,6 @@ public final class EnabledFormatModel {
 		return this.enabledProperty;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return this.formatProperty.get().name();

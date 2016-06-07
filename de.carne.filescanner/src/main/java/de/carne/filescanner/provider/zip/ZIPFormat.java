@@ -36,10 +36,6 @@ public class ZIPFormat extends Format {
 		registerHeaderSpec(ZIPFormatSpecs.ZIP_LFH);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.spi.Format#decodable()
-	 */
 	@Override
 	public Decodable decodable() {
 		return ZIPFormatSpecs.ZIP;

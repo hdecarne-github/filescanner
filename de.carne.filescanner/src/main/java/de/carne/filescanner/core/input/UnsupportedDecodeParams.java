@@ -39,10 +39,6 @@ public class UnsupportedDecodeParams extends DecodeParams {
 		super(name + " encoded data", encodedSize, decodedPath);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.input.DecodeParams#newDecoder()
-	 */
 	@Override
 	public Decoder newDecoder() {
 		return new Decoder() {

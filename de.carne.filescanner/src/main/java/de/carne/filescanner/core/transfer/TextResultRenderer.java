@@ -26,45 +26,21 @@ import de.carne.util.Strings;
  */
 public abstract class TextResultRenderer extends FileScannerResultRenderer {
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.spi.FileScannerResultRenderer#writeBreak()
-	 */
 	@Override
 	protected void writeBreak() throws IOException, InterruptedException {
 		write(Strings.NEWLINE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.spi.FileScannerResultRenderer#writeText(de.carne.
-	 * filescanner.spi.FileScannerResultRenderer.Mode, java.lang.String)
-	 */
 	@Override
 	protected void writeText(Mode mode, String text) throws IOException, InterruptedException {
 		write(text);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.spi.FileScannerResultRenderer#writeImage(de.carne.
-	 * filescanner.spi.FileScannerResultRenderer.Mode,
-	 * de.carne.filescanner.spi.FileScannerResultRenderer.StreamHandler)
-	 */
 	@Override
 	protected void writeImage(Mode mode, StreamHandler streamHandler) throws IOException, InterruptedException {
 		// Nothing to do here
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.spi.FileScannerResultRenderer#writeVideo(de.carne.
-	 * filescanner.spi.FileScannerResultRenderer.Mode,
-	 * de.carne.filescanner.spi.FileScannerResultRenderer.StreamHandler)
-	 */
 	@Override
 	protected void writeVideo(Mode mode, StreamHandler streamHandler) throws IOException, InterruptedException {
 		// Nothing to do here

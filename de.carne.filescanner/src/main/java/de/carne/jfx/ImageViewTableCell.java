@@ -54,10 +54,6 @@ public class ImageViewTableCell<T> extends TableCell<T, Image> {
 		};
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see javafx.scene.control.Cell#updateItem(java.lang.Object, boolean)
-	 */
 	@Override
 	protected void updateItem(Image image, boolean empty) {
 		this.imageView.setImage(image);

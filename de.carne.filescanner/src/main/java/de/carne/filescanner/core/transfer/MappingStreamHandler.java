@@ -66,12 +66,6 @@ public class MappingStreamHandler implements StreamHandler {
 			this.inputStart = inputStart;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * de.carne.filescanner.core.transfer.MappingStreamHandler.Mapping#read(
-		 * long, byte[], int, int)
-		 */
 		@Override
 		public int read(long position, byte[] b, int off, int len) throws IOException {
 			ByteBuffer buffer = ByteBuffer.wrap(b, off, len);
@@ -119,11 +113,6 @@ public class MappingStreamHandler implements StreamHandler {
 		return mapInputSection(result.input(), result.start(), result.end());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.spi.FileScannerResultRenderer.StreamHandler#open()
-	 */
 	@Override
 	public InputStream open() throws IOException {
 		return new InputStream() {

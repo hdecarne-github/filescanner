@@ -36,11 +36,6 @@ class FileScannerStatusProxy implements FileScannerStatus {
 		this.status = status;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.FileScannerStatus#onScanStart(de.carne.
-	 * filescanner.core.FileScanner, de.carne.filescanner.core.FileScannerStats)
-	 */
 	@Override
 	public void onScanStart(FileScanner scanner, FileScannerStats stats) {
 		if (Platform.isFxApplicationThread()) {
@@ -67,11 +62,6 @@ class FileScannerStatusProxy implements FileScannerStatus {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.FileScannerStatus#onScanFinished(de.carne.
-	 * filescanner.core.FileScanner, de.carne.filescanner.core.FileScannerStats)
-	 */
 	@Override
 	public void onScanFinished(FileScanner scanner, FileScannerStats stats) {
 		if (Platform.isFxApplicationThread()) {
@@ -98,12 +88,6 @@ class FileScannerStatusProxy implements FileScannerStatus {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.FileScannerStatus#onScanCancelled(de.carne.
-	 * filescanner.core.FileScanner, de.carne.filescanner.core.FileScannerStats)
-	 */
 	@Override
 	public void onScanCancelled(FileScanner scanner, FileScannerStats stats) {
 		if (Platform.isFxApplicationThread()) {
@@ -130,11 +114,6 @@ class FileScannerStatusProxy implements FileScannerStatus {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.FileScannerStatus#onScanProgress(de.carne.
-	 * filescanner.core.FileScanner, de.carne.filescanner.core.FileScannerStats)
-	 */
 	@Override
 	public void onScanProgress(FileScanner scanner, FileScannerStats stats) {
 		if (Platform.isFxApplicationThread()) {
@@ -161,12 +140,6 @@ class FileScannerStatusProxy implements FileScannerStatus {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.FileScannerStatus#onScanResult(de.carne.
-	 * filescanner.core.FileScanner,
-	 * de.carne.filescanner.core.FileScannerResult)
-	 */
 	@Override
 	public void onScanResult(FileScanner scanner, FileScannerResult result) {
 		if (Platform.isFxApplicationThread()) {
@@ -193,12 +166,6 @@ class FileScannerStatusProxy implements FileScannerStatus {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.FileScannerStatus#onScanException(de.carne.
-	 * filescanner.core.FileScanner, java.lang.Throwable)
-	 */
 	@Override
 	public void onScanException(FileScanner scanner, Throwable e) {
 		if (Platform.isFxApplicationThread()) {

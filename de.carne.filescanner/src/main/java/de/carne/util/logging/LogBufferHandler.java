@@ -90,28 +90,16 @@ public class LogBufferHandler extends Handler {
 		this.handlers.remove(handler);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.util.logging.Handler#publish(java.util.logging.LogRecord)
-	 */
 	@Override
 	public void publish(LogRecord record) {
 		publishRecord(record);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.util.logging.Handler#flush()
-	 */
 	@Override
 	public void flush() {
 		flushHandlers();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.util.logging.Handler#close()
-	 */
 	@Override
 	public void close() throws SecurityException {
 		closeHandlers();

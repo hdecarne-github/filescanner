@@ -36,10 +36,6 @@ public class PropertiesPreferencesFactory implements PreferencesFactory {
 		PREFERENCES_DIR = System.getProperty(packageName, "." + packageName);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.util.prefs.PreferencesFactory#userRoot()
-	 */
 	@Override
 	public Preferences systemRoot() {
 		String userHome = System.getProperty("user.home", ".");
@@ -56,10 +52,6 @@ public class PropertiesPreferencesFactory implements PreferencesFactory {
 		return new PropertiesPreferences(propertiesPath);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.util.prefs.PreferencesFactory#systemRoot()
-	 */
 	@Override
 	public Preferences userRoot() {
 		String userHome = System.getProperty("user.home", ".");

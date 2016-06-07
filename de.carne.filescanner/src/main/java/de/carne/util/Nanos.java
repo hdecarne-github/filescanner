@@ -50,10 +50,6 @@ public final class Nanos {
 		return (System.nanoTime() - this.startNanos) / 1000L;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return toString(elapsed());

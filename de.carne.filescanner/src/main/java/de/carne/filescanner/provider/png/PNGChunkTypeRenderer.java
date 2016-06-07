@@ -24,12 +24,6 @@ import de.carne.filescanner.util.Printer;
  */
 class PNGChunkTypeRenderer extends U32SymbolRenderer {
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.spec.SymbolRenderer#getSymbol(java.lang.
-	 * Object)
-	 */
 	@Override
 	public String getSymbol(Integer value) {
 		String symbol = super.getSymbol(value);

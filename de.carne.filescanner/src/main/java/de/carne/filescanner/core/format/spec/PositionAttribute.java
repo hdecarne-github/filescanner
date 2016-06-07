@@ -41,13 +41,6 @@ public abstract class PositionAttribute<T extends Number> extends NumberAttribut
 		super(type, name, format);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.spec.NumberAttribute#specRender(de.carne
-	 * .filescanner.core.FileScannerResult, long, long,
-	 * de.carne.filescanner.spi.FileScannerResultRenderer)
-	 */
 	@Override
 	public void specRender(FileScannerResult result, long start, long end, FileScannerResultRenderer renderer)
 			throws IOException, InterruptedException {

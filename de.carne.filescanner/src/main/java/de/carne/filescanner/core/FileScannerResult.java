@@ -234,7 +234,7 @@ public abstract class FileScannerResult {
 
 	/**
 	 * Set application data for this result.
-	 * 
+	 *
 	 * @param data The data to set.
 	 */
 	public synchronized final <T> void setData(T data) {
@@ -243,7 +243,7 @@ public abstract class FileScannerResult {
 
 	/**
 	 * Get previously set application data.
-	 * 
+	 *
 	 * @param dataType The application data type.
 	 * @return The application data.
 	 * @see #setData(Object)
@@ -367,10 +367,6 @@ public abstract class FileScannerResult {
 		return this.input.cachedRead(position, size, this.order);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return title();

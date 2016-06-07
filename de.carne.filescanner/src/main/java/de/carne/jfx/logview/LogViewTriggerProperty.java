@@ -36,35 +36,23 @@ public class LogViewTriggerProperty extends ObjectPropertyBase<Boolean> {
 
 	/**
 	 * Construct {@code LogViewTriggerProperty}.
-	 * 
+	 *
 	 * @param parent The stage controller to use for log view showing.
 	 */
 	public LogViewTriggerProperty(StageController parent) {
 		this.parent = parent;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see javafx.beans.property.ReadOnlyProperty#getBean()
-	 */
 	@Override
 	public Object getBean() {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see javafx.beans.property.ReadOnlyProperty#getName()
-	 */
 	@Override
 	public String getName() {
 		return "";
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see javafx.beans.property.ObjectPropertyBase#set(java.lang.Object)
-	 */
 	@Override
 	public void set(Boolean newValue) {
 		if (Boolean.TRUE.equals(newValue) && this.logView == null) {

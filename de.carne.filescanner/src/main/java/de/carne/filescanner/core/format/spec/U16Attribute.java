@@ -42,20 +42,11 @@ public class U16Attribute extends NumberAttribute<Short> {
 		super(NumberAttributeType.U16, name, format);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.ResultAttribute#getValueType()
-	 */
 	@Override
 	public Class<Short> getValueType() {
 		return Short.class;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.DataAttribute#getValue(java.nio.
-	 * ByteBuffer)
-	 */
 	@Override
 	public Short getValue(ByteBuffer buffer) {
 		return (isSA(buffer, type().size()) ? Short.valueOf(buffer.getShort()) : null);

@@ -83,10 +83,6 @@ public final class PositionRange {
 		return this.start <= position && position < this.end;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();

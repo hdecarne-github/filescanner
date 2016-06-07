@@ -189,10 +189,6 @@ public abstract class FileScannerInput implements Closeable {
 		this.scanner.queueInput(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.io.Closeable#close()
-	 */
 	@Override
 	public final void close() {
 		try {
@@ -219,30 +215,16 @@ public abstract class FileScannerInput implements Closeable {
 			super(scanner, path);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see de.carne.filescanner.spi.FileScannerInput#size()
-		 */
 		@Override
 		public long size() throws IOException {
 			return getReadChannel().size();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * de.carne.filescanner.spi.FileScannerInput#read(java.nio.ByteBuffer,
-		 * long)
-		 */
 		@Override
 		public int read(ByteBuffer dst, long position) throws IOException {
 			return getReadChannel().read(dst, position);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see de.carne.filescanner.spi.FileScannerInput#close0()
-		 */
 		@Override
 		protected synchronized void close0() throws Exception {
 			IOException closeException = null;

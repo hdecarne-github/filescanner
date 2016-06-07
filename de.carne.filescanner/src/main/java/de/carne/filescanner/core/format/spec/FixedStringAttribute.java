@@ -66,10 +66,6 @@ public class FixedStringAttribute extends StringAttribute {
 		this(name, charset, new NumberExpression<>(sizeLambda));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.spec.FormatSpec#isFixedSize()
-	 */
 	@Override
 	public boolean isFixedSize() {
 		Number sizeValue = this.sizeExpression.beforeDecode();
@@ -77,10 +73,6 @@ public class FixedStringAttribute extends StringAttribute {
 		return sizeValue != null && sizeValue.longValue() < MAX_MATCH_SIZE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.FormatSpec#matchSize()
-	 */
 	@Override
 	public int matchSize() {
 		Number sizeValue = this.sizeExpression.beforeDecode();
@@ -96,11 +88,6 @@ public class FixedStringAttribute extends StringAttribute {
 		return matchSize;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.FormatSpec#specDecode(de.carne.
-	 * filescanner. core.FileScannerResultBuilder, long)
-	 */
 	@Override
 	public long specDecode(FileScannerResultBuilder result, long position) throws IOException {
 		long stringSize = this.sizeExpression.decode().longValue();
@@ -123,13 +110,6 @@ public class FixedStringAttribute extends StringAttribute {
 		return decoded;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.spec.FormatSpec#specRender(de.carne.
-	 * filescanner.core.FileScannerResult, long, long,
-	 * de.carne.filescanner.spi.FileScannerResultRenderer)
-	 */
 	@Override
 	public void specRender(FileScannerResult result, long start, long end, FileScannerResultRenderer renderer)
 			throws IOException, InterruptedException {

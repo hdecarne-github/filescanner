@@ -63,10 +63,6 @@ public class EncodedFormatSpec extends FormatSpec implements Supplier<String> {
 		this(new ValueExpression<>(decodeParamsLambda));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.util.function.Supplier#get()
-	 */
 	@Override
 	public String get() {
 		DecodeParams decodeParams = this.decodeParamsExpression.decode();
@@ -74,21 +70,11 @@ public class EncodedFormatSpec extends FormatSpec implements Supplier<String> {
 		return (decodeParams != null ? decodeParams.getEncodedName() : "");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.spec.FormatSpec#resultType()
-	 */
 	@Override
 	public FileScannerResultType resultType() {
 		return FileScannerResultType.ENCODED_INPUT;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.spec.FormatSpec#specDecode(de.carne.
-	 * filescanner.core.FileScannerResultBuilder, long)
-	 */
 	@SuppressWarnings("resource")
 	@Override
 	public long specDecode(FileScannerResultBuilder result, long position) throws IOException {
@@ -122,13 +108,6 @@ public class EncodedFormatSpec extends FormatSpec implements Supplier<String> {
 		return decoded;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.spec.FormatSpec#specRender(de.carne.
-	 * filescanner.core.FileScannerResult, long, long,
-	 * de.carne.filescanner.spi.FileScannerResultRenderer)
-	 */
 	@Override
 	public void specRender(FileScannerResult result, long start, long end, FileScannerResultRenderer renderer)
 			throws IOException, InterruptedException {

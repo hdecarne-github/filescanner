@@ -53,19 +53,11 @@ final class ResultTreeItemFactory {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see javafx.scene.control.TreeItem#isLeaf()
-		 */
 		@Override
 		public boolean isLeaf() {
 			return getValue().childrenCount() == 0;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see javafx.scene.control.TreeItem#getChildren()
-		 */
 		@Override
 		public ObservableList<TreeItem<FileScannerResult>> getChildren() {
 			if (!this.synced) {

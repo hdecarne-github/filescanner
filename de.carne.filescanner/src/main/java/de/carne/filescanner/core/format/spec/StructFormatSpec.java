@@ -47,10 +47,6 @@ public class StructFormatSpec extends FormatSpec {
 		return this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.spec.FormatSpec#isFixedSize()
-	 */
 	@Override
 	public boolean isFixedSize() {
 		boolean fixedSize = true;
@@ -64,10 +60,6 @@ public class StructFormatSpec extends FormatSpec {
 		return fixedSize;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.FormatSpec#matchSize()
-	 */
 	@Override
 	public int matchSize() {
 		int matchSize = 0;
@@ -86,11 +78,6 @@ public class StructFormatSpec extends FormatSpec {
 		return matchSize;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.FormatSpec#matches(java.nio.ByteBuffer)
-	 */
 	@Override
 	public boolean matches(ByteBuffer buffer) {
 		boolean matches = false;
@@ -110,11 +97,6 @@ public class StructFormatSpec extends FormatSpec {
 		return matches;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.FormatSpec#specDecode(de.carne.
-	 * filescanner. core.FileScannerResultBuilder, long)
-	 */
 	@Override
 	public long specDecode(FileScannerResultBuilder result, long position) throws IOException {
 		long decoded = 0L;
@@ -143,13 +125,6 @@ public class StructFormatSpec extends FormatSpec {
 		return decoded;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.spec.FormatSpec#specRender(de.carne.
-	 * filescanner.core.FileScannerResult, long, long,
-	 * de.carne.filescanner.spi.FileScannerResultRenderer)
-	 */
 	@Override
 	public void specRender(FileScannerResult result, long start, long end, FileScannerResultRenderer renderer)
 			throws IOException, InterruptedException {

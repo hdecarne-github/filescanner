@@ -60,19 +60,11 @@ public class PreferencesController extends StageController {
 		getStage().close();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.jfx.StageController#getModality()
-	 */
 	@Override
 	protected Modality getModality() {
 		return Modality.APPLICATION_MODAL;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.certmgr.jfx.StageController#setupStage(javafx.stage.Stage)
-	 */
 	@Override
 	protected void setupStage(Stage controllerStage) throws IOException {
 		super.setupStage(controllerStage);

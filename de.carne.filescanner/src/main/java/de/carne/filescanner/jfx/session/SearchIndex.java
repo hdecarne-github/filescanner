@@ -127,10 +127,6 @@ class SearchIndex implements AutoCloseable {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.AutoCloseable#close()
-	 */
 	@Override
 	public synchronized void close() {
 		this.searcher = null;

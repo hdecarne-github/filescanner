@@ -292,11 +292,6 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 		return streamHandler;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.spi.FileScannerResultRenderer.StreamHandler#open()
-	 */
 	@SuppressWarnings("resource")
 	@Override
 	public InputStream open() throws IOException {

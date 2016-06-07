@@ -42,20 +42,11 @@ public class U8Attribute extends NumberAttribute<Byte> {
 		super(NumberAttributeType.U8, name, format);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.ResultAttribute#getValueType()
-	 */
 	@Override
 	public Class<Byte> getValueType() {
 		return Byte.class;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.DataAttribute#getValue(java.nio.
-	 * ByteBuffer)
-	 */
 	@Override
 	public Byte getValue(ByteBuffer buffer) {
 		return (isSA(buffer, type().size()) ? Byte.valueOf(buffer.get()) : null);

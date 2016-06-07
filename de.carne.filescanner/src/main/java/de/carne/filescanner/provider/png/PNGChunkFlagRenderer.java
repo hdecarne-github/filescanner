@@ -28,11 +28,6 @@ public final class PNGChunkFlagRenderer extends U32FlagRenderer {
 
 	private static int FLAG_MASK = 0x20202020;
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.spec.FlagRenderer#render(java.lang.
-	 * Number, de.carne.filescanner.spi.FileScannerResultRenderer)
-	 */
 	@Override
 	public void render(Integer value, FileScannerResultRenderer renderer) throws IOException, InterruptedException {
 		super.render(Integer.valueOf(value.intValue() & FLAG_MASK), renderer);

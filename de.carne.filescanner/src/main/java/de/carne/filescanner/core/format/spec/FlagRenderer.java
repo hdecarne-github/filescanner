@@ -30,12 +30,6 @@ public abstract class FlagRenderer<T extends Number> extends AttributeRenderer<T
 
 	private final HashMap<T, String> symbolMap = new HashMap<>();
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.spec.AttributeRenderer#render(java.lang.
-	 * Object, de.carne.filescanner.spi.FileScannerResultRenderer)
-	 */
 	@Override
 	public void render(T value, FileScannerResultRenderer renderer) throws IOException, InterruptedException {
 		T foldedFlag = null;
@@ -82,7 +76,7 @@ public abstract class FlagRenderer<T extends Number> extends AttributeRenderer<T
 
 	/**
 	 * Fold two flags into one.
-	 * 
+	 *
 	 * @param flag1 The 1st flag to fold.
 	 * @param flag2 The 2nd flag to fold.
 	 * @return The folded flag.

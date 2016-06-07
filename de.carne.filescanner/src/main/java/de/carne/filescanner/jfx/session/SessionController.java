@@ -535,10 +535,6 @@ public class SessionController extends StageController {
 		this.scanStatusIcon.setImage(Images.IMAGE_WARNING16);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.jfx.StageController#setupStage(javafx.stage.Stage)
-	 */
 	@Override
 	protected void setupStage(Stage controllerStage) throws IOException {
 		// Basic setup
@@ -642,19 +638,11 @@ public class SessionController extends StageController {
 		this.fileView.setViewType(fileViewType);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.jfx.StageController#getSystemMenuBar()
-	 */
 	@Override
 	protected MenuBar getSystemMenuBar() {
 		return this.systemMenuBar;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.jfx.StageController#getPreferences()
-	 */
 	@Override
 	protected Preferences getPreferences() {
 		return PREFERENCES;

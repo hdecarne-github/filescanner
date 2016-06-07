@@ -49,21 +49,11 @@ public class DeflateDecodeParams extends DecodeParams {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.input.DecodeParams#newDecoder()
-	 */
 	@Override
 	public Decoder newDecoder() {
 		return new DeflateDecoder(this.modes);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.input.DecodeParams#render(de.carne.filescanner.
-	 * spi.FileScannerResultRenderer)
-	 */
 	@Override
 	public void render(FileScannerResultRenderer renderer) throws IOException, InterruptedException {
 		super.render(renderer);

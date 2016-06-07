@@ -78,20 +78,12 @@ public class FileScannerApplication extends Application implements Main {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.Main#run(java.lang.String[])
-	 */
 	@Override
 	public int run(String[] args) {
 		Application.launch(getClass(), args);
 		return 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see javafx.application.Application#start(javafx.stage.Stage)
-	 */
 	@Override
 	public void start(Stage stage) throws Exception {
 		Thread.currentThread().setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
@@ -114,10 +106,6 @@ public class FileScannerApplication extends Application implements Main {
 		processParameters(session);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see javafx.application.Application#stop()
-	 */
 	@Override
 	public void stop() throws Exception {
 		LOG.debug(null, "JavaFX GUI stopped");

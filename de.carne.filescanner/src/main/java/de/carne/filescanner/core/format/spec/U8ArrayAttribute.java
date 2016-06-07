@@ -44,21 +44,11 @@ public class U8ArrayAttribute extends NumberArrayAttribute<Byte> {
 		super(NumberAttributeType.U8, name, sizeLambda, U8Attributes.HEXADECIMAL_FORMAT);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.ResultAttribute#getValueType()
-	 */
 	@Override
 	public Class<Byte[]> getValueType() {
 		return Byte[].class;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.spec.NumberArrayAttribute#getValues(java
-	 * .nio.ByteBuffer, int)
-	 */
 	@Override
 	public Byte[] getValues(ByteBuffer buffer, int size) {
 		Byte[] values = null;

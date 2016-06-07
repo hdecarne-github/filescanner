@@ -26,10 +26,6 @@ public class U32FlagRenderer extends FlagRenderer<Integer> {
 
 	private static final int MSB = 0b100000000000000000000000000000;
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Iterable#iterator()
-	 */
 	@Override
 	public Iterator<Integer> iterator() {
 		return new Iterator<Integer>() {
@@ -52,34 +48,16 @@ public class U32FlagRenderer extends FlagRenderer<Integer> {
 		};
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.spec.FlagRenderer#testFlag(java.lang.
-	 * Number, java.lang.Number)
-	 */
 	@Override
 	protected boolean testFlag(Integer flag, Integer value) {
 		return (value.intValue() & flag.intValue()) != 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.spec.FlagRenderer#foldFlag(java.lang.
-	 * Number, java.lang.Number)
-	 */
 	@Override
 	protected Integer foldFlag(Integer flag1, Integer flag2) {
 		return Integer.valueOf(flag1.intValue() | flag2.intValue());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.spec.FlagRenderer#formatFlag(java.lang.
-	 * Number, java.lang.Number)
-	 */
 	@Override
 	protected String formatFlag(Integer flag, Integer value) {
 		StringBuilder formatBuffer = new StringBuilder();

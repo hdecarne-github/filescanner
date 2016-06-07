@@ -182,19 +182,11 @@ public abstract class Attribute<T> extends FormatSpec implements ResultAttribute
 		return Collections.unmodifiableList(this.extraRendererList);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.ResultAttribute#name()
-	 */
 	@Override
 	public final String name() {
 		return this.name;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.util.function.Supplier#get()
-	 */
 	@Override
 	public T get() {
 		assert this.bound;
@@ -202,10 +194,6 @@ public abstract class Attribute<T> extends FormatSpec implements ResultAttribute
 		return ResultContext.get().getAttribute(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return "Attribute '" + this.name + "'";

@@ -45,12 +45,6 @@ public class CommentRenderer<T> extends AttributeRenderer<T> {
 		this.function = function;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.spec.AttributeRenderer#render(java.lang.
-	 * Object, de.carne.filescanner.spi.FileScannerResultRenderer)
-	 */
 	@Override
 	public void render(T value, FileScannerResultRenderer renderer) throws IOException, InterruptedException {
 		String valueString = this.function.apply(value);

@@ -27,25 +27,12 @@ import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
  */
 public class UnionFormatSpec extends FormatSpec {
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.spec.FormatSpec#specDecode(de.carne.
-	 * filescanner.core.FileScannerResultBuilder, long)
-	 */
 	@Override
 	public long specDecode(FileScannerResultBuilder result, long position) throws IOException {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.spec.FormatSpec#specRender(de.carne.
-	 * filescanner.core.FileScannerResult, long, long,
-	 * de.carne.filescanner.spi.FileScannerResultRenderer)
-	 */
 	@Override
 	public void specRender(FileScannerResult result, long start, long end, FileScannerResultRenderer renderer)
 			throws IOException, InterruptedException {

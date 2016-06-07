@@ -33,12 +33,6 @@ class TimeoutHtmlResultRenderer extends URLHtmlResultRenderer {
 		this.nanoLimit = System.nanoTime() + (fastTimeout * 1000000L);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.transfer.HtmlResultRenderer#write(java.lang.
-	 * String[])
-	 */
 	@Override
 	protected void write(String... artifacts) throws IOException, InterruptedException {
 		if ((this.nanoLimit - System.nanoTime()) < 0) {
@@ -49,10 +43,6 @@ class TimeoutHtmlResultRenderer extends URLHtmlResultRenderer {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return this.buffer.toString();

@@ -86,10 +86,6 @@ public final class VirtualScrollLayout {
 		return this.vIncrement;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();

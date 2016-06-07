@@ -119,11 +119,6 @@ class FileViewSkin extends SkinBase<FileView> implements VirtualScrollRegion.Scr
 		this.scrollRegion.requestLayout();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.jfx.control.VirtualScrollRegion.Scrollable#
-	 * layoutVirtual(double, double)
-	 */
 	@Override
 	public VirtualScrollLayout layoutVirtual(double viewWidth, double viewHeight) {
 		FileView skinnable = getSkinnable();
@@ -214,33 +209,16 @@ class FileViewSkin extends SkinBase<FileView> implements VirtualScrollRegion.Scr
 		return (scrollLayout != null ? scrollLayout : VirtualScrollLayout.EMPTY);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.jfx.control.VirtualScrollRegion.Scrollable#
-	 * mapViewPort(double, double)
-	 */
 	@Override
 	public Point2D mapViewPort(double hValue, double vValue) {
 		return new Point2D(-hValue, 0.0);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.jfx.control.VirtualScrollRegion.Scrollable#hScrollTo
-	 * (double)
-	 */
 	@Override
 	public void hScrollTo(double value) {
 		this.viewPane.setLayoutX(-value);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.jfx.control.VirtualScrollRegion.Scrollable#vScrollTo
-	 * (double)
-	 */
 	@Override
 	public void vScrollTo(double value) {
 		if (!Double.isNaN(this.cachedViewPaneLineHeight)) {

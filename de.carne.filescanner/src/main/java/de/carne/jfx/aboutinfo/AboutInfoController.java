@@ -52,19 +52,11 @@ public class AboutInfoController extends StageController {
 	@FXML
 	TextArea ctlMainInfoText;
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.certmgr.jfx.StageController#getResizable()
-	 */
 	@Override
 	protected boolean getResizable() {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.certmgr.jfx.StageController#setupStage(javafx.stage.Stage)
-	 */
 	@Override
 	protected void setupStage(Stage controllerStage) throws IOException {
 		super.setupStage(controllerStage);

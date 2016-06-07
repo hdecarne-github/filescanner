@@ -41,10 +41,6 @@ public class NullDecodeParams extends DecodeParams {
 		assert encodedSize >= 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.input.DecodeParams#newDecoder()
-	 */
 	@Override
 	public Decoder newDecoder() {
 		return null;

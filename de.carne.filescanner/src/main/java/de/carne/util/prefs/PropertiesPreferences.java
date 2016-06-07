@@ -56,38 +56,21 @@ class PropertiesPreferences extends AbstractPreferences {
 		this.properties = parent.properties;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.util.prefs.AbstractPreferences#putSpi(java.lang.String,
-	 * java.lang.String)
-	 */
 	@Override
 	protected void putSpi(String key, String value) {
 		this.properties.put(absolutePath() + "/" + key, value);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.util.prefs.AbstractPreferences#getSpi(java.lang.String)
-	 */
 	@Override
 	protected String getSpi(String key) {
 		return this.properties.getProperty(absolutePath() + "/" + key);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.util.prefs.AbstractPreferences#removeSpi(java.lang.String)
-	 */
 	@Override
 	protected void removeSpi(String key) {
 		this.properties.remove(absolutePath() + "/" + key);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.util.prefs.AbstractPreferences#removeNodeSpi()
-	 */
 	@Override
 	protected void removeNodeSpi() throws BackingStoreException {
 		String keyPrefix = absolutePath();
@@ -101,10 +84,6 @@ class PropertiesPreferences extends AbstractPreferences {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.util.prefs.AbstractPreferences#keysSpi()
-	 */
 	@Override
 	protected String[] keysSpi() throws BackingStoreException {
 		ArrayList<String> keys = new ArrayList<>(this.properties.size());
@@ -120,10 +99,6 @@ class PropertiesPreferences extends AbstractPreferences {
 		return keys.toArray(new String[keys.size()]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.util.prefs.AbstractPreferences#childrenNamesSpi()
-	 */
 	@Override
 	protected String[] childrenNamesSpi() throws BackingStoreException {
 		ArrayList<String> childrenNames = new ArrayList<>(this.properties.size());
@@ -139,37 +114,21 @@ class PropertiesPreferences extends AbstractPreferences {
 		return childrenNames.toArray(new String[childrenNames.size()]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.util.prefs.AbstractPreferences#childSpi(java.lang.String)
-	 */
 	@Override
 	protected AbstractPreferences childSpi(String name) {
 		return new PropertiesPreferences(this, name);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.util.prefs.AbstractPreferences#sync()
-	 */
 	@Override
 	public void sync() throws BackingStoreException {
 		storeProperties();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.util.prefs.AbstractPreferences#syncSpi()
-	 */
 	@Override
 	protected void syncSpi() throws BackingStoreException {
 		// Nothing to do here
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.util.prefs.AbstractPreferences#flushSpi()
-	 */
 	@Override
 	protected void flushSpi() throws BackingStoreException {
 		// Nothing to do here

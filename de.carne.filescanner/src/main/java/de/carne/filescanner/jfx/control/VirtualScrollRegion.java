@@ -102,10 +102,6 @@ class VirtualScrollRegion<C extends Node> extends Region {
 		this.hBar.setValue(hValue);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see javafx.scene.Parent#layoutChildren()
-	 */
 	@Override
 	protected void layoutChildren() {
 		double regionWidth = getWidth();

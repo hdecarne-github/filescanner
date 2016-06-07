@@ -80,10 +80,6 @@ public class ValueExpression<T> {
 		return (this.value != null ? this.value : this.valueLambda.get());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return "ValueExpression = '" + (this.value != null ? this.value : "<Lambda>") + "'";

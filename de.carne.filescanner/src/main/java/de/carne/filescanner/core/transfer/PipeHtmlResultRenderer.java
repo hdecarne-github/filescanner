@@ -34,12 +34,6 @@ class PipeHtmlResultRenderer extends URLHtmlResultRenderer {
 		this.out = new OutputStreamWriter(out, StandardCharsets.UTF_8);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.transfer.HtmlResultRenderer#write(java.lang.
-	 * String[])
-	 */
 	@Override
 	protected void write(String... artifacts) throws IOException, InterruptedException {
 		for (String artifact : artifacts) {

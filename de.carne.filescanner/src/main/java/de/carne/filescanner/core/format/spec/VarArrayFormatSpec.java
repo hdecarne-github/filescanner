@@ -71,29 +71,16 @@ public class VarArrayFormatSpec extends FormatSpec {
 		this.maxOccurrence = maxOccurrence;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.spec.FormatSpec#isFixedSize()
-	 */
 	@Override
 	public boolean isFixedSize() {
 		return this.minOccurrence > 0 && this.minOccurrence == this.maxOccurrence && this.spec.isFixedSize();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.spec.FormatSpec#matchSize()
-	 */
 	@Override
 	public int matchSize() {
 		return (this.spec.isFixedSize() ? this.minOccurrence : 1) * this.spec.matchSize();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.spec.FormatSpec#matches(java.nio.
-	 * ByteBuffer)
-	 */
 	@Override
 	public boolean matches(ByteBuffer buffer) {
 		boolean matches = this.spec.matches(buffer);
@@ -106,12 +93,6 @@ public class VarArrayFormatSpec extends FormatSpec {
 		return matches;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.spec.FormatSpec#specDecode(de.carne.
-	 * filescanner.core.FileScannerResultBuilder, long)
-	 */
 	@Override
 	public long specDecode(FileScannerResultBuilder result, long position) throws IOException {
 		long decoded = 0;
@@ -157,13 +138,6 @@ public class VarArrayFormatSpec extends FormatSpec {
 		return decoded;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.spec.FormatSpec#specRender(de.carne.
-	 * filescanner.core.FileScannerResult, long, long,
-	 * de.carne.filescanner.spi.FileScannerResultRenderer)
-	 */
 	@Override
 	public void specRender(FileScannerResult result, long start, long end, FileScannerResultRenderer renderer)
 			throws IOException, InterruptedException {

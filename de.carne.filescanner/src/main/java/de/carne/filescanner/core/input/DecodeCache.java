@@ -85,10 +85,6 @@ public final class DecodeCache implements AutoCloseable {
 		return new Input(input.scanner(), path, decodeInputStart, decodeInputEnd, decodetatus);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.AutoCloseable#close()
-	 */
 	@Override
 	public synchronized void close() {
 		IOException closeException = null;
@@ -194,21 +190,11 @@ public final class DecodeCache implements AutoCloseable {
 			return this.decodeStatus;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see de.carne.filescanner.spi.FileScannerInput#size()
-		 */
 		@Override
 		public long size() throws IOException {
 			return this.decodeCacheEnd - this.decodeCacheStart;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * de.carne.filescanner.spi.FileScannerInput#read(java.nio.ByteBuffer,
-		 * long)
-		 */
 		@Override
 		public int read(ByteBuffer dst, long position) throws IOException {
 			assert dst != null;
@@ -225,10 +211,6 @@ public final class DecodeCache implements AutoCloseable {
 			return read;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see de.carne.filescanner.spi.FileScannerInput#close0()
-		 */
 		@Override
 		protected void close0() throws Exception {
 			// Nothing to do here

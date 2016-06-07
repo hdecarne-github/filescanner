@@ -26,12 +26,6 @@ public class StringTextResultRenderer extends TextResultRenderer {
 
 	private StringBuilder buffer = new StringBuilder();
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.transfer.TextResultRenderer#write(java.lang.
-	 * String[])
-	 */
 	@Override
 	protected void write(String... artifacts) throws IOException, InterruptedException {
 		for (String artifact : artifacts) {
@@ -39,10 +33,6 @@ public class StringTextResultRenderer extends TextResultRenderer {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return this.buffer.toString();

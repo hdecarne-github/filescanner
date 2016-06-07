@@ -69,10 +69,6 @@ public class ExportController extends StageController {
 		getStage().close();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.certmgr.jfx.StageController#setupStage(javafx.stage.Stage)
-	 */
 	@Override
 	protected void setupStage(Stage controllerStage) throws IOException {
 		super.setupStage(controllerStage);
@@ -83,7 +79,7 @@ public class ExportController extends StageController {
 
 	/**
 	 * Begin the result export.
-	 * 
+	 *
 	 * @param resultParam The scanner result to export.
 	 */
 	public void beginExport(FileScannerResult resultParam) {

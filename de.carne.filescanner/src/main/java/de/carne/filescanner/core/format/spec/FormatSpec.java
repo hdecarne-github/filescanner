@@ -146,12 +146,6 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 	 */
 	public abstract long specDecode(FileScannerResultBuilder result, long position) throws IOException;
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.Decodable#decode(de.carne.filescanner.
-	 * core.FileScannerResultBuilder)
-	 */
 	@Override
 	public long decode(FileScannerResultBuilder result) throws IOException {
 		ResultContext context = ResultContext.get();
@@ -179,12 +173,6 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 	public abstract void specRender(FileScannerResult result, long start, long end, FileScannerResultRenderer renderer)
 			throws IOException, InterruptedException;
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.RenderableData#renderData(de.carne.
-	 * filescanner.core.FileScannerResult, long, long,
-	 * de.carne.filescanner.spi.FileScannerResultRenderer)
-	 */
 	@Override
 	public void renderData(FileScannerResult result, long start, long end, FileScannerResultRenderer renderer)
 			throws IOException, InterruptedException {
@@ -195,13 +183,6 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 		specRender(result, start, end, renderer);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.Renderable#render(de.carne.filescanner.
-	 * core.FileScannerResult,
-	 * de.carne.filescanner.spi.FileScannerResultRenderer)
-	 */
 	@Override
 	public void render(FileScannerResult result, FileScannerResultRenderer renderer)
 			throws IOException, InterruptedException {
@@ -365,10 +346,6 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 		return (position + size) <= input.size();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return "FormatSpec " + (this.resultTitleExpression != null ? this.resultTitleExpression : "<anonymous>");

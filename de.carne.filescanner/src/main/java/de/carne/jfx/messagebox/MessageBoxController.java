@@ -87,10 +87,6 @@ public class MessageBoxController extends StageController {
 		getStage().close();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.certmgr.jfx.StageController#setupStage(javafx.stage.Stage)
-	 */
 	@Override
 	protected void setupStage(Stage controllerStage) throws IOException {
 		super.setupStage(controllerStage);

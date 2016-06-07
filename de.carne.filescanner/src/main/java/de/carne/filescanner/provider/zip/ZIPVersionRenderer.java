@@ -26,12 +26,6 @@ import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
  */
 class ZIPVersionRenderer extends U16SymbolRenderer {
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.spec.SymbolRenderer#render(java.lang.
-	 * Object, de.carne.filescanner.spi.FileScannerResultRenderer)
-	 */
 	@Override
 	public void render(Short value, FileScannerResultRenderer renderer) throws IOException, InterruptedException {
 		short shortValue = value.shortValue();

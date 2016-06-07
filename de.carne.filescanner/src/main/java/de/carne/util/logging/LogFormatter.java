@@ -31,10 +31,6 @@ public class LogFormatter extends Formatter {
 
 	private final DateFormat dateFormat = DateFormat.getDateTimeInstance();
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.util.logging.Formatter#format(java.util.logging.LogRecord)
-	 */
 	@Override
 	public String format(LogRecord record) {
 		String message = null;

@@ -39,7 +39,7 @@ public class TransformationReadOnlyObjectProperty<T, R> extends ReadOnlyObjectPr
 
 	/**
 	 * Construct {@code TransformedReadOnlyObjectProperty}.
-	 * 
+	 *
 	 * @param source The source property.
 	 * @param transformation The transformation function.
 	 */
@@ -66,28 +66,16 @@ public class TransformationReadOnlyObjectProperty<T, R> extends ReadOnlyObjectPr
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see javafx.beans.property.ReadOnlyProperty#getBean()
-	 */
 	@Override
 	public Object getBean() {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see javafx.beans.property.ReadOnlyProperty#getName()
-	 */
 	@Override
 	public String getName() {
 		return this.source.getName();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see javafx.beans.value.ObservableObjectValue#get()
-	 */
 	@Override
 	public R get() {
 		this.valid = true;

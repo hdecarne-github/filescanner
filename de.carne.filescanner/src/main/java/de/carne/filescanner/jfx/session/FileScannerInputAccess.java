@@ -33,21 +33,11 @@ class FileScannerInputAccess implements FileAccess {
 		this.input = input;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.jfx.control.FileAccess#size()
-	 */
 	@Override
 	public long size() throws IOException {
 		return this.input.size();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.jfx.control.FileAccess#read(java.nio.ByteBuffer,
-	 * long)
-	 */
 	@Override
 	public int read(ByteBuffer dst, long position) throws IOException {
 		return this.input.read(dst, position);

@@ -261,10 +261,6 @@ public final class ApplicationLoader extends URLClassLoader {
 		return resourceStream;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.ClassLoader#loadClass(java.lang.String)
-	 */
 	@Override
 	public Class<?> loadClass(String name) throws ClassNotFoundException {
 		boolean useSystemClassLoader = false;

@@ -35,10 +35,6 @@ public class PNGFormat extends Format {
 		registerHeaderSpec(PNGFormatSpecs.PNG_SIGNATURE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.spi.Format#decodable()
-	 */
 	@Override
 	public Decodable decodable() {
 		return PNGFormatSpecs.PNG;

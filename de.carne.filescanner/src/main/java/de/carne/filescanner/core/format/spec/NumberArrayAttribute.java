@@ -121,10 +121,6 @@ public abstract class NumberArrayAttribute<T extends Number> extends Attribute<T
 		return this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.spec.FormatSpec#isFixedSize()
-	 */
 	@Override
 	public boolean isFixedSize() {
 		Number sizeValue = this.sizeExpression.beforeDecode();
@@ -132,10 +128,6 @@ public abstract class NumberArrayAttribute<T extends Number> extends Attribute<T
 		return sizeValue != null && (sizeValue.longValue() * this.type.size()) < MAX_MATCH_SIZE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.spec.FormatSpec#matchSize()
-	 */
 	@Override
 	public int matchSize() {
 		Number sizeValue = this.sizeExpression.beforeDecode();
@@ -151,11 +143,6 @@ public abstract class NumberArrayAttribute<T extends Number> extends Attribute<T
 		return matchSize;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.spec.FormatSpec#matches(java.nio.
-	 * ByteBuffer)
-	 */
 	@Override
 	public boolean matches(ByteBuffer buffer) {
 		Number sizeValue = this.sizeExpression.beforeDecode();
@@ -181,12 +168,6 @@ public abstract class NumberArrayAttribute<T extends Number> extends Attribute<T
 		return matches;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.spec.FormatSpec#specDecode(de.carne.
-	 * filescanner.core.FileScannerResultBuilder, long)
-	 */
 	@Override
 	public long specDecode(FileScannerResultBuilder result, long position) throws IOException {
 		long totalSize = this.sizeExpression.decode().longValue() * this.type.size();
@@ -200,13 +181,6 @@ public abstract class NumberArrayAttribute<T extends Number> extends Attribute<T
 		return decoded;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.spec.FormatSpec#specRender(de.carne.
-	 * filescanner.core.FileScannerResult, long, long,
-	 * de.carne.filescanner.spi.FileScannerResultRenderer)
-	 */
 	@Override
 	public void specRender(FileScannerResult result, long start, long end, FileScannerResultRenderer renderer)
 			throws IOException, InterruptedException {

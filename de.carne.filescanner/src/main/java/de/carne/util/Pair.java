@@ -52,10 +52,6 @@ public final class Pair<F, S> {
 		return this.second;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return this.first + " = " + this.second;

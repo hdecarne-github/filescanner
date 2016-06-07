@@ -52,10 +52,6 @@ public abstract class StringAttribute extends Attribute<String> {
 		this.charset = charset;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.Attribute#getValueType()
-	 */
 	@Override
 	public Class<String> getValueType() {
 		return String.class;

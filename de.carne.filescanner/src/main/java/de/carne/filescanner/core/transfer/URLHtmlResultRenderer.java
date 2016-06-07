@@ -32,12 +32,6 @@ abstract class URLHtmlResultRenderer extends HtmlResultRenderer {
 		this.urlHandler = urlHandler;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.transfer.HtmlResultRenderer#
-	 * registerStreamHandler(de.carne.filescanner.spi.FileScannerResultRenderer.
-	 * StreamHandler)
-	 */
 	@Override
 	protected URL registerStreamHandler(StreamHandler streamHandler) throws IOException, InterruptedException {
 		return this.urlHandler.registerStreamHandler(streamHandler);

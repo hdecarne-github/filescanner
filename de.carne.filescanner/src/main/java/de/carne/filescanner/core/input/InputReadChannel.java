@@ -36,28 +36,16 @@ class InputReadChannel implements ReadableByteChannel {
 		this.readPosition = readPosition;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.nio.channels.Channel#isOpen()
-	 */
 	@Override
 	public boolean isOpen() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.nio.channels.Channel#close()
-	 */
 	@Override
 	public void close() throws IOException {
 		// Nothing to do here
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.nio.channels.ReadableByteChannel#read(java.nio.ByteBuffer)
-	 */
 	@Override
 	public synchronized int read(ByteBuffer dst) throws IOException {
 		int read = this.input.read(dst, this.readPosition);

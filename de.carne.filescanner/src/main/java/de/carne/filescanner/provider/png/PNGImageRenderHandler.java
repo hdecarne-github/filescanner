@@ -22,22 +22,14 @@ import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.format.spec.FormatSpec;
 import de.carne.filescanner.core.format.spec.FormatSpec.RenderHandler;
 import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
-import de.carne.filescanner.core.transfer.MappingStreamHandler;
 import de.carne.filescanner.core.transfer.FileScannerResultRenderer.Feature;
+import de.carne.filescanner.core.transfer.MappingStreamHandler;
 
 /**
  * Custom render handler for PNG image display.
  */
 public class PNGImageRenderHandler implements RenderHandler {
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.spec.FormatSpecRenderHandler#render(de.
-	 * carne.filescanner.core.format.spec.FormatSpec,
-	 * de.carne.filescanner.core.FileScannerResult,
-	 * de.carne.filescanner.spi.FileScannerResultRenderer)
-	 */
 	@Override
 	public void render(FormatSpec spec, FileScannerResult result, FileScannerResultRenderer renderer)
 			throws IOException, InterruptedException {

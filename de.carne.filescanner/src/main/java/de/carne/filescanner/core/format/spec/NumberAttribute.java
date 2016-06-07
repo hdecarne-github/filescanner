@@ -82,29 +82,16 @@ public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 		return this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.spec.FormatSpec#isFixedSize()
-	 */
 	@Override
 	public boolean isFixedSize() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.FormatSpec#matchSize()
-	 */
 	@Override
 	public int matchSize() {
 		return this.type.size();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.FormatSpec#matches(java.nio.ByteBuffer)
-	 */
 	@Override
 	public boolean matches(ByteBuffer buffer) {
 		T value = getValue(buffer);
@@ -112,11 +99,6 @@ public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 		return (value != null && validateValue(value));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.FormatSpec#specDecode(de.carne.
-	 * filescanner. core.FileScannerResultBuilder, long)
-	 */
 	@Override
 	public long specDecode(FileScannerResultBuilder result, long position) throws IOException {
 		T value = getValue(result.input().cachedRead(position, this.type.size(), result.order()));
@@ -135,13 +117,6 @@ public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 		return decoded;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * de.carne.filescanner.core.format.spec.FormatSpec#specRender(de.carne.
-	 * filescanner.core.FileScannerResult, long, long,
-	 * de.carne.filescanner.spi.FileScannerResultRenderer)
-	 */
 	@Override
 	public void specRender(FileScannerResult result, long start, long end, FileScannerResultRenderer renderer)
 			throws IOException, InterruptedException {

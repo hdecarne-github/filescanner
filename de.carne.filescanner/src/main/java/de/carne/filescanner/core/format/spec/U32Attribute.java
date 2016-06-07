@@ -42,20 +42,11 @@ public class U32Attribute extends NumberAttribute<Integer> {
 		super(NumberAttributeType.U32, name, format);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.ResultAttribute#getValueType()
-	 */
 	@Override
 	public Class<Integer> getValueType() {
 		return Integer.class;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.filescanner.core.format.DataAttribute#getValue(java.nio.
-	 * ByteBuffer)
-	 */
 	@Override
 	public Integer getValue(ByteBuffer buffer) {
 		return (isSA(buffer, type().size()) ? Integer.valueOf(buffer.getInt()) : null);

@@ -76,10 +76,6 @@ public class LogViewController extends StageController {
 	@FXML
 	TableColumn<LogRecordModel, String> ctlLogTableMessage;
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.jfx.StageController#setupStage(javafx.stage.Stage)
-	 */
 	@Override
 	protected void setupStage(Stage controllerStage) throws IOException {
 		super.setupStage(controllerStage);
@@ -97,19 +93,11 @@ public class LogViewController extends StageController {
 		});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.jfx.StageController#getStyle()
-	 */
 	@Override
 	protected StageStyle getStyle() {
 		return StageStyle.UTILITY;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see de.carne.jfx.StageController#getModality()
-	 */
 	@Override
 	protected Modality getModality() {
 		return Modality.NONE;

@@ -147,10 +147,6 @@ public final class FileScanner implements Closeable {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.io.Closeable#close()
-	 */
 	@Override
 	public void close() {
 		this.threadPool.shutdownNow();
@@ -172,10 +168,6 @@ public final class FileScanner implements Closeable {
 			this.result = result;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.util.concurrent.Callable#call()
-		 */
 		@Override
 		public Scanner call() throws Exception {
 			scanInput(this.result);
