@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Set;
 
-import de.carne.filescanner.spi.FileScannerResultRenderer;
 import de.carne.filescanner.util.Hexadecimal;
 
 /**

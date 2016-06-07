@@ -20,13 +20,13 @@ import java.io.IOException;
 import java.util.function.Supplier;
 
 import de.carne.filescanner.core.DecodeStatusException;
+import de.carne.filescanner.core.FileScannerInput;
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.core.FileScannerResultType;
 import de.carne.filescanner.core.input.DecodeCache;
 import de.carne.filescanner.core.input.DecodeParams;
-import de.carne.filescanner.spi.FileScannerInput;
-import de.carne.filescanner.spi.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
 import de.carne.nio.compression.spi.Decoder;
 import de.carne.util.logging.Log;
 

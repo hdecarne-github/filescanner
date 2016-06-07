@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.carne.filescanner.spi;
+package de.carne.filescanner.core;
 
 import java.io.Closeable;
 import java.io.File;
@@ -27,7 +27,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.LinkedList;
 
-import de.carne.filescanner.core.FileScanner;
 import de.carne.filescanner.util.Units;
 import de.carne.util.logging.Log;
 

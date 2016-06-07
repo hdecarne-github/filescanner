@@ -19,7 +19,7 @@ package de.carne.filescanner.core.format.spec;
 import java.io.IOException;
 import java.util.function.Function;
 
-import de.carne.filescanner.spi.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
 
 /**
  * Simple attribute renderer which adds a comment part to the output.

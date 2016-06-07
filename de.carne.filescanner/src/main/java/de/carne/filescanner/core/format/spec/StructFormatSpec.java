@@ -25,7 +25,7 @@ import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.core.format.ResultContext;
 import de.carne.filescanner.core.format.ResultSection;
-import de.carne.filescanner.spi.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
 
 /**
  * Struct format spec combining a consecutive list of format specs.

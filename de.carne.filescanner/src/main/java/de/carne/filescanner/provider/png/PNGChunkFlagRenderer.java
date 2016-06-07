@@ -19,7 +19,7 @@ package de.carne.filescanner.provider.png;
 import java.io.IOException;
 
 import de.carne.filescanner.core.format.spec.U32FlagRenderer;
-import de.carne.filescanner.spi.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
 
 /**
  * Custom renderer for PNG chunk flags.

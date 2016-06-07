@@ -19,8 +19,8 @@ package de.carne.filescanner.jfx.session;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import de.carne.filescanner.core.FileScannerInput;
 import de.carne.filescanner.jfx.control.FileAccess;
-import de.carne.filescanner.spi.FileScannerInput;
 
 /**
  * Helper class providing {@FileAccess} functions on {@code FileScannerInput}.

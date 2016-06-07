@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import de.carne.filescanner.core.FileScannerResult;
-import de.carne.filescanner.spi.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
 
 /**
  * This class defines Number based attributes of fixed size that are used to

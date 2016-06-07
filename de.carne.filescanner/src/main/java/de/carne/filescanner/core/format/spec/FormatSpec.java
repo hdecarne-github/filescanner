@@ -22,6 +22,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
+import de.carne.filescanner.core.FileScannerInput;
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.core.FileScannerResultType;
@@ -29,8 +30,7 @@ import de.carne.filescanner.core.format.Decodable;
 import de.carne.filescanner.core.format.RenderableData;
 import de.carne.filescanner.core.format.ResultContext;
 import de.carne.filescanner.core.format.ResultSection;
-import de.carne.filescanner.spi.FileScannerInput;
-import de.carne.filescanner.spi.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
 
 /**
  * Base class for spec based format definitions.

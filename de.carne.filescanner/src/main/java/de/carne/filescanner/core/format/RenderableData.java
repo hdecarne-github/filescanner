@@ -19,7 +19,7 @@ package de.carne.filescanner.core.format;
 import java.io.IOException;
 
 import de.carne.filescanner.core.FileScannerResult;
-import de.carne.filescanner.spi.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
 
 /**
  * This interface defines the functions to render selected data of a format.

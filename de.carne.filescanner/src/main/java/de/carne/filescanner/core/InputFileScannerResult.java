@@ -19,8 +19,7 @@ package de.carne.filescanner.core;
 import java.io.IOException;
 import java.nio.ByteOrder;
 
-import de.carne.filescanner.spi.FileScannerInput;
-import de.carne.filescanner.spi.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
 import de.carne.filescanner.util.Units;
 
 /**

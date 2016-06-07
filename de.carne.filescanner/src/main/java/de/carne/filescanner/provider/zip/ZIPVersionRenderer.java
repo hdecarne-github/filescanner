@@ -19,7 +19,7 @@ package de.carne.filescanner.provider.zip;
 import java.io.IOException;
 
 import de.carne.filescanner.core.format.spec.U16SymbolRenderer;
-import de.carne.filescanner.spi.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
 
 /**
  * Custom renderer for ZIP version attribute.

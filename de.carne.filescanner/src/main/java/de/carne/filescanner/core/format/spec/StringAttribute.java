@@ -22,7 +22,7 @@ import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 
 import de.carne.filescanner.core.FileScannerResult;
-import de.carne.filescanner.spi.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
 import de.carne.filescanner.util.Printer;
 import de.carne.filescanner.util.Units;
 

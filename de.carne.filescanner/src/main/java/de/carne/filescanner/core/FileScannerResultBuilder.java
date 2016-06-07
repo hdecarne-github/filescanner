@@ -21,8 +21,7 @@ import java.nio.ByteOrder;
 
 import de.carne.filescanner.core.format.Renderable;
 import de.carne.filescanner.core.format.ResultContext;
-import de.carne.filescanner.spi.FileScannerInput;
-import de.carne.filescanner.spi.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
 import de.carne.filescanner.spi.Format;
 
 /**

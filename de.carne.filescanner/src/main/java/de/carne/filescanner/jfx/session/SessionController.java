@@ -36,6 +36,7 @@ import org.w3c.dom.html.HTMLAnchorElement;
 
 import de.carne.ApplicationLoader;
 import de.carne.filescanner.core.FileScanner;
+import de.carne.filescanner.core.FileScannerInput;
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultType;
 import de.carne.filescanner.core.FileScannerStats;
@@ -49,7 +50,6 @@ import de.carne.filescanner.jfx.control.PositionRange;
 import de.carne.filescanner.jfx.export.ExportController;
 import de.carne.filescanner.jfx.preferences.PreferencesController;
 import de.carne.filescanner.jfx.session.ResultTreeItemFactory.ResultTreeItem;
-import de.carne.filescanner.spi.FileScannerInput;
 import de.carne.filescanner.util.Hexadecimal;
 import de.carne.filescanner.util.Units;
 import de.carne.jfx.StageController;

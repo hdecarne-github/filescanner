@@ -18,7 +18,7 @@ package de.carne.filescanner.core.format.spec;
 
 import java.io.IOException;
 
-import de.carne.filescanner.spi.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
 
 /**
  * Base class for secondary renderer which can be added to an

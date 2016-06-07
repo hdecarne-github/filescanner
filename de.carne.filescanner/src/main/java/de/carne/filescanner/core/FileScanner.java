@@ -25,7 +25,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import de.carne.filescanner.core.input.DecodeCache;
-import de.carne.filescanner.spi.FileScannerInput;
 import de.carne.filescanner.spi.Format;
 import de.carne.util.logging.Log;
 

@@ -35,7 +35,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import de.carne.filescanner.core.FileScannerResult;
-import de.carne.filescanner.spi.FileScannerResultRenderer.StreamHandler;
+import de.carne.filescanner.core.transfer.FileScannerResultRenderer.StreamHandler;
 import de.carne.util.logging.Log;
 
 /**

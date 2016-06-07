@@ -18,7 +18,6 @@ package de.carne.filescanner.core.transfer;
 
 import java.io.IOException;
 
-import de.carne.filescanner.spi.FileScannerResultRenderer;
 import de.carne.util.Strings;
 
 /**

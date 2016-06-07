@@ -19,7 +19,7 @@ package de.carne.filescanner.core.input;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import de.carne.filescanner.spi.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
 import de.carne.nio.compression.deflate.DeflateName;
 import de.carne.nio.compression.spi.Decoder;
 

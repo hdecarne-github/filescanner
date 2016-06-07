@@ -21,9 +21,9 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
+import de.carne.filescanner.core.FileScannerInput;
 import de.carne.filescanner.core.FileScannerResult;
-import de.carne.filescanner.spi.FileScannerInput;
-import de.carne.filescanner.spi.FileScannerResultRenderer.StreamHandler;
+import de.carne.filescanner.core.transfer.FileScannerResultRenderer.StreamHandler;
 import de.carne.nio.compression.IncompleteReadException;
 
 /**

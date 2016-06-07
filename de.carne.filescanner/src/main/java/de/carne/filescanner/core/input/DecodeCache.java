@@ -25,7 +25,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.LinkedList;
 
 import de.carne.filescanner.core.FileScanner;
-import de.carne.filescanner.spi.FileScannerInput;
+import de.carne.filescanner.core.FileScannerInput;
 import de.carne.nio.compression.spi.Decoder;
 import de.carne.util.logging.Log;
 

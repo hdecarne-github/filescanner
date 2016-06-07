@@ -21,9 +21,9 @@ import java.io.IOException;
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.format.spec.FormatSpec;
 import de.carne.filescanner.core.format.spec.FormatSpec.RenderHandler;
+import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
 import de.carne.filescanner.core.transfer.MappingStreamHandler;
-import de.carne.filescanner.spi.FileScannerResultRenderer;
-import de.carne.filescanner.spi.FileScannerResultRenderer.Feature;
+import de.carne.filescanner.core.transfer.FileScannerResultRenderer.Feature;
 
 /**
  * Custom render handler for PNG image display.

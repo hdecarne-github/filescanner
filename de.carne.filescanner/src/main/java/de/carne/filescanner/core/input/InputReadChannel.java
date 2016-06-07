@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
 
-import de.carne.filescanner.spi.FileScannerInput;
+import de.carne.filescanner.core.FileScannerInput;
 
 /**
  * Helper class providing {@linkplain ReadableByteChannel} access to an input.
