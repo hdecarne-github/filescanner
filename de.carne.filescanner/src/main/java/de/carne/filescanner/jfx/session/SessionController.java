@@ -42,7 +42,7 @@ import de.carne.filescanner.core.FileScannerResultType;
 import de.carne.filescanner.core.FileScannerStats;
 import de.carne.filescanner.core.FileScannerStatus;
 import de.carne.filescanner.core.transfer.HtmlResultRendererURLHandler;
-import de.carne.filescanner.core.transfer.HtmlResultRendererURLHandler.RenderResult;
+import de.carne.filescanner.core.transfer.HtmlResultRendererURLHandler.RenderOutput;
 import de.carne.filescanner.jfx.Images;
 import de.carne.filescanner.jfx.control.FileView;
 import de.carne.filescanner.jfx.control.FileViewType;
@@ -121,7 +121,7 @@ public class SessionController extends StageController {
 
 	private final ResultTreeItemFactory resultItemFactory = new ResultTreeItemFactory();
 
-	private RenderResult resultViewObject = null;
+	private RenderOutput resultViewObject = null;
 
 	private final LogViewTriggerProperty logViewTriggerProperty = new LogViewTriggerProperty(this);
 
@@ -430,10 +430,10 @@ public class SessionController extends StageController {
 			try {
 				this.resultViewObject = HtmlResultRendererURLHandler.open(result, RESULT_VIEW_STYLE_SHEET_LOCATION,
 						RESULT_VIEW_FAST_TIMEOUT);
-				if (this.resultViewObject.isFast()) {
-					this.resultView.getEngine().loadContent(this.resultViewObject.getFastResult());
+				if (this.resultViewObject.isReady()) {
+					this.resultView.getEngine().loadContent(this.resultViewObject.getOutput());
 				} else {
-					this.resultView.getEngine().load(this.resultViewObject.getResultLocation());
+					this.resultView.getEngine().load(this.resultViewObject.getOutputLocation());
 				}
 			} catch (IOException e) {
 				LOG.error(e, I18N.BUNDLE, I18N.STR_OPEN_RENDERER_ERROR);

@@ -23,7 +23,7 @@ import java.util.ArrayList;
 
 import de.carne.filescanner.core.FileScannerInput;
 import de.carne.filescanner.core.FileScannerResult;
-import de.carne.filescanner.core.transfer.FileScannerResultRenderer.StreamHandler;
+import de.carne.filescanner.core.transfer.ResultRenderer.StreamHandler;
 import de.carne.nio.compression.IncompleteReadException;
 
 /**

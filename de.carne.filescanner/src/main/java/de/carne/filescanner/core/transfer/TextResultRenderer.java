@@ -24,7 +24,7 @@ import de.carne.util.Strings;
  * Base class for all {@code FileScannerResultRenderer} implementations that
  * generate simple text output.
  */
-public abstract class TextResultRenderer extends FileScannerResultRenderer {
+public abstract class TextResultRenderer extends ResultRenderer {
 
 	@Override
 	protected void writeBreak() throws IOException, InterruptedException {

@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 
-import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.ResultRenderer;
 import de.carne.nio.compression.deflate.DeflateDecoder;
 import de.carne.nio.compression.deflate.DeflateMode;
 import de.carne.nio.compression.spi.Decoder;
@@ -55,7 +55,7 @@ public class DeflateDecodeParams extends DecodeParams {
 	}
 
 	@Override
-	public void render(FileScannerResultRenderer renderer) throws IOException, InterruptedException {
+	public void render(ResultRenderer renderer) throws IOException, InterruptedException {
 		super.render(renderer);
 
 		ArrayList<DeflateMode> modeList = new ArrayList<>(this.modes);

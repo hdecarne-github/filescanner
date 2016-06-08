@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Objects;
 
 import de.carne.filescanner.core.format.ResultContext;
-import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.ResultRenderer;
 import de.carne.filescanner.util.Hexadecimal;
 import de.carne.filescanner.util.Units;
 import de.carne.util.Exceptions;
@@ -299,7 +299,7 @@ public abstract class FileScannerResult {
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if he render thread is interrupted.
 	 */
-	public void render(FileScannerResultRenderer renderer) throws IOException, InterruptedException {
+	public void render(ResultRenderer renderer) throws IOException, InterruptedException {
 		renderDefault(renderer);
 		renderer.close();
 	}
@@ -311,7 +311,7 @@ public abstract class FileScannerResult {
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if he render thread is interrupted.
 	 */
-	public void renderDecodeStatus(FileScannerResultRenderer renderer) throws IOException, InterruptedException {
+	public void renderDecodeStatus(ResultRenderer renderer) throws IOException, InterruptedException {
 		DecodeStatusException decodeStatus = decodeStatus();
 
 		if (decodeStatus != null && !decodeStatus.isNested()) {
@@ -334,7 +334,7 @@ public abstract class FileScannerResult {
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if he render thread is interrupted.
 	 */
-	public void renderDefault(FileScannerResultRenderer renderer) throws IOException, InterruptedException {
+	public void renderDefault(ResultRenderer renderer) throws IOException, InterruptedException {
 		if (renderer.hasOutput()) {
 			renderer.renderBreak();
 		}

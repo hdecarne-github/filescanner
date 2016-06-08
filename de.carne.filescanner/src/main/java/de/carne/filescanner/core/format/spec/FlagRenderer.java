@@ -19,7 +19,7 @@ package de.carne.filescanner.core.format.spec;
 import java.io.IOException;
 import java.util.HashMap;
 
-import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.ResultRenderer;
 
 /**
  * Base class for flag-set rendering.
@@ -31,7 +31,7 @@ public abstract class FlagRenderer<T extends Number> extends AttributeRenderer<T
 	private final HashMap<T, String> symbolMap = new HashMap<>();
 
 	@Override
-	public void render(T value, FileScannerResultRenderer renderer) throws IOException, InterruptedException {
+	public void render(T value, ResultRenderer renderer) throws IOException, InterruptedException {
 		T foldedFlag = null;
 
 		for (T flag : this) {
@@ -51,7 +51,7 @@ public abstract class FlagRenderer<T extends Number> extends AttributeRenderer<T
 		}
 	}
 
-	private void renderFlag(T flag, T value, FileScannerResultRenderer renderer)
+	private void renderFlag(T flag, T value, ResultRenderer renderer)
 			throws IOException, InterruptedException {
 		String symbol = this.symbolMap.get(flag);
 

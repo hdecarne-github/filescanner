@@ -19,7 +19,7 @@ package de.carne.filescanner.core.format;
 import java.io.IOException;
 
 import de.carne.filescanner.core.FileScannerResult;
-import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.ResultRenderer;
 
 /**
  * This interface defines the functions to render selected data of a format.
@@ -36,7 +36,7 @@ public interface RenderableData {
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	public void renderData(FileScannerResult result, long start, long end, FileScannerResultRenderer renderer)
+	public void renderData(FileScannerResult result, long start, long end, ResultRenderer renderer)
 			throws IOException, InterruptedException;
 
 }

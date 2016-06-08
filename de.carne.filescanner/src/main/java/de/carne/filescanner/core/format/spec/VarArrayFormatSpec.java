@@ -23,7 +23,7 @@ import de.carne.filescanner.core.DecodeStatusException;
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.core.format.ResultContext;
-import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.ResultRenderer;
 
 /**
  * Variable array of format specs.
@@ -139,7 +139,7 @@ public class VarArrayFormatSpec extends FormatSpec {
 	}
 
 	@Override
-	public void specRender(FileScannerResult result, long start, long end, FileScannerResultRenderer renderer)
+	public void specRender(FileScannerResult result, long start, long end, ResultRenderer renderer)
 			throws IOException, InterruptedException {
 		result.renderDefault(renderer);
 		renderer.renderBreakOrClose(isResult());

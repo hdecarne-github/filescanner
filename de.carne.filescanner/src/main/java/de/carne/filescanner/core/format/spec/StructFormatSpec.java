@@ -25,7 +25,7 @@ import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.core.format.ResultContext;
 import de.carne.filescanner.core.format.ResultSection;
-import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.ResultRenderer;
 
 /**
  * Struct format spec combining a consecutive list of format specs.
@@ -126,7 +126,7 @@ public class StructFormatSpec extends FormatSpec {
 	}
 
 	@Override
-	public void specRender(FileScannerResult result, long start, long end, FileScannerResultRenderer renderer)
+	public void specRender(FileScannerResult result, long start, long end, ResultRenderer renderer)
 			throws IOException, InterruptedException {
 		long renderPosition = start;
 		int sectionIndex = 0;

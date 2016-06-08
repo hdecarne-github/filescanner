@@ -23,7 +23,7 @@ import java.util.HashMap;
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.core.format.spec.Attribute;
-import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.ResultRenderer;
 import de.carne.util.logging.Log;
 
 /**
@@ -175,10 +175,10 @@ public abstract class ResultContext {
 	 * @param renderer The renderer to use.
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
-	 * @see Decodable#render(FileScannerResult, FileScannerResultRenderer)
+	 * @see Decodable#render(FileScannerResult, ResultRenderer)
 	 */
 	public static void setupAndRender(Renderable renderable, FileScannerResult result,
-			FileScannerResultRenderer renderer) throws IOException, InterruptedException {
+			ResultRenderer renderer) throws IOException, InterruptedException {
 		assert renderable != null;
 		assert result != null;
 		assert renderer != null;

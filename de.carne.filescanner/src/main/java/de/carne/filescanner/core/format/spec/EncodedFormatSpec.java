@@ -26,7 +26,7 @@ import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.core.FileScannerResultType;
 import de.carne.filescanner.core.input.DecodeCache;
 import de.carne.filescanner.core.input.DecodeParams;
-import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.ResultRenderer;
 import de.carne.nio.compression.spi.Decoder;
 import de.carne.util.logging.Log;
 
@@ -109,7 +109,7 @@ public class EncodedFormatSpec extends FormatSpec implements Supplier<String> {
 	}
 
 	@Override
-	public void specRender(FileScannerResult result, long start, long end, FileScannerResultRenderer renderer)
+	public void specRender(FileScannerResult result, long start, long end, ResultRenderer renderer)
 			throws IOException, InterruptedException {
 		DecodeParams decodeParams = this.decodeParamsExpression.decode();
 

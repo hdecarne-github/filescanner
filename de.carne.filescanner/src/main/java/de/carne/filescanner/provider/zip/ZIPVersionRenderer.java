@@ -19,7 +19,7 @@ package de.carne.filescanner.provider.zip;
 import java.io.IOException;
 
 import de.carne.filescanner.core.format.spec.U16SymbolRenderer;
-import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.ResultRenderer;
 
 /**
  * Custom renderer for ZIP version attribute.
@@ -27,7 +27,7 @@ import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
 class ZIPVersionRenderer extends U16SymbolRenderer {
 
 	@Override
-	public void render(Short value, FileScannerResultRenderer renderer) throws IOException, InterruptedException {
+	public void render(Short value, ResultRenderer renderer) throws IOException, InterruptedException {
 		short shortValue = value.shortValue();
 		short versionValue = (short) (shortValue & 0x00ff);
 		short hostValue = (short) (shortValue & 0xff00);

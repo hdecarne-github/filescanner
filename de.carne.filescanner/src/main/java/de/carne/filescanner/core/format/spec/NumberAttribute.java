@@ -22,7 +22,7 @@ import java.nio.ByteBuffer;
 import de.carne.filescanner.core.DecodeStatusException;
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
-import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.ResultRenderer;
 
 /**
  * This class defines Number based attributes of fixed size.
@@ -118,7 +118,7 @@ public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 	}
 
 	@Override
-	public void specRender(FileScannerResult result, long start, long end, FileScannerResultRenderer renderer)
+	public void specRender(FileScannerResult result, long start, long end, ResultRenderer renderer)
 			throws IOException, InterruptedException {
 		int typeSize = this.type.size();
 		ByteBuffer buffer = result.cachedRead(start, typeSize);

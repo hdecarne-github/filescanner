@@ -18,7 +18,7 @@ package de.carne.filescanner.core.format.spec;
 
 import java.io.IOException;
 
-import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.ResultRenderer;
 
 /**
  * Base class for secondary renderer which can be added to an
@@ -36,6 +36,6 @@ public abstract class AttributeRenderer<T> {
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	public abstract void render(T value, FileScannerResultRenderer renderer) throws IOException, InterruptedException;
+	public abstract void render(T value, ResultRenderer renderer) throws IOException, InterruptedException;
 
 }

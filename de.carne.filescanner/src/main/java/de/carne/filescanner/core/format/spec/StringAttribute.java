@@ -22,7 +22,7 @@ import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 
 import de.carne.filescanner.core.FileScannerResult;
-import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.ResultRenderer;
 import de.carne.filescanner.util.Printer;
 import de.carne.filescanner.util.Units;
 
@@ -91,7 +91,7 @@ public abstract class StringAttribute extends Attribute<String> {
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	protected void renderString(FileScannerResult result, long position, long size, FileScannerResultRenderer renderer)
+	protected void renderString(FileScannerResult result, long position, long size, ResultRenderer renderer)
 			throws IOException, InterruptedException {
 		StringBuilder buffer = new StringBuilder("\"");
 

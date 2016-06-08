@@ -30,7 +30,7 @@ import de.carne.filescanner.core.format.Decodable;
 import de.carne.filescanner.core.format.RenderableData;
 import de.carne.filescanner.core.format.ResultContext;
 import de.carne.filescanner.core.format.ResultSection;
-import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.ResultRenderer;
 
 /**
  * Base class for spec based format definitions.
@@ -55,7 +55,7 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 		 * @throws IOException if an I/O error occurs.
 		 * @throws InterruptedException if the render thread was interrupted.
 		 */
-		public void render(FormatSpec spec, FileScannerResult result, FileScannerResultRenderer renderer)
+		public void render(FormatSpec spec, FileScannerResult result, ResultRenderer renderer)
 				throws IOException, InterruptedException;
 
 	}
@@ -170,11 +170,11 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	public abstract void specRender(FileScannerResult result, long start, long end, FileScannerResultRenderer renderer)
+	public abstract void specRender(FileScannerResult result, long start, long end, ResultRenderer renderer)
 			throws IOException, InterruptedException;
 
 	@Override
-	public void renderData(FileScannerResult result, long start, long end, FileScannerResultRenderer renderer)
+	public void renderData(FileScannerResult result, long start, long end, ResultRenderer renderer)
 			throws IOException, InterruptedException {
 		assert result.start() <= start;
 		assert start <= end;
@@ -184,7 +184,7 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 	}
 
 	@Override
-	public void render(FileScannerResult result, FileScannerResultRenderer renderer)
+	public void render(FileScannerResult result, ResultRenderer renderer)
 			throws IOException, InterruptedException {
 		if (this.resultRenderHandler != null) {
 			this.resultRenderHandler.render(this, result, renderer);

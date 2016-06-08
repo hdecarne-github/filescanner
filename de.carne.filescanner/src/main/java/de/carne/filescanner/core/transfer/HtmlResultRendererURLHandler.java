@@ -35,7 +35,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import de.carne.filescanner.core.FileScannerResult;
-import de.carne.filescanner.core.transfer.FileScannerResultRenderer.StreamHandler;
+import de.carne.filescanner.core.transfer.ResultRenderer.StreamHandler;
 import de.carne.util.logging.Log;
 
 /**
@@ -109,43 +109,43 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 	/**
 	 * The actual render result.
 	 * <p>
-	 * Use the {@linkplain RenderResult#isFast()} function to check whether a
-	 * fast result is available.
+	 * Use the {@linkplain RenderOutput#isReady()} function to check whether the
+	 * output can be accessed directly.
 	 * </p>
 	 */
-	public static class RenderResult {
+	public static class RenderOutput {
 
 		private final String baseLocation;
 
-		private final String fastResult;
+		private final String output;
 
-		RenderResult(String baseURL, String fastResult) {
+		RenderOutput(String baseURL, String output) {
 			this.baseLocation = baseURL;
-			this.fastResult = fastResult;
+			this.output = output;
 		}
 
 		/**
-		 * Check whether the fast result is available.
+		 * Check whether the output can be accessed directly.
 		 * <p>
 		 * If this function returns {@code true} the render result can be
-		 * accessed directly by calling {@linkplain #getFastResult()}.
+		 * accessed directly by calling {@linkplain #getOutput()}.
 		 * </p>
 		 *
-		 * @return {@code true}, if the fast result is available.
+		 * @return {@code true}, if the output result can be accessed directly.
 		 */
-		public boolean isFast() {
-			return this.fastResult != null;
+		public boolean isReady() {
+			return this.output != null;
 		}
 
 		/**
-		 * Get the fast result.
+		 * Get the output result.
 		 *
-		 * @return The fast result or {@code null} if no fast result is
-		 *         available.
-		 * @see #isFast()
+		 * @return The output or {@code null} if the output result is not
+		 *         directly accessible.
+		 * @see #isReady()
 		 */
-		public String getFastResult() {
-			return this.fastResult;
+		public String getOutput() {
+			return this.output;
 		}
 
 		/**
@@ -158,7 +158,7 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 		 *
 		 * @return The render result URL.
 		 */
-		public String getResultLocation() {
+		public String getOutputLocation() {
 			return this.baseLocation;
 		}
 
@@ -170,14 +170,15 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 	 * @param result The {@code FileScannerResult} to render.
 	 * @param styleSheetLocation The optional style sheet location to use for
 	 *        rendering.
-	 * @param fastTimeout The time in milliseconds this function waits for a
-	 *        fast result. If this parameter is {@code 0} the fast result is not
-	 *        checked at all.
-	 * @return The created {@linkplain RenderResult} for accessing the renderer
-	 *         output.
+	 * @param timeout The time in milliseconds this function waits for a
+	 *        directly accessible result. If this parameter is {@code 0} the
+	 *        function returns immediately and the result has to be accessed via
+	 *        it's location URL.
+	 * @return The {@linkplain RenderOutput} object to use for accessing the
+	 *         renderer output.
 	 * @throws IOException if an I/O error occurs.
 	 */
-	public static RenderResult open(FileScannerResult result, String styleSheetLocation, int fastTimeout)
+	public static RenderOutput open(FileScannerResult result, String styleSheetLocation, int timeout)
 			throws IOException {
 		assert result != null;
 
@@ -190,19 +191,19 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 
 		LOCATION_MAP.put(baseLocation, urlHandler);
 
-		String fastResult = null;
+		String renderOutput = null;
 
-		if (fastTimeout > 0) {
+		if (timeout > 0) {
 			try {
-				TimeoutHtmlResultRenderer buffer = new TimeoutHtmlResultRenderer(urlHandler, fastTimeout);
+				TimeoutHtmlResultRenderer buffer = new TimeoutHtmlResultRenderer(urlHandler, timeout);
 
 				result.render(buffer);
-				fastResult = buffer.toString();
+				renderOutput = buffer.toString();
 			} catch (InterruptedException e) {
-				LOG.info(null, "Fast rendering timout ({0} ms) reached; continue with URL result only", fastTimeout);
+				LOG.info(null, "Fast rendering timout ({0} ms) reached; continue with URL result only", timeout);
 			}
 		}
-		return new RenderResult(baseLocation, fastResult);
+		return new RenderOutput(baseLocation, renderOutput);
 	}
 
 	URL registerStreamHandler(StreamHandler handler) throws IOException {
@@ -222,12 +223,12 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 	 * Closing the render result invalidates it's URL.
 	 * </p>
 	 *
-	 * @param result The {@linkplain RenderResult} to close.
+	 * @param result The {@linkplain RenderOutput} to close.
 	 */
-	public static void close(RenderResult result) {
+	public static void close(RenderOutput result) {
 		assert result != null;
 
-		String baseLocation = result.getResultLocation();
+		String baseLocation = result.getOutputLocation();
 
 		Iterator<Map.Entry<String, StreamHandler>> entryIterator = LOCATION_MAP.entrySet().iterator();
 

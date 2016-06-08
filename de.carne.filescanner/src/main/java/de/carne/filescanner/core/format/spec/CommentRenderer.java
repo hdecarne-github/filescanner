@@ -19,7 +19,7 @@ package de.carne.filescanner.core.format.spec;
 import java.io.IOException;
 import java.util.function.Function;
 
-import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.ResultRenderer;
 
 /**
  * Simple attribute renderer which adds a comment part to the output.
@@ -46,7 +46,7 @@ public class CommentRenderer<T> extends AttributeRenderer<T> {
 	}
 
 	@Override
-	public void render(T value, FileScannerResultRenderer renderer) throws IOException, InterruptedException {
+	public void render(T value, ResultRenderer renderer) throws IOException, InterruptedException {
 		String valueString = this.function.apply(value);
 
 		if (valueString != null) {

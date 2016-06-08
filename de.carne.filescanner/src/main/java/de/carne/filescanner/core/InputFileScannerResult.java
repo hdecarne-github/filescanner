@@ -19,7 +19,7 @@ package de.carne.filescanner.core;
 import java.io.IOException;
 import java.nio.ByteOrder;
 
-import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.ResultRenderer;
 import de.carne.filescanner.util.Units;
 
 /**
@@ -63,7 +63,7 @@ class InputFileScannerResult extends FileScannerResult {
 	}
 
 	@Override
-	public void render(FileScannerResultRenderer renderer) throws IOException, InterruptedException {
+	public void render(ResultRenderer renderer) throws IOException, InterruptedException {
 		renderer.setNormalMode().renderText("path");
 		renderer.setOperatorMode().renderText(" = ");
 		renderer.setValueMode().renderText(input().path().toString());

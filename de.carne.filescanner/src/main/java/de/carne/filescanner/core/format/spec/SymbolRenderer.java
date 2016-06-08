@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
-import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.ResultRenderer;
 
 /**
  * Map based attribute renderer (which maps values to symbols).
@@ -33,7 +33,7 @@ public class SymbolRenderer<T> extends AttributeRenderer<T> {
 	private final HashMap<T, String> symbolMap = new HashMap<>();
 
 	@Override
-	public void render(T value, FileScannerResultRenderer renderer) throws IOException, InterruptedException {
+	public void render(T value, ResultRenderer renderer) throws IOException, InterruptedException {
 		String symbol = getSymbol(value);
 
 		if (symbol != null) {

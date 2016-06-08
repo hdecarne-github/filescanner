@@ -19,7 +19,7 @@ package de.carne.filescanner.provider.png;
 import java.io.IOException;
 
 import de.carne.filescanner.core.format.spec.U32FlagRenderer;
-import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.ResultRenderer;
 
 /**
  * Custom renderer for PNG chunk flags.
@@ -29,7 +29,7 @@ public final class PNGChunkFlagRenderer extends U32FlagRenderer {
 	private static int FLAG_MASK = 0x20202020;
 
 	@Override
-	public void render(Integer value, FileScannerResultRenderer renderer) throws IOException, InterruptedException {
+	public void render(Integer value, ResultRenderer renderer) throws IOException, InterruptedException {
 		super.render(Integer.valueOf(value.intValue() & FLAG_MASK), renderer);
 	}
 

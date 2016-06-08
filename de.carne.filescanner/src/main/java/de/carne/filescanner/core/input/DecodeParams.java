@@ -19,7 +19,7 @@ package de.carne.filescanner.core.input;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.ResultRenderer;
 import de.carne.nio.compression.deflate.DeflateName;
 import de.carne.nio.compression.spi.Decoder;
 
@@ -85,7 +85,7 @@ public abstract class DecodeParams {
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	public void render(FileScannerResultRenderer renderer) throws IOException, InterruptedException {
+	public void render(ResultRenderer renderer) throws IOException, InterruptedException {
 		renderer.setNormalMode().renderText("Compression");
 		renderer.setOperatorMode().renderText(" = ");
 		renderer.setValueMode().renderText(DeflateName.NAME);

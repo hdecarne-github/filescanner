@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * asynchronous rendering model where rendering can be interrupted at any time.
  * </p>
  */
-public abstract class FileScannerResultRenderer {
+public abstract class ResultRenderer {
 
 	/**
 	 * Render features.
@@ -139,7 +139,7 @@ public abstract class FileScannerResultRenderer {
 	 * @param feature The feature to enable.
 	 * @return The updated renderer.
 	 */
-	public final FileScannerResultRenderer enableFeature(Feature feature) {
+	public final ResultRenderer enableFeature(Feature feature) {
 		assert feature != null;
 
 		this.enabledFeatures.add(feature);
@@ -154,7 +154,7 @@ public abstract class FileScannerResultRenderer {
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	public final FileScannerResultRenderer setMode(Mode mode) throws IOException, InterruptedException {
+	public final ResultRenderer setMode(Mode mode) throws IOException, InterruptedException {
 		assert mode != null;
 
 		checkInterrupted();
@@ -180,7 +180,7 @@ public abstract class FileScannerResultRenderer {
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	public final FileScannerResultRenderer setNormalMode() throws IOException, InterruptedException {
+	public final ResultRenderer setNormalMode() throws IOException, InterruptedException {
 		return setMode(Mode.NORMAL);
 	}
 
@@ -192,7 +192,7 @@ public abstract class FileScannerResultRenderer {
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	public final FileScannerResultRenderer setValueMode() throws IOException, InterruptedException {
+	public final ResultRenderer setValueMode() throws IOException, InterruptedException {
 		return setMode(Mode.VALUE);
 	}
 
@@ -204,7 +204,7 @@ public abstract class FileScannerResultRenderer {
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	public final FileScannerResultRenderer setCommentMode() throws IOException, InterruptedException {
+	public final ResultRenderer setCommentMode() throws IOException, InterruptedException {
 		return setMode(Mode.COMMENT);
 	}
 
@@ -216,7 +216,7 @@ public abstract class FileScannerResultRenderer {
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	public final FileScannerResultRenderer setKeywordMode() throws IOException, InterruptedException {
+	public final ResultRenderer setKeywordMode() throws IOException, InterruptedException {
 		return setMode(Mode.KEYWORD);
 	}
 
@@ -228,7 +228,7 @@ public abstract class FileScannerResultRenderer {
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	public final FileScannerResultRenderer setOperatorMode() throws IOException, InterruptedException {
+	public final ResultRenderer setOperatorMode() throws IOException, InterruptedException {
 		return setMode(Mode.OPERATOR);
 	}
 
@@ -240,7 +240,7 @@ public abstract class FileScannerResultRenderer {
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	public final FileScannerResultRenderer setLabelMode() throws IOException, InterruptedException {
+	public final ResultRenderer setLabelMode() throws IOException, InterruptedException {
 		return setMode(Mode.LABEL);
 	}
 
@@ -252,7 +252,7 @@ public abstract class FileScannerResultRenderer {
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	public final FileScannerResultRenderer setErrorMode() throws IOException, InterruptedException {
+	public final ResultRenderer setErrorMode() throws IOException, InterruptedException {
 		return setMode(Mode.ERROR);
 	}
 
@@ -263,7 +263,7 @@ public abstract class FileScannerResultRenderer {
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	public final FileScannerResultRenderer renderBreak() throws IOException, InterruptedException {
+	public final ResultRenderer renderBreak() throws IOException, InterruptedException {
 		checkInterrupted();
 		ensureOpenAndPrepared();
 		writeBreak();
@@ -281,7 +281,7 @@ public abstract class FileScannerResultRenderer {
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	public final FileScannerResultRenderer renderText(String text) throws IOException, InterruptedException {
+	public final ResultRenderer renderText(String text) throws IOException, InterruptedException {
 		checkInterrupted();
 		ensureOpenAndPrepared();
 		applyMode();
@@ -301,7 +301,7 @@ public abstract class FileScannerResultRenderer {
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	public final FileScannerResultRenderer renderRefText(String text, long position)
+	public final ResultRenderer renderRefText(String text, long position)
 			throws IOException, InterruptedException {
 		checkInterrupted();
 		ensureOpenAndPrepared();
@@ -318,7 +318,7 @@ public abstract class FileScannerResultRenderer {
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	public final FileScannerResultRenderer renderImage(StreamHandler streamHandler)
+	public final ResultRenderer renderImage(StreamHandler streamHandler)
 			throws IOException, InterruptedException {
 		checkInterrupted();
 		ensureOpenAndPrepared();
@@ -336,7 +336,7 @@ public abstract class FileScannerResultRenderer {
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	public final FileScannerResultRenderer renderRefText(StreamHandler streamHandler, long position)
+	public final ResultRenderer renderRefText(StreamHandler streamHandler, long position)
 			throws IOException, InterruptedException {
 		checkInterrupted();
 		ensureOpenAndPrepared();
@@ -353,7 +353,7 @@ public abstract class FileScannerResultRenderer {
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	public final FileScannerResultRenderer renderVideo(StreamHandler streamHandler)
+	public final ResultRenderer renderVideo(StreamHandler streamHandler)
 			throws IOException, InterruptedException {
 		checkInterrupted();
 		ensureOpenAndPrepared();
@@ -371,7 +371,7 @@ public abstract class FileScannerResultRenderer {
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	public final FileScannerResultRenderer renderRefVideo(StreamHandler streamHandler, long position)
+	public final ResultRenderer renderRefVideo(StreamHandler streamHandler, long position)
 			throws IOException, InterruptedException {
 		checkInterrupted();
 		ensureOpenAndPrepared();

@@ -21,8 +21,8 @@ import java.io.IOException;
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.format.spec.FormatSpec;
 import de.carne.filescanner.core.format.spec.FormatSpec.RenderHandler;
-import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
-import de.carne.filescanner.core.transfer.FileScannerResultRenderer.Feature;
+import de.carne.filescanner.core.transfer.ResultRenderer;
+import de.carne.filescanner.core.transfer.ResultRenderer.Feature;
 import de.carne.filescanner.core.transfer.MappingStreamHandler;
 
 /**
@@ -31,7 +31,7 @@ import de.carne.filescanner.core.transfer.MappingStreamHandler;
 public class PNGImageRenderHandler implements RenderHandler {
 
 	@Override
-	public void render(FormatSpec spec, FileScannerResult result, FileScannerResultRenderer renderer)
+	public void render(FormatSpec spec, FileScannerResult result, ResultRenderer renderer)
 			throws IOException, InterruptedException {
 		if (result.decodeStatus() == null) {
 			MappingStreamHandler mapping = new MappingStreamHandler();

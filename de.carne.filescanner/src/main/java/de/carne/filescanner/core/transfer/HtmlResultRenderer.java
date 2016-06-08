@@ -26,7 +26,7 @@ import de.carne.filescanner.util.Hexadecimal;
  * Base class for all {@code FileScannerResultRenderer} implementations that
  * generate HTML output.
  */
-public abstract class HtmlResultRenderer extends FileScannerResultRenderer {
+public abstract class HtmlResultRenderer extends ResultRenderer {
 
 	private final String styleSheetLocation;
 

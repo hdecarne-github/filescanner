@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import de.carne.filescanner.core.FileScannerResult;
-import de.carne.filescanner.core.transfer.FileScannerResultRenderer;
+import de.carne.filescanner.core.transfer.ResultRenderer;
 
 /**
  * This class defines Number based attributes of fixed size that are used to
@@ -42,7 +42,7 @@ public abstract class PositionAttribute<T extends Number> extends NumberAttribut
 	}
 
 	@Override
-	public void specRender(FileScannerResult result, long start, long end, FileScannerResultRenderer renderer)
+	public void specRender(FileScannerResult result, long start, long end, ResultRenderer renderer)
 			throws IOException, InterruptedException {
 		int typeSize = type().size();
 		ByteBuffer buffer = result.cachedRead(start, typeSize);
