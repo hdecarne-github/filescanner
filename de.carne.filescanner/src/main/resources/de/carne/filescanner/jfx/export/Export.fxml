@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<GridPane hgap="8.0" prefHeight="180.0" prefWidth="400.0" vgap="8.0" xmlns="http://javafx.com/javafx/8.0.92" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.carne.filescanner.jfx.export.ExportController">
+<GridPane hgap="8.0" prefHeight="180.0" prefWidth="400.0" vgap="8.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.carne.filescanner.jfx.export.ExportController">
   <children>
       <HBox fx:id="resultDisplay" spacing="4.0" GridPane.columnSpan="2147483647">
          <children>
@@ -47,7 +47,7 @@
             <Font size="12.0" />
          </font>
       </Label>
-      <ProgressBar fx:id="exportProgress" progress="0.0" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="3" />
+      <ProgressBar fx:id="exportProgress" maxWidth="1.7976931348623157E308" progress="0.0" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="3" />
     <HBox alignment="TOP_RIGHT" spacing="8.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="4">
       <children>
       <Button minWidth="80.0" mnemonicParsing="false" onAction="#onStart" text="%_STR_START_BUTTON" HBox.hgrow="NEVER">
