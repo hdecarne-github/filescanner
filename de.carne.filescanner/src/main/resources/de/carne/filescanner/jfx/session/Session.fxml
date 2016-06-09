@@ -25,16 +25,12 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.web.WebView?>
 
-<VBox onDragDropped="#onDragDropped" onDragOver="#onDragOver" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.carne.filescanner.jfx.session.SessionController">
+<VBox onDragDropped="#onDragDropped" onDragOver="#onDragOver" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.92" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.carne.filescanner.jfx.session.SessionController">
   <children>
     <MenuBar fx:id="systemMenuBar" VBox.vgrow="NEVER">
       <menus>
         <Menu mnemonicParsing="false" text="%_STR_FILE_MENU">
           <items>
-            <Menu mnemonicParsing="false" text="%_STR_NEW_SESSION_MENU">
-                     <items>
-                  <MenuItem mnemonicParsing="false" onAction="#onNewSession" text="%_STR_NEW_SESSION_MENU_ITEM" />
-                     </items></Menu>
             <MenuItem mnemonicParsing="false" onAction="#onOpenFile" text="%_STR_OPEN_FILE_MENU_ITEM">
                      <graphic>
                         <ImageView pickOnBounds="true" preserveRatio="true">
@@ -43,8 +39,6 @@
                            </image>
                         </ImageView>
                      </graphic></MenuItem>
-                  <CheckMenuItem fx:id="autoIndexMenuItem" mnemonicParsing="false" onAction="#onAutoIndex" text="%_STR_AUTO_INDEX_MENU_ITEM" />
-                  <MenuItem mnemonicParsing="false" onAction="#onScanPrefs" text="%_STR_SCAN_PREFS_MENU_ITEM" />
                   <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" onAction="#onExit" text="%_STR_EXIT_MENU_ITEM" />
           </items>
@@ -120,6 +114,12 @@
                   </RadioMenuItem>
                   <RadioMenuItem fx:id="octalFileViewMenuItem" mnemonicParsing="false" onAction="#onOctalFileViewSelected" text="%_STR_OCTAL_FILE_VIEW_MENU_ITEM" toggleGroup="$FILE_VIEW_TYPE_GROUP2" />
                   <RadioMenuItem fx:id="hexadecimalFileViewMenuItem" mnemonicParsing="false" onAction="#onHexadecimalFileViewSelected" selected="true" text="%_STR_HEXADECIMAL_FILE_VIEW_MENU_ITEM" toggleGroup="$FILE_VIEW_TYPE_GROUP2" />
+               </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="%_STR_TOOLS_MENU">
+               <items>
+                  <CheckMenuItem fx:id="autoIndexMenuItem" mnemonicParsing="false" onAction="#onAutoIndex" text="%_STR_AUTO_INDEX_MENU_ITEM" />
+                  <MenuItem mnemonicParsing="false" onAction="#onPreferences" text="%_STR_PREFERENCES_MENU_ITEM" />
                </items>
             </Menu>
         <Menu mnemonicParsing="false" text="%_STR_HELP_MENU">

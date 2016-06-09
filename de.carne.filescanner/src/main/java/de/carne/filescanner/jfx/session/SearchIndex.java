@@ -183,16 +183,8 @@ class SearchIndex implements AutoCloseable {
 		return resultId;
 	}
 
-	public synchronized FileScannerResult searchNext(FileScannerResult start, String queryString) throws IOException {
-		return search(start, queryString, true);
-	}
-
-	public synchronized FileScannerResult searchPrevious(FileScannerResult start, String queryString)
+	public synchronized FileScannerResult search(FileScannerResult start, String queryString, boolean next)
 			throws IOException {
-		return search(start, queryString, false);
-	}
-
-	private FileScannerResult search(FileScannerResult start, String queryString, boolean next) throws IOException {
 		SimpleQueryParser searchQueryParser = new SimpleQueryParser(createAnalyzer(), CONTENT_FIELD);
 		Query searchQuery = (Strings.notEmpty(queryString) ? searchQueryParser.parse(queryString) : null);
 		BooleanQuery.Builder queryBuilder = new BooleanQuery.Builder();

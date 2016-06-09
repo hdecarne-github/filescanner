@@ -233,21 +233,8 @@ public class SessionController extends StageController {
 	}
 
 	@FXML
-	void onAutoIndex(ActionEvent evt) {
-		if (this.autoIndexProperty.get()) {
-			rebuildSearchIndex();
-		}
-	}
-
-	@FXML
-	void onScanPrefs(ActionEvent evt) {
-		try {
-			PreferencesController preferences = openStage(PreferencesController.class);
-
-			preferences.getStage().showAndWait();
-		} catch (IOException e) {
-			reportUnexpectedException(e);
-		}
+	void onExit(ActionEvent evt) {
+		getStage().close();
 	}
 
 	@FXML
@@ -277,29 +264,15 @@ public class SessionController extends StageController {
 
 	@FXML
 	void onSearchNext(ActionEvent evt) {
-		try {
-			if (this.searchIndex.isReady()) {
-				TreeItem<FileScannerResult> selectedResult = this.resultsView.getSelectionModel().getSelectedItem();
-				String searchQuery = this.searchQueryInput.getText();
-				FileScannerResult foundResult = null;
-
-				if (selectedResult != null) {
-					foundResult = this.searchIndex.searchNext(selectedResult.getValue(), searchQuery);
-				}
-				if (foundResult == null) {
-					foundResult = this.searchIndex.searchNext(null, searchQuery);
-				}
-				if (foundResult != null) {
-					gotoResult(foundResult, false);
-				}
-			}
-		} catch (Exception e) {
-			reportUnexpectedException(e);
-		}
+		onSearch(evt, true);
 	}
 
 	@FXML
 	void onSearchPrevious(ActionEvent evt) {
+		onSearch(evt, false);
+	}
+
+	private void onSearch(ActionEvent evt, boolean next) {
 		try {
 			if (this.searchIndex.isReady()) {
 				TreeItem<FileScannerResult> selectedResult = this.resultsView.getSelectionModel().getSelectedItem();
@@ -307,10 +280,10 @@ public class SessionController extends StageController {
 				FileScannerResult foundResult = null;
 
 				if (selectedResult != null) {
-					foundResult = this.searchIndex.searchPrevious(selectedResult.getValue(), searchQuery);
+					foundResult = this.searchIndex.search(selectedResult.getValue(), searchQuery, next);
 				}
 				if (foundResult == null) {
-					foundResult = this.searchIndex.searchPrevious(null, searchQuery);
+					foundResult = this.searchIndex.search(null, searchQuery, next);
 				}
 				if (foundResult != null) {
 					gotoResult(foundResult, false);
@@ -340,11 +313,6 @@ public class SessionController extends StageController {
 	}
 
 	@FXML
-	void onExit(ActionEvent evt) {
-		getStage().close();
-	}
-
-	@FXML
 	void onBinaryFileViewSelected(ActionEvent evt) {
 		this.fileView.setViewType(FileViewType.BINARY);
 		recordFileViewTypePrefence(FileViewType.BINARY);
@@ -360,6 +328,24 @@ public class SessionController extends StageController {
 	void onHexadecimalFileViewSelected(ActionEvent evt) {
 		this.fileView.setViewType(FileViewType.HEXADECIMAL_U);
 		recordFileViewTypePrefence(FileViewType.HEXADECIMAL_U);
+	}
+
+	@FXML
+	void onAutoIndex(ActionEvent evt) {
+		if (this.autoIndexProperty.get()) {
+			rebuildSearchIndex();
+		}
+	}
+
+	@FXML
+	void onPreferences(ActionEvent evt) {
+		try {
+			PreferencesController preferences = openStage(PreferencesController.class);
+
+			preferences.getStage().showAndWait();
+		} catch (IOException e) {
+			reportUnexpectedException(e);
+		}
 	}
 
 	@FXML
