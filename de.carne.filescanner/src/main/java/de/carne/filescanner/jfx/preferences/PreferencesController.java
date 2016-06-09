@@ -24,15 +24,19 @@ import java.util.Set;
 import java.util.prefs.BackingStoreException;
 
 import de.carne.filescanner.core.FileScannerPreferences;
+import de.carne.filescanner.core.transfer.RendererStyle;
+import de.carne.filescanner.core.transfer.RendererStylePreferences;
+import de.carne.filescanner.core.transfer.ResultRenderer.Mode;
 import de.carne.filescanner.jfx.Images;
 import de.carne.filescanner.spi.Format;
 import de.carne.jfx.StageController;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ListView;
 import javafx.scene.control.cell.CheckBoxListCell;
-import javafx.stage.Modality;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
@@ -42,12 +46,47 @@ import javafx.util.Callback;
 public class PreferencesController extends StageController {
 
 	@FXML
+	ColorPicker normalColorSelection;
+
+	@FXML
+	ColorPicker valueColorSelection;
+
+	@FXML
+	ColorPicker commentColorSelection;
+
+	@FXML
+	ColorPicker keywordColorSelection;
+
+	@FXML
+	ColorPicker operatorColorSelection;
+
+	@FXML
+	ColorPicker labelColorSelection;
+
+	@FXML
+	ColorPicker errorColorSelection;
+
+	@FXML
 	ListView<EnabledFormatModel> enabledFormatsList;
+
+	@FXML
+	void onApply(ActionEvent evt) {
+		saveFormatPreferences();
+		saveStylePreferences();
+		try {
+			RendererStylePreferences.sync();
+			FileScannerPreferences.sync();
+		} catch (BackingStoreException e) {
+			reportUnexpectedException(e);
+		}
+	}
 
 	@FXML
 	void onSave(ActionEvent evt) {
 		saveFormatPreferences();
+		saveStylePreferences();
 		try {
+			RendererStylePreferences.sync();
 			FileScannerPreferences.sync();
 			getStage().close();
 		} catch (BackingStoreException e) {
@@ -58,11 +97,6 @@ public class PreferencesController extends StageController {
 	@FXML
 	void onCancel(ActionEvent evt) {
 		getStage().close();
-	}
-
-	@Override
-	protected Modality getModality() {
-		return Modality.APPLICATION_MODAL;
 	}
 
 	@Override
@@ -79,8 +113,42 @@ public class PreferencesController extends StageController {
 					}
 
 				}));
+		loadStylePrefrences();
 		loadFormatPreferences();
 		getStage().sizeToScene();
+	}
+
+	private void loadStylePrefrences() {
+		RendererStyle style = RendererStylePreferences.getDefaultStyle();
+
+		this.normalColorSelection.setValue(intToColor(style.getColor(Mode.NORMAL)));
+		this.valueColorSelection.setValue(intToColor(style.getColor(Mode.VALUE)));
+		this.commentColorSelection.setValue(intToColor(style.getColor(Mode.COMMENT)));
+		this.keywordColorSelection.setValue(intToColor(style.getColor(Mode.KEYWORD)));
+		this.operatorColorSelection.setValue(intToColor(style.getColor(Mode.OPERATOR)));
+		this.labelColorSelection.setValue(intToColor(style.getColor(Mode.LABEL)));
+		this.errorColorSelection.setValue(intToColor(style.getColor(Mode.ERROR)));
+	}
+
+	private static Color intToColor(int i) {
+		return Color.rgb((i >>> 16) & 0xff, (i >>> 8) & 0xff, i & 0xff);
+	}
+
+	private void saveStylePreferences() {
+		RendererStyle style = new RendererStyle();
+
+		style.setColor(Mode.NORMAL, colorToInt(this.normalColorSelection.getValue()));
+		style.setColor(Mode.VALUE, colorToInt(this.valueColorSelection.getValue()));
+		style.setColor(Mode.COMMENT, colorToInt(this.commentColorSelection.getValue()));
+		style.setColor(Mode.KEYWORD, colorToInt(this.keywordColorSelection.getValue()));
+		style.setColor(Mode.OPERATOR, colorToInt(this.operatorColorSelection.getValue()));
+		style.setColor(Mode.LABEL, colorToInt(this.labelColorSelection.getValue()));
+		style.setColor(Mode.ERROR, colorToInt(this.errorColorSelection.getValue()));
+	}
+
+	private static int colorToInt(Color color) {
+		return ((int) (color.getRed() * 255) << 16) | ((int) (color.getGreen() * 255) << 8)
+				| (int) (color.getBlue() * 255);
 	}
 
 	private void loadFormatPreferences() {

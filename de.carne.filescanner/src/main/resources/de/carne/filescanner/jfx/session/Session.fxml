@@ -119,6 +119,7 @@
             <Menu mnemonicParsing="false" text="%_STR_TOOLS_MENU">
                <items>
                   <CheckMenuItem fx:id="autoIndexMenuItem" mnemonicParsing="false" onAction="#onAutoIndex" text="%_STR_AUTO_INDEX_MENU_ITEM" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem mnemonicParsing="false" onAction="#onPreferences" text="%_STR_PREFERENCES_MENU_ITEM" />
                </items>
             </Menu>
