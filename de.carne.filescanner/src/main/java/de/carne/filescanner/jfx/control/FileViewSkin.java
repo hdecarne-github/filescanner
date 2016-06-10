@@ -32,6 +32,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.control.SkinBase;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
@@ -71,6 +72,14 @@ class FileViewSkin extends SkinBase<FileView> implements VirtualScrollRegion.Scr
 		this.viewPane.setMinSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
 		this.viewPane.setPrefSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
 		this.viewPane.setMaxSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
+		skinnable.fontProperty().addListener(new ChangeListener<Font>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Font> observable, Font oldValue, Font newValue) {
+				requestLayout(false);
+			}
+
+		});
 		skinnable.viewTypeProperty().addListener(new ChangeListener<FileViewType>() {
 
 			@Override

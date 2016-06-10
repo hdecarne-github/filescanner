@@ -54,16 +54,16 @@ public final class RendererStylePreferences {
 
 	/**
 	 * Set the default style.
-	 * 
+	 *
 	 * @param style The default style.
 	 */
-	public void setDefaultStyle(RendererStyle style) {
+	public static void setDefaultStyle(RendererStyle style) {
 		assert style != null;
 
 		setStyle(PREF_DEFAULT, style);
 	}
 
-	private void setStyle(String key, RendererStyle style) {
+	private static void setStyle(String key, RendererStyle style) {
 		String preference = style.toPreferenceString();
 
 		PREFERENCES.put(key, preference);

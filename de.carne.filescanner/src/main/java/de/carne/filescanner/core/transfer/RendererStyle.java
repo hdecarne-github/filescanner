@@ -21,28 +21,28 @@ import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
 import de.carne.filescanner.core.transfer.ResultRenderer.Mode;
+import de.carne.util.logging.Log;
 
 /**
  * Class used for defining the rendering style.
  */
 public final class RendererStyle {
 
+	private static final Log LOG = new Log(RendererStyle.class);
+
 	private static final String PREFERENCE_DELIMITER = "|";
 
 	/**
 	 * Font info.
 	 */
-	public static class Font {
+	public static class FontInfo {
 
 		private final String name;
 
-		private final String family;
-
 		private final double size;
 
-		Font(String name, String family, double size) {
+		FontInfo(String name, double size) {
 			this.name = name;
-			this.family = family;
 			this.size = size;
 		}
 
@@ -56,15 +56,6 @@ public final class RendererStyle {
 		}
 
 		/**
-		 * Get the font family.
-		 *
-		 * @return The font family.
-		 */
-		public String family() {
-			return this.family;
-		}
-
-		/**
 		 * Get the font size.
 		 *
 		 * @return The font size.
@@ -75,7 +66,7 @@ public final class RendererStyle {
 
 	}
 
-	private Font font = new Font("Courier New", "Courier New", 12.0);
+	private FontInfo fontInfo = new FontInfo("Courier New", 14.0);
 
 	private HashMap<Mode, Integer> colors = new HashMap<>();
 
@@ -93,27 +84,25 @@ public final class RendererStyle {
 	}
 
 	/**
-	 * Set this style's font.
+	 * Set this style's font info.
 	 *
 	 * @param name The font name.
-	 * @param family The font family.
 	 * @param size The font size.
 	 */
-	public void setFont(String name, String family, double size) {
+	public void setFontInfo(String name, double size) {
 		assert name != null;
-		assert family != null;
 		assert size > 0.0;
 
-		this.font = new Font(name, family, size);
+		this.fontInfo = new FontInfo(name, size);
 	}
 
 	/**
-	 * Get this style's font.
+	 * Get this style's font info.
 	 *
-	 * @return This style's font.
+	 * @return This style's font info.
 	 */
-	public Font getFont() {
-		return this.font;
+	public FontInfo getFontInfo() {
+		return this.fontInfo;
 	}
 
 	/**
@@ -146,9 +135,8 @@ public final class RendererStyle {
 	public String toPreferenceString() {
 		StringBuilder buffer = new StringBuilder();
 
-		buffer.append(this.font.name()).append(PREFERENCE_DELIMITER);
-		buffer.append(this.font.family()).append(PREFERENCE_DELIMITER);
-		buffer.append(Double.toHexString(this.font.size())).append(PREFERENCE_DELIMITER);
+		buffer.append(this.fontInfo.name()).append(PREFERENCE_DELIMITER);
+		buffer.append(Double.toHexString(this.fontInfo.size())).append(PREFERENCE_DELIMITER);
 		buffer.append(Integer.toHexString(this.colors.get(Mode.NORMAL))).append(PREFERENCE_DELIMITER);
 		buffer.append(Integer.toHexString(this.colors.get(Mode.VALUE))).append(PREFERENCE_DELIMITER);
 		buffer.append(Integer.toHexString(this.colors.get(Mode.COMMENT))).append(PREFERENCE_DELIMITER);
@@ -171,7 +159,7 @@ public final class RendererStyle {
 		StringTokenizer tokens = new StringTokenizer(preference, PREFERENCE_DELIMITER);
 
 		try {
-			style.setFont(tokens.nextToken(), tokens.nextToken(), Double.parseDouble(tokens.nextToken()));
+			style.setFontInfo(tokens.nextToken(), Double.parseDouble(tokens.nextToken()));
 			style.setColor(Mode.NORMAL, Integer.parseUnsignedInt(tokens.nextToken(), 16));
 			style.setColor(Mode.VALUE, Integer.parseUnsignedInt(tokens.nextToken(), 16));
 			style.setColor(Mode.COMMENT, Integer.parseUnsignedInt(tokens.nextToken(), 16));
@@ -180,7 +168,7 @@ public final class RendererStyle {
 			style.setColor(Mode.LABEL, Integer.parseUnsignedInt(tokens.nextToken(), 16));
 			style.setColor(Mode.ERROR, Integer.parseUnsignedInt(tokens.nextToken(), 16));
 		} catch (NoSuchElementException | NumberFormatException e) {
-			// Ignore and continue with defaults
+			LOG.warning(null, "Unexpected style preference ''{0}'', using defaults", preference);
 		}
 		return style;
 	}

@@ -2,7 +2,9 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Tab?>
@@ -14,7 +16,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="400.0" prefWidth="360.0" spacing="4.0" xmlns="http://javafx.com/javafx/8.0.92" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.carne.filescanner.jfx.preferences.PreferencesController">
+<VBox prefHeight="400.0" prefWidth="400.0" spacing="4.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.carne.filescanner.jfx.preferences.PreferencesController">
    <children>
       <TabPane>
          <tabs>
@@ -26,6 +28,7 @@
                           <columnConstraints>
                             <ColumnConstraints hgrow="NEVER" />
                             <ColumnConstraints hgrow="ALWAYS" />
+                              <ColumnConstraints hgrow="NEVER" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints vgrow="NEVER" />
@@ -40,20 +43,22 @@
                           </rowConstraints>
                            <children>
                               <Label text="%_STR_FORMAT_FONT" />
+                              <ComboBox fx:id="fontSelection" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" />
                               <Label layoutX="10.0" layoutY="17.0" text="%_STR_NORMAL_COLOR" GridPane.rowIndex="1" />
-                              <ColorPicker fx:id="normalColorSelection" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <ColorPicker fx:id="normalColorSelection" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
                               <Label layoutX="14.0" layoutY="40.0" text="%_STR_VALUE_COLOR" GridPane.rowIndex="2" />
-                              <ColorPicker fx:id="valueColorSelection" layoutX="91.0" layoutY="36.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <ColorPicker fx:id="valueColorSelection" layoutX="91.0" layoutY="36.0" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="2" />
                               <Label layoutX="14.0" layoutY="18.0" text="%_STR_COMMENT_COLOR" GridPane.rowIndex="3" />
-                              <ColorPicker fx:id="commentColorSelection" layoutX="14.0" layoutY="14.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <ColorPicker fx:id="commentColorSelection" layoutX="14.0" layoutY="14.0" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="3" />
                               <Label layoutX="14.0" layoutY="18.0" text="%_STR_KEYWORD_COLOR" GridPane.rowIndex="4" />
-                              <ColorPicker fx:id="keywordColorSelection" layoutX="14.0" layoutY="14.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <ColorPicker fx:id="keywordColorSelection" layoutX="14.0" layoutY="14.0" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="4" />
                               <Label layoutX="14.0" layoutY="18.0" text="%_STR_OPERATOR_COLOR" GridPane.rowIndex="5" />
-                              <ColorPicker fx:id="operatorColorSelection" layoutX="14.0" layoutY="14.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                              <ColorPicker fx:id="operatorColorSelection" layoutX="14.0" layoutY="14.0" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="5" />
                               <Label layoutX="14.0" layoutY="18.0" text="%_STR_LABEL_COLOR" GridPane.rowIndex="6" />
-                              <ColorPicker fx:id="labelColorSelection" layoutX="14.0" layoutY="14.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <ColorPicker fx:id="labelColorSelection" layoutX="14.0" layoutY="14.0" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="6" />
                               <Label layoutX="14.0" layoutY="213.0" text="%_STR_ERROR_COLOR" GridPane.rowIndex="7" />
-                              <ColorPicker fx:id="errorColorSelection" layoutX="91.0" layoutY="209.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                              <ColorPicker fx:id="errorColorSelection" layoutX="91.0" layoutY="209.0" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="7" />
+                              <ChoiceBox fx:id="fontSizeSelection" maxWidth="1.7976931348623157E308" GridPane.columnIndex="2" />
                            </children>
                            <padding>
                               <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />

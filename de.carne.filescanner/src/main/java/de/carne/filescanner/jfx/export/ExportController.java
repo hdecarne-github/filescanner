@@ -19,7 +19,6 @@ package de.carne.filescanner.jfx.export;
 import java.io.IOException;
 
 import de.carne.filescanner.core.FileScannerResult;
-import de.carne.filescanner.jfx.Images;
 import de.carne.filescanner.jfx.ResultGraphics;
 import de.carne.filescanner.util.Units;
 import de.carne.jfx.StageController;
@@ -72,7 +71,6 @@ public class ExportController extends StageController {
 	@Override
 	protected void setupStage(Stage controllerStage) throws IOException {
 		super.setupStage(controllerStage);
-		controllerStage.getIcons().addAll(Images.IMAGE_EXPORT16, Images.IMAGE_EXPORT32);
 		controllerStage.setTitle(I18N.formatSTR_EXPORT_TITLE());
 		getStage().sizeToScene();
 	}

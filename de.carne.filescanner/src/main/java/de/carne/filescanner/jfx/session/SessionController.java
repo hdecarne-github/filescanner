@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.URL;
 import java.util.List;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
@@ -43,6 +42,9 @@ import de.carne.filescanner.core.FileScannerStats;
 import de.carne.filescanner.core.FileScannerStatus;
 import de.carne.filescanner.core.transfer.HtmlResultRendererURLHandler;
 import de.carne.filescanner.core.transfer.HtmlResultRendererURLHandler.RenderOutput;
+import de.carne.filescanner.core.transfer.RendererStyle;
+import de.carne.filescanner.core.transfer.RendererStyle.FontInfo;
+import de.carne.filescanner.core.transfer.RendererStylePreferences;
 import de.carne.filescanner.jfx.Images;
 import de.carne.filescanner.jfx.control.FileView;
 import de.carne.filescanner.jfx.control.FileViewType;
@@ -83,6 +85,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.text.Font;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -105,7 +108,8 @@ public class SessionController extends StageController {
 	private static final String RESULT_VIEW_STYLE_SHEET_LOCATION = ApplicationLoader
 			.getDirectURL(SessionController.class.getResource("ResultView.css")).toExternalForm();
 
-	private static final URL EMPTY_RESULT_VIEW_DOC = SessionController.class.getResource("EmptyResultView.html");
+	private static final String EMPTY_RESULT_VIEW_LOCATION = ApplicationLoader
+			.getDirectURL(SessionController.class.getResource("EmptyResultView.html")).toExternalForm();
 
 	private ScheduledFuture<?> updateSystemStatusFuture = null;
 
@@ -342,7 +346,8 @@ public class SessionController extends StageController {
 		try {
 			PreferencesController preferences = openStage(PreferencesController.class);
 
-			preferences.getStage().showAndWait();
+			preferences.setStyleConsumer(s -> applyRendererStyle(s));
+			preferences.getStage().show();
 		} catch (IOException e) {
 			reportUnexpectedException(e);
 		}
@@ -426,7 +431,7 @@ public class SessionController extends StageController {
 			}
 		} else {
 			this.fileView.setFile(null);
-			this.resultView.getEngine().load(EMPTY_RESULT_VIEW_DOC.toExternalForm());
+			this.resultView.getEngine().load(EMPTY_RESULT_VIEW_LOCATION);
 		}
 	}
 
@@ -530,7 +535,8 @@ public class SessionController extends StageController {
 				Images.IMAGE_FILESCANNER48);
 
 		// Control setup (menu, views, ...)
-		setupFileViewType(getFileViewTypePreference());
+		applyFileViewType(getFileViewTypePreference());
+		applyRendererStyle(RendererStylePreferences.getDefaultStyle());
 		this.autoIndexMenuItem.selectedProperty().bindBidirectional(this.autoIndexProperty);
 		this.copySelectionMenuItem.disableProperty()
 				.bind(Bindings.isNull(this.resultsView.getSelectionModel().selectedItemProperty()));
@@ -555,7 +561,7 @@ public class SessionController extends StageController {
 		this.gotoStartButton.disableProperty()
 				.bind(Bindings.isNull(this.resultsView.getSelectionModel().selectedItemProperty()));
 		this.resultView.setContextMenuEnabled(false);
-		this.resultView.getEngine().load(EMPTY_RESULT_VIEW_DOC.toExternalForm());
+		this.resultView.getEngine().load(EMPTY_RESULT_VIEW_LOCATION);
 		this.cancelScanButton.setDisable(true);
 		updateScanStatusMessage(I18N.STR_SCAN_STATUS_NONE, null);
 
@@ -606,7 +612,7 @@ public class SessionController extends StageController {
 		});
 	}
 
-	private void setupFileViewType(FileViewType fileViewType) {
+	private void applyFileViewType(FileViewType fileViewType) {
 		switch (fileViewType) {
 		case BINARY:
 			this.binaryFileViewMenuItem.setSelected(true);
@@ -619,9 +625,16 @@ public class SessionController extends StageController {
 			break;
 		case HEXADECIMAL_L:
 		default:
-			throw new IllegalStateException("Unexpected file view type: " + fileViewType);
+			this.hexadecimalFileViewMenuItem.setSelected(true);
+			LOG.warning(null, "Unexpected file view type: {0}", fileViewType);
 		}
 		this.fileView.setViewType(fileViewType);
+	}
+
+	private void applyRendererStyle(RendererStyle style) {
+		FontInfo styleFont = style.getFontInfo();
+
+		this.fileView.setFont(new Font(styleFont.name(), styleFont.size()));
 	}
 
 	@Override
@@ -818,7 +831,7 @@ public class SessionController extends StageController {
 	}
 
 	private void clearResults() {
-		this.resultView.getEngine().load(EMPTY_RESULT_VIEW_DOC.toExternalForm());
+		this.resultView.getEngine().load(EMPTY_RESULT_VIEW_LOCATION);
 		if (this.resultViewObject != null) {
 			HtmlResultRendererURLHandler.close(this.resultViewObject);
 			this.resultViewObject = null;

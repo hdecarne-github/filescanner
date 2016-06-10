@@ -21,22 +21,27 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.prefs.BackingStoreException;
 
 import de.carne.filescanner.core.FileScannerPreferences;
 import de.carne.filescanner.core.transfer.RendererStyle;
+import de.carne.filescanner.core.transfer.RendererStyle.FontInfo;
 import de.carne.filescanner.core.transfer.RendererStylePreferences;
 import de.carne.filescanner.core.transfer.ResultRenderer.Mode;
-import de.carne.filescanner.jfx.Images;
 import de.carne.filescanner.spi.Format;
 import de.carne.jfx.StageController;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
@@ -44,6 +49,34 @@ import javafx.util.Callback;
  * Dialog controller for preference editing.
  */
 public class PreferencesController extends StageController {
+
+	private static final ArrayList<String> MONOSPACED_FAMILIES = new ArrayList<>();
+
+	static {
+		Text narrowText = new Text("1 l");
+		Text wideText = new Text("XYZ");
+
+		for (String fontFamily : Font.getFamilies()) {
+			Font font = new Font(fontFamily, 10.0);
+
+			narrowText.setFont(font);
+			wideText.setFont(font);
+			if (narrowText.getLayoutBounds().equals(wideText.getLayoutBounds())) {
+				MONOSPACED_FAMILIES.add(fontFamily);
+			}
+		}
+	}
+
+	private static Double[] FONT_SIZES = new Double[] { 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0,
+			15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0, 22.0, 23.0, 24.0 };
+
+	private Consumer<RendererStyle> styleConsumer = null;
+
+	@FXML
+	ComboBox<String> fontSelection;
+
+	@FXML
+	ChoiceBox<Double> fontSizeSelection;
 
 	@FXML
 	ColorPicker normalColorSelection;
@@ -71,8 +104,8 @@ public class PreferencesController extends StageController {
 
 	@FXML
 	void onApply(ActionEvent evt) {
-		saveFormatPreferences();
-		saveStylePreferences();
+		applyStylePreferences();
+		applyFormatPreferences();
 		try {
 			RendererStylePreferences.sync();
 			FileScannerPreferences.sync();
@@ -83,8 +116,8 @@ public class PreferencesController extends StageController {
 
 	@FXML
 	void onSave(ActionEvent evt) {
-		saveFormatPreferences();
-		saveStylePreferences();
+		applyStylePreferences();
+		applyFormatPreferences();
 		try {
 			RendererStylePreferences.sync();
 			FileScannerPreferences.sync();
@@ -102,7 +135,6 @@ public class PreferencesController extends StageController {
 	@Override
 	protected void setupStage(Stage controllerStage) throws IOException {
 		super.setupStage(controllerStage);
-		controllerStage.getIcons().addAll(Images.IMAGE_FILESCANNER16, Images.IMAGE_FILESCANNER32);
 		controllerStage.setTitle(I18N.formatSTR_PREFERENCES_TITLE());
 		this.enabledFormatsList.setCellFactory(
 				CheckBoxListCell.forListView(new Callback<EnabledFormatModel, ObservableValue<Boolean>>() {
@@ -113,14 +145,35 @@ public class PreferencesController extends StageController {
 					}
 
 				}));
+		initFontSelection();
 		loadStylePrefrences();
 		loadFormatPreferences();
 		getStage().sizeToScene();
 	}
 
+	/**
+	 * Set a {@linkplain Consumer} to be called after the style preference has
+	 * been applied.
+	 *
+	 * @param styleConsumer The {@linkplain Consumer} to call.
+	 */
+	public void setStyleConsumer(Consumer<RendererStyle> styleConsumer) {
+		this.styleConsumer = styleConsumer;
+	}
+
+	private void initFontSelection() {
+		for (String fontFamily : MONOSPACED_FAMILIES) {
+			this.fontSelection.getItems().addAll(Font.getFontNames(fontFamily));
+		}
+		this.fontSizeSelection.getItems().addAll(FONT_SIZES);
+	}
+
 	private void loadStylePrefrences() {
 		RendererStyle style = RendererStylePreferences.getDefaultStyle();
+		FontInfo styleFont = style.getFontInfo();
 
+		this.fontSelection.getSelectionModel().select(styleFont.name());
+		this.fontSizeSelection.getSelectionModel().select(styleFont.size());
 		this.normalColorSelection.setValue(intToColor(style.getColor(Mode.NORMAL)));
 		this.valueColorSelection.setValue(intToColor(style.getColor(Mode.VALUE)));
 		this.commentColorSelection.setValue(intToColor(style.getColor(Mode.COMMENT)));
@@ -134,9 +187,10 @@ public class PreferencesController extends StageController {
 		return Color.rgb((i >>> 16) & 0xff, (i >>> 8) & 0xff, i & 0xff);
 	}
 
-	private void saveStylePreferences() {
+	private void applyStylePreferences() {
 		RendererStyle style = new RendererStyle();
 
+		style.setFontInfo(this.fontSelection.getValue(), this.fontSizeSelection.getValue());
 		style.setColor(Mode.NORMAL, colorToInt(this.normalColorSelection.getValue()));
 		style.setColor(Mode.VALUE, colorToInt(this.valueColorSelection.getValue()));
 		style.setColor(Mode.COMMENT, colorToInt(this.commentColorSelection.getValue()));
@@ -144,6 +198,10 @@ public class PreferencesController extends StageController {
 		style.setColor(Mode.OPERATOR, colorToInt(this.operatorColorSelection.getValue()));
 		style.setColor(Mode.LABEL, colorToInt(this.labelColorSelection.getValue()));
 		style.setColor(Mode.ERROR, colorToInt(this.errorColorSelection.getValue()));
+		RendererStylePreferences.setDefaultStyle(style);
+		if (this.styleConsumer != null) {
+			this.styleConsumer.accept(style);
+		}
 	}
 
 	private static int colorToInt(Color color) {
@@ -172,7 +230,7 @@ public class PreferencesController extends StageController {
 		}
 	}
 
-	private void saveFormatPreferences() {
+	private void applyFormatPreferences() {
 		HashSet<Format> enabledFormats = new HashSet<>();
 
 		for (EnabledFormatModel enabledFormatEntry : this.enabledFormatsList.getItems()) {
