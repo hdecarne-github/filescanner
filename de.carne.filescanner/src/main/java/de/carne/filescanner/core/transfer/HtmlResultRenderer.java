@@ -40,7 +40,7 @@ public abstract class HtmlResultRenderer extends ResultRenderer {
 	}
 
 	@Override
-	protected void writePreamble(Set<Feature> features) throws IOException, InterruptedException {
+	protected void writePrologue(Set<Feature> features) throws IOException, InterruptedException {
 		write("<!DOCTYPE HTML>\n<html>\n<head>\n<meta charset=\"utf-8\">\n");
 		if (this.styleSheetLocation != null) {
 			write("<link rel=\"stylesheet\" href=\"" + this.styleSheetLocation + "\"");

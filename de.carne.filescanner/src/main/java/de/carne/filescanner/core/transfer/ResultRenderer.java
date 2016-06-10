@@ -119,7 +119,7 @@ public abstract class ResultRenderer {
 			throw new IOException("Renderer closed");
 		}
 		if (!this.prepared) {
-			writePreamble(Collections.unmodifiableSet(this.enabledFeatures));
+			writePrologue(Collections.unmodifiableSet(this.enabledFeatures));
 			this.prepared = true;
 		}
 	}
@@ -301,8 +301,7 @@ public abstract class ResultRenderer {
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	public final ResultRenderer renderRefText(String text, long position)
-			throws IOException, InterruptedException {
+	public final ResultRenderer renderRefText(String text, long position) throws IOException, InterruptedException {
 		checkInterrupted();
 		ensureOpenAndPrepared();
 		applyMode();
@@ -318,8 +317,7 @@ public abstract class ResultRenderer {
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	public final ResultRenderer renderImage(StreamHandler streamHandler)
-			throws IOException, InterruptedException {
+	public final ResultRenderer renderImage(StreamHandler streamHandler) throws IOException, InterruptedException {
 		checkInterrupted();
 		ensureOpenAndPrepared();
 		applyMode();
@@ -353,8 +351,7 @@ public abstract class ResultRenderer {
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	public final ResultRenderer renderVideo(StreamHandler streamHandler)
-			throws IOException, InterruptedException {
+	public final ResultRenderer renderVideo(StreamHandler streamHandler) throws IOException, InterruptedException {
 		checkInterrupted();
 		ensureOpenAndPrepared();
 		applyMode();
@@ -415,7 +412,7 @@ public abstract class ResultRenderer {
 	}
 
 	/**
-	 * Write any necessary preamble data.
+	 * Write any necessary prologue data.
 	 * <p>
 	 * This function is called exactly once and always first during the
 	 * rendering process.
@@ -425,7 +422,7 @@ public abstract class ResultRenderer {
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	protected void writePreamble(Set<Feature> features) throws IOException, InterruptedException {
+	protected void writePrologue(Set<Feature> features) throws IOException, InterruptedException {
 		// default is to write nothing
 	}
 
