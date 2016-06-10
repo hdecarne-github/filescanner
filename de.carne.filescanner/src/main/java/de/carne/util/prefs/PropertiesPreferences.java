@@ -23,31 +23,32 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 import java.util.prefs.AbstractPreferences;
 import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 
-import de.carne.util.Exceptions;
 import de.carne.util.logging.Log;
 
 /**
- * Property file based Preferences implementation.
+ * Property file based {@linkplain Preferences} implementation.
  */
 class PropertiesPreferences extends AbstractPreferences {
 
-	private static Log LOG = new Log(PropertiesPreferences.class);
+	private static final Log LOG = new Log(PropertiesPreferences.class);
 
-	private Path propertiesPath;
+	private static final String KEY_SEPARATOR = "/";
+
+	private final Path propertiesPath;
 	private Properties properties;
 
 	PropertiesPreferences(Path propertiesPath) {
 		super(null, "");
-
-		assert propertiesPath != null;
-
 		this.propertiesPath = propertiesPath.toAbsolutePath();
-		this.properties = new Properties();
-		loadProperties();
+		this.properties = loadProperties(this.propertiesPath);
 	}
 
 	private PropertiesPreferences(PropertiesPreferences parent, String name) {
@@ -58,60 +59,53 @@ class PropertiesPreferences extends AbstractPreferences {
 
 	@Override
 	protected void putSpi(String key, String value) {
-		this.properties.put(absolutePath() + "/" + key, value);
+		synchronized (this.properties) {
+			this.properties.put(nodePath() + key, value);
+		}
 	}
 
 	@Override
 	protected String getSpi(String key) {
-		return this.properties.getProperty(absolutePath() + "/" + key);
+		String value;
+
+		synchronized (this.properties) {
+			value = this.properties.getProperty(nodePath() + key);
+		}
+		return value;
 	}
 
 	@Override
 	protected void removeSpi(String key) {
-		this.properties.remove(absolutePath() + "/" + key);
+		synchronized (this.properties) {
+			this.properties.remove(nodePath() + key);
+		}
 	}
 
 	@Override
 	protected void removeNodeSpi() throws BackingStoreException {
-		String keyPrefix = absolutePath();
-
-		for (Object keyObject : this.properties.keySet()) {
-			String key = keyObject.toString();
-
-			if (key.startsWith(keyPrefix)) {
-				this.properties.remove(key);
-			}
+		synchronized (this.properties) {
+			removeNodePath(this.properties, nodePath());
 		}
 	}
 
 	@Override
 	protected String[] keysSpi() throws BackingStoreException {
-		ArrayList<String> keys = new ArrayList<>(this.properties.size());
-		String keyPrefix = absolutePath();
+		String[] keys;
 
-		for (Object keyObject : this.properties.keySet()) {
-			String key = keyObject.toString();
-
-			if (key.startsWith(keyPrefix) && key.indexOf("/", keyPrefix.length()) == -1) {
-				keys.add(key.substring(keyPrefix.length()));
-			}
+		synchronized (this.properties) {
+			keys = getNodeKeys(this.properties, nodePath());
 		}
-		return keys.toArray(new String[keys.size()]);
+		return keys;
 	}
 
 	@Override
 	protected String[] childrenNamesSpi() throws BackingStoreException {
-		ArrayList<String> childrenNames = new ArrayList<>(this.properties.size());
-		String keyPrefix = absolutePath();
+		String[] children;
 
-		for (Object keyObject : this.properties.keySet()) {
-			String key = keyObject.toString();
-
-			if (key.startsWith(keyPrefix) && key.indexOf("/", keyPrefix.length()) >= 0) {
-				childrenNames.add(key.substring(keyPrefix.length()));
-			}
+		synchronized (this.properties) {
+			children = getNodeChildren(this.properties, nodePath());
 		}
-		return childrenNames.toArray(new String[childrenNames.size()]);
+		return children;
 	}
 
 	@Override
@@ -120,13 +114,10 @@ class PropertiesPreferences extends AbstractPreferences {
 	}
 
 	@Override
-	public void sync() throws BackingStoreException {
-		storeProperties();
-	}
-
-	@Override
 	protected void syncSpi() throws BackingStoreException {
-		// Nothing to do here
+		synchronized (this.properties) {
+			mergeProperties(this.properties, nodePath(), this.propertiesPath);
+		}
 	}
 
 	@Override
@@ -134,30 +125,124 @@ class PropertiesPreferences extends AbstractPreferences {
 		// Nothing to do here
 	}
 
-	private void loadProperties() {
-		if (Files.exists(this.propertiesPath)) {
-			LOG.info(null, "Loading preferences from: ''{0}''", this.propertiesPath);
-			try (InputStream propertiesStream = Files.newInputStream(this.propertiesPath, StandardOpenOption.READ)) {
-				this.properties.load(propertiesStream);
+	private static void mergeProperties(Properties properties, String nodePath, Path propertiesPath)
+			throws BackingStoreException {
+		LOG.info(null, "Merging preferences ''{0}'' to: ''{1}''", nodePath, propertiesPath);
+		try {
+			Files.createDirectories(propertiesPath.getParent());
+		} catch (IOException e) {
+			throw new BackingStoreException(e);
+		}
+
+		Properties mergedProperties = new Properties();
+
+		if (Files.exists(propertiesPath)) {
+			try (InputStream propertiesStream = Files.newInputStream(propertiesPath, StandardOpenOption.READ)) {
+				mergedProperties.load(propertiesStream);
 			} catch (IOException e) {
-				LOG.warning(e, null, Exceptions.toMessage(e));
+				throw new BackingStoreException(e);
+			}
+		}
+		removeNodePath(mergedProperties, nodePath);
+
+		Iterator<Map.Entry<Object, Object>> entryIterator = properties.entrySet().iterator();
+
+		while (entryIterator.hasNext()) {
+			Map.Entry<Object, Object> entry = entryIterator.next();
+			String key = entry.getKey().toString();
+
+			if (getNodeKey(nodePath, key) != null) {
+				mergedProperties.put(key, entry.getValue());
+			}
+		}
+		try (OutputStream propertiesStream = Files.newOutputStream(propertiesPath, StandardOpenOption.CREATE,
+				StandardOpenOption.WRITE)) {
+			mergedProperties.store(propertiesStream, null);
+		} catch (IOException e) {
+			throw new BackingStoreException(e);
+		}
+	}
+
+	private static Properties loadProperties(Path propertiesPath) {
+		Properties properties = new Properties();
+
+		if (Files.exists(propertiesPath)) {
+			LOG.info(null, "Loading preferences from: ''{0}''", propertiesPath);
+			try (InputStream propertiesStream = Files.newInputStream(propertiesPath, StandardOpenOption.READ)) {
+				properties.load(propertiesStream);
+			} catch (IOException e) {
+				LOG.warning(e, null, "Unable to load preferences from: ''{0}''", propertiesPath);
+			}
+		}
+		return properties;
+	}
+
+	private static void removeNodePath(Properties properties, String nodePath) {
+		Iterator<Object> keyIterator = properties.keySet().iterator();
+
+		while (keyIterator.hasNext()) {
+			String key = keyIterator.next().toString();
+
+			if (getNodeKey(nodePath, key) != null) {
+				keyIterator.remove();
 			}
 		}
 	}
 
-	private void storeProperties() throws BackingStoreException {
-		LOG.info(null, "Storing preferences to: ''{0}''", this.propertiesPath);
-		try {
-			Files.createDirectories(this.propertiesPath.getParent());
-		} catch (IOException e) {
-			throw new BackingStoreException(e);
+	private static String[] getNodeChildren(Properties properties, String nodePath) {
+		HashSet<String> nodeChildren = new HashSet<>(properties.size());
+		Iterator<Object> keyIterator = properties.keySet().iterator();
+
+		while (keyIterator.hasNext()) {
+			String key = keyIterator.next().toString();
+			String nodeChild = getNodeChild(nodePath, key);
+
+			if (nodeChild != null) {
+				nodeChildren.add(nodeChild);
+			}
 		}
-		try (OutputStream propertiesStream = Files.newOutputStream(this.propertiesPath, StandardOpenOption.CREATE,
-				StandardOpenOption.WRITE)) {
-			this.properties.store(propertiesStream, null);
-		} catch (IOException e) {
-			throw new BackingStoreException(e);
+		return nodeChildren.toArray(new String[nodeChildren.size()]);
+	}
+
+	private static String getNodeChild(String nodePath, String key) {
+		String nodeChild = null;
+
+		if (key.startsWith(nodePath)) {
+			int childEndIndex = key.indexOf(KEY_SEPARATOR, nodePath.length());
+
+			if (childEndIndex > 0) {
+				nodeChild = key.substring(nodePath.length(), childEndIndex);
+			}
 		}
+		return nodeChild;
+	}
+
+	private static String[] getNodeKeys(Properties properties, String nodePath) {
+		ArrayList<String> nodeKeys = new ArrayList<>(properties.size());
+		Iterator<Object> keyIterator = properties.keySet().iterator();
+
+		while (keyIterator.hasNext()) {
+			String key = keyIterator.next().toString();
+			String nodeKey = getNodeKey(nodePath, key);
+
+			if (nodeKey != null) {
+				nodeKeys.add(nodeKey);
+			}
+		}
+		return nodeKeys.toArray(new String[nodeKeys.size()]);
+	}
+
+	private static String getNodeKey(String nodePath, String key) {
+		String nodeKey = null;
+
+		if (key.startsWith(nodePath) && key.indexOf(KEY_SEPARATOR, nodePath.length()) < 0) {
+			nodeKey = key.substring(nodePath.length());
+		}
+		return nodeKey;
+	}
+
+	private String nodePath() {
+		return absolutePath() + KEY_SEPARATOR;
 	}
 
 }

@@ -44,7 +44,7 @@ public class PropertiesPreferencesFactory implements PreferencesFactory {
 		try {
 			systemName = InetAddress.getLocalHost().getHostName();
 		} catch (UnknownHostException e) {
-			systemName = "unknown";
+			systemName = "UNKNOWN";
 		}
 
 		Path propertiesPath = Paths.get(userHome, PREFERENCES_DIR, "system-" + systemName + ".properties");
@@ -61,11 +61,12 @@ public class PropertiesPreferencesFactory implements PreferencesFactory {
 	}
 
 	/**
-	 * Create a Preferences object backed up by a given properties file.
+	 * Create a {@linkplain Preferences} object backed up by a given properties
+	 * file.
 	 *
 	 * @param propertiesPath The properties file use for backing up the
 	 *        preferences.
-	 * @return The created Preferences object.
+	 * @return The created {@linkplain Preferences} object.
 	 */
 	public static Preferences fromFile(Path propertiesPath) {
 		return new PropertiesPreferences(propertiesPath);
