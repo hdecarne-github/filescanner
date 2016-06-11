@@ -46,6 +46,10 @@ public final class RendererStyle {
 			this.size = size;
 		}
 
+		FontInfo(FontInfo fontInfo) {
+			this(fontInfo.name, fontInfo.size);
+		}
+
 		/**
 		 * Get the font name.
 		 *
@@ -81,6 +85,18 @@ public final class RendererStyle {
 		this.colors.put(Mode.OPERATOR, 0x000000);
 		this.colors.put(Mode.LABEL, 0xc0c0c0);
 		this.colors.put(Mode.ERROR, 0xff0000);
+	}
+
+	/**
+	 * Set style.
+	 *
+	 * @param style The style to set.
+	 */
+	public void setStyle(RendererStyle style) {
+		assert style != null;
+
+		this.fontInfo = new FontInfo(style.fontInfo);
+		this.colors.putAll(style.colors);
 	}
 
 	/**

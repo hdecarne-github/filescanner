@@ -18,8 +18,12 @@ package de.carne.filescanner.core.transfer;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Set;
+import java.util.StringTokenizer;
 
+import de.carne.ApplicationLoader;
+import de.carne.filescanner.core.transfer.RendererStyle.FontInfo;
 import de.carne.filescanner.util.Hexadecimal;
 
 /**
@@ -28,27 +32,165 @@ import de.carne.filescanner.util.Hexadecimal;
  */
 public abstract class HtmlResultRenderer extends ResultRenderer {
 
-	private final String styleSheetLocation;
+	private static final String TRANSPARENCY_BACKGROUND_LOCATION = ApplicationLoader
+			.getDirectURL(HtmlResultRenderer.class.getResource("transparency.png")).toExternalForm();
 
-	/**
-	 * Construct {@code HtmlResultRenderer}.
-	 *
-	 * @param styleSheetLocation Optional reference to a style sheet.
-	 */
-	protected HtmlResultRenderer(String styleSheetLocation) {
-		this.styleSheetLocation = styleSheetLocation;
+	static final HashMap<String, String> CSS_FONT_STYLES = new HashMap<>();
+
+	static {
+		CSS_FONT_STYLES.put("normal", "normal");
+		CSS_FONT_STYLES.put("italic", "italic");
+		CSS_FONT_STYLES.put("oblique", "oblique");
+	}
+
+	static final HashMap<String, String> CSS_FONT_WEIGHTS = new HashMap<>();
+
+	static {
+		CSS_FONT_WEIGHTS.put("bold", "bold");
+	}
+
+	private static class CSSFontInfo {
+
+		private final String family;
+
+		private final String style;
+
+		private final String weight;
+
+		private final String size;
+
+		private CSSFontInfo(String family, String style, String weight, String size) {
+			this.family = family;
+			this.style = style;
+			this.weight = weight;
+			this.size = size;
+		}
+
+		public static CSSFontInfo fromFontInfo(FontInfo fontInfo) {
+			StringTokenizer tokens = new StringTokenizer(fontInfo.name(), " ");
+			StringBuilder family = new StringBuilder();
+			String style = null;
+			String weight = null;
+
+			while (tokens.hasMoreTokens()) {
+				String token = tokens.nextToken();
+
+				if (family.length() == 0) {
+					family.append(token);
+					continue;
+				}
+				if (style == null) {
+					style = CSS_FONT_STYLES.get(token.toLowerCase());
+					if (style != null) {
+						continue;
+					}
+				}
+				if (weight == null) {
+					weight = CSS_FONT_WEIGHTS.get(token.toLowerCase());
+					if (weight != null) {
+						continue;
+					}
+				}
+				if (style == null && weight == null) {
+					family.append(' ').append(token);
+				}
+			}
+
+			String size = String.format("%.2f", fontInfo.size());
+
+			return new CSSFontInfo(family.toString(), style, weight, size);
+		}
+
+		public String family() {
+			return this.family;
+		}
+
+		public boolean hasStyle() {
+			return this.style != null;
+		}
+
+		public String style() {
+			return this.style;
+		}
+
+		public boolean hasWeight() {
+			return this.weight != null;
+		}
+
+		public String weight() {
+			return this.weight;
+		}
+
+		public String size() {
+			return this.size;
+		}
+
+	}
+
+	private static class CSSColor {
+
+		private final String color;
+
+		private CSSColor(String color) {
+			this.color = color;
+		}
+
+		public static CSSColor fromInt(int i) {
+			return new CSSColor("rgb(" + ((i >>> 16) & 0xff) + "," + ((i >>> 8) & 0xff) + "," + (i & 0xff) + ")");
+		}
+
+		public String color() {
+			return this.color;
+		}
+
+	}
+
+	private static String preparePrologue(RendererStyle style) {
+		StringBuilder buffer = new StringBuilder();
+
+		buffer.append("<!DOCTYPE HTML>\n<html>\n<head>\n<meta charset=\"utf-8\">\n<style>\nbody {\n");
+		CSSFontInfo cssFontInfo = CSSFontInfo.fromFontInfo(style.getFontInfo());
+
+		buffer.append("font-family: ").append(cssFontInfo.family()).append(";\n");
+		if (cssFontInfo.hasStyle()) {
+			buffer.append("font-style: ").append(cssFontInfo.style()).append(";\n");
+		}
+		if (cssFontInfo.hasWeight()) {
+			buffer.append("font-weight: ").append(cssFontInfo.weight()).append(";\n");
+		}
+		buffer.append("font-size: ");
+		buffer.append(cssFontInfo.size());
+		buffer.append(";\nwhite-space: nowrap;\n}\n.transparent {\nbackground-image: url(\"");
+		buffer.append(TRANSPARENCY_BACKGROUND_LOCATION);
+		buffer.append("\");\n}\n.normal {\ncolor: ");
+		buffer.append(CSSColor.fromInt(style.getColor(Mode.NORMAL)).color());
+		buffer.append(";\n}\n.value {\ncolor: ");
+		buffer.append(CSSColor.fromInt(style.getColor(Mode.VALUE)).color());
+		buffer.append(";\n}\n.comment {\ncolor: ");
+		buffer.append(CSSColor.fromInt(style.getColor(Mode.COMMENT)).color());
+		buffer.append(";\n}\n.keyword {\ncolor: ");
+		buffer.append(CSSColor.fromInt(style.getColor(Mode.KEYWORD)).color());
+		buffer.append(";\n}\n.operator {\ncolor: ");
+		buffer.append(CSSColor.fromInt(style.getColor(Mode.OPERATOR)).color());
+		buffer.append(";\n}\n.label {\ncolor: ");
+		buffer.append(CSSColor.fromInt(style.getColor(Mode.LABEL)).color());
+		buffer.append(";\n}\n.error {\ncolor: ");
+		buffer.append(CSSColor.fromInt(style.getColor(Mode.ERROR)).color());
+		buffer.append(";\n}\n</style>\n</head>\n");
+		return buffer.toString();
 	}
 
 	@Override
-	protected void writePrologue(Set<Feature> features) throws IOException, InterruptedException {
-		write("<!DOCTYPE HTML>\n<html>\n<head>\n<meta charset=\"utf-8\">\n");
-		if (this.styleSheetLocation != null) {
-			write("<link rel=\"stylesheet\" href=\"" + this.styleSheetLocation + "\"");
+	protected void writePrologue() throws IOException, InterruptedException {
+		write(preparePrologue(getStyle()));
+		write("</head>\n<body");
+
+		Set<Feature> features = getFeatures();
+
+		if (features.contains(Feature.TRANSPARENCY)) {
+			write(" class=\"transparent\"");
 		}
-
-		String bodyStyle = (features.contains(Feature.TRANSPARENCY) ? " class=\"transparent\"" : "");
-
-		write("</head>\n<body" + bodyStyle + ">\n");
+		write(">\n");
 	}
 
 	@Override

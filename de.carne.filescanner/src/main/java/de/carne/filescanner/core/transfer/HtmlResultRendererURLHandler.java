@@ -92,18 +92,14 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 
 	private final String baseLocation;
 
-	private final String styleSheetLocation;
+	private final RendererStyle style;
 
 	private int streamIndex = 0;
 
-	private HtmlResultRendererURLHandler(FileScannerResult result, String baseLocation, String styleSheetLocation) {
+	private HtmlResultRendererURLHandler(FileScannerResult result, String baseLocation, RendererStyle style) {
 		this.result = result;
 		this.baseLocation = baseLocation;
-		this.styleSheetLocation = styleSheetLocation;
-	}
-
-	final String getStyleSheetLocation() {
-		return this.styleSheetLocation;
+		this.style = style;
 	}
 
 	/**
@@ -168,8 +164,7 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 	 * Open a renderer.
 	 *
 	 * @param result The {@code FileScannerResult} to render.
-	 * @param styleSheetLocation The optional style sheet location to use for
-	 *        rendering.
+	 * @param style The style to use for rendering.
 	 * @param timeout The time in milliseconds this function waits for a
 	 *        directly accessible result. If this parameter is {@code 0} the
 	 *        function returns immediately and the result has to be accessed via
@@ -178,16 +173,15 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 	 *         renderer output.
 	 * @throws IOException if an I/O error occurs.
 	 */
-	public static RenderOutput open(FileScannerResult result, String styleSheetLocation, int timeout)
-			throws IOException {
+	public static RenderOutput open(FileScannerResult result, RendererStyle style, int timeout) throws IOException {
 		assert result != null;
+		assert style != null;
 
 		String baseLocation = new URL(PROTOCOL_RENDERER, "", UUID.randomUUID().toString()).toExternalForm();
 
 		LOG.debug(null, "Creating renderer URL: ''{0}''", baseLocation);
 
-		HtmlResultRendererURLHandler urlHandler = new HtmlResultRendererURLHandler(result, baseLocation,
-				styleSheetLocation);
+		HtmlResultRendererURLHandler urlHandler = new HtmlResultRendererURLHandler(result, baseLocation, style);
 
 		LOCATION_MAP.put(baseLocation, urlHandler);
 
@@ -197,6 +191,7 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 			try {
 				TimeoutHtmlResultRenderer buffer = new TimeoutHtmlResultRenderer(urlHandler, timeout);
 
+				buffer.setStyle(style);
 				result.render(buffer);
 				renderOutput = buffer.toString();
 			} catch (InterruptedException e) {
@@ -334,7 +329,10 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 	}
 
 	void renderResult(PipedOutputStream pipe) throws IOException, InterruptedException {
-		this.result.render(new PipeHtmlResultRenderer(this, pipe));
+		PipeHtmlResultRenderer renderer = new PipeHtmlResultRenderer(this, pipe);
+
+		renderer.setStyle(this.style);
+		this.result.render(renderer);
 	}
 
 }

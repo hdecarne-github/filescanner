@@ -28,7 +28,6 @@ abstract class URLHtmlResultRenderer extends HtmlResultRenderer {
 	private final HtmlResultRendererURLHandler urlHandler;
 
 	protected URLHtmlResultRenderer(HtmlResultRendererURLHandler urlHandler) {
-		super(urlHandler.getStyleSheetLocation());
 		this.urlHandler = urlHandler;
 	}
 

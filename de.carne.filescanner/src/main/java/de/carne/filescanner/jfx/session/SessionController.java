@@ -105,9 +105,6 @@ public class SessionController extends StageController {
 
 	private static final int RESULT_VIEW_FAST_TIMEOUT = 250;
 
-	private static final String RESULT_VIEW_STYLE_SHEET_LOCATION = ApplicationLoader
-			.getDirectURL(SessionController.class.getResource("ResultView.css")).toExternalForm();
-
 	private static final String EMPTY_RESULT_VIEW_LOCATION = ApplicationLoader
 			.getDirectURL(SessionController.class.getResource("EmptyResultView.html")).toExternalForm();
 
@@ -124,6 +121,8 @@ public class SessionController extends StageController {
 	private final SimpleBooleanProperty searchIndexReady = new SimpleBooleanProperty(this.searchIndex.isReady());
 
 	private final ResultTreeItemFactory resultItemFactory = new ResultTreeItemFactory();
+
+	private RendererStyle resultViewStyle = new RendererStylePreferences().getDefaultStyle();
 
 	private RenderOutput resultViewObject = null;
 
@@ -419,7 +418,7 @@ public class SessionController extends StageController {
 				this.resultViewObject = null;
 			}
 			try {
-				this.resultViewObject = HtmlResultRendererURLHandler.open(result, RESULT_VIEW_STYLE_SHEET_LOCATION,
+				this.resultViewObject = HtmlResultRendererURLHandler.open(result, this.resultViewStyle,
 						RESULT_VIEW_FAST_TIMEOUT);
 				if (this.resultViewObject.isReady()) {
 					this.resultView.getEngine().loadContent(this.resultViewObject.getOutput());
@@ -635,6 +634,7 @@ public class SessionController extends StageController {
 		FontInfo styleFont = style.getFontInfo();
 
 		this.fileView.setFont(new Font(styleFont.name(), styleFont.size()));
+		this.resultViewStyle = style;
 	}
 
 	@Override

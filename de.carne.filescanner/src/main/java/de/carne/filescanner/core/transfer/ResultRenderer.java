@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Base class for all scan result renderer.
@@ -102,8 +101,9 @@ public abstract class ResultRenderer {
 
 	}
 
-	private AtomicBoolean open = new AtomicBoolean(true);
+	private boolean open = true;
 	private boolean prepared = false;
+	private final RendererStyle style = new RendererStyle();
 	private final HashSet<Feature> enabledFeatures = new HashSet<>();
 	private Mode currentMode = null;
 	private Mode nextMode = Mode.NORMAL;
@@ -114,12 +114,12 @@ public abstract class ResultRenderer {
 		}
 	}
 
-	private void ensureOpenAndPrepared() throws IOException, InterruptedException {
-		if (!this.open.get()) {
+	private synchronized void ensureOpenAndPrepared() throws IOException, InterruptedException {
+		if (!this.open) {
 			throw new IOException("Renderer closed");
 		}
 		if (!this.prepared) {
-			writePrologue(Collections.unmodifiableSet(this.enabledFeatures));
+			writePrologue();
 			this.prepared = true;
 		}
 	}
@@ -134,6 +134,26 @@ public abstract class ResultRenderer {
 	}
 
 	/**
+	 * Set the rendering style.
+	 *
+	 * @param style The style to set.
+	 * @return The updated renderer.
+	 */
+	public final ResultRenderer setStyle(RendererStyle style) {
+		this.style.setStyle(style);
+		return this;
+	}
+
+	/**
+	 * Get the rendering style.
+	 * 
+	 * @return The rendering style.
+	 */
+	public final RendererStyle getStyle() {
+		return this.style;
+	}
+
+	/**
 	 * Enable a specific rendering feature.
 	 *
 	 * @param feature The feature to enable.
@@ -144,6 +164,16 @@ public abstract class ResultRenderer {
 
 		this.enabledFeatures.add(feature);
 		return this;
+	}
+
+	/**
+	 * Get the set of enabled features.
+	 *
+	 * @return The set of enabled features.
+	 * @see #enabledFeatures
+	 */
+	public final Set<Feature> getFeatures() {
+		return Collections.unmodifiableSet(this.enabledFeatures);
 	}
 
 	/**
@@ -404,11 +434,11 @@ public abstract class ResultRenderer {
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	public final void close() throws IOException, InterruptedException {
+	public synchronized final void close() throws IOException, InterruptedException {
 		checkInterrupted();
 		ensureOpenAndPrepared();
 		writeEpilogue();
-		this.open.set(false);
+		this.open = false;
 	}
 
 	/**
@@ -418,11 +448,10 @@ public abstract class ResultRenderer {
 	 * rendering process.
 	 * </p>
 	 *
-	 * @param features The enabled features for this renderer.
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	protected void writePrologue(Set<Feature> features) throws IOException, InterruptedException {
+	protected void writePrologue() throws IOException, InterruptedException {
 		// default is to write nothing
 	}
 
