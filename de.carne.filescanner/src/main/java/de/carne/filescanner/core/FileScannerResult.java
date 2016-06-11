@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Objects;
 
 import de.carne.filescanner.core.format.ResultContext;
+import de.carne.filescanner.core.transfer.ResultExporter;
 import de.carne.filescanner.core.transfer.ResultRenderer;
 import de.carne.filescanner.util.Hexadecimal;
 import de.carne.filescanner.util.Units;
@@ -95,6 +96,8 @@ public abstract class FileScannerResult {
 	};
 
 	private final ArrayList<FileScannerResult> children = new ArrayList<>();
+
+	private final ArrayList<? extends ResultExporter> exporters = new ArrayList<>();
 
 	private Object data;
 
@@ -231,6 +234,23 @@ public abstract class FileScannerResult {
 	 * @return The result's title.
 	 */
 	public abstract String title();
+
+	/**
+	 * Get the result's exporters.
+	 *
+	 * @param exporterClass The type of exporters to return.
+	 * @return The available exporters.
+	 */
+	public synchronized <T extends ResultExporter> List<T> getExporters(Class<T> exporterClass) {
+		ArrayList<T> matchingExporters = new ArrayList<>();
+
+		for (ResultExporter exporter : this.exporters) {
+			if (exporterClass.isInstance(exporter)) {
+				matchingExporters.add(exporterClass.cast(exporter));
+			}
+		}
+		return matchingExporters;
+	}
 
 	/**
 	 * Set application data for this result.

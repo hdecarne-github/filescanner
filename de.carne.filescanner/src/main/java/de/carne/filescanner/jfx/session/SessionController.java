@@ -122,7 +122,7 @@ public class SessionController extends StageController {
 
 	private final ResultTreeItemFactory resultItemFactory = new ResultTreeItemFactory();
 
-	private RendererStyle resultViewStyle = new RendererStylePreferences().getDefaultStyle();
+	private RendererStyle resultViewStyle = RendererStylePreferences.getDefaultStyle();
 
 	private RenderOutput resultViewObject = null;
 
