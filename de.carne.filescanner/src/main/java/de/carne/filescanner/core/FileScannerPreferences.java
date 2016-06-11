@@ -50,7 +50,7 @@ public final class FileScannerPreferences {
 		HashSet<Format> enabledFormats = new HashSet<>();
 
 		for (Format format : Format.getFormats()) {
-			boolean formatEnabled = PREFERENCES.getBoolean(format.getClass() + PREF_FORMAT_ENABLED, true);
+			boolean formatEnabled = PREFERENCES.getBoolean(preferenceKey(format, PREF_FORMAT_ENABLED), true);
 
 			if (formatEnabled) {
 				enabledFormats.add(format);
@@ -69,8 +69,12 @@ public final class FileScannerPreferences {
 		for (Format format : Format.getFormats()) {
 			boolean formatEnabled = (enabledFormats != null ? enabledFormats.contains(format) : true);
 
-			PREFERENCES.putBoolean(format.getClass() + PREF_FORMAT_ENABLED, formatEnabled);
+			PREFERENCES.putBoolean(preferenceKey(format, PREF_FORMAT_ENABLED), formatEnabled);
 		}
+	}
+
+	private static String preferenceKey(Format format, String key) {
+		return format.getClass().getName() + key;
 	}
 
 }
