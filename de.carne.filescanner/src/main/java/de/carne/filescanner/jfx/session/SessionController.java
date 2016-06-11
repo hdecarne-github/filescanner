@@ -403,35 +403,7 @@ public class SessionController extends StageController {
 	}
 
 	void onResultItemSelected(TreeItem<FileScannerResult> resultItem) {
-		if (resultItem != null) {
-			FileScannerResult result = resultItem.getValue();
-
-			this.fileView.setFile(new FileScannerInputAccess(result.input()));
-
-			PositionRange selection = new PositionRange(result.start(), result.end());
-
-			this.fileView.setPosition(selection.getStart());
-			this.fileView.setSelection(selection);
-
-			if (this.resultViewObject != null) {
-				HtmlResultRendererURLHandler.close(this.resultViewObject);
-				this.resultViewObject = null;
-			}
-			try {
-				this.resultViewObject = HtmlResultRendererURLHandler.open(result, this.resultViewStyle,
-						RESULT_VIEW_FAST_TIMEOUT);
-				if (this.resultViewObject.isReady()) {
-					this.resultView.getEngine().loadContent(this.resultViewObject.getOutput());
-				} else {
-					this.resultView.getEngine().load(this.resultViewObject.getOutputLocation());
-				}
-			} catch (IOException e) {
-				LOG.error(e, I18N.BUNDLE, I18N.STR_OPEN_RENDERER_ERROR);
-			}
-		} else {
-			this.fileView.setFile(null);
-			this.resultView.getEngine().load(EMPTY_RESULT_VIEW_LOCATION);
-		}
+		updateScanResult(resultItem != null ? resultItem.getValue() : null);
 	}
 
 	void onResultViewLoaded() {
@@ -560,7 +532,7 @@ public class SessionController extends StageController {
 		this.gotoStartButton.disableProperty()
 				.bind(Bindings.isNull(this.resultsView.getSelectionModel().selectedItemProperty()));
 		this.resultView.setContextMenuEnabled(false);
-		this.resultView.getEngine().load(EMPTY_RESULT_VIEW_LOCATION);
+		updateScanResult(null);
 		this.cancelScanButton.setDisable(true);
 		updateScanStatusMessage(I18N.STR_SCAN_STATUS_NONE, null);
 
@@ -635,6 +607,7 @@ public class SessionController extends StageController {
 
 		this.fileView.setFont(new Font(styleFont.name(), styleFont.size()));
 		this.resultViewStyle = style;
+		updateScanResult();
 	}
 
 	@Override
@@ -729,6 +702,42 @@ public class SessionController extends StageController {
 			resultItem.setExpanded(true);
 			this.resultsView.getSelectionModel().select(resultItem);
 			this.resultsView.requestFocus();
+		}
+	}
+
+	private void updateScanResult() {
+		TreeItem<FileScannerResult> selectedItem = this.resultsView.getSelectionModel().getSelectedItem();
+
+		updateScanResult(selectedItem != null ? selectedItem.getValue() : null);
+	}
+
+	private void updateScanResult(FileScannerResult result) {
+		if (result != null) {
+			this.fileView.setFile(new FileScannerInputAccess(result.input()));
+
+			PositionRange selection = new PositionRange(result.start(), result.end());
+
+			this.fileView.setPosition(selection.getStart());
+			this.fileView.setSelection(selection);
+
+			if (this.resultViewObject != null) {
+				HtmlResultRendererURLHandler.close(this.resultViewObject);
+				this.resultViewObject = null;
+			}
+			try {
+				this.resultViewObject = HtmlResultRendererURLHandler.open(result, this.resultViewStyle,
+						RESULT_VIEW_FAST_TIMEOUT);
+				if (this.resultViewObject.isReady()) {
+					this.resultView.getEngine().loadContent(this.resultViewObject.getOutput());
+				} else {
+					this.resultView.getEngine().load(this.resultViewObject.getOutputLocation());
+				}
+			} catch (IOException e) {
+				LOG.error(e, I18N.BUNDLE, I18N.STR_OPEN_RENDERER_ERROR);
+			}
+		} else {
+			this.fileView.setFile(null);
+			this.resultView.getEngine().load(EMPTY_RESULT_VIEW_LOCATION);
 		}
 	}
 
