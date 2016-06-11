@@ -25,6 +25,7 @@ import java.util.StringTokenizer;
 import de.carne.ApplicationLoader;
 import de.carne.filescanner.core.transfer.RendererStyle.FontInfo;
 import de.carne.filescanner.util.Hexadecimal;
+import de.carne.util.MRUList;
 
 /**
  * Base class for all {@code FileScannerResultRenderer} implementations that
@@ -180,9 +181,18 @@ public abstract class HtmlResultRenderer extends ResultRenderer {
 		return buffer.toString();
 	}
 
+	private static final MRUList<RendererStyle, String> PROLOGUE_CACHE = new MRUList<>(1);
+
 	@Override
 	protected void writePrologue() throws IOException, InterruptedException {
-		write(preparePrologue(getStyle()));
+		RendererStyle style = getStyle();
+		String prologue = PROLOGUE_CACHE.use(style);
+
+		if (prologue == null) {
+			prologue = preparePrologue(style);
+			PROLOGUE_CACHE.use(style, prologue);
+		}
+		write(prologue);
 		write("</head>\n<body");
 
 		Set<Feature> features = getFeatures();
