@@ -61,6 +61,8 @@ import de.carne.jfx.messagebox.MessageBoxStyle;
 import de.carne.util.Exceptions;
 import de.carne.util.Strings;
 import de.carne.util.logging.Log;
+import de.carne.util.prefs.DirectoryPreference;
+import de.carne.util.prefs.ObjectPreference;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -99,9 +101,10 @@ public class SessionController extends StageController {
 
 	private static final Preferences PREFERENCES = Preferences.systemNodeForPackage(SessionController.class);
 
-	private static final String PREF_FILE_VIEW_TYPE = "fileViewType";
+	private static final ObjectPreference<FileViewType> PREF_FILE_VIEW_TYPE = new ObjectPreference<>("fileViewType",
+			s -> FileViewType.valueOf(s));
 
-	private static final String PREF_INITIAL_DIRECTORY = "initialDirectory";
+	private static final DirectoryPreference PREF_INITIAL_DIRECTORY = new DirectoryPreference("initialDirectory");
 
 	private static final int RESULT_VIEW_FAST_TIMEOUT = 250;
 
@@ -225,13 +228,13 @@ public class SessionController extends StageController {
 	void onOpenFile(ActionEvent evt) {
 		FileChooser fileChooser = new FileChooser();
 
-		fileChooser.setInitialDirectory(getInitialDirectoryPreference());
+		fileChooser.setInitialDirectory(PREF_INITIAL_DIRECTORY.getAsFile(PREFERENCES));
 
 		File file = fileChooser.showOpenDialog(getStage());
 
 		if (file != null) {
 			openFile(file);
-			recordInitialDirectoryPreference(file);
+			PREF_INITIAL_DIRECTORY.setFromFile(PREFERENCES, file);
 		}
 	}
 
@@ -318,19 +321,19 @@ public class SessionController extends StageController {
 	@FXML
 	void onBinaryFileViewSelected(ActionEvent evt) {
 		this.fileView.setViewType(FileViewType.BINARY);
-		recordFileViewTypePrefence(FileViewType.BINARY);
+		PREF_FILE_VIEW_TYPE.set(PREFERENCES, FileViewType.BINARY);
 	}
 
 	@FXML
 	void onOctalFileViewSelected(ActionEvent evt) {
 		this.fileView.setViewType(FileViewType.OCTAL);
-		recordFileViewTypePrefence(FileViewType.OCTAL);
+		PREF_FILE_VIEW_TYPE.set(PREFERENCES, FileViewType.OCTAL);
 	}
 
 	@FXML
 	void onHexadecimalFileViewSelected(ActionEvent evt) {
 		this.fileView.setViewType(FileViewType.HEXADECIMAL_U);
-		recordFileViewTypePrefence(FileViewType.HEXADECIMAL_U);
+		PREF_FILE_VIEW_TYPE.set(PREFERENCES, FileViewType.HEXADECIMAL_U);
 	}
 
 	@FXML
@@ -506,7 +509,7 @@ public class SessionController extends StageController {
 				Images.IMAGE_FILESCANNER48);
 
 		// Control setup (menu, views, ...)
-		applyFileViewType(getFileViewTypePreference());
+		applyFileViewType(PREF_FILE_VIEW_TYPE.get(PREFERENCES, FileViewType.HEXADECIMAL_U));
 		applyRendererStyle(RendererStylePreferences.getDefaultStyle());
 		this.autoIndexMenuItem.selectedProperty().bindBidirectional(this.autoIndexProperty);
 		this.copySelectionMenuItem.disableProperty()
@@ -885,42 +888,6 @@ public class SessionController extends StageController {
 
 			});
 		}
-	}
-
-	private FileViewType getFileViewTypePreference() {
-		String fileViewTypePref = PREFERENCES.get(PREF_FILE_VIEW_TYPE, null);
-		FileViewType fileViewType = FileViewType.HEXADECIMAL_U;
-
-		if (Strings.notEmpty(fileViewTypePref)) {
-			try {
-				fileViewType = FileViewType.valueOf(fileViewTypePref);
-			} catch (IllegalArgumentException e) {
-				// ignore and use default value for file view type
-			}
-		}
-		return fileViewType;
-	}
-
-	private void recordFileViewTypePrefence(FileViewType fileViewType) {
-		PREFERENCES.put(PREF_FILE_VIEW_TYPE, fileViewType.toString());
-	}
-
-	private File getInitialDirectoryPreference() {
-		String initialDirectoryPref = PREFERENCES.get(PREF_INITIAL_DIRECTORY, null);
-		File initialDirectory = null;
-
-		if (Strings.notEmpty(initialDirectoryPref)) {
-			File initialDirectoryPrefFile = new File(initialDirectoryPref);
-
-			if (initialDirectoryPrefFile.isDirectory()) {
-				initialDirectory = initialDirectoryPrefFile;
-			}
-		}
-		return initialDirectory;
-	}
-
-	private void recordInitialDirectoryPreference(File file) {
-		PREFERENCES.put(PREF_INITIAL_DIRECTORY, file.getParent());
 	}
 
 }

@@ -18,12 +18,14 @@ package de.carne.filescanner.jfx.export;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.prefs.Preferences;
 
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.transfer.FileResultExporter;
 import de.carne.filescanner.jfx.ResultGraphics;
 import de.carne.filescanner.util.Units;
 import de.carne.jfx.StageController;
+import de.carne.util.prefs.DirectoryPreference;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
@@ -36,9 +38,13 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
 /**
- * Dialog controller for preference editing.
+ * Dialog controller for result data exporting.
  */
 public class ExportController extends StageController {
+
+	private static final Preferences PREFERENCES = Preferences.systemNodeForPackage(ExportController.class);
+
+	private static final DirectoryPreference PREF_INITIAL_DIRECTORY = new DirectoryPreference("initialDirectory");
 
 	private FileScannerResult result = null;
 
@@ -65,18 +71,19 @@ public class ExportController extends StageController {
 			FileChooser fileChooser = new FileChooser();
 
 			fileChooser.getExtensionFilters().addAll(getFilters(exporter));
+			fileChooser.setInitialDirectory(PREF_INITIAL_DIRECTORY.getAsFile(PREFERENCES));
 
 			File file = fileChooser.showSaveDialog(getStage());
 
 			if (file != null) {
-
+				this.exportDestinationInput.setText(file.toString());
 			}
 		}
 	}
 
 	@FXML
 	void onStart(ActionEvent evt) {
-		getStage().close();
+
 	}
 
 	@FXML
@@ -89,6 +96,11 @@ public class ExportController extends StageController {
 		super.setupStage(controllerStage);
 		controllerStage.setTitle(I18N.formatSTR_EXPORT_TITLE());
 		getStage().sizeToScene();
+	}
+
+	@Override
+	protected Preferences getPreferences() {
+		return PREFERENCES;
 	}
 
 	/**
@@ -110,7 +122,7 @@ public class ExportController extends StageController {
 
 	private static ExtensionFilter[] getFilters(FileResultExporter exporter) {
 		ExtensionFilter exporterFilter = new ExtensionFilter(exporter.name(), exporter.filter());
-		ExtensionFilter allFilesFilter = new ExtensionFilter(I18N.formatSTR_ALL_FILES_FILTER(), "*");
+		ExtensionFilter allFilesFilter = new ExtensionFilter(I18N.formatSTR_ALL_FILES_FILTER(), "*.*");
 
 		return new ExtensionFilter[] { exporterFilter, allFilesFilter };
 	}
