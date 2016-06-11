@@ -79,8 +79,8 @@ public final class RendererStyle {
 	 */
 	public RendererStyle() {
 		this.colors.put(Mode.NORMAL, 0x000000);
-		this.colors.put(Mode.VALUE, 0x0000ff);
-		this.colors.put(Mode.COMMENT, 0x00ff00);
+		this.colors.put(Mode.VALUE, 0x334db3);
+		this.colors.put(Mode.COMMENT, 0x669966);
 		this.colors.put(Mode.KEYWORD, 0x660066);
 		this.colors.put(Mode.OPERATOR, 0x000000);
 		this.colors.put(Mode.LABEL, 0xc0c0c0);
