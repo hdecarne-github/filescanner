@@ -31,18 +31,8 @@ public abstract class FileResultExporter extends ResultExporter {
 	/**
 	 * Default exporter for simply writing a scanner result to a file.
 	 */
-	public static final FileResultExporter RAW_EXPORTER = new FileResultExporter(I18N.formatSTR_RAW_EXPORT_NAME(),
-			".bin", "*.bin") {
-
-		@Override
-		public StreamHandler getStreamHandler(FileScannerResult result) {
-			MappingStreamHandler streamHandler = new MappingStreamHandler();
-
-			streamHandler.mapResult(result);
-			return streamHandler;
-		}
-
-	};
+	public static final FileResultExporter BIN_EXPORTER = simpleExporter(I18N.formatSTR_RAW_EXPORT_NAME(), ".bin",
+			"*.bin");
 
 	private final String defaultExtension;
 
@@ -65,6 +55,31 @@ public abstract class FileResultExporter extends ResultExporter {
 
 		this.defaultExtension = defaultExtension;
 		this.extensionFilters = extensionFilters;
+	}
+
+	/**
+	 * Create simple exporter performing a pass-through export of a scanner
+	 * result.
+	 * 
+	 * @param name The exporter name.
+	 * @param defaultExtension The export file's default extension (without any
+	 *        wildcards).
+	 * @param extensionFilters The extension filters supported by the export
+	 *        file type.
+	 * @return The created exporter.
+	 */
+	public static FileResultExporter simpleExporter(String name, String defaultExtension, String... extensionFilters) {
+		return new FileResultExporter(name, defaultExtension, extensionFilters) {
+
+			@Override
+			public StreamHandler getStreamHandler(FileScannerResult result) {
+				MappingStreamHandler streamHandler = new MappingStreamHandler();
+
+				streamHandler.mapResult(result);
+				return streamHandler;
+			}
+
+		};
 	}
 
 	/**

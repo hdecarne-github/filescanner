@@ -244,7 +244,7 @@ public class ExportController extends StageController {
 
 				});
 		this.exporterSelection.getItems().addAll(this.result.getExporters(FileResultExporter.class));
-		this.exporterSelection.getItems().add(FileResultExporter.RAW_EXPORTER);
+		this.exporterSelection.getItems().add(FileResultExporter.BIN_EXPORTER);
 		this.exporterSelection.getSelectionModel().select(0);
 	}
 
