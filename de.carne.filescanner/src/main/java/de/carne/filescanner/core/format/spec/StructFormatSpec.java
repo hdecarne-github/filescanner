@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import de.carne.filescanner.core.DecodeStatusException;
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
-import de.carne.filescanner.core.format.ResultContext;
+import de.carne.filescanner.core.format.DecodeContext;
 import de.carne.filescanner.core.format.ResultSection;
 import de.carne.filescanner.core.transfer.ResultRenderer;
 
@@ -108,7 +108,7 @@ public class StructFormatSpec extends FormatSpec {
 			if (spec.isResult()) {
 				FileScannerResultBuilder specResult = result.addResult(spec.resultType(), specPosition, spec);
 
-				specDecoded = ResultContext.setupAndDecode(spec, specResult);
+				specDecoded = DecodeContext.setupAndDecode(spec, specResult);
 				result.updateDecodeStatus(specResult.decodeStatus());
 			} else {
 				specDecoded = spec.specDecode(result, specPosition);

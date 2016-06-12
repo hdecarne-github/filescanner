@@ -22,7 +22,7 @@ import java.nio.ByteBuffer;
 import de.carne.filescanner.core.DecodeStatusException;
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
-import de.carne.filescanner.core.format.ResultContext;
+import de.carne.filescanner.core.format.DecodeContext;
 import de.carne.filescanner.core.transfer.ResultRenderer;
 
 /**
@@ -116,7 +116,7 @@ public class VarArrayFormatSpec extends FormatSpec {
 				FileScannerResultBuilder specResult = result.addResult(matchingSpec.resultType(), specPosition,
 						matchingSpec);
 
-				specDecoded = ResultContext.setupAndDecode(matchingSpec, specResult);
+				specDecoded = DecodeContext.setupAndDecode(matchingSpec, specResult);
 				result.updateDecodeStatus(specResult.decodeStatus());
 			} else {
 				specDecoded = matchingSpec.specDecode(result, specPosition);

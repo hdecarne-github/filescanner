@@ -19,6 +19,7 @@ package de.carne.filescanner.core;
 import java.io.IOException;
 import java.nio.ByteOrder;
 
+import de.carne.filescanner.core.format.RenderContext;
 import de.carne.filescanner.core.transfer.ResultRenderer;
 import de.carne.filescanner.util.Units;
 
@@ -38,13 +39,18 @@ class InputFileScannerResult extends FileScannerResult {
 		this.end = input.size();
 		this.parent = parent;
 		if (this.parent != null) {
-			this.parent.addChild(this);
+			this.parent.addResultChild(this);
 		}
 	}
 
 	@Override
 	public long end() {
 		return this.end;
+	}
+
+	@Override
+	public RenderContext renderContext() {
+		return null;
 	}
 
 	@Override

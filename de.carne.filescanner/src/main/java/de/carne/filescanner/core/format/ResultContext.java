@@ -16,14 +16,10 @@
  */
 package de.carne.filescanner.core.format;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import de.carne.filescanner.core.FileScannerResult;
-import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.core.format.spec.Attribute;
-import de.carne.filescanner.core.transfer.ResultRenderer;
 import de.carne.util.logging.Log;
 
 /**
@@ -33,8 +29,6 @@ import de.carne.util.logging.Log;
 public abstract class ResultContext {
 
 	private static final Log LOG = new Log(ResultContext.class);
-
-	private static final ThreadLocal<ResultContext> RESULT_CONTEXT = new ThreadLocal<>();
 
 	private final HashMap<ResultAttribute<?>, Object> resultAttributes = new HashMap<>();
 
@@ -52,7 +46,7 @@ public abstract class ResultContext {
 	 *
 	 * @param context The context to copy the information from.
 	 */
-	public final void addResults(ResultContext context) {
+	protected final void contextAddResults(ResultContext context) {
 		this.resultAttributes.putAll(context.resultAttributes);
 		this.resultSections.addAll(context.resultSections);
 	}
@@ -62,7 +56,7 @@ public abstract class ResultContext {
 	 *
 	 * @param attribute The attribute to declare.
 	 */
-	public final <T> void declareAttribute(ResultAttribute<T> attribute) {
+	protected final <T> void contextDeclareAttribute(ResultAttribute<T> attribute) {
 		assert attribute != null;
 
 		this.resultAttributes.put(attribute, null);
@@ -74,7 +68,7 @@ public abstract class ResultContext {
 	 * @param attribute The attribute to set.
 	 * @param value The attribute value to set.
 	 */
-	public final <T> void setAttribute(ResultAttribute<T> attribute, T value) {
+	protected final <T> void contextSetAttribute(ResultAttribute<T> attribute, T value) {
 		assert attribute != null;
 
 		ResultContext currentContext = this;
@@ -97,7 +91,7 @@ public abstract class ResultContext {
 	 * @param attribute The attribute to get.
 	 * @return The set attribute value or {@code null} if none has been set.
 	 */
-	public final <T> T getAttribute(Attribute<T> attribute) {
+	protected final <T> T contextGetAttribute(Attribute<T> attribute) {
 		assert attribute != null;
 
 		ResultContext currentContext = this;
@@ -116,7 +110,7 @@ public abstract class ResultContext {
 	 * @param size The size of the result section.
 	 * @param renderable The {@linkplain RenderableData} to use for rendering.
 	 */
-	public final void recordResultSection(long size, RenderableData renderable) {
+	protected final void contextRecordResultSection(long size, RenderableData renderable) {
 		assert size >= 0L;
 		assert renderable != null;
 
@@ -131,84 +125,8 @@ public abstract class ResultContext {
 	 *         has not been recorded.
 	 * @see #recordResultSection(long, RenderableData)
 	 */
-	public final ResultSection getResultSection(int index) {
+	protected final ResultSection contextGetResultSection(int index) {
 		return (index < this.resultSections.size() ? this.resultSections.get(index) : null);
-	}
-
-	/**
-	 * Activate a context and start decode a result.
-	 *
-	 * @param decodable The {@linkplain Decodable} to use for decoding.
-	 * @param result The result builder to decode into and which's context
-	 *        should be activate.
-	 * @return The number of decoded bytes.
-	 * @throws IOException if an I/O error occurs.
-	 * @see Decodable#decode(FileScannerResultBuilder)
-	 */
-	public static long setupAndDecode(Decodable decodable, FileScannerResultBuilder result) throws IOException {
-		assert decodable != null;
-		assert result != null;
-
-		ResultContext parentContext = RESULT_CONTEXT.get();
-		long decoded;
-
-		try {
-			RESULT_CONTEXT.set(result.context());
-			decoded = decodable.decode(result);
-			result.updateEnd(result.start() + decoded);
-		} finally {
-			if (parentContext != null) {
-				RESULT_CONTEXT.set(parentContext);
-			} else {
-				RESULT_CONTEXT.remove();
-			}
-		}
-		return decoded;
-	}
-
-	/**
-	 * Activate a context and render a result.
-	 *
-	 * @param renderable The {@linkplain Renderable} to use for rendering.
-	 * @param result The result to render and which's context should be
-	 *        activate.
-	 * @param renderer The renderer to use.
-	 * @throws IOException if an I/O error occurs.
-	 * @throws InterruptedException if the render thread was interrupted.
-	 * @see Decodable#render(FileScannerResult, ResultRenderer)
-	 */
-	public static void setupAndRender(Renderable renderable, FileScannerResult result,
-			ResultRenderer renderer) throws IOException, InterruptedException {
-		assert renderable != null;
-		assert result != null;
-		assert renderer != null;
-
-		ResultContext parentContext = RESULT_CONTEXT.get();
-
-		try {
-			RESULT_CONTEXT.set(result.context());
-			renderable.render(result, renderer);
-		} finally {
-			if (parentContext != null) {
-				RESULT_CONTEXT.set(parentContext);
-			} else {
-				RESULT_CONTEXT.remove();
-			}
-		}
-	}
-
-	/**
-	 * Get the currently active {@code ResultContext}.
-	 *
-	 * @return The currently active {@code ResultContext}.
-	 */
-	public static ResultContext get() {
-		ResultContext context = RESULT_CONTEXT.get();
-
-		if (context == null) {
-			throw new IllegalStateException("No decode context set");
-		}
-		return context;
 	}
 
 }

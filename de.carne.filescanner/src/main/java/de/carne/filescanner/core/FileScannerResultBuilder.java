@@ -18,9 +18,13 @@ package de.carne.filescanner.core;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
+import java.util.List;
 
+import de.carne.filescanner.core.format.DecodeContext;
+import de.carne.filescanner.core.format.RenderContext;
 import de.carne.filescanner.core.format.Renderable;
 import de.carne.filescanner.core.format.ResultContext;
+import de.carne.filescanner.core.transfer.ResultExporter;
 import de.carne.filescanner.core.transfer.ResultRenderer;
 import de.carne.filescanner.spi.Format;
 
@@ -35,6 +39,17 @@ import de.carne.filescanner.spi.Format;
 public final class FileScannerResultBuilder extends FileScannerResult {
 
 	private long end;
+
+	private final DecodeContext decodeContext = new DecodeContext() {
+
+		@Override
+		protected ResultContext parent() {
+			FileScannerResult parentResult = FileScannerResultBuilder.this.parent();
+
+			return (parentResult != null ? parentResult.renderContext() : null);
+		}
+
+	};
 
 	private DecodeStatusException decodeStatus = null;
 
@@ -61,15 +76,19 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 		this.end = start;
 		this.parent = parent;
 		if (this.parent != null) {
-			this.parent.addChild(this);
+			this.parent.addResultChild(this);
 		}
 		this.title = title;
 		this.renderable = renderable;
 	}
 
+	Renderable renderable() {
+		return this.renderable;
+	}
+
 	@Override
 	public long end() {
-		return Math.max(this.end, getChildrenEnd());
+		return Math.max(this.end, getResultChildrenEnd());
 	}
 
 	/**
@@ -81,6 +100,20 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 		assert start() <= updatedEnd;
 
 		this.end = updatedEnd;
+	}
+
+	@Override
+	public RenderContext renderContext() {
+		return decodeContext();
+	}
+
+	/**
+	 * Get the builder's decode context.
+	 *
+	 * @return The builder's decode context.
+	 */
+	public DecodeContext decodeContext() {
+		return this.decodeContext;
 	}
 
 	@Override
@@ -112,7 +145,7 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 	}
 
 	/**
-	 * Updated the result object's title.
+	 * Update the result object's title.
 	 *
 	 * @param updatedTitle The updated title to set.
 	 */
@@ -123,12 +156,14 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 	}
 
 	/**
-	 * Get this builder's {@linkplain Renderable}.
+	 * Add result exporters.
 	 *
-	 * @return This builder's {@linkplain Renderable}.
+	 * @param exporters The exporters to add.
 	 */
-	public Renderable renderable() {
-		return this.renderable;
+	public void addExporters(List<ResultExporter> exporters) {
+		assert exporters != null;
+
+		setResultExporters(exporters);
 	}
 
 	/**
@@ -200,6 +235,8 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 
 		private final long end;
 
+		private final RenderContext renderContext;
+
 		private final DecodeStatusException decodeStatus;
 
 		private final FileScannerResult parent;
@@ -213,15 +250,34 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 			this.end = builder.end();
 			this.decodeStatus = builder.decodeStatus();
 			this.parent = parent;
-			this.parent.addChild(this);
+			this.parent.addResultChild(this);
 			this.title = builder.title();
 			this.renderable = builder.renderable();
-			this.context().addResults(builder.context());
+			this.renderContext = new DecodeContext() {
+
+				{
+					contextAddResults(builder.renderContext());
+				}
+
+				@Override
+				protected ResultContext parent() {
+					FileScannerResult parentResult = DecodedFileScannerResult.this.parent();
+
+					return (parentResult != null ? parentResult.renderContext() : null);
+				}
+
+			};
+			setResultExporters(builder.getExporters());
 		}
 
 		@Override
 		public long end() {
 			return this.end;
+		}
+
+		@Override
+		public RenderContext renderContext() {
+			return this.renderContext;
 		}
 
 		@Override
@@ -242,7 +298,7 @@ public final class FileScannerResultBuilder extends FileScannerResult {
 		@Override
 		public void render(ResultRenderer renderer) throws IOException, InterruptedException {
 			if (this.renderable != null) {
-				ResultContext.setupAndRender(this.renderable, this, renderer);
+				RenderContext.setupAndRender(this.renderable, this, renderer);
 			} else {
 				super.render(renderer);
 			}

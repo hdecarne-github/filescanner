@@ -23,15 +23,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
+import de.carne.filescanner.core.format.DecodeContext;
+import de.carne.filescanner.core.format.RenderContext;
 import de.carne.filescanner.core.format.ResultAttribute;
-import de.carne.filescanner.core.format.ResultContext;
 
 /**
  * This class defines basic format spec attributes.
  * <p>
  * Basic attributes are of the form &lt;name&gt; = &lt;value&gt; where value is
  * a reasonable simple type. Attributes can be bound to a
- * {@linkplain ResultContext} and hence evaluated during decode or render phase.
+ * {@linkplain DecodeContext} and hence evaluated during decode or render phase.
  * </p>
  *
  * @param <T> The attribute' data type.
@@ -82,7 +83,7 @@ public abstract class Attribute<T> extends FormatSpec implements ResultAttribute
 	 * @param value The value to bind.
 	 */
 	protected final void bindValue(T value) {
-		ResultContext.get().setAttribute(this, value);
+		DecodeContext.getDecodeContext().setAttribute(this, value);
 	}
 
 	/**
@@ -191,7 +192,7 @@ public abstract class Attribute<T> extends FormatSpec implements ResultAttribute
 	public T get() {
 		assert this.bound;
 
-		return ResultContext.get().getAttribute(this);
+		return RenderContext.getRenderContext().getAttribute(this);
 	}
 
 	@Override

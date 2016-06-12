@@ -20,11 +20,12 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-import de.carne.filescanner.core.format.ResultContext;
+import de.carne.filescanner.core.format.RenderContext;
 import de.carne.filescanner.core.transfer.ResultExporter;
 import de.carne.filescanner.core.transfer.ResultRenderer;
 import de.carne.filescanner.util.Hexadecimal;
@@ -84,20 +85,9 @@ public abstract class FileScannerResult {
 
 	private final long start;
 
-	private final ResultContext context = new ResultContext() {
-
-		@Override
-		protected ResultContext parent() {
-			FileScannerResult parentResult = FileScannerResult.this.parent();
-
-			return (parentResult != null ? parentResult.context() : null);
-		}
-
-	};
-
 	private final ArrayList<FileScannerResult> children = new ArrayList<>();
 
-	private final ArrayList<? extends ResultExporter> exporters = new ArrayList<>();
+	private final ArrayList<ResultExporter> exporters = new ArrayList<>();
 
 	private Object data;
 
@@ -113,19 +103,23 @@ public abstract class FileScannerResult {
 		this.start = start;
 	}
 
-	synchronized void addChild(FileScannerResult child) {
+	synchronized void addResultChild(FileScannerResult child) {
 		this.children.add(child);
 		this.children.sort(POSITION_COMPARATOR);
 	}
 
-	synchronized void setChildren(List<FileScannerResult> children) {
+	synchronized void setResultChildren(List<FileScannerResult> children) {
 		this.children.addAll(children);
 	}
 
-	synchronized long getChildrenEnd() {
+	synchronized long getResultChildrenEnd() {
 		int childrenCount = this.children.size();
 
 		return (childrenCount > 0 ? this.children.get(childrenCount - 1).end() : this.start);
+	}
+
+	void setResultExporters(List<ResultExporter> exporters) {
+		this.exporters.addAll(exporters);
 	}
 
 	/**
@@ -181,13 +175,11 @@ public abstract class FileScannerResult {
 	}
 
 	/**
-	 * Get the result's context.
+	 * Get the result's render context.
 	 *
-	 * @return The result's context.
+	 * @return The result's render context.
 	 */
-	public final ResultContext context() {
-		return this.context;
-	}
+	public abstract RenderContext renderContext();
 
 	/**
 	 * Get the result's decode status.
@@ -238,10 +230,21 @@ public abstract class FileScannerResult {
 	/**
 	 * Get the result's exporters.
 	 *
+	 * @return The available exporters.
+	 */
+	public synchronized List<ResultExporter> getExporters() {
+		return Collections.unmodifiableList(this.exporters);
+	}
+
+	/**
+	 * Get the result's exporters.
+	 *
 	 * @param exporterClass The type of exporters to return.
 	 * @return The available exporters.
 	 */
 	public synchronized <T extends ResultExporter> List<T> getExporters(Class<T> exporterClass) {
+		assert exporterClass != null;
+
 		ArrayList<T> matchingExporters = new ArrayList<>();
 
 		for (ResultExporter exporter : this.exporters) {

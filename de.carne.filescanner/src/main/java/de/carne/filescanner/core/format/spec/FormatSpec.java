@@ -27,9 +27,10 @@ import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.core.FileScannerResultType;
 import de.carne.filescanner.core.format.Decodable;
+import de.carne.filescanner.core.format.DecodeContext;
 import de.carne.filescanner.core.format.RenderableData;
-import de.carne.filescanner.core.format.ResultContext;
 import de.carne.filescanner.core.format.ResultSection;
+import de.carne.filescanner.core.transfer.ResultExporter;
 import de.carne.filescanner.core.transfer.ResultRenderer;
 
 /**
@@ -61,6 +62,8 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 	}
 
 	private RenderHandler resultRenderHandler = null;
+
+	private final ArrayList<ResultExporter> resultExporters = new ArrayList<>();
 
 	/**
 	 * Whether this spec's data size is fixed or format dependent.
@@ -148,7 +151,7 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 
 	@Override
 	public long decode(FileScannerResultBuilder result) throws IOException {
-		ResultContext context = ResultContext.get();
+		DecodeContext context = DecodeContext.getDecodeContext();
 
 		for (Attribute<?> declaredAttribute : this.declaredAttributes) {
 			context.declareAttribute(declaredAttribute);
@@ -157,6 +160,7 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 		long decoded = specDecode(result, result.start());
 
 		result.updateTitle(this.resultTitleExpression.decode());
+		result.addExporters(this.resultExporters);
 		return decoded;
 	}
 
@@ -184,8 +188,7 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 	}
 
 	@Override
-	public void render(FileScannerResult result, ResultRenderer renderer)
-			throws IOException, InterruptedException {
+	public void render(FileScannerResult result, ResultRenderer renderer) throws IOException, InterruptedException {
 		if (this.resultRenderHandler != null) {
 			this.resultRenderHandler.render(this, result, renderer);
 		} else {
@@ -285,6 +288,17 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 	}
 
 	/**
+	 * Add an exporter for result export.
+	 *
+	 * @param exporter The exporter to add.
+	 */
+	public final void addResultExporter(ResultExporter exporter) {
+		assert exporter != null;
+
+		this.resultExporters.add(exporter);
+	}
+
+	/**
 	 * Record a result section during decoding.
 	 *
 	 * @param result The corresponding result object.
@@ -292,11 +306,11 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 	 * @param size The result section's size.
 	 * @param spec The result section's spec.
 	 */
-	protected final void recordResultSection(FileScannerResult result, long size, FormatSpec spec) {
+	protected final void recordResultSection(FileScannerResultBuilder result, long size, FormatSpec spec) {
 		assert size >= 0;
 		assert spec != null;
 
-		result.context().recordResultSection(size, spec);
+		result.decodeContext().recordResultSection(size, spec);
 	}
 
 	/**
@@ -310,7 +324,7 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 	protected final ResultSection getResultSectionSize(FileScannerResult result, int index) {
 		assert result != null;
 
-		return result.context().getResultSection(index);
+		return result.renderContext().getResultSection(index);
 	}
 
 	/**
