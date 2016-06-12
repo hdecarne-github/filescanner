@@ -1,7 +1,7 @@
 /*
  * I18N resource strings
  *
- * Generated on 11.06.2016 16:38:07
+ * Generated on 12.06.2016 16:38:20
  */
 package de.carne.filescanner.core.transfer;
 
@@ -33,7 +33,7 @@ public final class I18N {
 	/**
 	 * Resource key {@code STR_RAW_EXPORT_NAME}
 	 * <p>
-	 * Raw data
+	 * Binary data
 	 * </p>
 	 */
 	public static final String STR_RAW_EXPORT_NAME = "STR_RAW_EXPORT_NAME";
@@ -41,7 +41,7 @@ public final class I18N {
 	/**
 	 * Resource string {@code STR_RAW_EXPORT_NAME}
 	 * <p>
-	 * Raw data
+	 * Binary data
 	 * </p>
 	 *
 	 * @param arguments Format arguments.

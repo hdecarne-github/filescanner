@@ -18,14 +18,21 @@ package de.carne.filescanner.jfx.export;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.prefs.Preferences;
 
 import de.carne.filescanner.core.FileScannerResult;
+import de.carne.filescanner.core.FileScannerResultType;
 import de.carne.filescanner.core.transfer.FileResultExporter;
 import de.carne.filescanner.jfx.ResultGraphics;
 import de.carne.filescanner.util.Units;
 import de.carne.jfx.StageController;
+import de.carne.util.Strings;
 import de.carne.util.prefs.DirectoryPreference;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
@@ -70,8 +77,31 @@ public class ExportController extends StageController {
 		if (exporter != null) {
 			FileChooser fileChooser = new FileChooser();
 
-			fileChooser.getExtensionFilters().addAll(getFilters(exporter));
-			fileChooser.setInitialDirectory(PREF_INITIAL_DIRECTORY.getAsFile(PREFERENCES));
+			fileChooser.getExtensionFilters().addAll(getExporterFilters(exporter));
+
+			String input = this.exportDestinationInput.getText();
+			File initialDirectory = null;
+			String initialFileName = null;
+
+			if (Strings.notEmpty(input)) {
+				try {
+					Path inputPath = Paths.get(input);
+					Path inputPathParent = inputPath.getParent();
+					Path inputPathFileName = inputPath.getFileName();
+
+					if (inputPathParent != null) {
+						initialDirectory = inputPathParent.toFile();
+					}
+					if (inputPathFileName != null) {
+						initialFileName = inputPathFileName.toString();
+					}
+				} catch (InvalidPathException e) {
+					// ignore
+				}
+			}
+
+			fileChooser.setInitialDirectory(initialDirectory);
+			fileChooser.setInitialFileName(initialFileName);
 
 			File file = fileChooser.showSaveDialog(getStage());
 
@@ -89,6 +119,11 @@ public class ExportController extends StageController {
 	@FXML
 	void onCancel(ActionEvent evt) {
 		getStage().close();
+	}
+
+	@FXML
+	void onExporterSelectionChanged(FileResultExporter exporter) {
+		updateExportDestinationInput(exporter);
 	}
 
 	@Override
@@ -115,13 +150,50 @@ public class ExportController extends StageController {
 		this.resultDisplay.getChildren().add(0, ResultGraphics.get(this.result));
 		this.resultDescription.setText(
 				I18N.formatSTR_RESULT_DESCRIPTION(this.result.title(), Units.formatByteValue(this.result.size())));
+		this.exporterSelection.getSelectionModel().selectedItemProperty()
+				.addListener(new ChangeListener<FileResultExporter>() {
+
+					@Override
+					public void changed(ObservableValue<? extends FileResultExporter> observable,
+							FileResultExporter oldValue, FileResultExporter newValue) {
+						onExporterSelectionChanged(newValue);
+					}
+
+				});
 		this.exporterSelection.getItems().addAll(this.result.getExporters(FileResultExporter.class));
 		this.exporterSelection.getItems().add(FileResultExporter.RAW_EXPORTER);
 		this.exporterSelection.getSelectionModel().select(0);
 	}
 
-	private static ExtensionFilter[] getFilters(FileResultExporter exporter) {
-		ExtensionFilter exporterFilter = new ExtensionFilter(exporter.name(), exporter.filter());
+	private void updateExportDestinationInput(FileResultExporter exporter) {
+		String currentInput = this.exportDestinationInput.getText();
+		Path currentInputPath = null;
+
+		if (Strings.notEmpty(currentInput)) {
+			try {
+				currentInputPath = Paths.get(currentInput);
+			} catch (InvalidPathException e) {
+				// ignore
+			}
+		}
+
+		Path inputPath;
+
+		if (currentInputPath != null) {
+			inputPath = exporter.getDefaultExportFilePath(currentInputPath);
+		} else {
+			inputPath = exporter.getDefaultExportFilePath(PREF_INITIAL_DIRECTORY.getAsPath(PREFERENCES),
+					getResultFileName());
+		}
+		this.exportDestinationInput.setText(inputPath.toString());
+	}
+
+	private String getResultFileName() {
+		return (this.result.type() == FileScannerResultType.INPUT ? this.result.title() : null);
+	}
+
+	private static ExtensionFilter[] getExporterFilters(FileResultExporter exporter) {
+		ExtensionFilter exporterFilter = new ExtensionFilter(exporter.name(), exporter.extensionFilters());
 		ExtensionFilter allFilesFilter = new ExtensionFilter(I18N.formatSTR_ALL_FILES_FILTER(), "*.*");
 
 		return new ExtensionFilter[] { exporterFilter, allFilesFilter };
