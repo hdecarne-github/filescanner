@@ -19,6 +19,8 @@ package de.carne.filescanner.core.transfer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import de.carne.filescanner.core.FileScannerResult;
+
 /**
  * Base class for file exporter.
  */
@@ -31,6 +33,14 @@ public abstract class FileResultExporter extends ResultExporter {
 	 */
 	public static final FileResultExporter RAW_EXPORTER = new FileResultExporter(I18N.formatSTR_RAW_EXPORT_NAME(),
 			".bin", "*.bin") {
+
+		@Override
+		public StreamHandler getStreamHandler(FileScannerResult result) {
+			MappingStreamHandler streamHandler = new MappingStreamHandler();
+
+			streamHandler.mapResult(result);
+			return streamHandler;
+		}
 
 	};
 
@@ -67,6 +77,15 @@ public abstract class FileResultExporter extends ResultExporter {
 	}
 
 	/**
+	 * Get the {@linkplain StreamHandler} providing access to the export data.
+	 *
+	 * @param result The result object to export.
+	 * @return The {@linkplain StreamHandler} providing access to the export
+	 *         data.
+	 */
+	public abstract StreamHandler getStreamHandler(FileScannerResult result);
+
+	/**
 	 * Get the default export file path for the exporter.
 	 *
 	 * @param file An optional file path to derive the default export file path
@@ -86,7 +105,7 @@ public abstract class FileResultExporter extends ResultExporter {
 
 	/**
 	 * Get the default export file path for the exporter.
-	 * 
+	 *
 	 * @param directory An optional directory path to derive the default export
 	 *        file path from.
 	 * @param name An optional file name to derive the default export file path

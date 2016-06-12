@@ -16,25 +16,35 @@
  */
 package de.carne.filescanner.jfx.export;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.concurrent.Future;
 import java.util.prefs.Preferences;
 
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultType;
 import de.carne.filescanner.core.transfer.FileResultExporter;
+import de.carne.filescanner.core.transfer.StreamHandler;
 import de.carne.filescanner.jfx.ResultGraphics;
 import de.carne.filescanner.util.Units;
 import de.carne.jfx.StageController;
+import de.carne.jfx.messagebox.MessageBoxStyle;
 import de.carne.util.Strings;
 import de.carne.util.prefs.DirectoryPreference;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -55,6 +65,8 @@ public class ExportController extends StageController {
 
 	private FileScannerResult result = null;
 
+	private Future<?> exportFuture = null;
+
 	@FXML
 	HBox resultDisplay;
 
@@ -68,10 +80,16 @@ public class ExportController extends StageController {
 	TextField exportDestinationInput;
 
 	@FXML
+	Button chooseExportDestinationButton;
+
+	@FXML
 	ProgressBar exportProgress;
 
 	@FXML
-	void onChooseDestination(ActionEvent evt) {
+	Button startButton;
+
+	@FXML
+	void onChooseExportDestination(ActionEvent evt) {
 		FileResultExporter exporter = this.exporterSelection.getValue();
 
 		if (exporter != null) {
@@ -113,17 +131,82 @@ public class ExportController extends StageController {
 
 	@FXML
 	void onStart(ActionEvent evt) {
+		Path exportFilePath = validateExportDestination();
 
+		if (exportFilePath != null) {
+			StreamHandler exporterStreamHandler = this.exporterSelection.getValue().getStreamHandler(this.result);
+			Task<Void> exportTask = new Task<Void>() {
+
+				private final Path filePath = exportFilePath;
+
+				private final StreamHandler streamHandler = exporterStreamHandler;
+
+				@Override
+				protected Void call() throws Exception {
+					byte[] buffer = new byte[4096];
+					long total = this.streamHandler.size();
+					long progress = 0L;
+
+					try (InputStream in = this.streamHandler.open();
+							OutputStream out = Files.newOutputStream(this.filePath, StandardOpenOption.CREATE)) {
+						while (!isCancelled()) {
+							int read = in.read(buffer);
+
+							if (read > 0) {
+								out.write(buffer, 0, read);
+								progress += read;
+								if (total >= 0) {
+									updateProgress(progress, total);
+								}
+							} else if (progress < total) {
+								throw new EOFException();
+							} else {
+								break;
+							}
+						}
+					}
+					return null;
+				}
+
+				@Override
+				protected void succeeded() {
+					exportTaskSucceeded(this.filePath);
+				}
+
+				@Override
+				protected void cancelled() {
+					exportTaskCancelled();
+				}
+
+				@Override
+				protected void failed() {
+					exportTaskFailed(this.filePath, getException());
+				}
+
+			};
+
+			beginExport(exportTask, exporterStreamHandler.size() < 0L);
+			this.exportFuture = getExecutorService().submit(exportTask);
+		}
 	}
 
 	@FXML
 	void onCancel(ActionEvent evt) {
-		getStage().close();
+		if (this.exportFuture != null) {
+			this.exportFuture.cancel(false);
+		} else {
+			getStage().close();
+		}
 	}
 
 	@FXML
 	void onExporterSelectionChanged(FileResultExporter exporter) {
 		updateExportDestinationInput(exporter);
+	}
+
+	@Override
+	protected boolean canClose() {
+		return this.exportFuture == null;
 	}
 
 	@Override
@@ -190,6 +273,62 @@ public class ExportController extends StageController {
 
 	private String getResultFileName() {
 		return (this.result.type() == FileScannerResultType.INPUT ? this.result.title() : null);
+	}
+
+	private Path validateExportDestination() {
+		String input = this.exportDestinationInput.getText();
+		Exception invalidInputException = null;
+		Path inputPath = null;
+
+		if (Strings.notEmpty(input)) {
+			try {
+				inputPath = Paths.get(input);
+			} catch (InvalidPathException e) {
+				invalidInputException = e;
+			}
+		}
+		if (inputPath == null) {
+			showMessageBox(I18N.formatSTR_INVALID_FILE_INPUT(input), invalidInputException,
+					MessageBoxStyle.ICON_WARNING, MessageBoxStyle.BUTTON_OK);
+		}
+		return inputPath;
+	}
+
+	private void beginExport(Task<Void> task, boolean indeterminate) {
+		this.exporterSelection.setDisable(true);
+		this.exportDestinationInput.setDisable(true);
+		this.chooseExportDestinationButton.setDisable(true);
+		this.startButton.setDisable(true);
+		this.exportProgress.setProgress(indeterminate ? -1.0 : 0.0);
+		this.exportProgress.progressProperty().bind(task.progressProperty());
+	}
+
+	private void endExport() {
+		this.exportProgress.progressProperty().unbind();
+		if (this.exportProgress.getProgress() < 0.0) {
+			this.exportProgress.setProgress(0.0);
+		}
+		this.exporterSelection.setDisable(false);
+		this.exportDestinationInput.setDisable(false);
+		this.chooseExportDestinationButton.setDisable(false);
+		this.startButton.setDisable(false);
+		this.exportFuture = null;
+	}
+
+	void exportTaskSucceeded(Path exportFilePath) {
+		endExport();
+		PREF_INITIAL_DIRECTORY.setFromFile(PREFERENCES, exportFilePath);
+		getStage().close();
+	}
+
+	void exportTaskCancelled() {
+		endExport();
+	}
+
+	void exportTaskFailed(Path exportFilePath, Throwable e) {
+		endExport();
+		showMessageBox(I18N.formatSTR_EXPORT_ERROR(exportFilePath), e, MessageBoxStyle.ICON_ERROR,
+				MessageBoxStyle.BUTTON_OK);
 	}
 
 	private static ExtensionFilter[] getExporterFilters(FileResultExporter exporter) {

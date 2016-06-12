@@ -765,6 +765,11 @@ public class SessionController extends StageController {
 				}
 
 				@Override
+				protected void cancelled() {
+					rebuildSearchIndexCancelled();
+				}
+
+				@Override
 				protected void failed() {
 					rebuildSearchIndexFailed(getException());
 				}
@@ -782,6 +787,11 @@ public class SessionController extends StageController {
 	}
 
 	void rebuildSearchIndexSucceeded() {
+		this.updateSearchIndexFuture = null;
+		this.searchIndexReady.set(this.searchIndex.isReady());
+	}
+
+	void rebuildSearchIndexCancelled() {
 		this.updateSearchIndexFuture = null;
 		this.searchIndexReady.set(this.searchIndex.isReady());
 	}

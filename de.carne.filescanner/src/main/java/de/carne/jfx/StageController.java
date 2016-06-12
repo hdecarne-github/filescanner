@@ -155,6 +155,17 @@ public abstract class StageController {
 	}
 
 	/**
+	 * Called every time the stage receives a close request to check whether the
+	 * stage can be closed or not.
+	 *
+	 * @return {@code true} if the stage can be closed. Returning {@code false}
+	 *         rejects the close request.
+	 */
+	protected boolean canClose() {
+		return !this.stage.getScene().getRoot().isDisabled();
+	}
+
+	/**
 	 * Called during stage setup to perform the actual controller specific setup
 	 * steps.
 	 * <p>
@@ -320,7 +331,7 @@ public abstract class StageController {
 	}
 
 	void onCloseRequest(WindowEvent evt) {
-		if (this.stage.getScene().getRoot().isDisabled()) {
+		if (!canClose()) {
 			evt.consume();
 		}
 	}

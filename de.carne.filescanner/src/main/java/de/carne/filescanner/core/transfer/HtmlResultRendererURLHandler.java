@@ -35,7 +35,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import de.carne.filescanner.core.FileScannerResult;
-import de.carne.filescanner.core.transfer.ResultRenderer.StreamHandler;
 import de.carne.util.logging.Log;
 
 /**
@@ -286,6 +285,11 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 			throw new FileNotFoundException(urlString);
 		}
 		return streamHandler;
+	}
+
+	@Override
+	public long size() {
+		return -1L;
 	}
 
 	@SuppressWarnings("resource")

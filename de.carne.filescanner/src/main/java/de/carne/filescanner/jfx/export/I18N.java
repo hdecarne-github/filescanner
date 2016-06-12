@@ -1,7 +1,7 @@
 /*
  * I18N resource strings
  *
- * Generated on 11.06.2016 16:48:03
+ * Generated on 12.06.2016 19:26:12
  */
 package de.carne.filescanner.jfx.export;
 
@@ -28,6 +28,69 @@ public final class I18N {
 		String pattern = BUNDLE.getString(key);
 
 		return (arguments.length > 0 ? MessageFormat.format(pattern, arguments) : pattern);
+	}
+
+	/**
+	 * Resource key {@code STR_INVALID_FILE_INPUT}
+	 * <p>
+	 * Cannot start export.<br/>''{0}'' is not a valid file name.
+	 * </p>
+	 */
+	public static final String STR_INVALID_FILE_INPUT = "STR_INVALID_FILE_INPUT";
+
+	/**
+	 * Resource string {@code STR_INVALID_FILE_INPUT}
+	 * <p>
+	 * Cannot start export.<br/>''{0}'' is not a valid file name.
+	 * </p>
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formated string.
+	 */
+	public static String formatSTR_INVALID_FILE_INPUT(Object... arguments) {
+		return format(STR_INVALID_FILE_INPUT, arguments);
+	}
+
+	/**
+	 * Resource key {@code STR_EXPORT_ERROR}
+	 * <p>
+	 * An error occurred while writing to export file<br/>''{0}''.
+	 * </p>
+	 */
+	public static final String STR_EXPORT_ERROR = "STR_EXPORT_ERROR";
+
+	/**
+	 * Resource string {@code STR_EXPORT_ERROR}
+	 * <p>
+	 * An error occurred while writing to export file<br/>''{0}''.
+	 * </p>
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formated string.
+	 */
+	public static String formatSTR_EXPORT_ERROR(Object... arguments) {
+		return format(STR_EXPORT_ERROR, arguments);
+	}
+
+	/**
+	 * Resource key {@code STR_EXPORT_TITLE}
+	 * <p>
+	 * Export
+	 * </p>
+	 */
+	public static final String STR_EXPORT_TITLE = "STR_EXPORT_TITLE";
+
+	/**
+	 * Resource string {@code STR_EXPORT_TITLE}
+	 * <p>
+	 * Export
+	 * </p>
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formated string.
+	 */
+	public static String formatSTR_EXPORT_TITLE(Object... arguments) {
+		return format(STR_EXPORT_TITLE, arguments);
 	}
 
 	/**
@@ -70,27 +133,6 @@ public final class I18N {
 	 */
 	public static String formatSTR_RESULT_DESCRIPTION(Object... arguments) {
 		return format(STR_RESULT_DESCRIPTION, arguments);
-	}
-
-	/**
-	 * Resource key {@code STR_EXPORT_TITLE}
-	 * <p>
-	 * Export
-	 * </p>
-	 */
-	public static final String STR_EXPORT_TITLE = "STR_EXPORT_TITLE";
-
-	/**
-	 * Resource string {@code STR_EXPORT_TITLE}
-	 * <p>
-	 * Export
-	 * </p>
-	 *
-	 * @param arguments Format arguments.
-	 * @return The formated string.
-	 */
-	public static String formatSTR_EXPORT_TITLE(Object... arguments) {
-		return format(STR_EXPORT_TITLE, arguments);
 	}
 
 }

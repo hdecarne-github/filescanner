@@ -33,7 +33,7 @@
          </font>
       </Label>
       <TextField fx:id="exportDestinationInput" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-      <Button mnemonicParsing="false" onAction="#onChooseDestination" GridPane.columnIndex="2" GridPane.rowIndex="2">
+      <Button fx:id="chooseExportDestinationButton" mnemonicParsing="false" onAction="#onChooseExportDestination" GridPane.columnIndex="2" GridPane.rowIndex="2">
          <graphic>
             <ImageView pickOnBounds="true" preserveRatio="true">
                <image>
@@ -50,7 +50,7 @@
       <ProgressBar fx:id="exportProgress" maxWidth="1.7976931348623157E308" progress="0.0" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="3" />
     <HBox alignment="TOP_RIGHT" spacing="8.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="4">
       <children>
-      <Button minWidth="80.0" mnemonicParsing="false" onAction="#onStart" text="%_STR_START_BUTTON" HBox.hgrow="NEVER">
+      <Button fx:id="startButton" minWidth="80.0" mnemonicParsing="false" onAction="#onStart" text="%_STR_START_BUTTON" HBox.hgrow="NEVER">
         <HBox.margin>
           <Insets left="14.0" />
         </HBox.margin>
@@ -69,11 +69,11 @@
       <ColumnConstraints hgrow="NEVER" />
   </columnConstraints>
   <rowConstraints>
-      <RowConstraints valignment="TOP" vgrow="ALWAYS" />
+      <RowConstraints valignment="TOP" vgrow="NEVER" />
       <RowConstraints valignment="CENTER" vgrow="NEVER" />
       <RowConstraints valignment="CENTER" vgrow="NEVER" />
       <RowConstraints valignment="CENTER" vgrow="NEVER" />
-    <RowConstraints valignment="CENTER" vgrow="NEVER" />
+    <RowConstraints valignment="CENTER" vgrow="ALWAYS" />
   </rowConstraints>
    <padding>
       <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />

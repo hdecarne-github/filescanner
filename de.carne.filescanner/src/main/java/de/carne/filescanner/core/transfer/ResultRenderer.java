@@ -17,7 +17,6 @@
 package de.carne.filescanner.core.transfer;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -86,21 +85,6 @@ public abstract class ResultRenderer {
 
 	}
 
-	/**
-	 * Interface used to access stream based data.
-	 */
-	public static interface StreamHandler {
-
-		/**
-		 * Open an {@code InputStream} for data access.
-		 *
-		 * @return The opened {@code InputStream}.
-		 * @throws IOException if an I/O error occurs.
-		 */
-		public InputStream open() throws IOException;
-
-	}
-
 	private boolean open = true;
 	private boolean prepared = false;
 	private final RendererStyle style = new RendererStyle();
@@ -146,7 +130,7 @@ public abstract class ResultRenderer {
 
 	/**
 	 * Get the rendering style.
-	 * 
+	 *
 	 * @return The rendering style.
 	 */
 	public final RendererStyle getStyle() {

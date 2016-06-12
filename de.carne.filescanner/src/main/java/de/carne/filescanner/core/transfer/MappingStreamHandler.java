@@ -23,11 +23,11 @@ import java.util.ArrayList;
 
 import de.carne.filescanner.core.FileScannerInput;
 import de.carne.filescanner.core.FileScannerResult;
-import de.carne.filescanner.core.transfer.ResultRenderer.StreamHandler;
 import de.carne.nio.compression.IncompleteReadException;
 
 /**
- *
+ * {@linkplain StreamHandler} implementation backed by a combination of mapped
+ * data sources.
  */
 public class MappingStreamHandler implements StreamHandler {
 
@@ -111,6 +111,11 @@ public class MappingStreamHandler implements StreamHandler {
 		assert result != null;
 
 		return mapInputSection(result.input(), result.start(), result.end());
+	}
+
+	@Override
+	public long size() {
+		return available(0l);
 	}
 
 	@Override
