@@ -31,7 +31,7 @@ public abstract class FileResultExporter extends ResultExporter {
 	/**
 	 * Default exporter for simply writing a scanner result to a file.
 	 */
-	public static final FileResultExporter BIN_EXPORTER = simpleExporter(I18N.formatSTR_RAW_EXPORT_NAME(), ".bin",
+	public static final FileResultExporter BIN_EXPORTER = simpleFileExporter(I18N.formatSTR_RAW_EXPORT_NAME(), ".bin",
 			"*.bin");
 
 	private final String defaultExtension;
@@ -68,7 +68,7 @@ public abstract class FileResultExporter extends ResultExporter {
 	 *        file type.
 	 * @return The created exporter.
 	 */
-	public static FileResultExporter simpleExporter(String name, String defaultExtension, String... extensionFilters) {
+	public static FileResultExporter simpleFileExporter(String name, String defaultExtension, String... extensionFilters) {
 		return new FileResultExporter(name, defaultExtension, extensionFilters) {
 
 			@Override

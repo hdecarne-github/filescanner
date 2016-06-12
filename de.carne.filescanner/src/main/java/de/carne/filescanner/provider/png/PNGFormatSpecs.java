@@ -21,7 +21,7 @@ import de.carne.filescanner.core.format.spec.U32Attribute;
 import de.carne.filescanner.core.format.spec.U32Attributes;
 import de.carne.filescanner.core.format.spec.U8ArrayAttribute;
 import de.carne.filescanner.core.format.spec.VarArrayFormatSpec;
-import de.carne.filescanner.core.transfer.FileResultExporter;
+import de.carne.filescanner.core.transfer.ImageResultExporter;
 
 /**
  * PNG format structures.
@@ -52,8 +52,8 @@ class PNGFormatSpecs {
 
 	public static final PNGImageRenderHandler PNG_RENDER_HANDLER = new PNGImageRenderHandler();
 
-	public static final FileResultExporter PNG_FILE_EXPORTER = FileResultExporter.simpleExporter(NAME_PNG, ".png",
-			"*.png");
+	public static final ImageResultExporter PNG_IMAGE_EXPORTER = ImageResultExporter.simpleImageExporter(NAME_PNG,
+			".png", "*.png");
 
 	public static final StructFormatSpec PNG_SIGNATURE;
 
@@ -110,7 +110,7 @@ class PNGFormatSpecs {
 		png.append(new VarArrayFormatSpec(PNG_CHUNK_GENERIC, PNG_CHUNK_IEND, 1));
 		png.setResult(NAME_PNG);
 		png.setResultRenderHandler(PNG_RENDER_HANDLER);
-		png.addResultExporter(PNG_FILE_EXPORTER);
+		png.addResultExporter(PNG_IMAGE_EXPORTER);
 		PNG = png;
 	}
 

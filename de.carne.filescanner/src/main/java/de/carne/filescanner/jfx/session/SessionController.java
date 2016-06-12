@@ -119,6 +119,8 @@ public class SessionController extends StageController {
 
 	private Future<?> updateSearchIndexFuture = null;
 
+	private Future<?> copyClipboardFuture = null;
+
 	private final SimpleBooleanProperty autoIndexProperty = new SimpleBooleanProperty(true);
 
 	private final SimpleBooleanProperty searchIndexReady = new SimpleBooleanProperty(this.searchIndex.isReady());
@@ -245,10 +247,13 @@ public class SessionController extends StageController {
 
 	@FXML
 	void onCopySelection(ActionEvent evt) {
-		TreeItem<FileScannerResult> selectedResult = this.resultsView.getSelectionModel().getSelectedItem();
+		TreeItem<FileScannerResult> resultItem = this.resultsView.getSelectionModel().getSelectedItem();
 
-		if (selectedResult != null) {
-
+		if (resultItem != null) {
+			if (this.copyClipboardFuture != null && !this.copyClipboardFuture.isDone()) {
+				this.copyClipboardFuture.cancel(false);
+			}
+			this.copyClipboardFuture = getExecutorService().submit(new CopyClipboardTask(resultItem.getValue()));
 		}
 	}
 
