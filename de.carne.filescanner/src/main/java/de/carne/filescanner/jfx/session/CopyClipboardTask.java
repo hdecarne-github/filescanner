@@ -56,10 +56,10 @@ class CopyClipboardTask extends Task<Void> {
 		List<ImageResultExporter> imageExporters = this.result.getExporters(ImageResultExporter.class);
 
 		if (!isCancelled() && imageExporters.size() > 0) {
-			this.imageData = imageExporters.get(0).getStreamHandler(this.result).open();
+			this.imageData = imageExporters.get(0).getExportStreamHandler(this.result).open();
 		}
 		if (!isCancelled() && this.textData == null && this.imageData == null) {
-			// TODO
+			this.textData = TextResultExporter.RENDER_TEXT_EXPORTER.export(this.result);
 		}
 		return null;
 	}

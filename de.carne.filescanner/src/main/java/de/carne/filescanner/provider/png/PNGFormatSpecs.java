@@ -52,7 +52,7 @@ class PNGFormatSpecs {
 
 	public static final PNGImageRenderHandler PNG_RENDER_HANDLER = new PNGImageRenderHandler();
 
-	public static final ImageResultExporter PNG_IMAGE_EXPORTER = ImageResultExporter.simpleImageExporter(NAME_PNG,
+	public static final ImageResultExporter PNG_IMAGE_EXPORTER = ImageResultExporter.defaultImageExporter(NAME_PNG,
 			".png", "*.png");
 
 	public static final StructFormatSpec PNG_SIGNATURE;

@@ -16,6 +16,8 @@
  */
 package de.carne.filescanner.core.transfer;
 
+import java.io.IOException;
+
 import de.carne.filescanner.core.FileScannerResult;
 
 /**
@@ -23,6 +25,30 @@ import de.carne.filescanner.core.FileScannerResult;
  */
 public abstract class TextResultExporter extends ResultExporter {
 
+	/**
+	 * Default {@linkplain TextResultExporter} implementation which uses the
+	 * result's render function to provide a textual representation of the
+	 * result.
+	 */
+	public static final TextResultExporter RENDER_TEXT_EXPORTER = new TextResultExporter("Text") {
+
+		@Override
+		public Text export(FileScannerResult result) throws IOException, InterruptedException {
+			StringPlainTextResultRenderer plainTextRenderer = new StringPlainTextResultRenderer();
+			CombinedResultRenderer combinedRenderer = new CombinedResultRenderer(plainTextRenderer);
+
+			result.render(combinedRenderer);
+			return new Text(plainTextRenderer.toString(), null);
+		}
+
+	};
+
+	/**
+	 * Result object holding the exported text.
+	 * <p>
+	 * The exported text can be available in more than one format.
+	 * </p>
+	 */
 	public static final class Text {
 
 		private final String plainText;
@@ -36,28 +62,65 @@ public abstract class TextResultExporter extends ResultExporter {
 			this.rtfText = rtfText;
 		}
 
+		/**
+		 * Check whether the exported text is available as plain text.
+		 *
+		 * @return {@code true} if the exported text is available as plain text.
+		 */
 		public boolean isPlainText() {
 			return this.plainText != null;
 		}
 
+		/**
+		 * Get the plain text representation of the exported data.
+		 *
+		 * @return The plain text representation of the exported data or
+		 *         {@code null} if it is not available in plain text.
+		 * @see #isPlainText()
+		 */
 		public String getPlainText() {
 			return this.plainText;
 		}
 
+		/**
+		 * Check whether the exported text is available as Rich Text.
+		 *
+		 * @return {@code true} if the exported text is available as Rich Text.
+		 */
 		public boolean isRtfText() {
 			return this.rtfText != null;
 		}
 
+		/**
+		 * Get the Rich Text representation of the exported data.
+		 *
+		 * @return The Rich Text representation of the exported data or
+		 *         {@code null} if it is not available in plain text.
+		 * @see #isRtfText()
+		 */
 		public String getRtfText() {
 			return this.rtfText;
 		}
 
 	}
 
+	/**
+	 * Construct {@code TextResultExporter}.
+	 *
+	 * @param name The exporter name.
+	 */
 	protected TextResultExporter(String name) {
 		super(name);
 	}
 
-	public abstract Text export(FileScannerResult result);
+	/**
+	 * Export the submitted result object to one or more text formats.
+	 *
+	 * @param result The result object to export.
+	 * @return The exported text (see {@linkplain Text}).
+	 * @throws IOException if an I/O error occurs.
+	 * @throws InterruptedException if the exporter thread was interrupted.
+	 */
+	public abstract Text export(FileScannerResult result) throws IOException, InterruptedException;
 
 }

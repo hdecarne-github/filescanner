@@ -45,7 +45,7 @@ import org.apache.lucene.search.TopFieldDocs;
 import org.apache.lucene.store.FSDirectory;
 
 import de.carne.filescanner.core.FileScannerResult;
-import de.carne.filescanner.core.transfer.StringTextResultRenderer;
+import de.carne.filescanner.core.transfer.StringPlainTextResultRenderer;
 import de.carne.util.IOUtils;
 import de.carne.util.Nanos;
 import de.carne.util.Strings;
@@ -164,7 +164,7 @@ class SearchIndex implements AutoCloseable {
 	}
 
 	private static String getResultContent(FileScannerResult result) throws IOException, InterruptedException {
-		StringTextResultRenderer content = new StringTextResultRenderer();
+		StringPlainTextResultRenderer content = new StringPlainTextResultRenderer();
 
 		content.renderText(result.title());
 		content.renderBreak();

@@ -47,12 +47,12 @@ public abstract class ImageResultExporter extends FileResultExporter {
 	 *        file type.
 	 * @return The created exporter.
 	 */
-	public static ImageResultExporter simpleImageExporter(String name, String defaultExtension,
+	public static ImageResultExporter defaultImageExporter(String name, String defaultExtension,
 			String... extensionFilters) {
 		return new ImageResultExporter(name, defaultExtension, extensionFilters) {
 
 			@Override
-			public StreamHandler getStreamHandler(FileScannerResult result) {
+			public StreamHandler getExportStreamHandler(FileScannerResult result) {
 				MappingStreamHandler streamHandler = new MappingStreamHandler();
 
 				streamHandler.mapResult(result);

@@ -19,10 +19,10 @@ package de.carne.filescanner.core.transfer;
 import java.io.IOException;
 
 /**
- * {@linkplain TextResultRenderer} implementation writing it's output to a
+ * {@linkplain PlainTextResultRenderer} implementation writing it's output to a
  * string buffer.
  */
-public class StringTextResultRenderer extends TextResultRenderer {
+public class StringPlainTextResultRenderer extends PlainTextResultRenderer {
 
 	private StringBuilder buffer = new StringBuilder();
 

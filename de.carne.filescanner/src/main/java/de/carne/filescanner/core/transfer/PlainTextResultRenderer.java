@@ -22,9 +22,9 @@ import de.carne.util.Strings;
 
 /**
  * Base class for all {@code FileScannerResultRenderer} implementations that
- * generate simple text output.
+ * generate plain text output.
  */
-public abstract class TextResultRenderer extends ResultRenderer {
+public abstract class PlainTextResultRenderer extends ResultRenderer {
 
 	@Override
 	protected void writeBreak() throws IOException, InterruptedException {

@@ -134,7 +134,7 @@ public class ExportController extends StageController {
 		Path exportFilePath = validateExportDestination();
 
 		if (exportFilePath != null) {
-			StreamHandler exporterStreamHandler = this.exporterSelection.getValue().getStreamHandler(this.result);
+			StreamHandler exporterStreamHandler = this.exporterSelection.getValue().getExportStreamHandler(this.result);
 			Task<Void> exportTask = new Task<Void>() {
 
 				private final Path filePath = exportFilePath;
