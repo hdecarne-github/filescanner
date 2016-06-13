@@ -97,7 +97,7 @@ public abstract class HtmlResultRenderer extends ResultRenderer {
 				}
 			}
 
-			String size = String.format("%.2f", fontInfo.size());
+			String size = String.format("%.0fpx", fontInfo.size());
 
 			return new CSSFontInfo(family.toString(), style, weight, size);
 		}

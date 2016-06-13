@@ -17,8 +17,10 @@
 package de.carne.filescanner.core.transfer;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.StringTokenizer;
 
-import de.carne.util.Strings;
+import de.carne.filescanner.core.transfer.RendererStyle.FontInfo;
 
 /**
  * Base class for all {@code FileScannerResultRenderer} implementations that
@@ -26,14 +28,116 @@ import de.carne.util.Strings;
  */
 public abstract class RichTextResultRenderer extends ResultRenderer {
 
+	static final HashMap<String, String> RTF_FORMATS = new HashMap<>();
+
+	static {
+		RTF_FORMATS.put("normal", "\\plain ");
+		RTF_FORMATS.put("italic", "\\i ");
+		RTF_FORMATS.put("oblique", "");
+		RTF_FORMATS.put("bold", "\\b ");
+	}
+
+	private static class RTFFontInfo {
+
+		private final String family;
+
+		private final String formats;
+
+		private RTFFontInfo(String family, String formats) {
+			this.family = family;
+			this.formats = formats;
+		}
+
+		public static RTFFontInfo fromFontInfo(FontInfo fontInfo) {
+			StringTokenizer tokens = new StringTokenizer(fontInfo.name(), " ");
+			StringBuilder family = new StringBuilder();
+			StringBuilder formats = new StringBuilder();
+
+			while (tokens.hasMoreTokens()) {
+				String token = tokens.nextToken();
+
+				if (family.length() == 0) {
+					family.append(token);
+					continue;
+				}
+
+				String format = RTF_FORMATS.get(token.toLowerCase());
+
+				if (format != null) {
+					formats.append(format);
+				} else {
+					family.append(' ').append(token);
+				}
+			}
+			formats.append(String.format("\\fs%.0f ", fontInfo.size() * 2.0));
+			return new RTFFontInfo(family.toString(), formats.toString());
+		}
+
+		public String family() {
+			return this.family;
+		}
+
+		public String formats() {
+			return this.formats;
+		}
+
+	}
+
+	@Override
+	protected void writePrologue() throws IOException, InterruptedException {
+		write("{\\rtf1\\ansi");
+
+		String encoding = System.getProperty("file.encoding", "").toLowerCase();
+
+		if (encoding.startsWith("cp") || encoding.startsWith("ms")) {
+			write("\\ansicpg", encoding.substring(2));
+		}
+		write("\\deff0{\\fonttbl{\\f0 ");
+
+		RendererStyle style = getStyle();
+		RTFFontInfo fontInfo = RTFFontInfo.fromFontInfo(style.getFontInfo());
+
+		write(fontInfo.family());
+		write(";}}\n{\\colortbl\n");
+		for (Mode mode : Mode.values()) {
+			int color = style.getColor(mode);
+
+			write("\\red", Integer.toString((color >>> 16) & 0xff));
+			write("\\green", Integer.toString((color >>> 8) & 0xff));
+			write("\\blue", Integer.toString(color & 0xff), ";\n");
+		}
+		write("}\n\\f0 ", fontInfo.formats());
+	}
+
+	@Override
+	protected void writeEpilogue() throws IOException, InterruptedException {
+		write("\n}\n");
+	}
+
 	@Override
 	protected void writeBreak() throws IOException, InterruptedException {
-		write(Strings.NEWLINE);
+		write("\n\\par ");
 	}
 
 	@Override
 	protected void writeText(Mode mode, String text) throws IOException, InterruptedException {
-		write(text);
+		write("{\\cf", Integer.toString(mode.ordinal()), " ");
+
+		StringBuilder buffer = new StringBuilder();
+		int textLength = text.length();
+
+		for (int textIndex = 0; textIndex < textLength; textIndex++) {
+			char textChar = text.charAt(textIndex);
+
+			if (textChar == '\\' || textChar == '{' || textChar == '}') {
+				buffer.append('\\').append(textChar);
+			} else if (textChar > 0xff) {
+				buffer.append("\\u").append(textChar & 0xffff);
+			} else {
+				buffer.append(textChar);
+			}
+		}
+		write(buffer.toString(), "}");
 	}
 
 	@Override

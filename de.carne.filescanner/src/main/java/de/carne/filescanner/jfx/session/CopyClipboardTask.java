@@ -21,7 +21,9 @@ import java.util.List;
 
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.transfer.ImageResultExporter;
+import de.carne.filescanner.core.transfer.RendererStyle;
 import de.carne.filescanner.core.transfer.TextResultExporter;
+import de.carne.util.Quirks;
 import de.carne.util.logging.Log;
 import javafx.concurrent.Task;
 import javafx.scene.image.Image;
@@ -37,12 +39,15 @@ class CopyClipboardTask extends Task<Void> {
 
 	private final FileScannerResult result;
 
+	private final RendererStyle style;
+
 	private TextResultExporter.Text textData = null;
 
 	private InputStream imageData = null;
 
-	CopyClipboardTask(FileScannerResult result) {
+	CopyClipboardTask(FileScannerResult result, RendererStyle style) {
 		this.result = result;
+		this.style = style;
 	}
 
 	@Override
@@ -50,7 +55,7 @@ class CopyClipboardTask extends Task<Void> {
 		List<TextResultExporter> textExporters = this.result.getExporters(TextResultExporter.class);
 
 		if (!isCancelled() && textExporters.size() > 0) {
-			this.textData = textExporters.get(0).export(this.result);
+			this.textData = textExporters.get(0).export(this.result, this.style);
 		}
 
 		List<ImageResultExporter> imageExporters = this.result.getExporters(ImageResultExporter.class);
@@ -59,7 +64,7 @@ class CopyClipboardTask extends Task<Void> {
 			this.imageData = imageExporters.get(0).getExportStreamHandler(this.result).open();
 		}
 		if (!isCancelled() && this.textData == null && this.imageData == null) {
-			this.textData = TextResultExporter.RENDER_TEXT_EXPORTER.export(this.result);
+			this.textData = TextResultExporter.RENDER_TEXT_EXPORTER.export(this.result, this.style);
 		}
 		return null;
 	}
@@ -75,7 +80,7 @@ class CopyClipboardTask extends Task<Void> {
 		if (this.textData != null) {
 			if (this.textData.isPlainText()) {
 				LOG.info(null, "Copying text/plain data from result ''{0}''", this.result.title());
-				content.putString(this.textData.getPlainText());
+				content.putString(Quirks.fxClipboardString(this.textData.getPlainText()));
 			}
 			if (this.textData.isRtfText()) {
 				LOG.info(null, "Copying text/rtf data from result ''{0}''", this.result.title());

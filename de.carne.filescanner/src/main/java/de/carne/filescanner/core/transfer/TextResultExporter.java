@@ -33,12 +33,15 @@ public abstract class TextResultExporter extends ResultExporter {
 	public static final TextResultExporter RENDER_TEXT_EXPORTER = new TextResultExporter("Text") {
 
 		@Override
-		public Text export(FileScannerResult result) throws IOException, InterruptedException {
+		public Text export(FileScannerResult result, RendererStyle style) throws IOException, InterruptedException {
 			StringPlainTextResultRenderer plainTextRenderer = new StringPlainTextResultRenderer();
-			CombinedResultRenderer combinedRenderer = new CombinedResultRenderer(plainTextRenderer);
+			StringRichTextResultRenderer richTextRenderer = new StringRichTextResultRenderer();
+			CombinedResultRenderer combinedRenderer = new CombinedResultRenderer(plainTextRenderer, richTextRenderer);
 
+			richTextRenderer.setStyle(style);
 			result.render(combinedRenderer);
-			return new Text(plainTextRenderer.toString(), null);
+			System.out.println(richTextRenderer.toString());
+			return new Text(plainTextRenderer.toString(), richTextRenderer.toString());
 		}
 
 	};
@@ -117,10 +120,11 @@ public abstract class TextResultExporter extends ResultExporter {
 	 * Export the submitted result object to one or more text formats.
 	 *
 	 * @param result The result object to export.
+	 * @param style The style to use for rendering.
 	 * @return The exported text (see {@linkplain Text}).
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the exporter thread was interrupted.
 	 */
-	public abstract Text export(FileScannerResult result) throws IOException, InterruptedException;
+	public abstract Text export(FileScannerResult result, RendererStyle style) throws IOException, InterruptedException;
 
 }

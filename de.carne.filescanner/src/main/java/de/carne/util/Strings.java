@@ -56,4 +56,29 @@ public final class Strings {
 		return (s != null ? s.trim() : "");
 	}
 
+	/**
+	 * Remove all occurrences of specific character from a string.
+	 *
+	 * @param s The string to remove the character from.
+	 * @param c The character to remove.
+	 * @return The processed string.
+	 */
+	public static String remove(String s, char c) {
+		StringBuilder buffer = null;
+
+		if (s != null && s.indexOf(c) >= 0) {
+			int length = s.length();
+
+			buffer = new StringBuilder(length);
+			for (int charIndex = 0; charIndex < length; charIndex++) {
+				char currentChar = s.charAt(charIndex);
+
+				if (currentChar != c) {
+					buffer.append(currentChar);
+				}
+			}
+		}
+		return (buffer != null ? buffer.toString() : s);
+	}
+
 }

@@ -253,7 +253,8 @@ public class SessionController extends StageController {
 			if (this.copyClipboardFuture != null && !this.copyClipboardFuture.isDone()) {
 				this.copyClipboardFuture.cancel(false);
 			}
-			this.copyClipboardFuture = getExecutorService().submit(new CopyClipboardTask(resultItem.getValue()));
+			this.copyClipboardFuture = getExecutorService()
+					.submit(new CopyClipboardTask(resultItem.getValue(), this.resultViewStyle));
 		}
 	}
 
