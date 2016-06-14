@@ -31,10 +31,10 @@ public abstract class RichTextResultRenderer extends ResultRenderer {
 	static final HashMap<String, String> RTF_FORMATS = new HashMap<>();
 
 	static {
-		RTF_FORMATS.put("normal", "\\plain ");
-		RTF_FORMATS.put("italic", "\\i ");
+		RTF_FORMATS.put("normal", "\\plain");
+		RTF_FORMATS.put("italic", "\\i");
 		RTF_FORMATS.put("oblique", "");
-		RTF_FORMATS.put("bold", "\\b ");
+		RTF_FORMATS.put("bold", "\\b");
 	}
 
 	private static class RTFFontInfo {
@@ -69,7 +69,7 @@ public abstract class RichTextResultRenderer extends ResultRenderer {
 					family.append(' ').append(token);
 				}
 			}
-			formats.append(String.format("\\fs%.0f ", fontInfo.size() * 2.0));
+			formats.append(String.format("\\fs%.0f", fontInfo.size() * 2.0));
 			return new RTFFontInfo(family.toString(), formats.toString());
 		}
 
@@ -92,7 +92,7 @@ public abstract class RichTextResultRenderer extends ResultRenderer {
 		if (encoding.startsWith("cp") || encoding.startsWith("ms")) {
 			write("\\ansicpg", encoding.substring(2));
 		}
-		write("\\deff0{\\fonttbl{\\f0 ");
+		write("\\deff0{\\fonttbl{\\f0\\fnil ");
 
 		RendererStyle style = getStyle();
 		RTFFontInfo fontInfo = RTFFontInfo.fromFontInfo(style.getFontInfo());
@@ -106,7 +106,7 @@ public abstract class RichTextResultRenderer extends ResultRenderer {
 			write("\\green", Integer.toString((color >>> 8) & 0xff));
 			write("\\blue", Integer.toString(color & 0xff), ";\n");
 		}
-		write("}\n\\f0 ", fontInfo.formats());
+		write("}\n\\f0\\uc1", fontInfo.formats());
 	}
 
 	@Override
@@ -116,7 +116,7 @@ public abstract class RichTextResultRenderer extends ResultRenderer {
 
 	@Override
 	protected void writeBreak() throws IOException, InterruptedException {
-		write("\n\\par ");
+		write("\\par\n");
 	}
 
 	@Override
@@ -124,20 +124,19 @@ public abstract class RichTextResultRenderer extends ResultRenderer {
 		write("{\\cf", Integer.toString(mode.ordinal()), " ");
 
 		StringBuilder buffer = new StringBuilder();
-		int textLength = text.length();
 
-		for (int textIndex = 0; textIndex < textLength; textIndex++) {
-			char textChar = text.charAt(textIndex);
-
-			if (textChar == '\\' || textChar == '{' || textChar == '}') {
-				buffer.append('\\').append(textChar);
-			} else if (textChar > 0xff) {
-				buffer.append("\\u").append(textChar & 0xffff);
-			} else {
-				buffer.append(textChar);
-			}
-		}
+		text.codePoints().forEach(c -> writeCodePoint(buffer, c));
 		write(buffer.toString(), "}");
+	}
+
+	private void writeCodePoint(StringBuilder buffer, int c) {
+		if (c == '\\' || c == '{' || c == '}') {
+			buffer.append('\\').append((char) c);
+		} else if (!Character.isBmpCodePoint(c)) {
+			buffer.append("\\u").append(c & 0xffff).append('?');
+		} else {
+			buffer.append((char) c);
+		}
 	}
 
 	@Override

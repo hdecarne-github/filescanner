@@ -40,7 +40,6 @@ public abstract class TextResultExporter extends ResultExporter {
 
 			richTextRenderer.setStyle(style);
 			result.render(combinedRenderer);
-			System.out.println(richTextRenderer.toString());
 			return new Text(plainTextRenderer.toString(), richTextRenderer.toString());
 		}
 
