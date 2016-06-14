@@ -63,6 +63,7 @@ import de.carne.util.Strings;
 import de.carne.util.logging.Log;
 import de.carne.util.prefs.DirectoryPreference;
 import de.carne.util.prefs.ObjectPreference;
+import de.carne.util.prefs.PropertiesPreferencesFactory;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -100,6 +101,8 @@ public class SessionController extends StageController {
 	private static final Log LOG = new Log(SessionController.class);
 
 	private static final Preferences PREFERENCES = Preferences.systemNodeForPackage(SessionController.class);
+
+	private static final String WEBVIEW_USER_DATA_DIRECTORY_NAME = "webview";
 
 	private static final ObjectPreference<FileViewType> PREF_FILE_VIEW_TYPE = new ObjectPreference<>("fileViewType",
 			s -> FileViewType.valueOf(s));
@@ -541,6 +544,8 @@ public class SessionController extends StageController {
 		this.gotoStartButton.disableProperty()
 				.bind(Bindings.isNull(this.resultsView.getSelectionModel().selectedItemProperty()));
 		this.resultView.setContextMenuEnabled(false);
+		this.resultView.getEngine()
+				.setUserDataDirectory(PropertiesPreferencesFactory.directory(WEBVIEW_USER_DATA_DIRECTORY_NAME));
 		updateScanResult(null);
 		this.cancelScanButton.setDisable(true);
 		updateScanStatusMessage(I18N.STR_SCAN_STATUS_NONE, null);

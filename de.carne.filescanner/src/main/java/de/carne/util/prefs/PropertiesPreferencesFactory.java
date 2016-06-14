@@ -16,8 +16,11 @@
  */
 package de.carne.util.prefs;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.prefs.Preferences;
@@ -70,6 +73,30 @@ public class PropertiesPreferencesFactory implements PreferencesFactory {
 	 */
 	public static Preferences fromFile(Path propertiesPath) {
 		return new PropertiesPreferences(propertiesPath);
+	}
+
+	/**
+	 * Get a directory within the preferences folder for storing user specific
+	 * data.
+	 * <p>
+	 * If the directory does not yet exist, it is created.
+	 * </p>
+	 *
+	 * @param name The directory name to use.
+	 * @return The created directory.
+	 */
+	public static File directory(String name) {
+		assert name != null;
+
+		String userHome = System.getProperty("user.home", ".");
+		Path directoryPath = Paths.get(userHome, PREFERENCES_DIR, name);
+
+		try {
+			Files.createDirectories(directoryPath);
+		} catch (IOException e) {
+			throw new RuntimeException("Unable to create preference directory '" + directoryPath + "'");
+		}
+		return directoryPath.toFile();
 	}
 
 }
