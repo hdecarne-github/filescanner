@@ -29,7 +29,9 @@ import de.carne.filescanner.core.transfer.RendererStyle;
 import de.carne.filescanner.core.transfer.RendererStyle.FontInfo;
 import de.carne.filescanner.core.transfer.RendererStylePreferences;
 import de.carne.filescanner.core.transfer.ResultRenderer.Mode;
+import de.carne.filescanner.jfx.Images;
 import de.carne.filescanner.spi.Format;
+import de.carne.jfx.FXPlatform;
 import de.carne.jfx.StageController;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -136,6 +138,8 @@ public class PreferencesController extends StageController {
 	protected void setupStage(Stage controllerStage) throws IOException {
 		super.setupStage(controllerStage);
 		controllerStage.setTitle(I18N.formatSTR_PREFERENCES_TITLE());
+		controllerStage.getIcons()
+				.addAll(FXPlatform.stageIcons(Images.IMAGE_FILESCANNER16, Images.IMAGE_FILESCANNER32));
 		this.enabledFormatsList.setCellFactory(
 				CheckBoxListCell.forListView(new Callback<EnabledFormatModel, ObservableValue<Boolean>>() {
 

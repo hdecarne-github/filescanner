@@ -33,8 +33,10 @@ import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultType;
 import de.carne.filescanner.core.transfer.FileResultExporter;
 import de.carne.filescanner.core.transfer.StreamHandler;
+import de.carne.filescanner.jfx.Images;
 import de.carne.filescanner.jfx.ResultGraphics;
 import de.carne.filescanner.util.Units;
+import de.carne.jfx.FXPlatform;
 import de.carne.jfx.StageController;
 import de.carne.jfx.messagebox.MessageBoxStyle;
 import de.carne.util.Strings;
@@ -213,6 +215,7 @@ public class ExportController extends StageController {
 	protected void setupStage(Stage controllerStage) throws IOException {
 		super.setupStage(controllerStage);
 		controllerStage.setTitle(I18N.formatSTR_EXPORT_TITLE());
+		controllerStage.getIcons().addAll(FXPlatform.stageIcons(Images.IMAGE_EXPORT16, Images.IMAGE_EXPORT32));
 		getStage().sizeToScene();
 	}
 
