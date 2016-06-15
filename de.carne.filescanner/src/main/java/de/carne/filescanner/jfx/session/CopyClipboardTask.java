@@ -23,7 +23,7 @@ import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.transfer.ImageResultExporter;
 import de.carne.filescanner.core.transfer.RendererStyle;
 import de.carne.filescanner.core.transfer.TextResultExporter;
-import de.carne.util.Quirks;
+import de.carne.jfx.FXQuirks;
 import de.carne.util.logging.Log;
 import javafx.concurrent.Task;
 import javafx.scene.image.Image;
@@ -80,7 +80,7 @@ class CopyClipboardTask extends Task<Void> {
 		if (this.textData != null) {
 			if (this.textData.isPlainText()) {
 				LOG.info(null, "Copying text/plain data from result ''{0}''", this.result.title());
-				content.putString(Quirks.fxClipboardString(this.textData.getPlainText()));
+				content.putString(FXQuirks.fxClipboardString(this.textData.getPlainText()));
 			}
 			if (this.textData.isRtfText()) {
 				LOG.info(null, "Copying text/rtf data from result ''{0}''", this.result.title());

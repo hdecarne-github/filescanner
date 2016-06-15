@@ -54,6 +54,7 @@ import de.carne.filescanner.jfx.preferences.PreferencesController;
 import de.carne.filescanner.jfx.session.ResultTreeItemFactory.ResultTreeItem;
 import de.carne.filescanner.util.Hexadecimal;
 import de.carne.filescanner.util.Units;
+import de.carne.jfx.FXPlatform;
 import de.carne.jfx.StageController;
 import de.carne.jfx.aboutinfo.AboutInfoController;
 import de.carne.jfx.logview.LogViewTriggerProperty;
@@ -514,8 +515,8 @@ public class SessionController extends StageController {
 		// Basic setup
 		super.setupStage(controllerStage);
 		controllerStage.setTitle(I18N.formatSTR_SESSION_TITLE());
-		controllerStage.getIcons().addAll(Images.IMAGE_FILESCANNER16, Images.IMAGE_FILESCANNER32,
-				Images.IMAGE_FILESCANNER48);
+		controllerStage.getIcons().addAll(FXPlatform.stageIcons(Images.IMAGE_FILESCANNER16, Images.IMAGE_FILESCANNER32,
+				Images.IMAGE_FILESCANNER48));
 
 		// Control setup (menu, views, ...)
 		this.autoIndexMenuItem.selectedProperty().bindBidirectional(this.autoIndexProperty);

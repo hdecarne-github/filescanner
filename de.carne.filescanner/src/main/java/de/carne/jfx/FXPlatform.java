@@ -14,32 +14,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.carne.util;
+package de.carne.jfx;
+
+import de.carne.util.Platform;
+import javafx.scene.image.Image;
 
 /**
- * Utility class providing workarounds for known quirks in the Java runtime.
+ * Utility class for support of Java FX platform specific functionality.
  */
-public final class Quirks {
+public final class FXPlatform {
 
-	private static final String OS_NAME = System.getProperty("os.name");
-
-	private static final boolean ENABLE_WINDOWS_QUIRKS;
-
-	static {
-		ENABLE_WINDOWS_QUIRKS = OS_NAME.startsWith("Windows ");
-	}
+	private static final Image[] EMPTY_ICONS = new Image[0];
 
 	/**
-	 * Fix double line breaks on paste issue on windows platform.
-	 *
-	 * @param s The string to copy to the clipboard.
-	 * @return The fixed string.
+	 * Filter stage icons according to platform preference.
+	 * 
+	 * @param icons The available icons.
+	 * @return The filtered icons.
 	 */
-	public static String fxClipboardString(String s) {
-		if (ENABLE_WINDOWS_QUIRKS) {
-			return Strings.remove(s, '\r');
+	public static Image[] stageIcons(Image... icons) {
+		if (Platform.IS_OS_X) {
+			return EMPTY_ICONS;
 		}
-		return s;
+		return icons;
 	}
 
 }
