@@ -84,4 +84,24 @@ public final class Nanos {
 		return NumberFormat.getNumberInstance().format(millis) + " ms";
 	}
 
+	/**
+	 * Convert nanoseconds value to milliseconds value.
+	 *
+	 * @param nanos The value to convert.
+	 * @return The converted value.
+	 */
+	public static long toMillis(long nanos) {
+		return nanos / 1000000L;
+	}
+
+	/**
+	 * Convert milliseconds value to nanoseconds value.
+	 *
+	 * @param millis The value to convert.
+	 * @return The converted value.
+	 */
+	public static long toNanos(long millis) {
+		return millis * 1000000L;
+	}
+
 }

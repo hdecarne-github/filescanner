@@ -38,7 +38,7 @@ public abstract class TextResultExporter extends ResultExporter {
 			StringRichTextResultRenderer richTextRenderer = new StringRichTextResultRenderer();
 			CombinedResultRenderer combinedRenderer = new CombinedResultRenderer(plainTextRenderer, richTextRenderer);
 
-			richTextRenderer.setStyle(style);
+			combinedRenderer.setStyle(style);
 			result.render(combinedRenderer);
 			return new Text(plainTextRenderer.toString(), richTextRenderer.toString());
 		}

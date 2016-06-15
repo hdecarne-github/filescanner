@@ -20,12 +20,14 @@ import java.io.IOException;
 import java.net.URL;
 
 /**
- * Base class for renderers used by {@linkplain HtmlResultRendererURLHandler}
- * class.
+ * {@linkplain HtmlResultRenderer} implementation used by
+ * {@linkplain HtmlResultRendererURLHandler} class.
  */
-abstract class URLHtmlResultRenderer extends HtmlResultRenderer {
+class URLHtmlResultRenderer extends HtmlResultRenderer {
 
 	private final HtmlResultRendererURLHandler urlHandler;
+
+	private final StringBuilder buffer = new StringBuilder();
 
 	protected URLHtmlResultRenderer(HtmlResultRendererURLHandler urlHandler) {
 		this.urlHandler = urlHandler;
@@ -34,6 +36,18 @@ abstract class URLHtmlResultRenderer extends HtmlResultRenderer {
 	@Override
 	protected URL registerStreamHandler(StreamHandler streamHandler) throws IOException, InterruptedException {
 		return this.urlHandler.registerStreamHandler(streamHandler);
+	}
+
+	@Override
+	protected void write(String... artifacts) throws IOException, InterruptedException {
+		for (String artifact : artifacts) {
+			this.buffer.append(artifact);
+		}
+	}
+
+	@Override
+	public String toString() {
+		return this.buffer.toString();
 	}
 
 }

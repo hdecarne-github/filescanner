@@ -123,7 +123,7 @@ public abstract class ResultRenderer {
 	 * @param style The style to set.
 	 * @return The updated renderer.
 	 */
-	public final ResultRenderer setStyle(RendererStyle style) {
+	public ResultRenderer setStyle(RendererStyle style) {
 		this.style.setStyle(style);
 		return this;
 	}
@@ -143,7 +143,7 @@ public abstract class ResultRenderer {
 	 * @param feature The feature to enable.
 	 * @return The updated renderer.
 	 */
-	public final ResultRenderer enableFeature(Feature feature) {
+	public ResultRenderer enableFeature(Feature feature) {
 		assert feature != null;
 
 		this.enabledFeatures.add(feature);

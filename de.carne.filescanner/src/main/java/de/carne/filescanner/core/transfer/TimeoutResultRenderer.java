@@ -18,117 +18,144 @@ package de.carne.filescanner.core.transfer;
 
 import java.io.IOException;
 
-/**
- * {@linkplain ResultRenderer} implementation that combines multiple renderer
- * implementations into one to create multiple render results in one render
- * call.
- */
-public class CombinedResultRenderer extends ResultRenderer {
+import de.carne.util.Nanos;
 
-	private final ResultRenderer[] renderers;
+/**
+ * {@linkplain ResultRenderer} implementation that enforces a time limit on the
+ * rendering process and interrupts as soon as the time limit is reached.
+ *
+ * @param <T> The actual renderer's type.
+ */
+public class TimeoutResultRenderer<T extends ResultRenderer> extends ResultRenderer {
+
+	private final T renderer;
+
+	private final Nanos nanos = new Nanos();
+
+	private final long limit;
 
 	/**
-	 * Construct {@code CombinedResultRenderer}.
+	 * Construct {@code TimeoutResultRenderer}.
 	 *
-	 * @param renderers The renderers to combine.
+	 * @param renderer The actual renderer.
+	 * @param timeoutMillis The time limit to enforce in milliseconds.
 	 */
-	public CombinedResultRenderer(ResultRenderer... renderers) {
-		this.renderers = renderers;
+	public TimeoutResultRenderer(T renderer, long timeoutMillis) {
+		assert renderer != null;
+
+		this.renderer = renderer;
+		this.limit = Nanos.toNanos(timeoutMillis);
+	}
+
+	/**
+	 * Get the actual renderer.
+	 *
+	 * @return The actual renderer.
+	 */
+	public T getRenderer() {
+		return this.renderer;
 	}
 
 	@Override
 	public ResultRenderer setStyle(RendererStyle style) {
-		for (ResultRenderer renderer : this.renderers) {
-			renderer.setStyle(style);
-		}
+		this.renderer.setStyle(style);
 		return super.setStyle(style);
 	}
 
 	@Override
 	public ResultRenderer enableFeature(Feature feature) {
-		for (ResultRenderer renderer : this.renderers) {
-			renderer.enableFeature(feature);
-		}
+		this.renderer.enableFeature(feature);
 		return super.enableFeature(feature);
 	}
 
 	@Override
 	protected void writePrologue() throws IOException, InterruptedException {
-		for (ResultRenderer renderer : this.renderers) {
-			renderer.writePrologue();
+		if (this.nanos.elapsed() > this.limit) {
+			throw new InterruptedException();
 		}
+		this.renderer.writePrologue();
 	}
 
 	@Override
 	protected void writeEpilogue() throws IOException, InterruptedException {
-		for (ResultRenderer renderer : this.renderers) {
-			renderer.writeEpilogue();
+		if (this.nanos.elapsed() > this.limit) {
+			throw new InterruptedException();
 		}
+		this.renderer.writeEpilogue();
 	}
 
 	@Override
 	protected void writeBeginMode(Mode mode) throws IOException, InterruptedException {
-		for (ResultRenderer renderer : this.renderers) {
-			renderer.writeBeginMode(mode);
+		if (this.nanos.elapsed() > this.limit) {
+			throw new InterruptedException();
 		}
+		this.renderer.writeBeginMode(mode);
 	}
 
 	@Override
 	protected void writeEndMode(Mode mode) throws IOException, InterruptedException {
-		for (ResultRenderer renderer : this.renderers) {
-			renderer.writeEndMode(mode);
+		if (this.nanos.elapsed() > this.limit) {
+			throw new InterruptedException();
 		}
+		this.renderer.writeEndMode(mode);
 	}
 
 	@Override
 	protected void writeBreak() throws IOException, InterruptedException {
-		for (ResultRenderer renderer : this.renderers) {
-			renderer.writeBreak();
+		if (this.nanos.elapsed() > this.limit) {
+			throw new InterruptedException();
 		}
+		this.renderer.writeBreak();
 	}
 
 	@Override
 	protected void writeText(Mode mode, String text) throws IOException, InterruptedException {
-		for (ResultRenderer renderer : this.renderers) {
-			renderer.writeText(mode, text);
+		if (this.nanos.elapsed() > this.limit) {
+			throw new InterruptedException();
 		}
+		this.renderer.writeText(mode, text);
 	}
 
 	@Override
 	protected void writeRefText(Mode mode, String text, long position) throws IOException, InterruptedException {
-		for (ResultRenderer renderer : this.renderers) {
-			renderer.writeRefText(mode, text, position);
+		if (this.nanos.elapsed() > this.limit) {
+			throw new InterruptedException();
 		}
+		this.renderer.writeRefText(mode, text, position);
 	}
 
 	@Override
 	protected void writeImage(Mode mode, StreamHandler streamHandler) throws IOException, InterruptedException {
-		for (ResultRenderer renderer : this.renderers) {
-			renderer.writeImage(mode, streamHandler);
+		if (this.nanos.elapsed() > this.limit) {
+			throw new InterruptedException();
 		}
+		this.renderer.writeImage(mode, streamHandler);
 	}
 
 	@Override
 	protected void writeRefImage(Mode mode, StreamHandler streamHandler, long position)
 			throws IOException, InterruptedException {
-		for (ResultRenderer renderer : this.renderers) {
-			renderer.writeRefImage(mode, streamHandler, position);
+		if (this.nanos.elapsed() > this.limit) {
+			throw new InterruptedException();
 		}
+		this.renderer.writeRefImage(mode, streamHandler, position);
 	}
 
 	@Override
 	protected void writeVideo(Mode mode, StreamHandler streamHandler) throws IOException, InterruptedException {
-		for (ResultRenderer renderer : this.renderers) {
-			renderer.writeVideo(mode, streamHandler);
+		if (this.nanos.elapsed() > this.limit) {
+			throw new InterruptedException();
 		}
+		this.renderer.writeVideo(mode, streamHandler);
 	}
 
 	@Override
 	protected void writeRefVideo(Mode mode, StreamHandler streamHandler, long position)
 			throws IOException, InterruptedException {
-		for (ResultRenderer renderer : this.renderers) {
-			renderer.writeRefVideo(mode, streamHandler, position);
+		if (this.nanos.elapsed() > this.limit) {
+			throw new InterruptedException();
 		}
+		this.renderer.writeRefVideo(mode, streamHandler, position);
 	}
 
 }

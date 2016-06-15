@@ -164,7 +164,7 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 	 *
 	 * @param result The {@code FileScannerResult} to render.
 	 * @param style The style to use for rendering.
-	 * @param timeout The time in milliseconds this function waits for a
+	 * @param timeoutMillis The time in milliseconds this function waits for a
 	 *        directly accessible result. If this parameter is {@code 0} the
 	 *        function returns immediately and the result has to be accessed via
 	 *        it's location URL.
@@ -172,7 +172,8 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 	 *         renderer output.
 	 * @throws IOException if an I/O error occurs.
 	 */
-	public static RenderOutput open(FileScannerResult result, RendererStyle style, int timeout) throws IOException {
+	public static RenderOutput open(FileScannerResult result, RendererStyle style, int timeoutMillis)
+			throws IOException {
 		assert result != null;
 		assert style != null;
 
@@ -186,15 +187,16 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 
 		String renderOutput = null;
 
-		if (timeout > 0) {
+		if (timeoutMillis > 0) {
 			try {
-				TimeoutHtmlResultRenderer buffer = new TimeoutHtmlResultRenderer(urlHandler, timeout);
+				TimeoutResultRenderer<URLHtmlResultRenderer> timeoutHtmlRenderer = new TimeoutResultRenderer<>(
+						new URLHtmlResultRenderer(urlHandler), timeoutMillis);
 
-				buffer.setStyle(style);
-				result.render(buffer);
-				renderOutput = buffer.toString();
+				timeoutHtmlRenderer.setStyle(style);
+				result.render(timeoutHtmlRenderer);
+				renderOutput = timeoutHtmlRenderer.getRenderer().toString();
 			} catch (InterruptedException e) {
-				LOG.info(null, "Fast rendering timout ({0} ms) reached; continue with URL result only", timeout);
+				LOG.info(null, "Fast rendering timout ({0} ms) reached; continue with URL result only", timeoutMillis);
 			}
 		}
 		return new RenderOutput(baseLocation, renderOutput);
