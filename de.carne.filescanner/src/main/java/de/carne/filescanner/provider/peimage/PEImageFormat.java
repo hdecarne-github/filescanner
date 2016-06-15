@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.carne.filescanner.provider.dosimage;
+package de.carne.filescanner.provider.peimage;
 
 import java.nio.ByteOrder;
 
@@ -22,26 +22,22 @@ import de.carne.filescanner.core.format.Decodable;
 import de.carne.filescanner.spi.Format;
 
 /**
- * <a href="https://en.wikipedia.org/wiki/DOS_MZ_executable">DOS MZ
- * executable</a> file format decoder.
- * <p>
- * This format decodes DOS stubs as prepended to the extended executable formats
- * (e.g. Portable Executable).
- * </p>
+ * <a href="https://en.wikipedia.org/wiki/Portable_Executable">Portable
+ * Executable</a> file format decoder.
  */
-public class DOSStubFormat extends Format {
+public class PEImageFormat extends Format {
 
 	/**
-	 * Construct {@code DOSStubFormat}.
+	 * Construct {@code PEImageFormat}.
 	 */
-	public DOSStubFormat() {
-		super(DOSImageFormatSpecs.NAME_DOS_STUB, ByteOrder.LITTLE_ENDIAN);
-		registerHeaderSpec(DOSImageFormatSpecs.DOS_STUB_HEADER);
+	public PEImageFormat() {
+		super(PEImageFormatSpecs.NAME_PE_IMAGE, ByteOrder.LITTLE_ENDIAN);
+		registerHeaderSpec(PEImageFormatSpecs.PE_HEADER);
 	}
 
 	@Override
 	public Decodable decodable() {
-		return DOSImageFormatSpecs.DOS_STUB;
+		return PEImageFormatSpecs.PE_IMAGE;
 	}
 
 }
