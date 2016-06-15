@@ -183,7 +183,7 @@ public class MappingStreamHandler implements StreamHandler {
 	int read(long position) throws IOException {
 		byte[] buffer = new byte[1];
 
-		return (read(position, buffer, 0, 1) == 1 ? buffer[0] : -1);
+		return (read(position, buffer, 0, 1) == 1 ? (buffer[0] & 0xff) : -1);
 	}
 
 	int read(long position, byte[] b, int off, int len) throws IOException {
