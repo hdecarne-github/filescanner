@@ -16,51 +16,77 @@
  */
 package de.carne.filescanner.provider.dosimage;
 
+import de.carne.filescanner.core.format.spec.SectionFormatSpec;
 import de.carne.filescanner.core.format.spec.StructFormatSpec;
+import de.carne.filescanner.core.format.spec.U16ArrayAttribute;
 import de.carne.filescanner.core.format.spec.U16Attribute;
+import de.carne.filescanner.core.format.spec.U16Attributes;
+import de.carne.filescanner.core.format.spec.U32Attribute;
+import de.carne.filescanner.core.format.spec.U8ArrayAttribute;
 
 /**
- * DOS executable image format structures.
+ * DOS image format structures.
  */
 class DOSImageFormatSpecs {
 
-	public static final String NAME_DOS_MZ_EXECUTABLE = "DOS MZ executable";
+	public static final String NAME_DOS_STUB = "DOS stub executable";
 
-	public static final String NAME_EXE_HEADER = "EXE header";
+	public static final String NAME_DOS_STUB_HEADER = "DOS header";
 
-	public static final String NAME_OEM_HEADER = "OEM header";
+	public static final U32Attribute DOS_STUB_E_LFANEW = new U32Attribute("e_lfanew");
 
-	public static final StructFormatSpec EXE_HEADER;
+	public static final StructFormatSpec DOS_STUB_HEADER;
 
 	static {
-		StructFormatSpec header = new StructFormatSpec();
+		StructFormatSpec dosStubHeader = new StructFormatSpec();
 
-		header.append(new U16Attribute("MAGIC").addValidValue((short) 0x5A4D));
-		header.append(new U16Attribute("CBLP").addValidator(s -> 0 < s && s <= 512));
-		header.append(new U16Attribute("CP").addValidator(s -> 0 < s));
-		header.append(new U16Attribute("CRLC").addValidator(s -> 0 <= s));
-		header.append(new U16Attribute("CPARHDR").addValidator(s -> 0 <= s));
-		header.append(new U16Attribute("MINALLOC").addValidator(s -> 0 <= s));
-		header.append(new U16Attribute("MAXALLOC"));
-		header.append(new U16Attribute("SS"));
-		header.append(new U16Attribute("SP"));
-		header.append(new U16Attribute("CSUM"));
-		header.append(new U16Attribute("IP"));
-		header.append(new U16Attribute("CS"));
-		header.append(new U16Attribute("LFARLC").addValidator(s -> 28 <= s));
-		header.append(new U16Attribute("OVNO"));
-		header.setResult(NAME_EXE_HEADER);
-		EXE_HEADER = header;
+		dosStubHeader.append(new U8ArrayAttribute("signature", 2).addValidValue(new Byte[] { 0x4D, 0x5A }));
+		dosStubHeader.append(
+				new U16Attribute("lastsize", U16Attributes.DECIMAL_FORMAT).addValidator(s -> 0 < s && s <= 512));
+		dosStubHeader.append(new U16Attribute("nblocks", U16Attributes.DECIMAL_FORMAT).addValidator(s -> 0 < s));
+		dosStubHeader.append(new U16Attribute("nreloc", U16Attributes.DECIMAL_FORMAT).addValidator(s -> s >= 0));
+		dosStubHeader.append(new U16Attribute("hdrsize", U16Attributes.DECIMAL_FORMAT).addValidator(s -> s > 0));
+		dosStubHeader.append(new U16Attribute("minalloc"));
+		dosStubHeader.append(new U16Attribute("maxalloc"));
+		dosStubHeader.append(new U16Attribute("ss"));
+		dosStubHeader.append(new U16Attribute("sp"));
+		dosStubHeader.append(new U16Attribute("checksum"));
+		dosStubHeader.append(new U16Attribute("ip"));
+		dosStubHeader.append(new U16Attribute("cs"));
+		dosStubHeader.append(new U16Attribute("relocpos").addValidValue((short) 0x0040));
+		dosStubHeader.append(new U16Attribute("noverlay", U16Attributes.DECIMAL_FORMAT));
+		dosStubHeader.append(new U16ArrayAttribute("reserved1", 4));
+		dosStubHeader.append(new U16Attribute("oem_id"));
+		dosStubHeader.append(new U16Attribute("oem_info"));
+		dosStubHeader.append(new U16ArrayAttribute("reserved2", 10));
+		dosStubHeader.append(DOS_STUB_E_LFANEW.bind());
+		dosStubHeader.setResult(NAME_DOS_STUB_HEADER);
+		DOS_STUB_HEADER = dosStubHeader;
 	}
 
-	public static final StructFormatSpec DOS_MZ_EXECUTABLE;
+	public static final SectionFormatSpec IMAGE_DATA;
 
 	static {
-		StructFormatSpec executable = new StructFormatSpec();
+		SectionFormatSpec imageData = new SectionFormatSpec(() -> dosStubImageDataSize());
 
-		executable.append(EXE_HEADER);
-		executable.setResult(NAME_DOS_MZ_EXECUTABLE);
-		DOS_MZ_EXECUTABLE = executable;
+		imageData.setResult("Image data");
+		IMAGE_DATA = imageData;
+	}
+
+	private static Long dosStubImageDataSize() {
+		return DOS_STUB_E_LFANEW.get() - 64L;
+	}
+
+	public static final StructFormatSpec DOS_STUB;
+
+	static {
+		StructFormatSpec dosStub = new StructFormatSpec();
+
+		dosStub.declareAttributes(DOS_STUB_E_LFANEW);
+		dosStub.append(DOS_STUB_HEADER);
+		dosStub.append(IMAGE_DATA);
+		dosStub.setResult(NAME_DOS_STUB);
+		DOS_STUB = dosStub;
 	}
 
 }

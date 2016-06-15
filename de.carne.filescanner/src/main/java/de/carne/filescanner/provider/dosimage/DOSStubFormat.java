@@ -24,20 +24,22 @@ import de.carne.filescanner.spi.Format;
 /**
  * <a href="https://en.wikipedia.org/wiki/DOS_MZ_executable">DOS MZ
  * executable</a> file format decoder.
+ * <p>
+ * </p>
  */
-public class DOSImageFormat extends Format {
+public class DOSStubFormat extends Format {
 
 	/**
-	 * Construct {@code DOSImageFormat}.
+	 * Construct {@code DOSStubFormat}.
 	 */
-	public DOSImageFormat() {
-		super(DOSImageFormatSpecs.NAME_DOS_MZ_EXECUTABLE, ByteOrder.LITTLE_ENDIAN);
-		registerHeaderSpec(DOSImageFormatSpecs.EXE_HEADER);
+	public DOSStubFormat() {
+		super(DOSImageFormatSpecs.NAME_DOS_STUB, ByteOrder.LITTLE_ENDIAN);
+		registerHeaderSpec(DOSImageFormatSpecs.DOS_STUB_HEADER);
 	}
 
 	@Override
 	public Decodable decodable() {
-		return DOSImageFormatSpecs.DOS_MZ_EXECUTABLE;
+		return DOSImageFormatSpecs.DOS_STUB;
 	}
 
 }
