@@ -518,8 +518,6 @@ public class SessionController extends StageController {
 				Images.IMAGE_FILESCANNER48);
 
 		// Control setup (menu, views, ...)
-		applyFileViewType(PREF_FILE_VIEW_TYPE.get(PREFERENCES, FileViewType.HEXADECIMAL_U));
-		applyRendererStyle(RendererStylePreferences.getDefaultStyle());
 		this.autoIndexMenuItem.selectedProperty().bindBidirectional(this.autoIndexProperty);
 		this.copySelectionMenuItem.disableProperty()
 				.bind(Bindings.isNull(this.resultsView.getSelectionModel().selectedItemProperty()));
@@ -546,9 +544,11 @@ public class SessionController extends StageController {
 		this.resultView.setContextMenuEnabled(false);
 		this.resultView.getEngine()
 				.setUserDataDirectory(PropertiesPreferencesFactory.directory(WEBVIEW_USER_DATA_DIRECTORY_NAME));
-		updateScanResult(null);
 		this.cancelScanButton.setDisable(true);
 		updateScanStatusMessage(I18N.STR_SCAN_STATUS_NONE, null);
+		updateScanResult(null);
+		applyFileViewType(PREF_FILE_VIEW_TYPE.get(PREFERENCES, FileViewType.HEXADECIMAL_U));
+		applyRendererStyle(RendererStylePreferences.getDefaultStyle());
 
 		// Periodic status update
 		this.updateSystemStatusFuture = getExecutorService().scheduleAtFixedRate(new Runnable() {
