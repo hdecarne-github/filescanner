@@ -22,8 +22,8 @@ import de.carne.filescanner.core.format.Decodable;
 import de.carne.filescanner.spi.Format;
 
 /**
- * PNG file format decoder: <a
- * href="https://en.wikipedia.org/wiki/Portable_Network_Graphics</a>.
+ * <a href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a>
+ * file format decoder.
  */
 public class PNGFormat extends Format {
 

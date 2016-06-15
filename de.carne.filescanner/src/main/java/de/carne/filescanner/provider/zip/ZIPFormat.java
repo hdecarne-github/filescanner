@@ -22,9 +22,8 @@ import de.carne.filescanner.core.format.Decodable;
 import de.carne.filescanner.spi.Format;
 
 /**
- * ZIP file format decoder:
- * <a href="https://en.wikipedia.org/wiki/Zip_(file_format)">https://en.
- * wikipedia.org/wiki/Zip_(file_format)</a>.
+ * <a href="https://en.wikipedia.org/wiki/Zip_(file_format)">ZIP</a> file format
+ * decoder.
  */
 public class ZIPFormat extends Format {
 

@@ -22,7 +22,7 @@ import de.carne.filescanner.core.format.Decodable;
 import de.carne.filescanner.spi.Format;
 
 /**
- * <a href="https://en.wikipedia.org/wiki/DOS_MZ_executable">DOS MCZ
+ * <a href="https://en.wikipedia.org/wiki/DOS_MZ_executable">DOS MZ
  * executable</a> file format decoder.
  */
 public class DOSImageFormat extends Format {
