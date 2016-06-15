@@ -197,15 +197,16 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 	}
 
 	/**
-	 * Declare an attribute to make it accessible in this spec's result scope.
+	 * Declare attributes to make them accessible in this spec's result scope.
 	 *
-	 * @param attribute The attribute to declare.
+	 * @param attributes The attributes to declare.
 	 * @return The updated format spec.
 	 */
-	public final FormatSpec declareAttribute(Attribute<?> attribute) {
-		assert attribute != null;
-
-		this.declaredAttributes.add(attribute);
+	public final FormatSpec declareAttributes(Attribute<?>... attributes) {
+		this.declaredAttributes.ensureCapacity(this.declaredAttributes.size() + attributes.length);
+		for (Attribute<?> attribute : attributes) {
+			this.declaredAttributes.add(attribute);
+		}
 		return this;
 	}
 
