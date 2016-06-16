@@ -189,7 +189,7 @@ public abstract class NumberArrayAttribute<T extends Number> extends Attribute<T
 
 		StringBuilder formatBuffer = new StringBuilder();
 
-		formatBuffer.append("[");
+		formatBuffer.append("{");
 
 		long totalSize = end - start;
 		int readSize = (int) Math.min(totalSize, MAX_RENDER_SIZE);
@@ -212,7 +212,7 @@ public abstract class NumberArrayAttribute<T extends Number> extends Attribute<T
 		if (readSize < totalSize) {
 			formatBuffer.append(", \u2026");
 		}
-		formatBuffer.append("]");
+		formatBuffer.append("}");
 		renderer.setValueMode();
 		renderer.renderText(formatBuffer.toString());
 		if (readSize < totalSize) {

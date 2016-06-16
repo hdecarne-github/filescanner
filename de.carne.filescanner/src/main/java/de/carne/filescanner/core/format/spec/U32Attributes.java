@@ -16,6 +16,9 @@
  */
 package de.carne.filescanner.core.format.spec;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 import de.carne.filescanner.util.Hexadecimal;
 import de.carne.filescanner.util.Units;
 
@@ -54,5 +57,11 @@ public final class U32Attributes {
 	 */
 	public static final CommentRenderer<Integer> BYTE_COUNT_COMMENT = new CommentRenderer<>(
 			v -> Units.formatByteValue(v.longValue()));
+
+	/**
+	 * Comment renderer for C time values (seconds till 00:00 01-01-1970).
+	 */
+	public static final CommentRenderer<Integer> CTIME_COMMENT = new CommentRenderer<>(
+			v -> DateFormat.getDateTimeInstance().format(new Date((v & 0xffffffffL) * 1000L)));
 
 }

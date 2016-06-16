@@ -29,9 +29,9 @@ import de.carne.filescanner.core.format.spec.U8ArrayAttribute;
  */
 class DOSImageFormatSpecs {
 
-	public static final String NAME_DOS_STUB = "DOS stub executable";
+	public static final String NAME_DOS_STUB = "DOS stub executable image";
 
-	public static final String NAME_DOS_STUB_HEADER = "DOS header";
+	public static final String NAME_DOS_STUB_HEADER = "DOS stub header";
 
 	public static final U32Attribute DOS_STUB_E_LFANEW = new U32Attribute("e_lfanew");
 
