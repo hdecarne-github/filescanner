@@ -93,19 +93,19 @@ public class FixedStringAttribute extends StringAttribute {
 		long stringSize = this.sizeExpression.decode().longValue();
 		long decoded = 0L;
 
-		if (!isSA(result.input(), position, stringSize)) {
-			result.updateDecodeStatus(DecodeStatusException.fatal("Unexpected end of data"));
-		} else {
+		if (isSA(result.input(), position, stringSize)) {
 			String value = decodeString(result, position, stringSize).toString();
 
 			if (!validateValue(value)) {
-				result.updateDecodeStatus(DecodeStatusException.fatal("Invalid data"));
+				result.updateDecodeStatus(DecodeStatusException.fatal(DecodeStatusException.STATUS_INVALID_DATA));
 			} else {
 				decoded = stringSize;
 				if (isBound()) {
 					bindValue(value);
 				}
 			}
+		} else {
+			result.updateDecodeStatus(DecodeStatusException.fatal(DecodeStatusException.STATUS_UNEXPECTED_EOD));
 		}
 		return decoded;
 	}

@@ -174,7 +174,7 @@ public abstract class NumberArrayAttribute<T extends Number> extends Attribute<T
 		long decoded = 0L;
 
 		if (!isSA(result.input(), position, totalSize)) {
-			result.updateDecodeStatus(DecodeStatusException.fatal("Unexpected end of data"));
+			result.updateDecodeStatus(DecodeStatusException.fatal(DecodeStatusException.STATUS_UNEXPECTED_EOD));
 		} else {
 			decoded = totalSize;
 		}
@@ -186,10 +186,9 @@ public abstract class NumberArrayAttribute<T extends Number> extends Attribute<T
 			throws IOException, InterruptedException {
 		renderer.setNormalMode().renderText(name());
 		renderer.setOperatorMode().renderText(" = ");
+		renderer.setNormalMode().renderText("{");
 
 		StringBuilder formatBuffer = new StringBuilder();
-
-		formatBuffer.append("{");
 
 		long totalSize = end - start;
 		int readSize = (int) Math.min(totalSize, MAX_RENDER_SIZE);
@@ -212,9 +211,8 @@ public abstract class NumberArrayAttribute<T extends Number> extends Attribute<T
 		if (readSize < totalSize) {
 			formatBuffer.append(", \u2026");
 		}
-		formatBuffer.append("}");
-		renderer.setValueMode();
-		renderer.renderText(formatBuffer.toString());
+		renderer.setValueMode().renderText(formatBuffer.toString());
+		renderer.setNormalMode().renderText(" }");
 		if (readSize < totalSize) {
 			formatBuffer.setLength(0);
 			formatBuffer.append(" // remaining ");

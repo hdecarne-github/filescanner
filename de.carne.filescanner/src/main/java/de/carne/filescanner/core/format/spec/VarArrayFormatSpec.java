@@ -122,7 +122,7 @@ public class VarArrayFormatSpec extends FormatSpec {
 				specDecoded = matchingSpec.specDecode(result, specPosition);
 			}
 			if (specDecoded == 0L) {
-				result.updateDecodeStatus(DecodeStatusException.fatal("No data decoded"));
+				result.updateDecodeStatus(DecodeStatusException.fatal(DecodeStatusException.STATUS_NO_DATA_DECODED));
 			}
 
 			DecodeStatusException decodeStatus = result.decodeStatus();

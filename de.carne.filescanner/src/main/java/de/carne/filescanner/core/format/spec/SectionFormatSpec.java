@@ -19,6 +19,7 @@ package de.carne.filescanner.core.format.spec;
 import java.io.IOException;
 import java.util.function.Supplier;
 
+import de.carne.filescanner.core.DecodeStatusException;
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.core.transfer.ResultRenderer;
@@ -54,7 +55,15 @@ public class SectionFormatSpec extends FormatSpec {
 
 	@Override
 	public long specDecode(FileScannerResultBuilder result, long position) throws IOException {
-		return this.sizeExpression.decode().longValue();
+		long size = this.sizeExpression.decode().longValue();
+		long decoded = 0L;
+
+		if (isSA(result.input(), position, size)) {
+			decoded = size;
+		} else {
+			result.updateDecodeStatus(DecodeStatusException.fatal(DecodeStatusException.STATUS_UNEXPECTED_EOD));
+		}
+		return decoded;
 	}
 
 	@Override

@@ -105,9 +105,9 @@ public abstract class NumberAttribute<T extends Number> extends Attribute<T> {
 		long decoded = 0L;
 
 		if (value == null) {
-			result.updateDecodeStatus(DecodeStatusException.fatal("Unexpected end of data"));
+			result.updateDecodeStatus(DecodeStatusException.fatal(DecodeStatusException.STATUS_UNEXPECTED_EOD));
 		} else if (!validateValue(value)) {
-			result.updateDecodeStatus(DecodeStatusException.fatal("Invalid data"));
+			result.updateDecodeStatus(DecodeStatusException.fatal(DecodeStatusException.STATUS_INVALID_DATA));
 		} else {
 			decoded = this.type.size();
 			if (isBound()) {

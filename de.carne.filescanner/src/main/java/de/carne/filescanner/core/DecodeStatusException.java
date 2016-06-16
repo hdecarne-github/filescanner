@@ -30,6 +30,21 @@ import java.io.IOException;
  */
 public class DecodeStatusException extends IOException {
 
+	/**
+	 * Status message for unexpected end of data.
+	 */
+	public static final String STATUS_UNEXPECTED_EOD = "Unexpected end of data";
+
+	/**
+	 * Status message for invalid data.
+	 */
+	public static final String STATUS_INVALID_DATA = "Invalid data";
+
+	/**
+	 * Status message for no decoded data.
+	 */
+	public static final String STATUS_NO_DATA_DECODED = "No data decoded";
+
 	private static final long serialVersionUID = 1L;
 
 	private final boolean fatal;
@@ -139,7 +154,7 @@ public class DecodeStatusException extends IOException {
 
 	/**
 	 * Conditionally construct a decode status exception.
-	 * 
+	 *
 	 * @param cause The exception status. If {@code null} no decode status
 	 *        exception will be created.
 	 * @param fatal Whether the status is fatal or non-fatal.
