@@ -151,7 +151,9 @@ public class StructFormatSpec extends FormatSpec {
 		if (!renderer.hasOutput()) {
 			result.renderDefault(renderer);
 		}
-		result.renderDecodeStatus(renderer);
+		if (isResult()) {
+			result.renderDecodeStatus(renderer);
+		}
 		renderer.renderBreakOrClose(isResult());
 	}
 

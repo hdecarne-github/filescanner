@@ -22,6 +22,7 @@ import java.util.function.Supplier;
 import de.carne.filescanner.core.DecodeStatusException;
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
+import de.carne.filescanner.core.FileScannerResultType;
 import de.carne.filescanner.core.format.DecodeContext;
 import de.carne.filescanner.core.transfer.ResultRenderer;
 
@@ -42,6 +43,11 @@ public class ConditionalFormatSpec extends FormatSpec {
 		assert specLambda != null;
 
 		this.specLambda = specLambda;
+	}
+
+	@Override
+	public FileScannerResultType resultType() {
+		return this.specLambda.get().resultType();
 	}
 
 	@Override
@@ -66,9 +72,35 @@ public class ConditionalFormatSpec extends FormatSpec {
 	}
 
 	@Override
+	public long decode(FileScannerResultBuilder result) throws IOException {
+		return this.specLambda.get().decode(result);
+	}
+
+	@Override
 	public void specRender(FileScannerResult result, long start, long end, ResultRenderer renderer)
 			throws IOException, InterruptedException {
 		this.specLambda.get().specRender(result, start, end, renderer);
+	}
+
+	@Override
+	public void renderData(FileScannerResult result, long start, long end, ResultRenderer renderer)
+			throws IOException, InterruptedException {
+		this.specLambda.get().renderData(result, start, end, renderer);
+	}
+
+	@Override
+	public void render(FileScannerResult result, ResultRenderer renderer) throws IOException, InterruptedException {
+		this.specLambda.get().render(result, renderer);
+	}
+
+	@Override
+	public boolean isResult() {
+		return this.specLambda.get().isResult();
+	}
+
+	@Override
+	public RenderHandler getResultRenderHandler() {
+		return this.specLambda.get().getResultRenderHandler();
 	}
 
 }

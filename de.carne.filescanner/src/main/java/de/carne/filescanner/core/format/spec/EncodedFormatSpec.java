@@ -116,7 +116,9 @@ public class EncodedFormatSpec extends FormatSpec implements Supplier<String> {
 		if (decodeParams != null) {
 			decodeParams.render(renderer);
 		}
-		result.renderDecodeStatus(renderer);
+		if (isResult()) {
+			result.renderDecodeStatus(renderer);
+		}
 		renderer.renderBreakOrClose(isResult());
 	}
 

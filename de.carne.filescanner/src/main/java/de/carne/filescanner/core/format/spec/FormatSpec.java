@@ -189,8 +189,10 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 
 	@Override
 	public void render(FileScannerResult result, ResultRenderer renderer) throws IOException, InterruptedException {
-		if (this.resultRenderHandler != null) {
-			this.resultRenderHandler.render(this, result, renderer);
+		RenderHandler renderHandler = getResultRenderHandler();
+
+		if (renderHandler != null) {
+			renderHandler.render(this, result, renderer);
 		} else {
 			specRender(result, result.start(), result.end(), renderer);
 		}
@@ -264,7 +266,7 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 	 *
 	 * @return {@code true} if this spec has been set as a result.
 	 */
-	public final boolean isResult() {
+	public boolean isResult() {
 		return this.resultTitleExpression != null;
 	}
 
@@ -284,7 +286,7 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 	 *
 	 * @return The handler or {@code null} if none has been set.
 	 */
-	public final RenderHandler getResultRenderHandler() {
+	public RenderHandler getResultRenderHandler() {
 		return this.resultRenderHandler;
 	}
 
