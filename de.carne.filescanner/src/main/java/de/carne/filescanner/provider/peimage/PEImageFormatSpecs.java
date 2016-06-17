@@ -185,11 +185,12 @@ class PEImageFormatSpecs {
 		win32Header.append(new U32Attribute("SizeOfHeaders").addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
 		win32Header.append(new U32Attribute("CheckSum"));
 		win32Header.append(new U16Attribute("Subsystem").addExtraRenderer(PE_SUBSYSTEM_SYMBOLS));
-		win32Header.append(new U16Attribute("DllCharacteristics").addExtraRenderer(PE_DLL_CHARACTERISTICS_FLAG_SYMBOLS));
+		win32Header
+				.append(new U16Attribute("DllCharacteristics").addExtraRenderer(PE_DLL_CHARACTERISTICS_FLAG_SYMBOLS));
 		win32Header.append(new U32Attribute("SizeOfStackReserve").addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
-		win32Header.append(new U32Attribute("SizeOfStackCommit"));
+		win32Header.append(new U32Attribute("SizeOfStackCommit").addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
 		win32Header.append(new U32Attribute("SizeOfHeapReserve").addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
-		win32Header.append(new U32Attribute("SizeOfHeapCommit"));
+		win32Header.append(new U32Attribute("SizeOfHeapCommit").addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
 		win32Header.append(new U32Attribute("LoaderFlags"));
 		win32Header.append(new U32Attribute("NumberOfRvaAndSizes", U32Attributes.DECIMAL_FORMAT));
 		win32Header.setResult(NAME_WIN32_HEADER);
