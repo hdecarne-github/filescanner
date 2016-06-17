@@ -83,6 +83,8 @@ class PEImageFormatSpecs {
 		PE_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol((short) 0x8000, "IMAGE_FILE_BYTES_REVERSED_HI");
 	}
 
+	public static final U16Attribute SIZE_OF_OPTIONAL_HEADER = new U16Attribute("SizeOfOptionalHeader");
+
 	public static final StructFormatSpec PE_HEADER;
 
 	static {
@@ -95,7 +97,7 @@ class PEImageFormatSpecs {
 		header.append(new U32Attribute("TimeDateStamp").addExtraRenderer(U32Attributes.CTIME_COMMENT));
 		header.append(new U32Attribute("PointerToSymbolTable"));
 		header.append(new U32Attribute("NumberOfSymbols", U32Attributes.DECIMAL_FORMAT));
-		header.append(new U16Attribute("SizeOfOptionalHeader").addExtraRenderer(U16Attributes.BYTE_COUNT_COMMENT));
+		header.append(SIZE_OF_OPTIONAL_HEADER.addExtraRenderer(U16Attributes.BYTE_COUNT_COMMENT));
 		header.append(new U16Attribute("Characteristics").addExtraRenderer(PE_CHARACTERISTICS_FLAG_SYMBOLS));
 		header.setResult(NAME_PE_HEADER);
 		PE_HEADER = header;
@@ -106,6 +108,7 @@ class PEImageFormatSpecs {
 	static {
 		StructFormatSpec image = new StructFormatSpec();
 
+		image.declareAttributes(SIZE_OF_OPTIONAL_HEADER);
 		image.append(PE_HEADER);
 		image.setResult(NAME_PE_IMAGE);
 		PE_IMAGE = image;

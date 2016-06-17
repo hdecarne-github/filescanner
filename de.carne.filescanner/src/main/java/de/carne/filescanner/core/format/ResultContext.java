@@ -101,6 +101,9 @@ public abstract class ResultContext {
 			value = currentContext.resultAttributes.get(attribute);
 			currentContext = currentContext.parent();
 		}
+		if (value == null) {
+			throw new IllegalStateException("Undefined attribute: " + attribute.name());
+		}
 		return attribute.getValueType().cast(value);
 	}
 
