@@ -16,7 +16,10 @@
  */
 package de.carne.filescanner.provider.peimage;
 
+import java.nio.charset.StandardCharsets;
+
 import de.carne.filescanner.core.format.spec.ConditionalSpec;
+import de.carne.filescanner.core.format.spec.FixedStringAttribute;
 import de.carne.filescanner.core.format.spec.FormatSpec;
 import de.carne.filescanner.core.format.spec.StructSpec;
 import de.carne.filescanner.core.format.spec.U16Attribute;
@@ -25,6 +28,7 @@ import de.carne.filescanner.core.format.spec.U16FlagRenderer;
 import de.carne.filescanner.core.format.spec.U16SymbolRenderer;
 import de.carne.filescanner.core.format.spec.U32Attribute;
 import de.carne.filescanner.core.format.spec.U32Attributes;
+import de.carne.filescanner.core.format.spec.U32FlagRenderer;
 import de.carne.filescanner.core.format.spec.U8Attribute;
 import de.carne.filescanner.core.format.spec.U8Attributes;
 
@@ -134,6 +138,53 @@ class PEImageFormatSpecs {
 				"IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE");
 	}
 
+	public static final U32FlagRenderer PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS = new U32FlagRenderer();
+
+	static {
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00000001, "<reserved>");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00000002, "<reserved>");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00000004, "<reserved>");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00000008, "IMAGE_SCN_TYPE_NO_PAD");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00000010, "<reserved>");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00000020, "IMAGE_SCN_CNT_CODE");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00000040, "IMAGE_SCN_CNT_INITIALIZED_DATA");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00000080, "IMAGE_SCN_CNT_UNINITIALIZED_DATA");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00000100, "IMAGE_SCN_LNK_OTHER");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00000200, "IMAGE_SCN_LNK_INFO");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00000400, "<reserved>");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00000800, "IMAGE_SCN_LNK_REMOVE");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00001000, "IMAGE_SCN_LNK_COMDAT");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00008000, "IMAGE_SCN_GPREL");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00020000, "IMAGE_SCN_MEM_PURGEABLE");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00020000, "IMAGE_SCN_MEM_16BIT");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00040000, "IMAGE_SCN_MEM_LOCKED");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00080000, "IMAGE_SCN_MEM_PRELOAD");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00100000, "IMAGE_SCN_ALIGN_1BYTES");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00200000, "IMAGE_SCN_ALIGN_2BYTES");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00300000, "IMAGE_SCN_ALIGN_4BYTES");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00400000, "IMAGE_SCN_ALIGN_8BYTES");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00500000, "IMAGE_SCN_ALIGN_16BYTES");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00600000, "IMAGE_SCN_ALIGN_32BYTES");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00700000, "IMAGE_SCN_ALIGN_64BYTES");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00800000, "IMAGE_SCN_ALIGN_128BYTES");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00900000, "IMAGE_SCN_ALIGN_256BYTES");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00A00000, "IMAGE_SCN_ALIGN_512BYTES");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00B00000, "IMAGE_SCN_ALIGN_1024BYTES");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00C00000, "IMAGE_SCN_ALIGN_2048BYTES");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00D00000, "IMAGE_SCN_ALIGN_4096BYTES");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x00E00000, "IMAGE_SCN_ALIGN_8192BYTES");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x01000000, "IMAGE_SCN_LNK_NRELOC_OVFL");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x02000000, "IMAGE_SCN_MEM_DISCARDABLE");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x04000000, "IMAGE_SCN_MEM_NOT_CACHED");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x08000000, "IMAGE_SCN_MEM_NOT_PAGED");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x10000000, "IMAGE_SCN_MEM_SHARED");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x20000000, "IMAGE_SCN_MEM_EXECUTE");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x40000000, "IMAGE_SCN_MEM_READ");
+		PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS.addFlagSymbol(0x80000000, "IMAGE_SCN_MEM_WRITE");
+	}
+
+	public static final U16Attribute NUMBER_OF_SECTIONS = new U16Attribute("NumberOfSections");
+
 	public static final U16Attribute SIZE_OF_OPTIONAL_HEADER = new U16Attribute("SizeOfOptionalHeader");
 
 	public static final StructSpec PE_HEADER;
@@ -144,7 +195,7 @@ class PEImageFormatSpecs {
 		header.append(new U32Attribute("Magic").addValidValue(0x00004550));
 		header.append(new U16Attribute("Machine").addValidValues(PE_MACHINE_SYMBOLS.getValues())
 				.addExtraRenderer(PE_MACHINE_SYMBOLS));
-		header.append(new U16Attribute("NumberOfSections", U16Attributes.DECIMAL_FORMAT));
+		header.append(NUMBER_OF_SECTIONS.setFormat(U16Attributes.DECIMAL_FORMAT));
 		header.append(new U32Attribute("TimeDateStamp").addExtraRenderer(U32Attributes.CTIME_COMMENT));
 		header.append(new U32Attribute("PointerToSymbolTable"));
 		header.append(new U32Attribute("NumberOfSymbols", U32Attributes.DECIMAL_FORMAT));
@@ -396,14 +447,37 @@ class PEImageFormatSpecs {
 		return (index < NUMBER_OF_RVA_AND_SIZES.get().intValue() ? spec : null);
 	}
 
+	public static final FixedStringAttribute SECTION_NAME = new FixedStringAttribute("Name", StandardCharsets.UTF_8, 8);
+
+	public static final StructSpec PE_SECTION_HEADER;
+
+	static {
+		StructSpec sectionHeader = new StructSpec();
+
+		sectionHeader.append(SECTION_NAME.bind());
+		sectionHeader.append(new U32Attribute("VirtualSize").addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
+		sectionHeader.append(new U32Attribute("VirtualAddress"));
+		sectionHeader.append(new U32Attribute("SizeOfRawData").addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
+		sectionHeader.append(new U32Attribute("PointerToRawData"));
+		sectionHeader.append(new U32Attribute("PointerToRelocations"));
+		sectionHeader.append(new U32Attribute("PointerToLinenumbers"));
+		sectionHeader.append(new U16Attribute("NumberOfRelocations", U16Attributes.DECIMAL_FORMAT));
+		sectionHeader.append(new U16Attribute("NumberOfLinenumbers", U16Attributes.DECIMAL_FORMAT));
+		sectionHeader
+				.append(new U32Attribute("Characteristics").addExtraRenderer(PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS));
+		sectionHeader.setResult("Section header [{0}]", SECTION_NAME);
+		PE_SECTION_HEADER = sectionHeader;
+	}
+
 	public static final StructSpec PE_IMAGE;
 
 	static {
 		StructSpec image = new StructSpec();
 
-		image.declareAttributes(SIZE_OF_OPTIONAL_HEADER);
+		image.declareAttributes(NUMBER_OF_SECTIONS, SIZE_OF_OPTIONAL_HEADER);
 		image.append(PE_HEADER);
 		image.append(new ConditionalSpec(true, () -> getOptionalHeaderSpec()));
+		image.append(PE_SECTION_HEADER);
 		image.setResult(NAME_PE_IMAGE);
 		PE_IMAGE = image;
 	}
