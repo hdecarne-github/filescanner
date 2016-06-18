@@ -16,9 +16,9 @@
  */
 package de.carne.filescanner.provider.peimage;
 
-import de.carne.filescanner.core.format.spec.ConditionalFormatSpec;
+import de.carne.filescanner.core.format.spec.ConditionalSpec;
 import de.carne.filescanner.core.format.spec.FormatSpec;
-import de.carne.filescanner.core.format.spec.StructFormatSpec;
+import de.carne.filescanner.core.format.spec.StructSpec;
 import de.carne.filescanner.core.format.spec.U16Attribute;
 import de.carne.filescanner.core.format.spec.U16Attributes;
 import de.carne.filescanner.core.format.spec.U16FlagRenderer;
@@ -136,10 +136,10 @@ class PEImageFormatSpecs {
 
 	public static final U16Attribute SIZE_OF_OPTIONAL_HEADER = new U16Attribute("SizeOfOptionalHeader");
 
-	public static final StructFormatSpec PE_HEADER;
+	public static final StructSpec PE_HEADER;
 
 	static {
-		StructFormatSpec header = new StructFormatSpec();
+		StructSpec header = new StructSpec();
 
 		header.append(new U32Attribute("Magic").addValidValue(0x00004550));
 		header.append(new U16Attribute("Machine").addValidValues(PE_MACHINE_SYMBOLS.getValues())
@@ -154,10 +154,10 @@ class PEImageFormatSpecs {
 		PE_HEADER = header;
 	}
 
-	public static final StructFormatSpec WIN32_HEADER;
+	public static final StructSpec WIN32_HEADER;
 
 	static {
-		StructFormatSpec win32Header = new StructFormatSpec();
+		StructSpec win32Header = new StructSpec();
 
 		win32Header.append(new U16Attribute("Magic").addValidValues(PE_OPTIONAL_HEADER_MAGIC_SYMBOLS.getValues())
 				.addExtraRenderer(PE_OPTIONAL_HEADER_MAGIC_SYMBOLS));
@@ -197,14 +197,14 @@ class PEImageFormatSpecs {
 		WIN32_HEADER = win32Header;
 	}
 
-	public static final StructFormatSpec PE_IMAGE;
+	public static final StructSpec PE_IMAGE;
 
 	static {
-		StructFormatSpec image = new StructFormatSpec();
+		StructSpec image = new StructSpec();
 
 		image.declareAttributes(SIZE_OF_OPTIONAL_HEADER);
 		image.append(PE_HEADER);
-		image.append(new ConditionalFormatSpec(() -> getOptionalHeaderSpec()));
+		image.append(new ConditionalSpec(() -> getOptionalHeaderSpec()));
 		image.setResult(NAME_PE_IMAGE);
 		PE_IMAGE = image;
 	}

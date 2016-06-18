@@ -30,7 +30,7 @@ import de.carne.filescanner.core.transfer.ResultRenderer;
 /**
  * Struct format spec combining a consecutive list of format specs.
  */
-public class StructFormatSpec extends FormatSpec {
+public class StructSpec extends FormatSpecBuilder {
 
 	private final ArrayList<FormatSpec> specs = new ArrayList<>();
 
@@ -40,7 +40,7 @@ public class StructFormatSpec extends FormatSpec {
 	 * @param spec The spec to append.
 	 * @return The updated struct spec.
 	 */
-	public StructFormatSpec append(FormatSpec spec) {
+	public StructSpec append(FormatSpec spec) {
 		assert spec != null;
 
 		this.specs.add(spec);

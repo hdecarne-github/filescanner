@@ -16,11 +16,11 @@
  */
 package de.carne.filescanner.provider.png;
 
-import de.carne.filescanner.core.format.spec.StructFormatSpec;
+import de.carne.filescanner.core.format.spec.StructSpec;
 import de.carne.filescanner.core.format.spec.U32Attribute;
 import de.carne.filescanner.core.format.spec.U32Attributes;
 import de.carne.filescanner.core.format.spec.U8ArrayAttribute;
-import de.carne.filescanner.core.format.spec.VarArrayFormatSpec;
+import de.carne.filescanner.core.format.spec.VarArraySpec;
 import de.carne.filescanner.core.transfer.ImageResultExporter;
 
 /**
@@ -55,10 +55,10 @@ class PNGFormatSpecs {
 	public static final ImageResultExporter PNG_IMAGE_EXPORTER = ImageResultExporter.defaultImageExporter(NAME_PNG,
 			".png", "*.png");
 
-	public static final StructFormatSpec PNG_SIGNATURE;
+	public static final StructSpec PNG_SIGNATURE;
 
 	static {
-		StructFormatSpec signature = new StructFormatSpec();
+		StructSpec signature = new StructSpec();
 
 		signature.append(new U8ArrayAttribute("signature", 8)
 				.addValidValue(new Byte[] { (byte) 0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a }));
@@ -73,10 +73,10 @@ class PNGFormatSpecs {
 	public static final U32Attribute CHUNK_TYPE_GENERIC = new U32Attribute("Chunk Type");
 	public static final U32Attribute CHUNK_TYPE_IEND = new U32Attribute(CHUNK_TYPE_GENERIC.name());
 
-	public static final StructFormatSpec PNG_CHUNK_GENERIC;
+	public static final StructSpec PNG_CHUNK_GENERIC;
 
 	static {
-		StructFormatSpec chunkGeneric = new StructFormatSpec();
+		StructSpec chunkGeneric = new StructSpec();
 
 		chunkGeneric.append(CHUNK_LENGTH.bind().addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
 		chunkGeneric.append(
@@ -87,10 +87,10 @@ class PNGFormatSpecs {
 		PNG_CHUNK_GENERIC = chunkGeneric;
 	}
 
-	public static final StructFormatSpec PNG_CHUNK_IEND;
+	public static final StructSpec PNG_CHUNK_IEND;
 
 	static {
-		StructFormatSpec chunkIEND = new StructFormatSpec();
+		StructSpec chunkIEND = new StructSpec();
 
 		chunkIEND.append(CHUNK_LENGTH);
 		chunkIEND.append(CHUNK_TYPE_IEND.bind().addValidValue(0x49454e44).addExtraRenderer(PNG_CHUNK_TYPE_SYMBOLS)
@@ -101,13 +101,13 @@ class PNGFormatSpecs {
 		PNG_CHUNK_IEND = chunkIEND;
 	}
 
-	public static final StructFormatSpec PNG;
+	public static final StructSpec PNG;
 
 	static {
-		StructFormatSpec png = new StructFormatSpec();
+		StructSpec png = new StructSpec();
 
 		png.append(PNG_SIGNATURE);
-		png.append(new VarArrayFormatSpec(PNG_CHUNK_GENERIC, PNG_CHUNK_IEND, 1));
+		png.append(new VarArraySpec(PNG_CHUNK_GENERIC, PNG_CHUNK_IEND, 1));
 		png.setResult(NAME_PNG);
 		png.setResultRenderHandler(PNG_RENDER_HANDLER);
 		png.addResultExporter(PNG_IMAGE_EXPORTER);

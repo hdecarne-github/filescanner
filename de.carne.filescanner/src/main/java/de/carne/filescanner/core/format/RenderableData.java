@@ -22,12 +22,13 @@ import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.transfer.ResultRenderer;
 
 /**
- * This interface defines the functions to render selected data of a format.
+ * This interface defines the functions to render a specific data section of a
+ * format.
  */
 public interface RenderableData {
 
 	/**
-	 * Render the scanner result.
+	 * Render the scan result.
 	 *
 	 * @param result The result object containing the data to render.
 	 * @param start The start position of the data to render.

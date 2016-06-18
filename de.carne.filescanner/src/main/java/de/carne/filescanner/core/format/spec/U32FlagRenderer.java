@@ -24,7 +24,11 @@ import java.util.Iterator;
  */
 public class U32FlagRenderer extends FlagRenderer<Integer> {
 
-	private static final int MSB = 0b100000000000000000000000000000;
+	private static final int MSB = 0b1000000000000000000000000000000;
+
+	static int shift(int flag) {
+		return flag >>> 1;
+	}
 
 	@Override
 	public Iterator<Integer> iterator() {
@@ -41,7 +45,7 @@ public class U32FlagRenderer extends FlagRenderer<Integer> {
 			public Integer next() {
 				int currentFlag = this.nextFlag;
 
-				this.nextFlag >>>= 1;
+				this.nextFlag = shift(this.nextFlag);
 				return currentFlag;
 			}
 
@@ -70,7 +74,7 @@ public class U32FlagRenderer extends FlagRenderer<Integer> {
 			} else {
 				formatBuffer.append('.');
 			}
-			shiftFlag >>>= 1;
+			shiftFlag = shift(shiftFlag);
 		}
 		return formatBuffer.toString();
 	}

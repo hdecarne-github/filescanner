@@ -30,24 +30,19 @@ import de.carne.filescanner.core.transfer.ResultRenderer;
  * Conditional format spec that applies a specific spec depending on the current
  * context.
  */
-public class ConditionalFormatSpec extends FormatSpec {
+public class ConditionalSpec extends FormatSpec {
 
 	private final Supplier<FormatSpec> specLambda;
 
 	/**
-	 * Construct {@code ConditionalFormatSpec}.
+	 * Construct {@code ConditionalSpec}.
 	 *
 	 * @param specLambda The expression providing the format spec to use.
 	 */
-	public ConditionalFormatSpec(Supplier<FormatSpec> specLambda) {
+	public ConditionalSpec(Supplier<FormatSpec> specLambda) {
 		assert specLambda != null;
 
 		this.specLambda = specLambda;
-	}
-
-	@Override
-	public FileScannerResultType resultType() {
-		return this.specLambda.get().resultType();
 	}
 
 	@Override
@@ -96,6 +91,11 @@ public class ConditionalFormatSpec extends FormatSpec {
 	@Override
 	public boolean isResult() {
 		return this.specLambda.get().isResult();
+	}
+
+	@Override
+	public FileScannerResultType resultType() {
+		return this.specLambda.get().resultType();
 	}
 
 	@Override

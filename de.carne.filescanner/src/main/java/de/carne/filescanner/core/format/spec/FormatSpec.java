@@ -18,19 +18,13 @@ package de.carne.filescanner.core.format.spec;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.function.Supplier;
 
 import de.carne.filescanner.core.FileScannerInput;
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.core.FileScannerResultType;
 import de.carne.filescanner.core.format.Decodable;
-import de.carne.filescanner.core.format.DecodeContext;
 import de.carne.filescanner.core.format.RenderableData;
-import de.carne.filescanner.core.format.ResultSection;
-import de.carne.filescanner.core.transfer.ResultExporter;
 import de.carne.filescanner.core.transfer.ResultRenderer;
 
 /**
@@ -38,19 +32,15 @@ import de.carne.filescanner.core.transfer.ResultRenderer;
  */
 public abstract class FormatSpec implements Decodable, RenderableData {
 
-	private final ArrayList<Attribute<?>> declaredAttributes = new ArrayList<>();
-
-	private StringExpression resultTitleExpression = null;
-
 	/**
-	 * Interface for custom result rendering.
+	 * Interface for spec based custom result rendering.
 	 */
 	public interface RenderHandler {
 
 		/**
-		 * Render the scanner result.
+		 * Render the scan result.
 		 *
-		 * @param spec The format spec used to decode the result.
+		 * @param spec The spec used to decode the result.
 		 * @param result The result object to render.
 		 * @param renderer The renderer to use.
 		 * @throws IOException if an I/O error occurs.
@@ -61,12 +51,8 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 
 	}
 
-	private RenderHandler resultRenderHandler = null;
-
-	private final ArrayList<ResultExporter> resultExporters = new ArrayList<>();
-
 	/**
-	 * Whether this spec's data size is fixed or format dependent.
+	 * Check whether this spec's data size is fixed or variable.
 	 * <p>
 	 * If this function returns {@code true} the {@linkplain #matchSize()}
 	 * function can be used to get the actual size.
@@ -92,21 +78,6 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 	}
 
 	/**
-	 * This function checks whether the prerequisites assumed by
-	 * {@linkplain #matches(ByteBuffer)} are met.
-	 *
-	 * @param buffer The buffer to check.
-	 * @return The match size as returned by {@linkplain #matchSize()} or
-	 *         {@code 0} if the match size is {@code 0} or the buffer remaining
-	 *         bytes are insufficient.
-	 */
-	protected final int checkedMatchSize(ByteBuffer buffer) {
-		int matchSize = matchSize();
-
-		return (matchSize > 0 && isSA(buffer, matchSize) ? matchSize : 0);
-	}
-
-	/**
 	 * Match a {@linkplain ByteBuffer} against this spec.
 	 * <p>
 	 * Matching will always fail if this spec's match size (as returned by
@@ -121,22 +92,7 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 	 * @return {@code true} if the buffer's data matches.
 	 */
 	public boolean matches(ByteBuffer buffer) {
-		int matchSize = checkedMatchSize(buffer);
-		boolean matches = matchSize > 0;
-
-		if (matches) {
-			buffer.position(buffer.position() + matchSize);
-		}
-		return matches;
-	}
-
-	/**
-	 * Get this's specs result type.
-	 *
-	 * @return This's specs result type.
-	 */
-	public FileScannerResultType resultType() {
-		return FileScannerResultType.FORMAT;
+		return false;
 	}
 
 	/**
@@ -151,17 +107,9 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 
 	@Override
 	public long decode(FileScannerResultBuilder result) throws IOException {
-		DecodeContext context = DecodeContext.getDecodeContext();
+		assert isResult();
 
-		for (Attribute<?> declaredAttribute : this.declaredAttributes) {
-			context.declareAttribute(declaredAttribute);
-		}
-
-		long decoded = specDecode(result, result.start());
-
-		result.updateTitle(this.resultTitleExpression.decode());
-		result.addExporters(this.resultExporters);
-		return decoded;
+		return specDecode(result, result.start());
 	}
 
 	/**
@@ -180,15 +128,13 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 	@Override
 	public void renderData(FileScannerResult result, long start, long end, ResultRenderer renderer)
 			throws IOException, InterruptedException {
-		assert result.start() <= start;
-		assert start <= end;
-		assert end <= result.end();
-
 		specRender(result, start, end, renderer);
 	}
 
 	@Override
 	public void render(FileScannerResult result, ResultRenderer renderer) throws IOException, InterruptedException {
+		assert isResult();
+
 		RenderHandler renderHandler = getResultRenderHandler();
 
 		if (renderHandler != null) {
@@ -199,135 +145,32 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 	}
 
 	/**
-	 * Declare attributes to make them accessible in this spec's result scope.
-	 *
-	 * @param attributes The attributes to declare.
-	 * @return The updated format spec.
-	 */
-	public final FormatSpec declareAttributes(Attribute<?>... attributes) {
-		this.declaredAttributes.ensureCapacity(this.declaredAttributes.size() + attributes.length);
-		for (Attribute<?> attribute : attributes) {
-			this.declaredAttributes.add(attribute);
-		}
-		return this;
-	}
-
-	/**
-	 * Mark this spec as a scan result.
-	 * <p>
-	 * Marking spec as a result instructs the caller to decode this spec into
-	 * it's own result object.
-	 * </p>
-	 *
-	 * @param title The title to use for the result object.
-	 * @return The updated format spec.
-	 */
-	public final FormatSpec setResult(String title) {
-		this.resultTitleExpression = new StringExpression(title);
-		return this;
-	}
-
-	/**
-	 * Mark this spec as a scan result.
-	 * <p>
-	 * Marking spec as a result instructs the caller to decode this spec into
-	 * it's own result object.
-	 * </p>
-	 *
-	 * @param titleLambda The string expression providing the title to use for
-	 *        the result object.
-	 * @return The updated format spec.
-	 */
-	public final FormatSpec setResult(Supplier<String> titleLambda) {
-		this.resultTitleExpression = new StringExpression(titleLambda);
-		return this;
-	}
-
-	/**
-	 * Mark this spec as a scan result.
-	 * <p>
-	 * Marking spec as a result instructs the caller to decode this spec into
-	 * it's own result object.
-	 * </p>
-	 *
-	 * @param pattern The {@linkplain MessageFormat} format pattern for the
-	 *        result object's title.
-	 * @param titleLambda The string expression providing the format param to
-	 *        use during title formatting.
-	 * @return The updated format spec.
-	 */
-	public final FormatSpec setResult(String pattern, Supplier<String> titleLambda) {
-		this.resultTitleExpression = new StringExpression(pattern, titleLambda);
-		return this;
-	}
-
-	/**
-	 * Check whether this spec has been set as result.
+	 * Check whether this spec represents a scan result or not.
 	 *
 	 * @return {@code true} if this spec has been set as a result.
 	 */
 	public boolean isResult() {
-		return this.resultTitleExpression != null;
+		return false;
 	}
 
 	/**
-	 * Set a custom render handler for result display.
+	 * Get this's specs result type.
 	 *
-	 * @param handler The handler to use for result rendering.
-	 * @return The updated format spec.
+	 * @return This's specs result type or {@code null} if this spec does not
+	 *         represent a scan result.
 	 */
-	public final FormatSpec setResultRenderHandler(RenderHandler handler) {
-		this.resultRenderHandler = handler;
-		return this;
+	public FileScannerResultType resultType() {
+		return null;
 	}
 
 	/**
 	 * Get the custom render handler for result display.
 	 *
-	 * @return The handler or {@code null} if none has been set.
+	 * @return The handler or {@code null} if none has been set or if this spec
+	 *         does not represent a scan result.
 	 */
 	public RenderHandler getResultRenderHandler() {
-		return this.resultRenderHandler;
-	}
-
-	/**
-	 * Add an exporter for result export.
-	 *
-	 * @param exporter The exporter to add.
-	 */
-	public final void addResultExporter(ResultExporter exporter) {
-		assert exporter != null;
-
-		this.resultExporters.add(exporter);
-	}
-
-	/**
-	 * Record a result section during decoding.
-	 *
-	 * @param result The corresponding result object.
-	 * @param position The result section's position.
-	 * @param size The result section's size.
-	 * @param spec The result section's spec.
-	 */
-	protected final void recordResultSection(FileScannerResultBuilder result, long size, FormatSpec spec) {
-		assert size >= 0;
-		assert spec != null;
-
-		result.decodeContext().recordResultSection(size, spec);
-	}
-
-	/**
-	 * Get a previously recorded result section.
-	 *
-	 * @param result The corresponding result object.
-	 * @param index The index of the result section to retrieve.
-	 * @return The result section object or {@code null} if the submitted index
-	 *         has not been recorded.
-	 */
-	protected final ResultSection getResultSectionSize(FileScannerResult result, int index) {
-		assert result != null;
-
-		return result.renderContext().getResultSection(index);
+		return null;
 	}
 
 	/**
@@ -338,7 +181,7 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 	 * @return {@code true} if the buffer contains the required number of bytes
 	 *         or more.
 	 */
-	protected static final boolean isSA(ByteBuffer buffer, int size) {
+	protected static final boolean isBufferSufficient(ByteBuffer buffer, int size) {
 		assert buffer != null;
 		assert size >= 0;
 
@@ -355,17 +198,13 @@ public abstract class FormatSpec implements Decodable, RenderableData {
 	 *         or more.
 	 * @throws IOException if an I/O error occurs.
 	 */
-	protected static final boolean isSA(FileScannerInput input, long position, long size) throws IOException {
+	protected static final boolean isInputSufficient(FileScannerInput input, long position, long size)
+			throws IOException {
 		assert input != null;
 		assert position >= 0;
 		assert size >= 0;
 
 		return (position + size) <= input.size();
-	}
-
-	@Override
-	public String toString() {
-		return "FormatSpec " + (this.resultTitleExpression != null ? this.resultTitleExpression : "<anonymous>");
 	}
 
 }

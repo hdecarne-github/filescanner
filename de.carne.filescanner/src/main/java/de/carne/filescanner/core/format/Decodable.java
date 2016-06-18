@@ -26,7 +26,7 @@ import de.carne.filescanner.core.FileScannerResultBuilder;
 public interface Decodable extends Renderable {
 
 	/**
-	 * Decode scanner result.
+	 * Decode scan result.
 	 *
 	 * @param result The result builder to decode into.
 	 * @return The number of decoded bytes.

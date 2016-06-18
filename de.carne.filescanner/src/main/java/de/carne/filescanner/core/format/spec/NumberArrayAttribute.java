@@ -154,7 +154,7 @@ public abstract class NumberArrayAttribute<T extends Number> extends Attribute<T
 			if (sizeLong < MAX_MATCH_SIZE) {
 				int size = sizeValue.intValue();
 
-				if (isSA(buffer, size * this.type.size())) {
+				if (isBufferSufficient(buffer, size * this.type.size())) {
 					if (hasValidators()) {
 						T[] values = getValues(buffer, size);
 
@@ -173,7 +173,7 @@ public abstract class NumberArrayAttribute<T extends Number> extends Attribute<T
 		long totalSize = this.sizeExpression.decode().longValue() * this.type.size();
 		long decoded = 0L;
 
-		if (!isSA(result.input(), position, totalSize)) {
+		if (!isInputSufficient(result.input(), position, totalSize)) {
 			result.updateDecodeStatus(DecodeStatusException.fatal(DecodeStatusException.STATUS_UNEXPECTED_EOD));
 		} else {
 			decoded = totalSize;

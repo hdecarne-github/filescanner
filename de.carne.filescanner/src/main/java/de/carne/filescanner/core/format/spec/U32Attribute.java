@@ -49,7 +49,7 @@ public class U32Attribute extends NumberAttribute<Integer> {
 
 	@Override
 	public Integer getValue(ByteBuffer buffer) {
-		return (isSA(buffer, type().size()) ? Integer.valueOf(buffer.getInt()) : null);
+		return (isBufferSufficient(buffer, type().size()) ? Integer.valueOf(buffer.getInt()) : null);
 	}
 
 }

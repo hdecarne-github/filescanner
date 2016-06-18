@@ -53,7 +53,7 @@ public class U16ArrayAttribute extends NumberArrayAttribute<Short> {
 	public Short[] getValues(ByteBuffer buffer, int size) {
 		Short[] values = null;
 
-		if (isSA(buffer, size * type().size())) {
+		if (isBufferSufficient(buffer, size * type().size())) {
 			values = new Short[size];
 			for (int valueIndex = 0; valueIndex < size; valueIndex++) {
 				values[valueIndex] = buffer.getShort();

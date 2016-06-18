@@ -49,7 +49,7 @@ public class U8Attribute extends NumberAttribute<Byte> {
 
 	@Override
 	public Byte getValue(ByteBuffer buffer) {
-		return (isSA(buffer, type().size()) ? Byte.valueOf(buffer.get()) : null);
+		return (isBufferSufficient(buffer, type().size()) ? Byte.valueOf(buffer.get()) : null);
 	}
 
 }

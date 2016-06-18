@@ -38,14 +38,15 @@ public class LogFormatter extends Formatter {
 		try (StringWriter sw = new StringWriter(); PrintWriter pw = new PrintWriter(sw)) {
 			StringBuffer sb = sw.getBuffer();
 
+			sb.ensureCapacity(sb.length() + 2048);
 			sb.append(this.dateFormat.format(new Date(record.getMillis())));
 			sb.append(" [");
 			sb.append(record.getThreadID());
 			sb.append("] ");
 			sb.append(Log.levelToString(record.getLevel()));
-			sb.append(" ");
+			sb.append(' ');
 			sb.append(record.getLoggerName());
-			sb.append(" ");
+			sb.append(' ');
 			sb.append(formatMessage(record));
 			pw.println();
 

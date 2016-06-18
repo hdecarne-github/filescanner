@@ -67,6 +67,8 @@ public final class DecodeCache implements AutoCloseable {
 
 		ensureWriteChannelOpen();
 
+		LOG.info(null, "Decoding compressed data ({0})...", decoder.name());
+
 		long decodeInputStart = this.decodeCacheWriteChannel.size();
 		long decodeInputEnd = decodeInputStart;
 		IOException decodetatus = null;

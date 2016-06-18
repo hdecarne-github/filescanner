@@ -33,46 +33,33 @@ import de.carne.util.logging.Log;
 /**
  * Encoded format spec defining a section of encoded data.
  */
-public class EncodedFormatSpec extends FormatSpec implements Supplier<String> {
+public class EncodedSpec extends FormatSpec {
 
-	private static final Log LOG = new Log(EncodedFormatSpec.class);
+	private static final Log LOG = new Log(EncodedSpec.class);
 
 	private final ValueExpression<DecodeParams> decodeParamsExpression;
 
-	private EncodedFormatSpec(ValueExpression<DecodeParams> factoryExpression) {
+	private EncodedSpec(ValueExpression<DecodeParams> factoryExpression) {
 		this.decodeParamsExpression = factoryExpression;
-		setResult(this);
 	}
 
 	/**
-	 * Construct {@code EncodedFormatSpec}.
+	 * Construct {@code EncodedSpec}.
 	 *
 	 * @param decodeParams The decode parameters to use for decoding.
 	 */
-	public EncodedFormatSpec(DecodeParams decodeParams) {
+	public EncodedSpec(DecodeParams decodeParams) {
 		this(new ValueExpression<>(decodeParams));
 	}
 
 	/**
-	 * Construct {@code EncodedFormatSpec}.
+	 * Construct {@code EncodedSpec}.
 	 *
 	 * @param decodeParamsLambda The expression providing the decode parameters
 	 *        to use for decoding.
 	 */
-	public EncodedFormatSpec(Supplier<DecodeParams> decodeParamsLambda) {
+	public EncodedSpec(Supplier<DecodeParams> decodeParamsLambda) {
 		this(new ValueExpression<>(decodeParamsLambda));
-	}
-
-	@Override
-	public String get() {
-		DecodeParams decodeParams = this.decodeParamsExpression.decode();
-
-		return (decodeParams != null ? decodeParams.getEncodedName() : "");
-	}
-
-	@Override
-	public FileScannerResultType resultType() {
-		return FileScannerResultType.ENCODED_INPUT;
 	}
 
 	@SuppressWarnings("resource")
@@ -88,11 +75,12 @@ public class EncodedFormatSpec extends FormatSpec implements Supplier<String> {
 			Exception decodeStatus;
 
 			if (decoder != null) {
-				DecodeCache.Input decodedInput2 = result.input().scanner().decodeCache().decodeInput(result.input(),
+				DecodeCache.Input cachedInput = result.input().scanner().decodeCache().decodeInput(result.input(),
 						position, decoder, decodeParams.getDecodedPath());
+
 				decoded = Math.max(decoder.totalIn(), encodedSize);
-				decodedInput = decodedInput2;
-				decodeStatus = decodedInput2.decodeStatus();
+				decodedInput = cachedInput;
+				decodeStatus = cachedInput.decodeStatus();
 			} else {
 				decoded = Math.max(0L, encodedSize);
 				decodedInput = result.input().slice(position, position + decoded, decodeParams.getDecodedPath());
@@ -102,6 +90,7 @@ public class EncodedFormatSpec extends FormatSpec implements Supplier<String> {
 				LOG.warning(null, "Decoding exceeded the specified encoded size; {0} addional bytes read",
 						decoded - encodedSize);
 			}
+			result.updateTitle(decodeParams.getEncodedName());
 			result.addInput(decodedInput);
 			result.updateDecodeStatus(DecodeStatusException.fromException(decodeStatus, encodedSize < 0));
 		}
@@ -120,6 +109,16 @@ public class EncodedFormatSpec extends FormatSpec implements Supplier<String> {
 			result.renderDecodeStatus(renderer);
 		}
 		renderer.renderBreakOrClose(isResult());
+	}
+
+	@Override
+	public boolean isResult() {
+		return true;
+	}
+
+	@Override
+	public FileScannerResultType resultType() {
+		return FileScannerResultType.ENCODED_INPUT;
 	}
 
 }

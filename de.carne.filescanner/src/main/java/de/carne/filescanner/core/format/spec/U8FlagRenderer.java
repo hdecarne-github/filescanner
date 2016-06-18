@@ -19,22 +19,22 @@ package de.carne.filescanner.core.format.spec;
 import java.util.Iterator;
 
 /**
- * Renderer used for the display of {@linkplain NumberAttributeType#U16}
+ * Renderer used for the display of {@linkplain NumberAttributeType#U8}
  * attribute based flag-sets.
  */
-public class U16FlagRenderer extends FlagRenderer<Short> {
+public class U8FlagRenderer extends FlagRenderer<Byte> {
 
-	private static final short MSB = (short) 0b1000000000000000;
+	private static final byte MSB = (byte) 0b10000000;
 
-	static short shift(short flag) {
-		return (short) ((flag & 0xffff) >>> 1);
+	static byte shift(byte flag) {
+		return (byte) ((flag & 0xff) >>> 1);
 	}
 
 	@Override
-	public Iterator<Short> iterator() {
-		return new Iterator<Short>() {
+	public Iterator<Byte> iterator() {
+		return new Iterator<Byte>() {
 
-			private short nextFlag = MSB;
+			private byte nextFlag = MSB;
 
 			@Override
 			public boolean hasNext() {
@@ -42,8 +42,8 @@ public class U16FlagRenderer extends FlagRenderer<Short> {
 			}
 
 			@Override
-			public Short next() {
-				short currentFlag = this.nextFlag;
+			public Byte next() {
+				byte currentFlag = this.nextFlag;
 
 				this.nextFlag = shift(this.nextFlag);
 				return currentFlag;
@@ -53,24 +53,24 @@ public class U16FlagRenderer extends FlagRenderer<Short> {
 	}
 
 	@Override
-	protected boolean testFlag(Short flag, Short value) {
-		return (value.shortValue() & flag.shortValue()) != 0;
+	protected boolean testFlag(Byte flag, Byte value) {
+		return (value.byteValue() & flag.byteValue()) != 0;
 	}
 
 	@Override
-	protected Short foldFlag(Short flag1, Short flag2) {
-		return Short.valueOf((short) (flag1.shortValue() | flag2.shortValue()));
+	protected Byte foldFlag(Byte flag1, Byte flag2) {
+		return Byte.valueOf((byte) (flag1.byteValue() | flag2.byteValue()));
 	}
 
 	@Override
-	protected String formatFlag(Short flag, Short value) {
+	protected String formatFlag(Byte flag, Byte value) {
 		StringBuilder formatBuffer = new StringBuilder();
-		short shiftFlag = MSB;
-		short flagValue = flag.shortValue();
+		byte shiftFlag = MSB;
+		byte flagValue = flag.byteValue();
 
 		while (shiftFlag != 0) {
 			if ((shiftFlag & flagValue) != 0) {
-				formatBuffer.append((flagValue & value.shortValue()) != 0 ? '1' : '0');
+				formatBuffer.append((flagValue & value.byteValue()) != 0 ? '1' : '0');
 			} else {
 				formatBuffer.append('.');
 			}

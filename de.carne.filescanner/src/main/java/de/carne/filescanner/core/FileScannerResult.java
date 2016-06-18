@@ -372,7 +372,6 @@ public abstract class FileScannerResult {
 		renderer.setNormalMode().renderText("size");
 		renderer.setOperatorMode().renderText(" = ");
 		renderer.setValueMode().renderText(Units.formatByteValue(size()));
-		renderDecodeStatus(renderer);
 	}
 
 	/**

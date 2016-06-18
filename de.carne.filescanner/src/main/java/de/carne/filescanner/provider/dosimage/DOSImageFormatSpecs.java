@@ -16,8 +16,8 @@
  */
 package de.carne.filescanner.provider.dosimage;
 
-import de.carne.filescanner.core.format.spec.SectionFormatSpec;
-import de.carne.filescanner.core.format.spec.StructFormatSpec;
+import de.carne.filescanner.core.format.spec.SectionSpec;
+import de.carne.filescanner.core.format.spec.StructSpec;
 import de.carne.filescanner.core.format.spec.U16ArrayAttribute;
 import de.carne.filescanner.core.format.spec.U16Attribute;
 import de.carne.filescanner.core.format.spec.U16Attributes;
@@ -35,10 +35,10 @@ class DOSImageFormatSpecs {
 
 	public static final U32Attribute DOS_STUB_E_LFANEW = new U32Attribute("e_lfanew");
 
-	public static final StructFormatSpec DOS_STUB_HEADER;
+	public static final StructSpec DOS_STUB_HEADER;
 
 	static {
-		StructFormatSpec dosStubHeader = new StructFormatSpec();
+		StructSpec dosStubHeader = new StructSpec();
 
 		dosStubHeader.append(new U8ArrayAttribute("signature", 2).addValidValue(new Byte[] { 0x4D, 0x5A }));
 		dosStubHeader.append(
@@ -64,10 +64,10 @@ class DOSImageFormatSpecs {
 		DOS_STUB_HEADER = dosStubHeader;
 	}
 
-	public static final SectionFormatSpec IMAGE_DATA;
+	public static final SectionSpec IMAGE_DATA;
 
 	static {
-		SectionFormatSpec imageData = new SectionFormatSpec(() -> dosStubImageDataSize());
+		SectionSpec imageData = new SectionSpec(() -> dosStubImageDataSize());
 
 		imageData.setResult("Image data");
 		IMAGE_DATA = imageData;
@@ -77,10 +77,10 @@ class DOSImageFormatSpecs {
 		return DOS_STUB_E_LFANEW.get() - 64L;
 	}
 
-	public static final StructFormatSpec DOS_STUB;
+	public static final StructSpec DOS_STUB;
 
 	static {
-		StructFormatSpec dosStub = new StructFormatSpec();
+		StructSpec dosStub = new StructSpec();
 
 		dosStub.declareAttributes(DOS_STUB_E_LFANEW);
 		dosStub.append(DOS_STUB_HEADER);

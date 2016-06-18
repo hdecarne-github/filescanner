@@ -93,7 +93,7 @@ public class FixedStringAttribute extends StringAttribute {
 		long stringSize = this.sizeExpression.decode().longValue();
 		long decoded = 0L;
 
-		if (isSA(result.input(), position, stringSize)) {
+		if (isInputSufficient(result.input(), position, stringSize)) {
 			String value = decodeString(result, position, stringSize).toString();
 
 			if (!validateValue(value)) {

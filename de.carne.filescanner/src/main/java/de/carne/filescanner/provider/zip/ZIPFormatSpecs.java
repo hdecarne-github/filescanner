@@ -20,9 +20,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import de.carne.filescanner.core.format.spec.EncodedFormatSpec;
+import de.carne.filescanner.core.format.spec.EncodedSpec;
 import de.carne.filescanner.core.format.spec.FixedStringAttribute;
-import de.carne.filescanner.core.format.spec.StructFormatSpec;
+import de.carne.filescanner.core.format.spec.StructSpec;
 import de.carne.filescanner.core.format.spec.U16Attribute;
 import de.carne.filescanner.core.format.spec.U16Attributes;
 import de.carne.filescanner.core.format.spec.U16FlagRenderer;
@@ -31,7 +31,7 @@ import de.carne.filescanner.core.format.spec.U32Attribute;
 import de.carne.filescanner.core.format.spec.U32Attributes;
 import de.carne.filescanner.core.format.spec.U32PositionAttribute;
 import de.carne.filescanner.core.format.spec.U8ArrayAttribute;
-import de.carne.filescanner.core.format.spec.VarArrayFormatSpec;
+import de.carne.filescanner.core.format.spec.VarArraySpec;
 import de.carne.filescanner.core.input.DecodeParams;
 import de.carne.filescanner.core.input.DeflateDecodeParams;
 import de.carne.filescanner.core.input.NullDecodeParams;
@@ -132,10 +132,10 @@ class ZIPFormatSpecs {
 	public static final FixedStringAttribute LFH_FILE_NAME = new FixedStringAttribute("file name",
 			StandardCharsets.UTF_8, LFH_FILE_NAME_LENGTH);
 
-	public static final StructFormatSpec ZIP_LFH;
+	public static final StructSpec ZIP_LFH;
 
 	static {
-		StructFormatSpec lfh = new StructFormatSpec();
+		StructSpec lfh = new StructSpec();
 
 		lfh.append(new U32Attribute("local file header signature").addValidValue(0x04034b50));
 		lfh.append(new U16Attribute("version needed to extract").addExtraRenderer(ZIP_VERSION_SYMBOLS));
@@ -156,10 +156,10 @@ class ZIPFormatSpecs {
 		ZIP_LFH = lfh;
 	}
 
-	public static final StructFormatSpec ZIP_DD;
+	public static final StructSpec ZIP_DD;
 
 	static {
-		StructFormatSpec dd = new StructFormatSpec();
+		StructSpec dd = new StructSpec();
 
 		dd.append(new U32Attribute("local file header signature").addValidValue(0x08074b50));
 		dd.append(new U32Attribute("crc-32"));
@@ -171,14 +171,14 @@ class ZIPFormatSpecs {
 		ZIP_DD = dd;
 	}
 
-	public static final StructFormatSpec ZIP_ENTRY;
+	public static final StructSpec ZIP_ENTRY;
 
 	static {
-		StructFormatSpec zipEntry = new StructFormatSpec();
+		StructSpec zipEntry = new StructSpec();
 
 		zipEntry.append(ZIP_LFH);
-		zipEntry.append(new EncodedFormatSpec(() -> getInputDecodeParams()));
-		zipEntry.append(new VarArrayFormatSpec(ZIP_DD, null, 0, 1));
+		zipEntry.append(new EncodedSpec(() -> getInputDecodeParams()));
+		zipEntry.append(new VarArraySpec(ZIP_DD, null, 0, 1));
 		zipEntry.declareAttributes(LFH_COMPRESSION_METHOD, LFH_COMPRESSED_SIZE, LFH_FILE_NAME);
 		zipEntry.setResult(NAME_ZIP_ENTRY, LFH_FILE_NAME);
 		ZIP_ENTRY = zipEntry;
@@ -196,10 +196,10 @@ class ZIPFormatSpecs {
 	public static final FixedStringAttribute CDH_FILE_NAME = new FixedStringAttribute("file name",
 			StandardCharsets.UTF_8, CDH_FILE_NAME_LENGTH);
 
-	public static final StructFormatSpec ZIP_CDH;
+	public static final StructSpec ZIP_CDH;
 
 	static {
-		StructFormatSpec cdh = new StructFormatSpec();
+		StructSpec cdh = new StructSpec();
 
 		cdh.append(new U32Attribute("central file header signature").addValidValue(0x02014b50));
 		cdh.append(new U16Attribute("version made by").addExtraRenderer(ZIP_VERSION_SYMBOLS));
@@ -230,10 +230,10 @@ class ZIPFormatSpecs {
 
 	public static final U16Attribute EOCD_ZIP_COMMENT_LENGTH = new U16Attribute(".ZIP file comment length");
 
-	public static final StructFormatSpec ZIP_EOCD;
+	public static final StructSpec ZIP_EOCD;
 
 	static {
-		StructFormatSpec eocd = new StructFormatSpec();
+		StructSpec eocd = new StructSpec();
 
 		eocd.append(new U32Attribute("end of central dir signature").addValidValue(0x06054b50));
 		eocd.append(new U16Attribute("number of this disk", U16Attributes.DECIMAL_FORMAT));
@@ -250,24 +250,24 @@ class ZIPFormatSpecs {
 		ZIP_EOCD = eocd;
 	}
 
-	public static final StructFormatSpec ZIP_CD;
+	public static final StructSpec ZIP_CD;
 
 	static {
-		StructFormatSpec cd = new StructFormatSpec();
+		StructSpec cd = new StructSpec();
 
-		cd.append(new VarArrayFormatSpec(ZIP_CDH, null, 1));
+		cd.append(new VarArraySpec(ZIP_CDH, null, 1));
 		cd.append(ZIP_EOCD);
 		cd.declareAttributes(CDH_FILE_NAME);
 		cd.setResult(NAME_ZIP_CD, CDH_FILE_NAME);
 		ZIP_CD = cd;
 	}
 
-	public static final StructFormatSpec ZIP;
+	public static final StructSpec ZIP;
 
 	static {
-		StructFormatSpec zip = new StructFormatSpec();
+		StructSpec zip = new StructSpec();
 
-		zip.append(new VarArrayFormatSpec(ZIP_ENTRY, null, 1));
+		zip.append(new VarArraySpec(ZIP_ENTRY, null, 1));
 		zip.append(ZIP_CD);
 		zip.setResult(NAME_ZIP);
 		ZIP = zip;

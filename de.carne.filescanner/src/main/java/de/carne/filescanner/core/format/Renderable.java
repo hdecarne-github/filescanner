@@ -27,14 +27,13 @@ import de.carne.filescanner.core.transfer.ResultRenderer;
 public interface Renderable {
 
 	/**
-	 * Render the scanner result.
+	 * Render the scan result.
 	 *
 	 * @param result The result object to render.
 	 * @param renderer The renderer to use.
 	 * @throws IOException if an I/O error occurs.
 	 * @throws InterruptedException if the render thread was interrupted.
 	 */
-	public void render(FileScannerResult result, ResultRenderer renderer)
-			throws IOException, InterruptedException;
+	public void render(FileScannerResult result, ResultRenderer renderer) throws IOException, InterruptedException;
 
 }

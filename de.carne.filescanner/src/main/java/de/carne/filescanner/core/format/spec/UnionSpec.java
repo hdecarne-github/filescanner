@@ -25,7 +25,7 @@ import de.carne.filescanner.core.transfer.ResultRenderer;
 /**
  *
  */
-public class UnionFormatSpec extends FormatSpec {
+public class UnionSpec extends FormatSpec {
 
 	@Override
 	public long specDecode(FileScannerResultBuilder result, long position) throws IOException {

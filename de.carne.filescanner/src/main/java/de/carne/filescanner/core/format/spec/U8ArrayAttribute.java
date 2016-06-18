@@ -53,7 +53,7 @@ public class U8ArrayAttribute extends NumberArrayAttribute<Byte> {
 	public Byte[] getValues(ByteBuffer buffer, int size) {
 		Byte[] values = null;
 
-		if (isSA(buffer, size * type().size())) {
+		if (isBufferSufficient(buffer, size * type().size())) {
 			values = new Byte[size];
 			for (int valueIndex = 0; valueIndex < size; valueIndex++) {
 				values[valueIndex] = buffer.get();

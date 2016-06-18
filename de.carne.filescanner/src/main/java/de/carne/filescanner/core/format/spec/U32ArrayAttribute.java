@@ -53,7 +53,7 @@ public class U32ArrayAttribute extends NumberArrayAttribute<Integer> {
 	public Integer[] getValues(ByteBuffer buffer, int size) {
 		Integer[] values = null;
 
-		if (isSA(buffer, size * type().size())) {
+		if (isBufferSufficient(buffer, size * type().size())) {
 			values = new Integer[size];
 			for (int valueIndex = 0; valueIndex < size; valueIndex++) {
 				values[valueIndex] = buffer.getInt();

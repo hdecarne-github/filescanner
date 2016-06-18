@@ -27,7 +27,7 @@ import de.carne.filescanner.core.transfer.ResultRenderer;
 /**
  * Format spec for defining simple format sections.
  */
-public class SectionFormatSpec extends FormatSpec {
+public class SectionSpec extends FormatSpecBuilder {
 
 	private final NumberExpression<?> sizeExpression;
 
@@ -36,7 +36,7 @@ public class SectionFormatSpec extends FormatSpec {
 	 *
 	 * @param size The static section size.
 	 */
-	public SectionFormatSpec(Number size) {
+	public SectionSpec(Number size) {
 		assert size != null;
 
 		this.sizeExpression = new NumberExpression<>(size);
@@ -47,7 +47,7 @@ public class SectionFormatSpec extends FormatSpec {
 	 *
 	 * @param sizeLambda The expression providing the section size.
 	 */
-	public SectionFormatSpec(Supplier<? extends Number> sizeLambda) {
+	public SectionSpec(Supplier<? extends Number> sizeLambda) {
 		assert sizeLambda != null;
 
 		this.sizeExpression = new NumberExpression<>(sizeLambda);
@@ -58,7 +58,7 @@ public class SectionFormatSpec extends FormatSpec {
 		long size = this.sizeExpression.decode().longValue();
 		long decoded = 0L;
 
-		if (isSA(result.input(), position, size)) {
+		if (isInputSufficient(result.input(), position, size)) {
 			decoded = size;
 		} else {
 			result.updateDecodeStatus(DecodeStatusException.fatal(DecodeStatusException.STATUS_UNEXPECTED_EOD));

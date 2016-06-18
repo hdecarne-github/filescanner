@@ -28,7 +28,7 @@ import de.carne.filescanner.core.transfer.ResultRenderer;
 /**
  * Variable array of format specs.
  */
-public class VarArrayFormatSpec extends FormatSpec {
+public class VarArraySpec extends FormatSpec {
 
 	private final FormatSpec spec;
 
@@ -45,7 +45,7 @@ public class VarArrayFormatSpec extends FormatSpec {
 	 * @param stopSpec The optional spec indicating the last entry in the array.
 	 * @param minOccurrence The minimum occurrence of the spec.
 	 */
-	public VarArrayFormatSpec(FormatSpec spec, FormatSpec stopSpec, int minOccurrence) {
+	public VarArraySpec(FormatSpec spec, FormatSpec stopSpec, int minOccurrence) {
 		this(spec, stopSpec, minOccurrence, 0);
 	}
 
@@ -58,7 +58,7 @@ public class VarArrayFormatSpec extends FormatSpec {
 	 * @param maxOccurrence The maximum occurrence of the space or {@code 0} if
 	 *        undefined.
 	 */
-	public VarArrayFormatSpec(FormatSpec spec, FormatSpec stopSpec, int minOccurrence, int maxOccurrence) {
+	public VarArraySpec(FormatSpec spec, FormatSpec stopSpec, int minOccurrence, int maxOccurrence) {
 		assert spec != null;
 		assert spec.matchSize() > 0;
 		assert stopSpec == null || stopSpec.matchSize() <= spec.matchSize();
