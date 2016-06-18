@@ -20,8 +20,8 @@ package de.carne.filescanner.core.format;
  * This class defines render information for a specific data section within a
  * scanner result.
  *
- * @see DecodeContext#recordResultSection(long, RenderableData)
- * @see RenderContext#getResultSection(int)
+ * @see DecodeContext#recordResultSection(long, long, RenderableData)
+ * @see RenderContext#getResultSection(long)
  */
 public final class ResultSection {
 

@@ -497,17 +497,19 @@ public class SessionController extends StageController {
 	}
 
 	void onFileScannerException(FileScanner scanner, Throwable e) {
-		StringWriter text = new StringWriter();
-		PrintWriter printer = new PrintWriter(text);
-		String exceptionMessage = Exceptions.toMessage(e);
+		if (scanner.equals(this.fileScanner)) {
+			StringWriter text = new StringWriter();
+			PrintWriter printer = new PrintWriter(text);
+			String exceptionMessage = Exceptions.toMessage(e);
 
-		if (Strings.notEmpty(exceptionMessage)) {
-			printer.println(exceptionMessage);
+			if (Strings.notEmpty(exceptionMessage)) {
+				printer.println(exceptionMessage);
+			}
+			e.printStackTrace(printer);
+			printer.flush();
+			this.scanStatusInfo.getTooltip().setText(text.toString());
+			this.scanStatusIcon.setImage(Images.IMAGE_WARNING16);
 		}
-		e.printStackTrace(printer);
-		printer.flush();
-		this.scanStatusInfo.getTooltip().setText(text.toString());
-		this.scanStatusIcon.setImage(Images.IMAGE_WARNING16);
 	}
 
 	@Override

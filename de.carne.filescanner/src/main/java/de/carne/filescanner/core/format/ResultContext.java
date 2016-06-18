@@ -16,7 +16,6 @@
  */
 package de.carne.filescanner.core.format;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import de.carne.filescanner.core.format.spec.Attribute;
@@ -32,7 +31,7 @@ public abstract class ResultContext {
 
 	private final HashMap<ResultAttribute<?>, Object> resultAttributes = new HashMap<>();
 
-	private final ArrayList<ResultSection> resultSections = new ArrayList<>();
+	private final HashMap<Long, ResultSection> resultSections = new HashMap<>();
 
 	/**
 	 * Get the parent context.
@@ -48,7 +47,7 @@ public abstract class ResultContext {
 	 */
 	protected final void contextAddResults(ResultContext context) {
 		this.resultAttributes.putAll(context.resultAttributes);
-		this.resultSections.addAll(context.resultSections);
+		this.resultSections.putAll(context.resultSections);
 	}
 
 	/**
@@ -110,26 +109,27 @@ public abstract class ResultContext {
 	/**
 	 * Record a result section for later rendering.
 	 *
+	 * @param position The position of the result section.
 	 * @param size The size of the result section.
 	 * @param renderable The {@linkplain RenderableData} to use for rendering.
 	 */
-	protected final void contextRecordResultSection(long size, RenderableData renderable) {
+	protected final void contextRecordResultSection(long position, long size, RenderableData renderable) {
+		assert position >= 0L;
 		assert size >= 0L;
-		assert renderable != null;
 
-		this.resultSections.add(new ResultSection(size, renderable));
+		this.resultSections.putIfAbsent(position, new ResultSection(size, renderable));
 	}
 
 	/**
 	 * Get a previously recorded result section.
 	 *
-	 * @param index The index of the result section to retrieve.
+	 * @param position The position of the result section to retrieve.
 	 * @return The result section object or {@code null} if the submitted index
 	 *         has not been recorded.
 	 * @see #recordResultSection(long, RenderableData)
 	 */
-	protected final ResultSection contextGetResultSection(int index) {
-		return (index < this.resultSections.size() ? this.resultSections.get(index) : null);
+	protected final ResultSection contextGetResultSection(long position) {
+		return this.resultSections.get(position);
 	}
 
 }

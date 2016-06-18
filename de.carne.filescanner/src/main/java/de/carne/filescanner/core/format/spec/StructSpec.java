@@ -24,6 +24,7 @@ import de.carne.filescanner.core.DecodeStatusException;
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.core.format.DecodeContext;
+import de.carne.filescanner.core.format.RenderableData;
 import de.carne.filescanner.core.format.ResultSection;
 import de.carne.filescanner.core.transfer.ResultRenderer;
 
@@ -100,9 +101,9 @@ public class StructSpec extends FormatSpecBuilder {
 	@Override
 	public long specDecode(FileScannerResultBuilder result, long position) throws IOException {
 		long decoded = 0L;
+		long specPosition = position;
 
 		for (FormatSpec spec : this.specs) {
-			long specPosition = position + decoded;
 			long specDecoded;
 
 			if (spec.isResult()) {
@@ -119,8 +120,9 @@ public class StructSpec extends FormatSpecBuilder {
 			if (decodeStatus != null && decodeStatus.isFatal()) {
 				break;
 			}
-			recordResultSection(result, specDecoded, spec);
+			recordResultSection(result, specPosition, specDecoded, (spec.isResult() ? null : spec));
 			decoded += specDecoded;
+			specPosition += specDecoded;
 		}
 		return decoded;
 	}
@@ -129,24 +131,19 @@ public class StructSpec extends FormatSpecBuilder {
 	public void specRender(FileScannerResult result, long start, long end, ResultRenderer renderer)
 			throws IOException, InterruptedException {
 		long renderPosition = start;
-		int sectionIndex = 0;
+		ResultSection section;
 
-		for (FormatSpec spec : this.specs) {
-			ResultSection section = getResultSectionSize(result, sectionIndex);
-
-			if (section == null) {
-				break;
-			}
-
+		while ((section = getResultSectionSize(result, renderPosition)) != null) {
 			long nextRenderPosition = renderPosition + section.size();
 
 			assert nextRenderPosition <= end;
 
-			if (!spec.isResult()) {
-				spec.specRender(result, renderPosition, nextRenderPosition, renderer);
+			RenderableData renderable = section.renderable();
+
+			if (renderable != null) {
+				renderable.renderData(result, renderPosition, nextRenderPosition, renderer);
 			}
 			renderPosition = nextRenderPosition;
-			sectionIndex++;
 		}
 		if (isResult()) {
 			if (!renderer.hasOutput()) {

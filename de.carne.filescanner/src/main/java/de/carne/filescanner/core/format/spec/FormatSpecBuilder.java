@@ -193,25 +193,26 @@ public abstract class FormatSpecBuilder extends FormatSpec {
 	 * @param size The result section's size.
 	 * @param spec The result section's spec.
 	 */
-	protected final void recordResultSection(FileScannerResultBuilder result, long size, FormatSpec spec) {
-		assert size >= 0;
-		assert spec != null;
+	protected final void recordResultSection(FileScannerResultBuilder result, long position, long size,
+			FormatSpec spec) {
+		assert result != null;
+		assert result.start() <= position;
 
-		result.decodeContext().recordResultSection(size, spec);
+		result.decodeContext().recordResultSection(position, size, spec);
 	}
 
 	/**
 	 * Get a previously recorded result section.
 	 *
 	 * @param result The corresponding result object.
-	 * @param index The index of the result section to retrieve.
+	 * @param position The position of the result section to retrieve.
 	 * @return The result section object or {@code null} if the submitted index
 	 *         has not been recorded.
 	 */
-	protected final ResultSection getResultSectionSize(FileScannerResult result, int index) {
+	protected final ResultSection getResultSectionSize(FileScannerResult result, long position) {
 		assert result != null;
 
-		return result.renderContext().getResultSection(index);
+		return result.renderContext().getResultSection(position);
 	}
 
 	@Override
