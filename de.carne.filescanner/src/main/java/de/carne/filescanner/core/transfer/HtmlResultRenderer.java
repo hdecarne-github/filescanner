@@ -225,12 +225,12 @@ public abstract class HtmlResultRenderer extends ResultRenderer {
 
 	@Override
 	protected void writeText(Mode mode, String text) throws IOException, InterruptedException {
-		write(text);
+		write(htmlEncode(text));
 	}
 
 	@Override
 	protected void writeRefText(Mode mode, String text, long position) throws IOException, InterruptedException {
-		write("<a href=\"#", Hexadecimal.formatL(position), "\">", text, "</a>");
+		write("<a href=\"#", Hexadecimal.formatL(position), "\">", htmlEncode(text), "</a>");
 	}
 
 	@Override
@@ -255,6 +255,35 @@ public abstract class HtmlResultRenderer extends ResultRenderer {
 			throws IOException, InterruptedException {
 		write("<a href=\"#", Hexadecimal.formatL(position), "\"><video src=\"",
 				registerStreamHandler(streamHandler).toExternalForm(), "\"/></a>");
+	}
+
+	private String htmlEncode(String decoded) {
+		StringBuilder encoded = new StringBuilder(decoded.length());
+
+		decoded.chars().forEachOrdered(c -> encodeCodePoint(encoded, c));
+		return encoded.toString();
+	}
+
+	private static void encodeCodePoint(StringBuilder encoded, int c) {
+		switch (c) {
+		case '&':
+			encoded.append("&amp;");
+			break;
+		case '"':
+			encoded.append("&quot;");
+			break;
+		case '\'':
+			encoded.append("&#039;");
+			break;
+		case '<':
+			encoded.append("&lt;");
+			break;
+		case '>':
+			encoded.append("&gt;");
+			break;
+		default:
+			encoded.append((char) c);
+		}
 	}
 
 	/**

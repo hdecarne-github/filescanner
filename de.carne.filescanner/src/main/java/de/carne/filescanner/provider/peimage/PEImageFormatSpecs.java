@@ -35,7 +35,7 @@ class PEImageFormatSpecs {
 
 	public static final String NAME_PE_IMAGE = "Portable Executable image";
 
-	public static final String NAME_PE_HEADER = "PE header";
+	public static final String NAME_PE_HEADER = "Portable Executable header";
 
 	public static final String NAME_WIN32_HEADER = "Win32 optional header";
 
@@ -154,6 +154,185 @@ class PEImageFormatSpecs {
 		PE_HEADER = header;
 	}
 
+	public static final StructSpec EXPORT_TABLE_ENTRY;
+
+	static {
+		StructSpec exportTable = new StructSpec();
+
+		exportTable.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress"));
+		exportTable.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].Size")
+				.addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
+		EXPORT_TABLE_ENTRY = exportTable;
+	}
+
+	public static final StructSpec IMPORT_TABLE_ENTRY;
+
+	static {
+		StructSpec importTable = new StructSpec();
+
+		importTable.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].VirtualAddress"));
+		importTable.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_IMPORT].Size")
+				.addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
+		IMPORT_TABLE_ENTRY = importTable;
+	}
+
+	public static final StructSpec RESOURCE_TABLE_ENTRY;
+
+	static {
+		StructSpec resourceTable = new StructSpec();
+
+		resourceTable.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_RESOURCE].VirtualAddress"));
+		resourceTable.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_RESOURCE].Size")
+				.addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
+		RESOURCE_TABLE_ENTRY = resourceTable;
+	}
+
+	public static final StructSpec EXCEPTION_TABLE_ENTRY;
+
+	static {
+		StructSpec exceptionTable = new StructSpec();
+
+		exceptionTable.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_EXCEPTION].VirtualAddress"));
+		exceptionTable.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_EXCEPTION].Size")
+				.addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
+		EXCEPTION_TABLE_ENTRY = exceptionTable;
+	}
+
+	public static final StructSpec CERTIFICATE_TABLE_ENTRY;
+
+	static {
+		StructSpec certificateTable = new StructSpec();
+
+		certificateTable.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_SECURITY].VirtualAddress"));
+		certificateTable.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_SECURITY].Size")
+				.addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
+		CERTIFICATE_TABLE_ENTRY = certificateTable;
+	}
+
+	public static final StructSpec BASE_RELOCATION_TABLE_ENTRY;
+
+	static {
+		StructSpec baseRelocationTable = new StructSpec();
+
+		baseRelocationTable.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_BASERELOC].VirtualAddress"));
+		baseRelocationTable.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_BASERELOC].Size")
+				.addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
+		BASE_RELOCATION_TABLE_ENTRY = baseRelocationTable;
+	}
+
+	public static final StructSpec DEBUG_ENTRY;
+
+	static {
+		StructSpec debug = new StructSpec();
+
+		debug.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_DEBUG].VirtualAddress"));
+		debug.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_DEBUG].Size")
+				.addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
+		DEBUG_ENTRY = debug;
+	}
+
+	public static final StructSpec ARCHITECTURE_ENTRY;
+
+	static {
+		StructSpec architecture = new StructSpec();
+
+		architecture.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_ARCHITECTURE].VirtualAddress"));
+		architecture.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_ARCHITECTURE].Size")
+				.addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
+		ARCHITECTURE_ENTRY = architecture;
+	}
+
+	public static final StructSpec GLOBAL_PTR_ENTRY;
+
+	static {
+		StructSpec globalPtr = new StructSpec();
+
+		globalPtr.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_GLOBALPTR].VirtualAddress"));
+		globalPtr.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_GLOBALPTR].Size")
+				.addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
+		GLOBAL_PTR_ENTRY = globalPtr;
+	}
+
+	public static final StructSpec TLS_TABLE_ENTRY;
+
+	static {
+		StructSpec tlsTable = new StructSpec();
+
+		tlsTable.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_TLS].VirtualAddress"));
+		tlsTable.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_TLS].Size")
+				.addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
+		TLS_TABLE_ENTRY = tlsTable;
+	}
+
+	public static final StructSpec LOAD_CONFIG_TABLE_ENTRY;
+
+	static {
+		StructSpec loadConfigTable = new StructSpec();
+
+		loadConfigTable.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_LOAD_CONFIG].VirtualAddress"));
+		loadConfigTable.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_LOAD_CONFIG].Size")
+				.addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
+		LOAD_CONFIG_TABLE_ENTRY = loadConfigTable;
+	}
+
+	public static final StructSpec BOUND_IMPORT_ENTRY;
+
+	static {
+		StructSpec boundImport = new StructSpec();
+
+		boundImport.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT].VirtualAddress"));
+		boundImport.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT].Size")
+				.addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
+		BOUND_IMPORT_ENTRY = boundImport;
+	}
+
+	public static final StructSpec IAT_ENTRY;
+
+	static {
+		StructSpec iat = new StructSpec();
+
+		iat.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_IAT].VirtualAddress"));
+		iat.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_IAT].Size")
+				.addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
+		IAT_ENTRY = iat;
+	}
+
+	public static final StructSpec DELAY_IMPORT_DESCRIPTOR_ENTRY;
+
+	static {
+		StructSpec delayImportDescriptor = new StructSpec();
+
+		delayImportDescriptor
+				.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT].VirtualAddress"));
+		delayImportDescriptor.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT].Size")
+				.addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
+		DELAY_IMPORT_DESCRIPTOR_ENTRY = delayImportDescriptor;
+	}
+
+	public static final StructSpec CLR_RUNTIME_HEADER_ENTRY;
+
+	static {
+		StructSpec clrRuntimeHeader = new StructSpec();
+
+		clrRuntimeHeader.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR].VirtualAddress"));
+		clrRuntimeHeader.append(new U32Attribute("DataDirectory[IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR].Size")
+				.addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
+		CLR_RUNTIME_HEADER_ENTRY = clrRuntimeHeader;
+	}
+
+	public static final StructSpec RESERVED15_ENTRY;
+
+	static {
+		StructSpec clrRuntimeHeader = new StructSpec();
+
+		clrRuntimeHeader.append(new U32Attribute("DataDirectory[15].VirtualAddress"));
+		clrRuntimeHeader
+				.append(new U32Attribute("DataDirectory[15].Size").addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
+		RESERVED15_ENTRY = clrRuntimeHeader;
+	}
+
+	public static final U32Attribute NUMBER_OF_RVA_AND_SIZES = new U32Attribute("NumberOfRvaAndSizes");
+
 	public static final StructSpec WIN32_HEADER;
 
 	static {
@@ -192,9 +371,29 @@ class PEImageFormatSpecs {
 		win32Header.append(new U32Attribute("SizeOfHeapReserve").addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
 		win32Header.append(new U32Attribute("SizeOfHeapCommit").addExtraRenderer(U32Attributes.BYTE_COUNT_COMMENT));
 		win32Header.append(new U32Attribute("LoaderFlags"));
-		win32Header.append(new U32Attribute("NumberOfRvaAndSizes", U32Attributes.DECIMAL_FORMAT));
+		win32Header.append(NUMBER_OF_RVA_AND_SIZES.setFormat(U32Attributes.DECIMAL_FORMAT).bind());
+		win32Header.append(new ConditionalSpec(false, () -> dataDirectoryEntrySpec(0, EXPORT_TABLE_ENTRY)));
+		win32Header.append(new ConditionalSpec(false, () -> dataDirectoryEntrySpec(1, IMPORT_TABLE_ENTRY)));
+		win32Header.append(new ConditionalSpec(false, () -> dataDirectoryEntrySpec(2, RESOURCE_TABLE_ENTRY)));
+		win32Header.append(new ConditionalSpec(false, () -> dataDirectoryEntrySpec(3, EXCEPTION_TABLE_ENTRY)));
+		win32Header.append(new ConditionalSpec(false, () -> dataDirectoryEntrySpec(4, CERTIFICATE_TABLE_ENTRY)));
+		win32Header.append(new ConditionalSpec(false, () -> dataDirectoryEntrySpec(5, BASE_RELOCATION_TABLE_ENTRY)));
+		win32Header.append(new ConditionalSpec(false, () -> dataDirectoryEntrySpec(6, DEBUG_ENTRY)));
+		win32Header.append(new ConditionalSpec(false, () -> dataDirectoryEntrySpec(7, ARCHITECTURE_ENTRY)));
+		win32Header.append(new ConditionalSpec(false, () -> dataDirectoryEntrySpec(8, GLOBAL_PTR_ENTRY)));
+		win32Header.append(new ConditionalSpec(false, () -> dataDirectoryEntrySpec(9, TLS_TABLE_ENTRY)));
+		win32Header.append(new ConditionalSpec(false, () -> dataDirectoryEntrySpec(10, LOAD_CONFIG_TABLE_ENTRY)));
+		win32Header.append(new ConditionalSpec(false, () -> dataDirectoryEntrySpec(11, BOUND_IMPORT_ENTRY)));
+		win32Header.append(new ConditionalSpec(false, () -> dataDirectoryEntrySpec(12, IAT_ENTRY)));
+		win32Header.append(new ConditionalSpec(false, () -> dataDirectoryEntrySpec(13, DELAY_IMPORT_DESCRIPTOR_ENTRY)));
+		win32Header.append(new ConditionalSpec(false, () -> dataDirectoryEntrySpec(14, CLR_RUNTIME_HEADER_ENTRY)));
+		win32Header.append(new ConditionalSpec(false, () -> dataDirectoryEntrySpec(15, RESERVED15_ENTRY)));
 		win32Header.setResult(NAME_WIN32_HEADER);
 		WIN32_HEADER = win32Header;
+	}
+
+	private static FormatSpec dataDirectoryEntrySpec(int index, FormatSpec spec) {
+		return (index < NUMBER_OF_RVA_AND_SIZES.get().intValue() ? spec : null);
 	}
 
 	public static final StructSpec PE_IMAGE;
@@ -204,7 +403,7 @@ class PEImageFormatSpecs {
 
 		image.declareAttributes(SIZE_OF_OPTIONAL_HEADER);
 		image.append(PE_HEADER);
-		image.append(new ConditionalSpec(() -> getOptionalHeaderSpec()));
+		image.append(new ConditionalSpec(true, () -> getOptionalHeaderSpec()));
 		image.setResult(NAME_PE_IMAGE);
 		PE_IMAGE = image;
 	}

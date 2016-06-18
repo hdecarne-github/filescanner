@@ -125,7 +125,7 @@ public abstract class RichTextResultRenderer extends ResultRenderer {
 
 		StringBuilder buffer = new StringBuilder();
 
-		text.codePoints().forEach(c -> writeCodePoint(buffer, c));
+		text.codePoints().forEachOrdered(c -> writeCodePoint(buffer, c));
 		write(buffer.toString(), "}");
 	}
 

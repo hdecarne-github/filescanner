@@ -23,7 +23,6 @@ import de.carne.filescanner.core.DecodeStatusException;
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.core.FileScannerResultType;
-import de.carne.filescanner.core.format.DecodeContext;
 import de.carne.filescanner.core.transfer.ResultRenderer;
 
 /**
@@ -32,75 +31,79 @@ import de.carne.filescanner.core.transfer.ResultRenderer;
  */
 public class ConditionalSpec extends FormatSpec {
 
+	private final boolean mandatory;
+
 	private final Supplier<FormatSpec> specLambda;
 
 	/**
 	 * Construct {@code ConditionalSpec}.
 	 *
+	 * @param mandatory Controls whether the absence of a spec is considered an
+	 *        error or not.
 	 * @param specLambda The expression providing the format spec to use.
 	 */
-	public ConditionalSpec(Supplier<FormatSpec> specLambda) {
+	public ConditionalSpec(boolean mandatory, Supplier<FormatSpec> specLambda) {
 		assert specLambda != null;
 
+		this.mandatory = mandatory;
 		this.specLambda = specLambda;
 	}
 
 	@Override
 	public long specDecode(FileScannerResultBuilder result, long position) throws IOException {
 		FormatSpec spec = this.specLambda.get();
-		long decoded;
+		long decoded = 0L;
 
 		if (spec != null) {
-			if (spec.isResult()) {
-				FileScannerResultBuilder specResult = result.addResult(spec.resultType(), position, spec);
-
-				decoded = DecodeContext.setupAndDecode(spec, specResult);
-				result.updateDecodeStatus(specResult.decodeStatus());
-			} else {
-				decoded = spec.specDecode(result, position);
-			}
-		} else {
+			decoded = spec.specDecode(result, position);
+		} else if (this.mandatory) {
 			result.updateDecodeStatus(DecodeStatusException.fatal(DecodeStatusException.STATUS_NO_DATA_DECODED));
-			decoded = 0L;
 		}
 		return decoded;
 	}
 
 	@Override
 	public long decode(FileScannerResultBuilder result) throws IOException {
-		return this.specLambda.get().decode(result);
+		FormatSpec spec = this.specLambda.get();
+		long decoded = 0L;
+
+		if (spec != null) {
+			decoded = spec.decode(result);
+		} else if (this.mandatory) {
+			result.updateDecodeStatus(DecodeStatusException.fatal(DecodeStatusException.STATUS_NO_DATA_DECODED));
+		}
+		return decoded;
 	}
 
 	@Override
 	public void specRender(FileScannerResult result, long start, long end, ResultRenderer renderer)
 			throws IOException, InterruptedException {
-		this.specLambda.get().specRender(result, start, end, renderer);
-	}
+		FormatSpec spec = this.specLambda.get();
 
-	@Override
-	public void renderData(FileScannerResult result, long start, long end, ResultRenderer renderer)
-			throws IOException, InterruptedException {
-		this.specLambda.get().renderData(result, start, end, renderer);
-	}
-
-	@Override
-	public void render(FileScannerResult result, ResultRenderer renderer) throws IOException, InterruptedException {
-		this.specLambda.get().render(result, renderer);
+		if (spec != null) {
+			spec.specRender(result, start, end, renderer);
+		}
 	}
 
 	@Override
 	public boolean isResult() {
-		return this.specLambda.get().isResult();
+		FormatSpec spec = this.specLambda.get();
+
+		return (spec != null ? spec.isResult() : false);
 	}
 
 	@Override
 	public FileScannerResultType resultType() {
-		return this.specLambda.get().resultType();
+		FormatSpec spec = this.specLambda.get();
+
+		return (spec != null ? spec.resultType() : null);
 	}
 
 	@Override
 	public RenderHandler getResultRenderHandler() {
-		return this.specLambda.get().getResultRenderHandler();
+		FormatSpec spec = this.specLambda.get();
+
+		return (spec != null ? spec.getResultRenderHandler() : null);
 	}
 
 }

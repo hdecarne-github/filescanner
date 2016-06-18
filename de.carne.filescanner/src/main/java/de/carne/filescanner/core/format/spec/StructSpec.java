@@ -148,13 +148,13 @@ public class StructSpec extends FormatSpecBuilder {
 			renderPosition = nextRenderPosition;
 			sectionIndex++;
 		}
-		if (!renderer.hasOutput()) {
-			result.renderDefault(renderer);
-		}
 		if (isResult()) {
+			if (!renderer.hasOutput()) {
+				result.renderDefault(renderer);
+			}
 			result.renderDecodeStatus(renderer);
+			renderer.close();
 		}
-		renderer.renderBreakOrClose(isResult());
 	}
 
 }
