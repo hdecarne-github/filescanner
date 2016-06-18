@@ -196,7 +196,7 @@ public class HtmlResultRendererURLHandler implements StreamHandler {
 				result.render(timeoutHtmlRenderer);
 				renderOutput = timeoutHtmlRenderer.getRenderer().toString();
 			} catch (InterruptedException e) {
-				LOG.info(null, "Fast rendering timout ({0} ms) reached; continue with URL result only", timeoutMillis);
+				LOG.info(null, "Fast rendering timout ({0} ms) reached; falling back to URL access", timeoutMillis);
 			}
 		}
 		return new RenderOutput(baseLocation, renderOutput);
