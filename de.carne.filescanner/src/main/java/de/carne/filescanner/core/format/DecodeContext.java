@@ -50,12 +50,12 @@ public abstract class DecodeContext extends RenderContext {
 	/**
 	 * Record a result section for later rendering.
 	 *
-	 * @param position The position of the result section.
-	 * @param size The size of the result section.
 	 * @param renderable The {@linkplain RenderableData} to use for rendering.
+	 * @param start The result section's start position.
+	 * @param end The result section's end position.
 	 */
-	public final void recordResultSection(long position, long size, RenderableData renderable) {
-		contextRecordResultSection(position, size, renderable);
+	public final void recordResultSection(RenderableData renderable, long start, long end) {
+		contextRecordResultSection(renderable, start, end);
 	}
 
 	/**

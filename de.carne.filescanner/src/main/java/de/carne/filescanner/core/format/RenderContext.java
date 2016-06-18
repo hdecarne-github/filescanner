@@ -45,13 +45,14 @@ public abstract class RenderContext extends ResultContext {
 	/**
 	 * Get a previously recorded result section.
 	 *
-	 * @param position The position of the result section to retrieve.
+	 * @param renderable The {@linkplain RenderableData} to retrieve the result
+	 *        section for.
 	 * @return The result section object or {@code null} if the submitted index
 	 *         has not been recorded.
-	 * @see DecodeContext#recordResultSection(long, long, RenderableData)
+	 * @see DecodeContext#recordResultSection(RenderableData, long, long)
 	 */
-	public final ResultSection getResultSection(long position) {
-		return contextGetResultSection(position);
+	public final ResultSection getResultSection(RenderableData renderable) {
+		return contextGetResultSection(renderable);
 	}
 
 	/**

@@ -16,31 +16,30 @@
  */
 package de.carne.filescanner.core.format;
 
+import java.io.IOException;
+
+import de.carne.filescanner.core.FileScannerResult;
+import de.carne.filescanner.core.transfer.ResultRenderer;
+
 /**
  * This class defines render information for a specific data section within a
  * scanner result.
  *
- * @see DecodeContext#recordResultSection(long, long, RenderableData)
- * @see RenderContext#getResultSection(long)
+ * @see DecodeContext#recordResultSection(RenderableData, long, long)
+ * @see RenderContext#getResultSection(RenderableData)
  */
 public final class ResultSection {
 
-	private final long size;
-
 	private final RenderableData renderable;
 
-	ResultSection(long size, RenderableData renderable) {
-		this.size = size;
-		this.renderable = renderable;
-	}
+	private final long start;
 
-	/**
-	 * Get the result section's size.
-	 *
-	 * @return The result section's size.
-	 */
-	public long size() {
-		return this.size;
+	private final long end;
+
+	ResultSection(RenderableData renderable, long start, long end) {
+		this.renderable = renderable;
+		this.start = start;
+		this.end = end;
 	}
 
 	/**
@@ -50,6 +49,36 @@ public final class ResultSection {
 	 */
 	public RenderableData renderable() {
 		return this.renderable;
+	}
+
+	/**
+	 * Get the result section's start position.
+	 *
+	 * @return The result section's start position.
+	 */
+	public long start() {
+		return this.start;
+	}
+
+	/**
+	 * Get the result section's end position.
+	 *
+	 * @return The result section's end position.
+	 */
+	public long end() {
+		return this.end;
+	}
+
+	/**
+	 * Render the result section.
+	 *
+	 * @param result The result object containing the data to render.
+	 * @param renderer The renderer to use.
+	 * @throws IOException if an I/O error occurs.
+	 * @throws InterruptedException if the render thread was interrupted.
+	 */
+	public void render(FileScannerResult result, ResultRenderer renderer) throws IOException, InterruptedException {
+		this.renderable.renderData(result, this.start, this.end, renderer);
 	}
 
 }

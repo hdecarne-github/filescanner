@@ -24,7 +24,6 @@ import de.carne.filescanner.core.DecodeStatusException;
 import de.carne.filescanner.core.FileScannerResult;
 import de.carne.filescanner.core.FileScannerResultBuilder;
 import de.carne.filescanner.core.format.DecodeContext;
-import de.carne.filescanner.core.format.RenderableData;
 import de.carne.filescanner.core.format.ResultSection;
 import de.carne.filescanner.core.transfer.ResultRenderer;
 
@@ -120,9 +119,14 @@ public class StructSpec extends FormatSpecBuilder {
 			if (decodeStatus != null && decodeStatus.isFatal()) {
 				break;
 			}
-			recordResultSection(result, specPosition, specDecoded, (spec.isResult() ? null : spec));
+
+			long nextSpecPosition = specPosition + specDecoded;
+
+			if (!spec.isResult()) {
+				recordResultSection(result, spec, specPosition, nextSpecPosition);
+			}
 			decoded += specDecoded;
-			specPosition += specDecoded;
+			specPosition = nextSpecPosition;
 		}
 		return decoded;
 	}
@@ -130,20 +134,12 @@ public class StructSpec extends FormatSpecBuilder {
 	@Override
 	public void specRender(FileScannerResult result, long start, long end, ResultRenderer renderer)
 			throws IOException, InterruptedException {
-		long renderPosition = start;
-		ResultSection section;
+		for (FormatSpec spec : this.specs) {
+			ResultSection section = getResultSection(result, spec);
 
-		while ((section = getResultSectionSize(result, renderPosition)) != null) {
-			long nextRenderPosition = renderPosition + section.size();
-
-			assert nextRenderPosition <= end;
-
-			RenderableData renderable = section.renderable();
-
-			if (renderable != null) {
-				renderable.renderData(result, renderPosition, nextRenderPosition, renderer);
+			if (section != null) {
+				section.render(result, renderer);
 			}
-			renderPosition = nextRenderPosition;
 		}
 		if (isResult()) {
 			if (!renderer.hasOutput()) {

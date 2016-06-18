@@ -31,7 +31,7 @@ public abstract class ResultContext {
 
 	private final HashMap<ResultAttribute<?>, Object> resultAttributes = new HashMap<>();
 
-	private final HashMap<Long, ResultSection> resultSections = new HashMap<>();
+	private final HashMap<RenderableData, ResultSection> resultSections = new HashMap<>();
 
 	/**
 	 * Get the parent context.
@@ -109,27 +109,25 @@ public abstract class ResultContext {
 	/**
 	 * Record a result section for later rendering.
 	 *
-	 * @param position The position of the result section.
-	 * @param size The size of the result section.
 	 * @param renderable The {@linkplain RenderableData} to use for rendering.
+	 * @param start The result section's start position.
+	 * @param end The result section's end position.
 	 */
-	protected final void contextRecordResultSection(long position, long size, RenderableData renderable) {
-		assert position >= 0L;
-		assert size >= 0L;
-
-		this.resultSections.putIfAbsent(position, new ResultSection(size, renderable));
+	protected final void contextRecordResultSection(RenderableData renderable, long start, long end) {
+		this.resultSections.put(renderable, new ResultSection(renderable, start, end));
 	}
 
 	/**
 	 * Get a previously recorded result section.
 	 *
-	 * @param position The position of the result section to retrieve.
+	 * @param renderable The {@linkplain RenderableData} to retrieve the result
+	 *        section for.
 	 * @return The result section object or {@code null} if the submitted index
 	 *         has not been recorded.
 	 * @see #recordResultSection(long, RenderableData)
 	 */
-	protected final ResultSection contextGetResultSection(long position) {
-		return this.resultSections.get(position);
+	protected final ResultSection contextGetResultSection(RenderableData renderable) {
+		return this.resultSections.get(renderable);
 	}
 
 }
