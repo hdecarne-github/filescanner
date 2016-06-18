@@ -26,6 +26,7 @@ import java.util.LinkedList;
 
 import de.carne.filescanner.core.FileScanner;
 import de.carne.filescanner.core.FileScannerInput;
+import de.carne.filescanner.util.Units;
 import de.carne.nio.compression.spi.Decoder;
 import de.carne.util.logging.Log;
 
@@ -81,6 +82,8 @@ public final class DecodeCache implements AutoCloseable {
 				decodeInputEnd += this.decodeCacheWriteChannel.write(decodeBuffer, decodeInputEnd);
 				decodeBuffer.clear();
 			}
+			LOG.info(null, "Decoding compressed data completed ({0}; output rate: {1}/s)", decoder.name(),
+					Units.formatByteValue(decoder.rateOut()));
 		} catch (IOException e) {
 			decodetatus = e;
 		}
