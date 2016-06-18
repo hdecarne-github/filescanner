@@ -18,6 +18,7 @@ package de.carne.filescanner.core;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.nio.channels.ClosedChannelException;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -212,7 +213,7 @@ public final class FileScanner implements Closeable {
 					scanPosition += 1l;
 				}
 			}
-		} catch (InterruptedException e) {
+		} catch (InterruptedException | ClosedChannelException e) {
 			// nothing to do here
 		} catch (Exception e) {
 			this.status.onScanException(this, e);
