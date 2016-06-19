@@ -47,7 +47,7 @@ public final class Nanos {
 	 * @return The elapsed milliseconds since object creation.
 	 */
 	public long elapsedMillis() {
-		return (System.nanoTime() - this.startNanos) / 1000L;
+		return toMillis(System.nanoTime() - this.startNanos);
 	}
 
 	@Override

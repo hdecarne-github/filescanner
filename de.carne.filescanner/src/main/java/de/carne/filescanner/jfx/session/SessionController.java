@@ -75,6 +75,7 @@ import javafx.concurrent.Worker;
 import javafx.concurrent.Worker.State;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
@@ -83,6 +84,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.ImageView;
@@ -204,7 +206,7 @@ public class SessionController extends StageController {
 	FileView fileView;
 
 	@FXML
-	Label scanStatusInfo;
+	Button showScanStatus;
 
 	@FXML
 	ImageView scanStatusIcon;
@@ -380,6 +382,25 @@ public class SessionController extends StageController {
 	}
 
 	@FXML
+	void onShowScanStatus(ActionEvent evt) {
+		Tooltip tooltip = this.showScanStatus.getTooltip();
+
+		if (tooltip == null) {
+			tooltip = new Tooltip(Long.toHexString(System.nanoTime()));
+
+			this.showScanStatus.setTooltip(tooltip);
+			tooltip.setAutoHide(false);
+
+			Point2D position = this.showScanStatus.localToScreen(0.0, 0.0);
+
+			tooltip.show(this.showScanStatus, position.getX(), position.getY() - 20);
+		} else {
+			tooltip.hide();
+			this.showScanStatus.setTooltip(null);
+		}
+	}
+
+	@FXML
 	void onCancelScan(ActionEvent evt) {
 		closeCurrentSession();
 		this.cancelScanButton.setDisable(true);
@@ -507,7 +528,6 @@ public class SessionController extends StageController {
 			}
 			e.printStackTrace(printer);
 			printer.flush();
-			this.scanStatusInfo.getTooltip().setText(text.toString());
 			this.scanStatusIcon.setImage(Images.IMAGE_WARNING16);
 		}
 	}
