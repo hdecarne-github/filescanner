@@ -1,7 +1,7 @@
 /*
  * I18N resource strings
  *
- * Generated on 19.06.2016 13:26:51
+ * Generated on 19.06.2016 14:27:55
  */
 package de.carne.filescanner.jfx.session;
 
@@ -49,6 +49,27 @@ public final class I18N {
 	 */
 	public static String formatSTR_SCAN_STATUS_FINISHED(Object... arguments) {
 		return format(STR_SCAN_STATUS_FINISHED, arguments);
+	}
+
+	/**
+	 * Resource key {@code STR_SCAN_NOTIFICATION_CANCELLED}
+	 * <p>
+	 * Scan has been cancelled. The displayed results are incomplete.
+	 * </p>
+	 */
+	public static final String STR_SCAN_NOTIFICATION_CANCELLED = "STR_SCAN_NOTIFICATION_CANCELLED";
+
+	/**
+	 * Resource string {@code STR_SCAN_NOTIFICATION_CANCELLED}
+	 * <p>
+	 * Scan has been cancelled. The displayed results are incomplete.
+	 * </p>
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formated string.
+	 */
+	public static String formatSTR_SCAN_NOTIFICATION_CANCELLED(Object... arguments) {
+		return format(STR_SCAN_NOTIFICATION_CANCELLED, arguments);
 	}
 
 	/**

@@ -24,7 +24,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.web.WebView?>
 
-<VBox onDragDropped="#onDragDropped" onDragOver="#onDragOver" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.92" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.carne.filescanner.jfx.session.SessionController">
+<VBox onDragDropped="#onDragDropped" onDragOver="#onDragOver" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.carne.filescanner.jfx.session.SessionController">
   <children>
     <MenuBar fx:id="systemMenuBar" VBox.vgrow="NEVER">
       <menus>
@@ -235,7 +235,7 @@
                <graphic>
                   <ImageView fx:id="scanStatusIcon" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../iconSuccess16.png" />
+                        <Image url="@../iconInfo16.png" />
                      </image>
                   </ImageView>
                </graphic>

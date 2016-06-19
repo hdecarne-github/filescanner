@@ -463,7 +463,7 @@ public class SessionController extends StageController {
 	void onFileScannerStart(FileScanner scanner, FileScannerStats stats) {
 		if (scanner.equals(this.fileScanner)) {
 			this.notifications.clear();
-			this.scanStatusIcon.setImage(Images.IMAGE_SUCCESS16);
+			this.scanStatusIcon.setImage(Images.IMAGE_INFO16);
 			this.cancelScanButton.setDisable(false);
 			updateScanStatusMessage(I18N.STR_SCAN_STATUS_START, stats);
 		}
@@ -481,6 +481,7 @@ public class SessionController extends StageController {
 
 	void onFileScannerCancelled(FileScanner scanner, FileScannerStats stats) {
 		if (scanner.equals(this.fileScanner)) {
+			this.notifications.showNotice(Images.IMAGE_INFO16, I18N.formatSTR_SCAN_NOTIFICATION_CANCELLED());
 			this.cancelScanButton.setDisable(true);
 			updateScanStatusMessage(I18N.STR_SCAN_STATUS_CANCELLED, stats);
 		}
