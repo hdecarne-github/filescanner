@@ -38,6 +38,7 @@ import de.carne.filescanner.jfx.ResultGraphics;
 import de.carne.filescanner.util.Units;
 import de.carne.jfx.FXPlatform;
 import de.carne.jfx.StageController;
+import de.carne.jfx.messagebox.MessageBoxResult;
 import de.carne.jfx.messagebox.MessageBoxStyle;
 import de.carne.util.Strings;
 import de.carne.util.prefs.DirectoryPreference;
@@ -293,6 +294,15 @@ public class ExportController extends StageController {
 		if (inputPath == null) {
 			showMessageBox(I18N.formatSTR_INVALID_FILE_INPUT(input), invalidInputException,
 					MessageBoxStyle.ICON_WARNING, MessageBoxStyle.BUTTON_OK);
+		} else if (Files.exists(inputPath)) {
+			if (!Files.isWritable(inputPath)) {
+				showMessageBox(I18N.formatSTR_FILE_NOT_WRITABLE(inputPath), null, MessageBoxStyle.ICON_WARNING,
+						MessageBoxStyle.BUTTON_OK);
+				inputPath = null;
+			} else if (showMessageBox(I18N.formatSTR_CONFIRM_OVERWRITE(inputPath), null, MessageBoxStyle.ICON_QUESTION,
+					MessageBoxStyle.BUTTON_YES_NO) != MessageBoxResult.YES) {
+				inputPath = null;
+			}
 		}
 		return inputPath;
 	}

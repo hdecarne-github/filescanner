@@ -1,7 +1,7 @@
 /*
  * I18N resource strings
  *
- * Generated on Jun 12, 2016 11:01:51 PM
+ * Generated on 19.06.2016 18:41:47
  */
 package de.carne.filescanner.jfx.export;
 
@@ -94,6 +94,27 @@ public final class I18N {
 	}
 
 	/**
+	 * Resource key {@code STR_FILE_NOT_WRITABLE}
+	 * <p>
+	 * Cannot start export.<br/>''{0}'' is not a file or cannot be overwritten.
+	 * </p>
+	 */
+	public static final String STR_FILE_NOT_WRITABLE = "STR_FILE_NOT_WRITABLE";
+
+	/**
+	 * Resource string {@code STR_FILE_NOT_WRITABLE}
+	 * <p>
+	 * Cannot start export.<br/>''{0}'' is not a file or cannot be overwritten.
+	 * </p>
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formated string.
+	 */
+	public static String formatSTR_FILE_NOT_WRITABLE(Object... arguments) {
+		return format(STR_FILE_NOT_WRITABLE, arguments);
+	}
+
+	/**
 	 * Resource key {@code STR_ALL_FILES_FILTER}
 	 * <p>
 	 * All files
@@ -133,6 +154,27 @@ public final class I18N {
 	 */
 	public static String formatSTR_RESULT_DESCRIPTION(Object... arguments) {
 		return format(STR_RESULT_DESCRIPTION, arguments);
+	}
+
+	/**
+	 * Resource key {@code STR_CONFIRM_OVERWRITE}
+	 * <p>
+	 * File ''{0}'' already exists.<br/>Do you want to overwrite the existing file?
+	 * </p>
+	 */
+	public static final String STR_CONFIRM_OVERWRITE = "STR_CONFIRM_OVERWRITE";
+
+	/**
+	 * Resource string {@code STR_CONFIRM_OVERWRITE}
+	 * <p>
+	 * File ''{0}'' already exists.<br/>Do you want to overwrite the existing file?
+	 * </p>
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formated string.
+	 */
+	public static String formatSTR_CONFIRM_OVERWRITE(Object... arguments) {
+		return format(STR_CONFIRM_OVERWRITE, arguments);
 	}
 
 }

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import de.carne.jfx.FXPlatform;
 import de.carne.jfx.StageController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -129,19 +130,23 @@ public class MessageBoxController extends StageController {
 		for (MessageBoxStyle style : styles) {
 			switch (style) {
 			case ICON_INFO:
-				getStage().getIcons().addAll(MessageBoxImages.getImages(MessageBoxStyle.ICON_INFO));
+				getStage().getIcons()
+						.addAll(FXPlatform.stageIcons(MessageBoxImages.getImages(MessageBoxStyle.ICON_INFO)));
 				this.ctlIcon.setImage(MessageBoxImages.getImage(MessageBoxStyle.ICON_INFO));
 				break;
 			case ICON_WARNING:
-				getStage().getIcons().addAll(MessageBoxImages.getImages(MessageBoxStyle.ICON_WARNING));
+				getStage().getIcons()
+						.addAll(FXPlatform.stageIcons(MessageBoxImages.getImages(MessageBoxStyle.ICON_WARNING)));
 				this.ctlIcon.setImage(MessageBoxImages.getImage(MessageBoxStyle.ICON_WARNING));
 				break;
 			case ICON_ERROR:
-				getStage().getIcons().addAll(MessageBoxImages.getImages(MessageBoxStyle.ICON_ERROR));
+				getStage().getIcons()
+						.addAll(FXPlatform.stageIcons(MessageBoxImages.getImages(MessageBoxStyle.ICON_ERROR)));
 				this.ctlIcon.setImage(MessageBoxImages.getImage(MessageBoxStyle.ICON_ERROR));
 				break;
 			case ICON_QUESTION:
-				getStage().getIcons().addAll(MessageBoxImages.getImages(MessageBoxStyle.ICON_QUESTION));
+				getStage().getIcons()
+						.addAll(FXPlatform.stageIcons(MessageBoxImages.getImages(MessageBoxStyle.ICON_QUESTION)));
 				this.ctlIcon.setImage(MessageBoxImages.getImage(MessageBoxStyle.ICON_QUESTION));
 				break;
 			case BUTTON_OK:

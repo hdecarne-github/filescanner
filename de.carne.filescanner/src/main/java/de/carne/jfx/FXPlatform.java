@@ -16,6 +16,9 @@
  */
 package de.carne.jfx;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import de.carne.util.Platform;
 import javafx.scene.image.Image;
 
@@ -28,13 +31,26 @@ public final class FXPlatform {
 
 	/**
 	 * Filter stage icons according to platform preference.
-	 * 
+	 *
 	 * @param icons The available icons.
 	 * @return The filtered icons.
 	 */
 	public static Image[] stageIcons(Image... icons) {
 		if (Platform.IS_OS_X) {
 			return EMPTY_ICONS;
+		}
+		return icons;
+	}
+
+	/**
+	 * Filter stage icons according to platform preference.
+	 *
+	 * @param icons The available icons.
+	 * @return The filtered icons.
+	 */
+	public static Collection<Image> stageIcons(Collection<Image> icons) {
+		if (Platform.IS_OS_X) {
+			return Collections.EMPTY_LIST;
 		}
 		return icons;
 	}
