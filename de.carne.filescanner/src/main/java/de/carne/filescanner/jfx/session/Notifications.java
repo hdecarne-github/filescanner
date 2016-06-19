@@ -26,6 +26,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
+import javafx.stage.PopupWindow.AnchorLocation;
 
 /**
  * Helper class for notification display and management.
@@ -113,12 +114,13 @@ final class Notifications {
 	}
 
 	private double showTooltip(Tooltip tooltip, double displacement) {
+		double gap = tooltip.getGraphicTextGap();
 		Bounds bounds = this.displayRegion.localToScreen(this.displayRegion.getBoundsInLocal());
 
 		tooltip.show(this.displayRegion.getScene().getWindow());
-		tooltip.setAnchorX(bounds.getMinX());
+		tooltip.setAnchorX(bounds.getMinX() + gap);
 
-		double nextDisplacement = displacement + tooltip.getHeight();
+		double nextDisplacement = displacement + gap + tooltip.getHeight();
 
 		tooltip.setAnchorY(bounds.getMaxY() - nextDisplacement);
 		tooltip.setAutoHide(true);
@@ -138,10 +140,13 @@ final class Notifications {
 
 			for (StackTraceElement trace : details.getStackTrace()) {
 				if (traceIndex >= TRACE_LIMIT) {
+					writer.println();
+					writer.print("\t\u2026");
 					break;
 				}
 				traceIndex++;
 				writer.println();
+				writer.print("\tat ");
 				writer.print(trace.toString());
 			}
 			writer.flush();
@@ -153,6 +158,7 @@ final class Notifications {
 		Tooltip tooltip = new Tooltip(tooltipMessage);
 
 		tooltip.setGraphic(new ImageView(icon));
+		tooltip.setAnchorLocation(AnchorLocation.WINDOW_TOP_LEFT);
 		return tooltip;
 	}
 
