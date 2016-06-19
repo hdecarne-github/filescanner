@@ -71,6 +71,7 @@ import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
 import javafx.concurrent.Worker.State;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
@@ -85,6 +86,8 @@ import javafx.scene.control.TreeView;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.text.Font;
 import javafx.scene.web.WebView;
@@ -594,6 +597,18 @@ public class SessionController extends StageController {
 			}
 
 		});
+
+		// Register some debug shortcuts
+		getStage().getScene().setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent event) {
+				if (event.isControlDown() && event.isShiftDown() && event.getCode() == KeyCode.G) {
+					runGC();
+				}
+			}
+
+		});
 	}
 
 	private void applyFileViewType(FileViewType fileViewType) {
@@ -908,6 +923,11 @@ public class SessionController extends StageController {
 
 			});
 		}
+	}
+
+	void runGC() {
+		LOG.info(null, "Running garbage collector...");
+		Runtime.getRuntime().gc();
 	}
 
 }
