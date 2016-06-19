@@ -18,8 +18,6 @@ package de.carne.filescanner.jfx.session;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.List;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
@@ -60,7 +58,6 @@ import de.carne.jfx.aboutinfo.AboutInfoController;
 import de.carne.jfx.logview.LogViewTriggerProperty;
 import de.carne.jfx.messagebox.MessageBoxStyle;
 import de.carne.util.Exceptions;
-import de.carne.util.Strings;
 import de.carne.util.logging.Log;
 import de.carne.util.prefs.DirectoryPreference;
 import de.carne.util.prefs.ObjectPreference;
@@ -75,7 +72,6 @@ import javafx.concurrent.Worker;
 import javafx.concurrent.Worker.State;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
@@ -84,7 +80,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.ImageView;
@@ -116,6 +111,8 @@ public class SessionController extends StageController {
 
 	private static final String EMPTY_RESULT_VIEW_LOCATION = ApplicationLoader
 			.getDirectURL(SessionController.class.getResource("EmptyResultView.html")).toExternalForm();
+
+	private Notifications notifications = null;
 
 	private ScheduledFuture<?> updateSystemStatusFuture = null;
 
@@ -204,9 +201,6 @@ public class SessionController extends StageController {
 
 	@FXML
 	FileView fileView;
-
-	@FXML
-	Button showScanStatus;
 
 	@FXML
 	ImageView scanStatusIcon;
@@ -383,21 +377,7 @@ public class SessionController extends StageController {
 
 	@FXML
 	void onShowScanStatus(ActionEvent evt) {
-		Tooltip tooltip = this.showScanStatus.getTooltip();
-
-		if (tooltip == null) {
-			tooltip = new Tooltip(Long.toHexString(System.nanoTime()));
-
-			this.showScanStatus.setTooltip(tooltip);
-			tooltip.setAutoHide(false);
-
-			Point2D position = this.showScanStatus.localToScreen(0.0, 0.0);
-
-			tooltip.show(this.showScanStatus, position.getX(), position.getY() - 20);
-		} else {
-			tooltip.hide();
-			this.showScanStatus.setTooltip(null);
-		}
+		this.notifications.toggleDisplay(Images.IMAGE_INFO16, I18N.formatSTR_SCAN_NOTIFICATION_NONE());
 	}
 
 	@FXML
@@ -482,6 +462,7 @@ public class SessionController extends StageController {
 
 	void onFileScannerStart(FileScanner scanner, FileScannerStats stats) {
 		if (scanner.equals(this.fileScanner)) {
+			this.notifications.clear();
 			this.scanStatusIcon.setImage(Images.IMAGE_SUCCESS16);
 			this.cancelScanButton.setDisable(false);
 			updateScanStatusMessage(I18N.STR_SCAN_STATUS_START, stats);
@@ -519,16 +500,9 @@ public class SessionController extends StageController {
 
 	void onFileScannerException(FileScanner scanner, Throwable e) {
 		if (scanner.equals(this.fileScanner)) {
-			StringWriter text = new StringWriter();
-			PrintWriter printer = new PrintWriter(text);
-			String exceptionMessage = Exceptions.toMessage(e);
-
-			if (Strings.notEmpty(exceptionMessage)) {
-				printer.println(exceptionMessage);
-			}
-			e.printStackTrace(printer);
-			printer.flush();
-			this.scanStatusIcon.setImage(Images.IMAGE_WARNING16);
+			this.notifications.showError(Images.IMAGE_ERROR16,
+					I18N.formatSTR_SCAN_NOTIFICATION_ERROR(Exceptions.toMessage(e)), e);
+			this.scanStatusIcon.setImage(Images.IMAGE_ERROR16);
 		}
 	}
 
@@ -539,6 +513,7 @@ public class SessionController extends StageController {
 		controllerStage.setTitle(I18N.formatSTR_SESSION_TITLE());
 		controllerStage.getIcons().addAll(FXPlatform.stageIcons(Images.IMAGE_FILESCANNER16, Images.IMAGE_FILESCANNER32,
 				Images.IMAGE_FILESCANNER48));
+		this.notifications = new Notifications(this.resultsView);
 
 		// Control setup (menu, views, ...)
 		this.autoIndexMenuItem.selectedProperty().bindBidirectional(this.autoIndexProperty);
