@@ -45,7 +45,7 @@ public class FixedStringAttribute extends StringAttribute {
 	}
 
 	/**
-	 * Construct {@code AStringAttribute}.
+	 * Construct {@code FixedStringAttribute}.
 	 *
 	 * @param name The attribute's name.
 	 * @param charset The charset to use for string decoding.
@@ -56,7 +56,7 @@ public class FixedStringAttribute extends StringAttribute {
 	}
 
 	/**
-	 * Construct {@code AStringAttribute}.
+	 * Construct {@code FixedStringAttribute}.
 	 *
 	 * @param name The attribute's name.
 	 * @param charset The charset to use for string decoding.

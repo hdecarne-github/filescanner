@@ -19,6 +19,7 @@ package de.carne.filescanner.provider.peimage;
 import java.nio.charset.StandardCharsets;
 
 import de.carne.filescanner.core.format.spec.ConditionalSpec;
+import de.carne.filescanner.core.format.spec.FixedArraySpec;
 import de.carne.filescanner.core.format.spec.FixedStringAttribute;
 import de.carne.filescanner.core.format.spec.FormatSpec;
 import de.carne.filescanner.core.format.spec.StructSpec;
@@ -42,6 +43,10 @@ class PEImageFormatSpecs {
 	public static final String NAME_PE_HEADER = "Portable Executable header";
 
 	public static final String NAME_WIN32_HEADER = "Win32 optional header";
+
+	public static final String NAME_PE_SECTION_HEADER = "Section header [{0}]";
+
+	public static final String NAME_PE_SECTION_HEADERS = "Section headers";
 
 	public static final U16SymbolRenderer PE_MACHINE_SYMBOLS = new U16SymbolRenderer();
 
@@ -195,7 +200,7 @@ class PEImageFormatSpecs {
 		header.append(new U32Attribute("Magic").addValidValue(0x00004550));
 		header.append(new U16Attribute("Machine").addValidValues(PE_MACHINE_SYMBOLS.getValues())
 				.addExtraRenderer(PE_MACHINE_SYMBOLS));
-		header.append(NUMBER_OF_SECTIONS.setFormat(U16Attributes.DECIMAL_FORMAT));
+		header.append(NUMBER_OF_SECTIONS.setFormat(U16Attributes.DECIMAL_FORMAT).bind());
 		header.append(new U32Attribute("TimeDateStamp").addExtraRenderer(U32Attributes.CTIME_COMMENT));
 		header.append(new U32Attribute("PointerToSymbolTable"));
 		header.append(new U32Attribute("NumberOfSymbols", U32Attributes.DECIMAL_FORMAT));
@@ -465,8 +470,17 @@ class PEImageFormatSpecs {
 		sectionHeader.append(new U16Attribute("NumberOfLinenumbers", U16Attributes.DECIMAL_FORMAT));
 		sectionHeader
 				.append(new U32Attribute("Characteristics").addExtraRenderer(PE_SECIION_CHARACTERISTICS_FLAG_SYMBOLS));
-		sectionHeader.setResult("Section header [{0}]", SECTION_NAME);
+		sectionHeader.setResult(NAME_PE_SECTION_HEADER, SECTION_NAME);
 		PE_SECTION_HEADER = sectionHeader;
+	}
+
+	public static final FixedArraySpec PE_SECTION_HEADERS;
+
+	static {
+		FixedArraySpec sectionHeaders = new FixedArraySpec(PE_SECTION_HEADER, NUMBER_OF_SECTIONS);
+
+		sectionHeaders.setResult(NAME_PE_SECTION_HEADERS);
+		PE_SECTION_HEADERS = sectionHeaders;
 	}
 
 	public static final StructSpec PE_IMAGE;
@@ -477,7 +491,7 @@ class PEImageFormatSpecs {
 		image.declareAttributes(NUMBER_OF_SECTIONS, SIZE_OF_OPTIONAL_HEADER);
 		image.append(PE_HEADER);
 		image.append(new ConditionalSpec(true, () -> getOptionalHeaderSpec()));
-		image.append(PE_SECTION_HEADER);
+		image.append(PE_SECTION_HEADERS);
 		image.setResult(NAME_PE_IMAGE);
 		PE_IMAGE = image;
 	}
