@@ -1,7 +1,7 @@
 /*
  * I18N resource strings
  *
- * Generated on Jun 12, 2016 11:01:51 PM
+ * Generated on 11.07.2016 12:00:51
  */
 package de.carne.filescanner.core.transfer;
 
