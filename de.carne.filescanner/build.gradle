@@ -13,8 +13,8 @@ def formatBuildDate() {
 }
 
 apply plugin: 'java'
-apply plugin: 'distribution'
 apply plugin: 'de.carne.gradleplugins.java'
+apply plugin: 'distribution'
 
 sourceCompatibility = 1.8
 
@@ -34,6 +34,7 @@ repositories {
 }
 
 dependencies {
+	compile('de.carne:common-jfx:0.0.1')
 	compile('de.carne:compression:0.2.0')
 	compile('org.apache.lucene:lucene-analyzers-common:6.0.1')
 	compile ('org.apache.lucene:lucene-queryparser:6.0.1') {
@@ -52,7 +53,7 @@ jar {
 			'X-Version-BuildDate' : formatBuildDate()
 		)
 	}
-	from configurations.runtime
+	from configurations.runtime.collect { it.name.matches('common-.*.jar') ? zipTree(it).matching { exclude 'META-INF/**' } : it }
 }
 
 distributions {
