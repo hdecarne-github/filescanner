@@ -20,8 +20,8 @@ repositories {
 }
 
 dependencies {
-	compile("de.carne:java-default:5")
-	testCompile("junit:junit:4.12")
+	implementation("de.carne:java-default:5")
+	testImplementation("junit:junit:4.12")
 }
 
 jacoco {
