@@ -20,8 +20,8 @@ repositories {
 }
 
 dependencies {
-	compile('de.carne:java-default:5')
-	testCompile('junit:junit:4.12')
+	compile("de.carne:java-default:5")
+	testCompile("junit:junit:4.12")
 }
 
 jacoco {
@@ -38,10 +38,6 @@ jacocoTestReport {
 }
 
 sonarqube {
-	properties {
-		property "sonar.projectName", "FileScanner"
-		property "sonar.projectKey", "de.carne.filescanner"
-	}
 }
 
 eclipse {
