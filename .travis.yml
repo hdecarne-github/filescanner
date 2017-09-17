@@ -11,7 +11,7 @@ os:
   - linux
   
 script:
-  - ./gradlew sonarqube
+  - ./gradlew build sonarqube
 
 notifications:
   email:
