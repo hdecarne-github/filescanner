@@ -1,5 +1,0 @@
-de.carne.filescanner.provider.dosimage.DOSStubFormat
-de.carne.filescanner.provider.gzip.GZIPFormat
-de.carne.filescanner.provider.peimage.PEImageFormat
-de.carne.filescanner.provider.png.PNGFormat
-de.carne.filescanner.provider.zip.ZIPFormat

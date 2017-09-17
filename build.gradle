@@ -1,0 +1,34 @@
+apply plugin: 'java-library'
+apply plugin: 'jacoco'
+apply plugin: 'eclipse'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+	compile('de.carne:java-default:5')
+	testCompile('junit:junit:4.12')
+}
+
+jacoco {
+    toolVersion = "0.7.9"
+}
+
+jacocoTestReport {
+	reports {
+		xml.enabled false
+		html.enabled true
+		html.destination file("${buildDir}/reports/jacocoHtml")
+		csv.enabled false
+	}
+}
+
+eclipse {
+	classpath {
+		defaultOutputDir = file('eclipse-build')
+	}
+}
