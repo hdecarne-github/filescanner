@@ -1,12 +1,22 @@
+buildscript {
+	repositories {
+		jcenter()
+	}
+	dependencies {
+		classpath("org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5")
+	}
+}
+
 apply plugin: 'java-library'
 apply plugin: 'jacoco'
+apply plugin: "org.sonarqube"
 apply plugin: 'eclipse'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
-    jcenter()
+	jcenter()
 }
 
 dependencies {
@@ -15,7 +25,7 @@ dependencies {
 }
 
 jacoco {
-    toolVersion = "0.7.9"
+	toolVersion = "0.7.9"
 }
 
 jacocoTestReport {
@@ -24,6 +34,13 @@ jacocoTestReport {
 		html.enabled true
 		html.destination file("${buildDir}/reports/jacocoHtml")
 		csv.enabled false
+	}
+}
+
+sonarqube {
+	properties {
+		property "sonar.projectName", "FileScanner"
+		property "sonar.projectKey", "de.carne.filescanner"
 	}
 }
 
