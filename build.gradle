@@ -7,7 +7,7 @@ buildscript {
 	}
 }
 
-apply plugin: 'java-library'
+apply plugin: 'java'
 apply plugin: 'jacoco'
 apply plugin: "org.sonarqube"
 apply plugin: 'eclipse'
@@ -20,9 +20,21 @@ repositories {
 }
 
 dependencies {
-	implementation("de.carne:java-default:5")
-	testImplementation("junit:junit:4.12")
+	compile("de.carne:java-default:5")
+	testCompile("junit:junit:4.12")
 }
+
+jar {
+	manifest {
+		attributes(
+			'Main-Class': 'de.carne.Application'
+		)
+	}
+	from configurations.runtime.collect {
+		it.name.matches('(java-default-.*.jar)|(java-jfx-.*.jar)') ? zipTree(it).matching { exclude 'META-INF/**' } : it
+	}
+}
+
 
 jacoco {
 	toolVersion = "0.7.9"

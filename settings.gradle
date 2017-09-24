@@ -1,1 +1,3 @@
 rootProject.name = 'filescanner'
+
+includeBuild '../java-default'

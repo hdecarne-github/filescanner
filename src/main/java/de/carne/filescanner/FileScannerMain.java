@@ -16,17 +16,31 @@
  */
 package de.carne.filescanner;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
+import de.carne.ApplicationMain;
+import de.carne.util.logging.Log;
+
 /**
- * 
+ * Application entry point.
  */
-public class FileScannerMain {
+public class FileScannerMain implements ApplicationMain {
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+	private static final Log LOG = new Log();
 
+	private static final String NAME = "filescanner";
+
+	@Override
+	public String name() {
+		return NAME;
+	}
+
+	@Override
+	public int run(String[] args) {
+		LOG.notice("Running ''{0} {1}''...", name(), Arrays.stream(args).collect(Collectors.joining(" ")));
+
+		return 0;
 	}
 
 }

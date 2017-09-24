@@ -16,20 +16,22 @@
  */
 package de.carne.filescanner.test;
 
-import org.junit.Assert;
 import org.junit.Test;
 
+import de.carne.Application;
 import de.carne.filescanner.FileScannerMain;
 
 /**
- *
+ * Test {@link FileScannerMain} class.
  */
-public class FileScannerTest {
+public class FileScannerMainTest {
 
+	/**
+	 * Test basic application startup.
+	 */
 	@Test
-	public void dummyTest() {
-		FileScannerMain.main(new String[] {});
-		Assert.assertTrue(true);
+	public void testFileScannerMain() {
+		Application.main(new String[] { "--verbose", "--version" });
 	}
 
 }
