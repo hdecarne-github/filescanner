@@ -27,6 +27,11 @@
 			<location>/Users/holger/Desktop/Projekte/github.com/filescanner/filescanner-gtk-linux-x86_64/shared-src/main/java</location>
 		</link>
 		<link>
+			<name>resources</name>
+			<type>2</type>
+			<location>/Users/holger/Desktop/Projekte/github.com/filescanner/filescanner-gtk-linux-x86_64/shared-src/main/resources</location>
+		</link>
+		<link>
 			<name>test-java</name>
 			<type>2</type>
 			<location>/Users/holger/Desktop/Projekte/github.com/filescanner/filescanner-gtk-linux-x86_64/shared-src/test/java</location>
