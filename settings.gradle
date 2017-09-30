@@ -1,3 +1,10 @@
 rootProject.name = 'filescanner'
 
-includeBuild '../java-default'
+include 'filescanner-cocoa-macosx-x86_64'
+include 'filescanner-gtk-linux-x86'
+include 'filescanner-gtk-linux-x86_64'
+include 'filescanner-win32-win32-x86'
+include 'filescanner-win32-win32-x86_64'
+
+if(file('../java-default').exists()) includeBuild '../java-default'
+if(file('../java-swt').exists()) includeBuild '../java-swt'

@@ -1,0 +1,5 @@
+test {
+	enabled = false
+}
+
+project.tasks["sonarqube"].enabled = test.enabled
