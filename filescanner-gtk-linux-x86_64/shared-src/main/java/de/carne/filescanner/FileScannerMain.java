@@ -62,6 +62,7 @@ public class FileScannerMain implements ApplicationMain {
 
 			shell.open();
 			shell.pack();
+			shell.close();
 			while (!shell.isDisposed()) {
 				if (!display.readAndDispatch()) {
 					display.sleep();
