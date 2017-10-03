@@ -1,20 +1,17 @@
+// Plugins
+plugins {
+    id "de.carne.java-tools" version "0.5.2" apply false
+    id "org.sonarqube" version "2.5" apply false
+}
+
 // Build helpers
 def snapshotBuild = project.version.endsWith("-SNAPSHOT")
-
-// Build script
-buildscript {
-	repositories {
-		jcenter()
-	}
-	dependencies {
-		classpath("org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5")
-	}
-}
 
 // Projects
 subprojects {
 
 	apply plugin: "java"
+	apply plugin: "de.carne.java-tools"
 	apply plugin: "jacoco"
 	apply plugin: "org.sonarqube"
 	apply plugin: "eclipse"
@@ -24,6 +21,7 @@ subprojects {
 	
 	repositories {
 		jcenter()
+		maven { url "https://oss.jfrog.org/libs-release/" }
 		if(snapshotBuild) {
 			maven { url "https://oss.jfrog.org/libs-snapshot/" }
 		}
@@ -32,15 +30,15 @@ subprojects {
 	sourceSets {
 		main {
 			java {
-				srcDirs += "../filescanner-gtk-linux-x86_64/shared-src/main/java"
+				srcDir "../filescanner-gtk-linux-x86_64/shared-src/main/java"
 			}
 			resources {
-				srcDirs += "../filescanner-gtk-linux-x86_64/shared-src/main/resources"
+				srcDir "../filescanner-gtk-linux-x86_64/shared-src/main/resources"
 			}
 		}
 		test {
 			java {
-				srcDirs += "../filescanner-gtk-linux-x86_64/shared-src/test/java"
+				srcDir "../filescanner-gtk-linux-x86_64/shared-src/test/java"
 			}
 		}
 	}
@@ -48,7 +46,7 @@ subprojects {
 	def buildPlatform = project.name.substring(rootProject.name.length())
 
 	dependencies {
-		compile("de.carne.common:java-default:3-SNAPSHOT")
+		compile("de.carne.common:java-default:5-SNAPSHOT")
 		compile("de.carne.common:java-swt${buildPlatform}:2-SNAPSHOT")
 		compile("de.carne.common:java-compression:3-SNAPSHOT")
 		compile("org.apache.lucene:lucene-analyzers-common:7.0.0")
@@ -57,11 +55,22 @@ subprojects {
 		}
 		testCompile("junit:junit:4.12")
 	}
+	
+	javatools {
+		generateI18N {
+			enabled = true
+			genDir = file("../filescanner-gtk-linux-x86_64/shared-src/main/java")
+			bundles = fileTree("../filescanner-gtk-linux-x86_64/shared-src/main/resources").include("**/*I18N.properties")
+		}
+	}
 
 	jar {
 		manifest {
 			attributes(
-				"Main-Class": "de.carne.Application"
+				"Main-Class": "de.carne.Application",
+				"X-Application-Name": "FileScanner",
+				"X-Application-Version": project.version,
+				"X-Application-Build": "???"
 			)
 		}
 		from configurations.runtime.collect {

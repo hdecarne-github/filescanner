@@ -22,7 +22,13 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import de.carne.ApplicationMain;
+import de.carne.filescanner.swt.main.MainInterface;
+import de.carne.filescanner.swt.resources.Images;
+import de.carne.swt.ResourceException;
+import de.carne.swt.UserApplication;
+import de.carne.util.ApplicationManifestInfo;
 import de.carne.util.Exceptions;
+import de.carne.util.Late;
 import de.carne.util.cmdline.CmdLineException;
 import de.carne.util.cmdline.CmdLineProcessor;
 import de.carne.util.logging.Log;
@@ -31,7 +37,7 @@ import de.carne.util.logging.Logs;
 /**
  * Application entry point.
  */
-public class FileScannerMain implements ApplicationMain {
+public class FileScannerMain extends UserApplication implements ApplicationMain {
 
 	static {
 		applyLogConfig(Logs.CONFIG_DEFAULT);
@@ -41,6 +47,8 @@ public class FileScannerMain implements ApplicationMain {
 
 	private static final String NAME = "filescanner";
 
+	private final Late<MainInterface> mainViewHolder = new Late<>();
+
 	@Override
 	public String name() {
 		return NAME;
@@ -48,46 +56,44 @@ public class FileScannerMain implements ApplicationMain {
 
 	@Override
 	public int run(String[] args) {
-		CmdLineProcessor cmdLine = buildCmdLineProcessor(args);
-
-		LOG.notice("Running ''{0}''...", cmdLine);
-
 		int status;
 
 		try {
-			cmdLine.process();
+			CmdLineProcessor logConfigCmdLine = buildLogConfigCmdLine(args);
 
-			Display display = new Display();
-			Shell shell = new Shell(display);
+			logConfigCmdLine.process();
 
-			shell.open();
-			shell.pack();
-			shell.close();
-			while (!shell.isDisposed()) {
-				if (!display.readAndDispatch()) {
-					display.sleep();
-				}
-			}
-			status = 0;
-		} catch (CmdLineException e) {
-			// TODO: Proper user message
+			LOG.notice("Running ''{0}''...", logConfigCmdLine);
+
+			CmdLineProcessor applicationCmdLine = buildApplicationCmdLine(args);
+
+			status = run(applicationCmdLine);
+		} catch (CmdLineException | ResourceException e) {
 			Exceptions.warn(e);
 			status = -1;
 		}
 		return status;
 	}
 
-	private CmdLineProcessor buildCmdLineProcessor(String[] args) {
-		CmdLineProcessor cmdLine = new CmdLineProcessor(name(), args);
+	@Override
+	protected Display setupDisplay() throws ResourceException {
+		Display.setAppName(ApplicationManifestInfo.APPLICATION_NAME);
+		Display.setAppVersion(ApplicationManifestInfo.APPLICATION_VERSION);
 
-		cmdLine.onSwitch((arg) -> applyLogConfig(Logs.CONFIG_VERBOSE)).arg("--verbose");
-		cmdLine.onSwitch((arg) -> applyLogConfig(Logs.CONFIG_DEBUG)).arg("--debug");
-		cmdLine.onSwitch((arg) -> showVersion()).arg("--version");
-		return cmdLine;
+		Display display = new Display();
+
+		Images.setup(display);
+		return display;
 	}
 
-	private void showVersion() {
-		// TODO: Display version info
+	@Override
+	protected Shell setupStartShell(Display display) throws ResourceException {
+		Shell root = new Shell(display);
+		MainInterface mainView = new MainInterface();
+
+		mainView.setup(root);
+		this.mainViewHolder.set(mainView);
+		return root;
 	}
 
 	private static void applyLogConfig(String config) {
@@ -96,6 +102,26 @@ public class FileScannerMain implements ApplicationMain {
 		} catch (IOException e) {
 			Exceptions.warn(e);
 		}
+	}
+
+	private CmdLineProcessor buildLogConfigCmdLine(String[] args) {
+		CmdLineProcessor cmdLine = new CmdLineProcessor(name(), args);
+
+		cmdLine.onSwitch(arg -> applyLogConfig(Logs.CONFIG_VERBOSE)).arg("--verbose");
+		cmdLine.onSwitch(arg -> applyLogConfig(Logs.CONFIG_DEBUG)).arg("--debug");
+		cmdLine.onUnnamedOption(CmdLineProcessor::ignore);
+		cmdLine.onUnknownArg(CmdLineProcessor::ignore);
+		return cmdLine;
+	}
+
+	private CmdLineProcessor buildApplicationCmdLine(String[] args) {
+		CmdLineProcessor cmdLine = new CmdLineProcessor(name(), args);
+
+		cmdLine.onSwitch(CmdLineProcessor::ignore).arg("--verbose");
+		cmdLine.onSwitch(CmdLineProcessor::ignore).arg("--debug");
+		cmdLine.onUnnamedOption(CmdLineProcessor::ignore);
+		cmdLine.onUnknownArg(CmdLineProcessor::ignore);
+		return cmdLine;
 	}
 
 }
