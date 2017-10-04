@@ -27,18 +27,20 @@ subprojects {
 		}
 	}
 
+	def sharedSrcDir = "../filescanner-gtk-linux-x86_64/shared-src"
+
 	sourceSets {
 		main {
 			java {
-				srcDir "../filescanner-gtk-linux-x86_64/shared-src/main/java"
+				srcDir "${sharedSrcDir}/main/java"
 			}
 			resources {
-				srcDir "../filescanner-gtk-linux-x86_64/shared-src/main/resources"
+				srcDir "${sharedSrcDir}/main/resources"
 			}
 		}
 		test {
 			java {
-				srcDir "../filescanner-gtk-linux-x86_64/shared-src/test/java"
+				srcDir "${sharedSrcDir}/test/java"
 			}
 		}
 	}
