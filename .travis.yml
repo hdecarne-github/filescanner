@@ -1,3 +1,5 @@
+sudo: false
+
 language: java
 
 addons:
@@ -13,11 +15,13 @@ jdk:
 os:
   - linux
 
-env: DISPLAY=:99.0
-
 before_script:
-  - sh -e /etc/init.d/xvfb start
-  - metacity --sm-disable --replace 2> metacity.err &
+  - "export DISPLAY=:99.0"
+  - "export DBUS_SESSION_BUS_ADDRESS=/dev/null"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 10 # give xvfb some time to start
+  - "metacity --sm-disable --replace 2> metacity.err &"
+  - sleep 10 # give metacity some time to start
 script:
   - ./gradlew build sonarqube
 
@@ -30,6 +34,8 @@ notifications:
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+  - rm -f  $HOME/.gradle/caches/*/fileHashes/fileHashes.bin
+  - rm -f  $HOME/.gradle/caches/*/fileHashes/fileHashes.lock
 cache:
   directories:
     - $HOME/.gradle/caches/
