@@ -19,8 +19,8 @@ package de.carne.filescanner.swt.resources;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
 
-import de.carne.swt.ResourceException;
 import de.carne.swt.graphics.ImageResourcePool;
+import de.carne.swt.graphics.ResourceException;
 import de.carne.util.Exceptions;
 import de.carne.util.Late;
 import de.carne.util.Lazy;
@@ -77,5 +77,51 @@ public final class Images {
 	 */
 	public static final Lazy<Image[]> IMAGES_FSLOGO = new Lazy<>(() -> new Image[] { IMAGE_FSLOGO16.get(),
 			IMAGE_FSLOGO32.get(), IMAGE_FSLOGO48.get(), IMAGE_FSLOGO128.get() });
+	/**
+	 * open_file16.png
+	 */
+	public static final Lazy<Image> IMAGE_OPEN_FILE16 = new Lazy<>(() -> getImage("open_file16.png"));
+	/**
+	 * copy_object16.png
+	 */
+	public static final Lazy<Image> IMAGE_COPY_OBJECT16 = new Lazy<>(() -> getImage("copy_object16.png"));
+	/**
+	 * copy_object_disabled16.png
+	 */
+	public static final Lazy<Image> IMAGE_COPY_OBJECT_DISABLED16 = new Lazy<>(
+			() -> getImage("copy_object_disabled16.png"));
+	/**
+	 * export_object16.png
+	 */
+	public static final Lazy<Image> IMAGE_EXPORT_OBJECT16 = new Lazy<>(() -> getImage("export_object16.png"));
+	/**
+	 * export_object_disabled16.png
+	 */
+	public static final Lazy<Image> IMAGE_EXPORT_OBJECT_DISABLED16 = new Lazy<>(
+			() -> getImage("export_object_disabled16.png"));
+	/**
+	 * goto_next16.png
+	 */
+	public static final Lazy<Image> IMAGE_GOTO_NEXT16 = new Lazy<>(() -> getImage("goto_next16.png"));
+	/**
+	 * goto_previous16.png
+	 */
+	public static final Lazy<Image> IMAGE_GOTO_PREVIOUS16 = new Lazy<>(() -> getImage("goto_previous16.png"));
+	/**
+	 * goto_end16.png
+	 */
+	public static final Lazy<Image> IMAGE_GOTO_END16 = new Lazy<>(() -> getImage("goto_end16.png"));
+	/**
+	 * goto_start16.png
+	 */
+	public static final Lazy<Image> IMAGE_GOTO_START16 = new Lazy<>(() -> getImage("goto_start16.png"));
+	/**
+	 * stop_scan16.png
+	 */
+	public static final Lazy<Image> IMAGE_STOP_SCAN16 = new Lazy<>(() -> getImage("stop_scan16.png"));
+	/**
+	 * stop_scan_disabled16.png
+	 */
+	public static final Lazy<Image> IMAGE_STOP_SCAN_DISABLED16 = new Lazy<>(() -> getImage("stop_scan_disabled16.png"));
 
 }

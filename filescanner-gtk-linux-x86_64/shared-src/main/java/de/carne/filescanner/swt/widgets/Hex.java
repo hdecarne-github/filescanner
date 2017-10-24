@@ -14,27 +14,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.carne.filescanner.swt.main;
+package de.carne.filescanner.swt.widgets;
 
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Shell;
-
-import de.carne.util.Late;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Composite;
 
 /**
- *
+ * Custom control for displaying raw hexadecimal data to the user.
  */
-class MainAgent extends MainController {
+@SuppressWarnings("squid:MaximumInheritanceDepth")
+public class Hex extends Canvas {
 
-	final Late<Shell> root = new Late<>();
-
-	void onQuitSelected(SelectionEvent event) {
-		close();
-	}
-
-	@Override
-	public void closeAgent() {
-		this.root.get().close();
+	/**
+	 * Construct {@linkplain Hex}.
+	 *
+	 * @param parent The widget's owner.
+	 * @param style The widget's style.
+	 */
+	public Hex(Composite parent, int style) {
+		super(parent, style);
 	}
 
 }

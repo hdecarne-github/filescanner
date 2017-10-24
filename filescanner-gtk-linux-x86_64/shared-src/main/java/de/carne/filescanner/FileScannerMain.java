@@ -24,8 +24,9 @@ import org.eclipse.swt.widgets.Shell;
 import de.carne.ApplicationMain;
 import de.carne.filescanner.swt.main.MainInterface;
 import de.carne.filescanner.swt.resources.Images;
-import de.carne.swt.ResourceException;
 import de.carne.swt.UserApplication;
+import de.carne.swt.graphics.ResourceException;
+import de.carne.swt.widgets.UserInterface;
 import de.carne.util.ApplicationManifestInfo;
 import de.carne.util.Exceptions;
 import de.carne.util.Late;
@@ -71,6 +72,8 @@ public class FileScannerMain extends UserApplication implements ApplicationMain 
 		} catch (CmdLineException | ResourceException e) {
 			Exceptions.warn(e);
 			status = -1;
+		} finally {
+			Logs.flush();
 		}
 		return status;
 	}
@@ -87,13 +90,12 @@ public class FileScannerMain extends UserApplication implements ApplicationMain 
 	}
 
 	@Override
-	protected Shell setupStartShell(Display display) throws ResourceException {
+	protected UserInterface<Shell> setupUserInterface(Display display) throws ResourceException {
 		Shell root = new Shell(display);
-		MainInterface mainView = new MainInterface();
+		MainInterface mainView = this.mainViewHolder.set(new MainInterface());
 
 		mainView.setup(root);
-		this.mainViewHolder.set(mainView);
-		return root;
+		return mainView;
 	}
 
 	private static void applyLogConfig(String config) {

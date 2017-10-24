@@ -14,53 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.carne.filescanner.swt.main;
+@NonNullByDefault
+package de.carne.filescanner.swt.widgets;
 
-import org.eclipse.swt.widgets.Shell;
-
-import de.carne.util.Late;
-
-/**
- *
- */
-class MainController {
-
-	final Late<Shell> root = new Late<>();
-
-	void onOpenSelected() {
-
-	}
-
-	void onQuitSelected() {
-		this.root.get().close();
-	}
-
-	void onCopyObjectSelected() {
-
-	}
-
-	void onExportObjectSelected() {
-
-	}
-
-	void onGotoNextSelected() {
-
-	}
-
-	void onGotoPreviousSelected() {
-
-	}
-
-	void onGotoEndSelected() {
-
-	}
-
-	void onGotoStartSelected() {
-
-	}
-
-	void onStopScanSelected() {
-
-	}
-
-}
+import de.carne.check.NonNullByDefault;
