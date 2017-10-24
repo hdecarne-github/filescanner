@@ -45,17 +45,17 @@ subprojects {
 		}
 	}
 
-	def buildPlatform = project.name.substring(rootProject.name.length())
+	def platformSuffix = project.name.substring(rootProject.name.length())
 
 	dependencies {
-		compile("de.carne.common:java-default:5-SNAPSHOT")
-		compile("de.carne.common:java-swt${buildPlatform}:2-SNAPSHOT")
+		compile("de.carne.common:java-default:6-SNAPSHOT")
+		compile("de.carne.common:java-swt${platformSuffix}:2-SNAPSHOT")
 		compile("de.carne.common:java-compression:3-SNAPSHOT")
 		compile("org.apache.lucene:lucene-analyzers-common:7.0.0")
 		compile("org.apache.lucene:lucene-queryparser:7.0.0") {
 			exclude module: "lucene-sandbox"
 		}
-		testCompile("junit:junit:4.12")
+		testCompile("de.carne.common:java-test-swt${platformSuffix}:2-SNAPSHOT")
 	}
 	
 	javatools {
@@ -96,6 +96,8 @@ subprojects {
 	eclipse {
 		classpath {
 			defaultOutputDir = file("eclipse-build")
+			downloadSources = true
+			downloadJavadoc = true
 		}
 	}
 }
