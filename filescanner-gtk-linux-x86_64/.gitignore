@@ -1,3 +1,5 @@
 /.gradle/
 /build/
 /eclipse-build/
+/.project
+/.classpath
