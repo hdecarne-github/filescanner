@@ -16,22 +16,37 @@
  */
 package de.carne.filescanner.test;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.carne.Application;
 import de.carne.filescanner.FileScannerMain;
+import de.carne.test.swt.tester.SWTTester;
 
 /**
  * Test {@link FileScannerMain} class.
  */
-public class FileScannerMainTest {
+public class FileScannerMainTest extends SWTTester {
+
+	/**
+	 * Setup the necessary system properties.
+	 */
+	@BeforeClass
+	public static void setUpBeforeClass() {
+		System.setProperty("de.carne.Application.TEST_MODE", Boolean.TRUE.toString());
+	}
+
+	@Override
+	protected void runSWTApplication(String[] args) {
+		Application.main(args);
+	}
 
 	/**
 	 * Test basic application startup.
 	 */
 	@Test
-	public void testFileScannerMain() {
-		Application.main(new String[] { "--verbose", "--version" });
+	public void testFileScanner() {
+		runner().run();
 	}
 
 }
