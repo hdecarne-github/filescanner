@@ -16,8 +16,10 @@
  */
 package de.carne.filescanner.swt.widgets;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Custom control for displaying raw hexadecimal data to the user.
@@ -33,6 +35,11 @@ public class Hex extends Canvas {
 	 */
 	public Hex(Composite parent, int style) {
 		super(parent, style);
+
+		Display display = getDisplay();
+
+		setBackground(display.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+		setForeground(display.getSystemColor(SWT.COLOR_LIST_FOREGROUND));
 	}
 
 }

@@ -16,51 +16,55 @@
  */
 package de.carne.filescanner.swt.main;
 
-import org.eclipse.swt.widgets.Shell;
-
-import de.carne.util.Late;
+import de.carne.util.logging.Log;
 
 /**
- *
+ * Main window.
  */
 class MainController {
 
-	final Late<Shell> root = new Late<>();
+	private static final Log LOG = new Log();
+
+	private final MainUI ui;
+
+	MainController(MainUI ui) {
+		this.ui = ui;
+	}
 
 	void onOpenSelected() {
-
+		LOG.info("onOpenSelected");
 	}
 
 	void onQuitSelected() {
-		this.root.get().close();
+		this.ui.close();
 	}
 
 	void onCopyObjectSelected() {
-
+		LOG.info("onCopyObjectSelected");
 	}
 
 	void onExportObjectSelected() {
-
+		LOG.info("onExportObjectSelected");
 	}
 
 	void onGotoNextSelected() {
-
+		LOG.info("onGotoNextSelected");
 	}
 
 	void onGotoPreviousSelected() {
-
+		LOG.info("onGotoPreviousSelected");
 	}
 
 	void onGotoEndSelected() {
-
+		LOG.info("onGotoEndSelected");
 	}
 
 	void onGotoStartSelected() {
-
+		LOG.info("onGotoStartSelected");
 	}
 
 	void onStopScanSelected() {
-
+		LOG.info("onStopScanSelected");
 	}
 
 }

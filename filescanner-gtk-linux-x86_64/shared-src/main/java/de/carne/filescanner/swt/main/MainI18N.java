@@ -6,9 +6,12 @@ package de.carne.filescanner.swt.main;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
+import javax.annotation.Generated;
+
 /**
  * Resource bundle: de/carne/filescanner/swt/main/MainI18N.properties
  */
+@Generated(value = { "de.carne.gradle.plugin.task.GenerateI18NTask" })
 public final class MainI18N {
 
 	/**

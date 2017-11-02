@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import de.carne.ApplicationMain;
-import de.carne.filescanner.swt.main.MainInterface;
+import de.carne.filescanner.swt.main.MainUI;
 import de.carne.filescanner.swt.resources.Images;
 import de.carne.swt.UserApplication;
 import de.carne.swt.graphics.ResourceException;
@@ -48,7 +48,7 @@ public class FileScannerMain extends UserApplication implements ApplicationMain 
 
 	private static final String NAME = "filescanner";
 
-	private final Late<MainInterface> mainViewHolder = new Late<>();
+	private final Late<MainUI> mainInterfaceHolder = new Late<>();
 
 	@Override
 	public String name() {
@@ -92,7 +92,7 @@ public class FileScannerMain extends UserApplication implements ApplicationMain 
 	@Override
 	protected UserInterface<Shell> setupUserInterface(Display display) throws ResourceException {
 		Shell root = new Shell(display);
-		MainInterface mainView = this.mainViewHolder.set(new MainInterface());
+		MainUI mainView = this.mainInterfaceHolder.set(new MainUI());
 
 		mainView.setup(root);
 		return mainView;
