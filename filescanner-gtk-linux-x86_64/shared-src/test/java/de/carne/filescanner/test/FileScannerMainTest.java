@@ -46,7 +46,11 @@ public class FileScannerMainTest extends SWTTester {
 	 */
 	@Test
 	public void testFileScanner() {
-		runner().run();
+		runner().check(this::checkMenuQuit).run();
+	}
+
+	private void checkMenuQuit() {
+		getShell("FileScanner").menuBar().item("&Quit").select();
 	}
 
 }
