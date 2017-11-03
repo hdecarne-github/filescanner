@@ -1,5 +1,6 @@
 test {
-	enabled = false
+	enabled = (System.properties["os.name"].toLowerCase() ==~ /windows .*/) \
+		&& (System.properties["os.arch"].toLowerCase() ==~ /x86|i386|i486|i586|i686/) 
 }
 
 project.tasks["sonarqube"].enabled = test.enabled
