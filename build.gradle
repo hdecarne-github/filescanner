@@ -1,6 +1,6 @@
 // Plugins
 plugins {
-    id "de.carne.java-tools" version "0.5.3" apply false
+    id "de.carne.java-tools" version "0.5.4" apply false
     id "org.sonarqube" version "2.6-rc1" apply false
 }
 
