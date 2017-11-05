@@ -18,6 +18,9 @@ package de.carne.filescanner.swt.main;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
@@ -47,12 +50,38 @@ public class MainUI extends UserInterface<Shell> {
 
 	private final Late<Shell> rootHolder = new Late<>();
 	private final Late<Text> searchPatternHolder = new Late<>();
+	private final Late<Sash> vSashHolder = new Late<>();
+	private final Late<Sash> hSashHolder = new Late<>();
 
 	/**
 	 * Send close request to the UI.
 	 */
 	public void close() {
 		root().close();
+	}
+
+	private void onVSashSelected(SelectionEvent event) {
+		Sash vSash = this.vSashHolder.get();
+
+		if ((event.detail & SWT.DRAG) != SWT.DRAG || (vSash.getStyle() & SWT.SMOOTH) == SWT.SMOOTH) {
+			FormData layoutData = (FormData) vSash.getLayoutData();
+
+			layoutData.left = new FormAttachment(0, event.x);
+			vSash.setLayoutData(layoutData);
+			vSash.requestLayout();
+		}
+	}
+
+	private void onHSashSelected(SelectionEvent event) {
+		Sash hSash = this.hSashHolder.get();
+
+		if ((event.detail & SWT.DRAG) != SWT.DRAG || (hSash.getStyle() & SWT.SMOOTH) == SWT.SMOOTH) {
+			FormData layoutData = (FormData) hSash.getLayoutData();
+
+			layoutData.top = new FormAttachment(0, event.y);
+			hSash.setLayoutData(layoutData);
+			hSash.requestLayout();
+		}
 	}
 
 	@Override
@@ -65,24 +94,28 @@ public class MainUI extends UserInterface<Shell> {
 		rootBuilder.withText(MainI18N.i18nTitle()).withImages(Images.IMAGES_FSLOGO);
 		buildMenuBar(rootBuilder, controller);
 
+		ControlBuilder<Sash> vSash = rootBuilder.addControlChild(Sash.class, SWT.VERTICAL);
+		ControlBuilder<Sash> hSash = rootBuilder.addControlChild(Sash.class, SWT.HORIZONTAL);
 		CoolBarBuilder commands = buildCommandBar(rootBuilder, controller);
 		ControlBuilder<Tree> resultView = rootBuilder.addControlChild(Tree.class,
-				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL | SWT.BORDER);
-		ControlBuilder<Sash> vSash = rootBuilder.addControlChild(Sash.class, SWT.VERTICAL);
-		Browser preView = new Browser(root, SWT.BORDER);
-		Sash hSash = new Sash(root, SWT.HORIZONTAL);
-		Hex hexView = new Hex(root, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL);
+		ControlBuilder<Browser> preView = rootBuilder.addControlChild(Browser.class, SWT.NONE);
+		ControlBuilder<Hex> hexView = rootBuilder.addControlChild(Hex.class, SWT.H_SCROLL | SWT.V_SCROLL);
 		CoolBarBuilder status = buildStatusBar(controller);
 
 		FormLayoutBuilder.layout().apply(root);
+		FormLayoutBuilder.data().left(40).top(commands).bottom(status).apply(vSash);
+		FormLayoutBuilder.data().left(vSash).top(50).right(100).apply(hSash);
 		FormLayoutBuilder.data().left(0).top(0).right(100).apply(commands);
 		FormLayoutBuilder.data().left(0).top(commands).right(vSash).bottom(status).apply(resultView);
-		FormLayoutBuilder.data().left(40).top(commands).bottom(status).apply(vSash);
 		FormLayoutBuilder.data().left(vSash).top(commands).right(100).bottom(hSash).apply(preView);
-		FormLayoutBuilder.data().left(vSash).top(50).right(100).apply(hSash);
 		FormLayoutBuilder.data().left(vSash).top(hSash).right(100).bottom(status).apply(hexView);
 		FormLayoutBuilder.data().left(0).right(100).bottom(100).apply(status);
 
+		this.vSashHolder.set(vSash.get());
+		this.hSashHolder.set(hSash.get());
+		vSash.onSelected(this::onVSashSelected);
+		hSash.onSelected(this::onHSashSelected);
 		root.layout(true);
 		resultView.get().setFocus();
 	}
