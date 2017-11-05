@@ -48,9 +48,9 @@ subprojects {
 	def platformSuffix = project.name.substring(rootProject.name.length())
 
 	dependencies {
+		compile("de.carne.common:filescanner-engine:1-SNAPSHOT")
 		compile("de.carne.common:java-default:6-SNAPSHOT")
 		compile("de.carne.common:java-swt${platformSuffix}:2-SNAPSHOT")
-		compile("de.carne.common:java-compression:3-SNAPSHOT")
 		compile("org.apache.lucene:lucene-analyzers-common:7.0.0")
 		compile("org.apache.lucene:lucene-queryparser:7.0.0") {
 			exclude module: "lucene-sandbox"
