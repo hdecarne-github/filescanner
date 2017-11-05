@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2007-2017 Holger de Carne and contributors, All Rights Reserved.
  *
