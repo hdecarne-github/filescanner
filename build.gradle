@@ -49,7 +49,7 @@ subprojects {
 
 	dependencies {
 		compile("de.carne.common:filescanner-engine:2-SNAPSHOT")
-		compile("de.carne.common:java-default:6-SNAPSHOT")
+		compile("de.carne.common:java-default:6")
 		compile("de.carne.common:java-swt${platformSuffix}:2-SNAPSHOT")
 		compile("org.apache.lucene:lucene-analyzers-common:7.0.0")
 		compile("org.apache.lucene:lucene-queryparser:7.0.0") {
