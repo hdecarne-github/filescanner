@@ -2,4 +2,5 @@ autoEnabled=true
 eclipse.preferences.version=1
 extraProperties=
 moduleKey=de.carne\:filescanner\:filescanner-gtk-linux-x86_64
+projectKey=de.carne\:filescanner\:filescanner-gtk-linux-x86_64
 serverId=SonarCloud/hdecarne-github
