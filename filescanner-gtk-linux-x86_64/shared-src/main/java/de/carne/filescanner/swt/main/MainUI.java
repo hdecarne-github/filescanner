@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2017 Holger de Carne and contributors, All Rights Reserved.
+ * Copyright (c) 2007-2018 Holger de Carne and contributors, All Rights Reserved.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ import de.carne.swt.widgets.UserInterface;
 import de.carne.util.Late;
 
 /**
- * Main window.
+ * Main window UI.
  */
 public class MainUI extends UserInterface<Shell> {
 
@@ -54,7 +54,7 @@ public class MainUI extends UserInterface<Shell> {
 	private final Late<Sash> hSashHolder = new Late<>();
 
 	/**
-	 * Send close request to the UI.
+	 * Sends close request to the UI.
 	 */
 	public void close() {
 		root().close();

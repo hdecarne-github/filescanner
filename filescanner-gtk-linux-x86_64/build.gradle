@@ -1,6 +1,5 @@
 test {
-	enabled = (System.properties["os.name"].toLowerCase() ==~ /linux/) \
-		&& (System.properties["os.arch"].toLowerCase() ==~ /x86_64|amd64/) 
+	enabled = project.name.endsWith(javatools.platform.swtToolkit)
 }
 
 project.tasks["sonarqube"].enabled = test.enabled

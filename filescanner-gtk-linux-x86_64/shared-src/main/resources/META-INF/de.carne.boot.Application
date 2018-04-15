@@ -1,0 +1,3 @@
+de.carne.filescanner.FileScannerMain
+java.util.logging.config.class=de.carne.boot.logging.Config
+de.carne.boot.prefs.FilePreferences = .de.carne.filescanner

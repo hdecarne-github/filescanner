@@ -1,7 +1,8 @@
 // Plugins
 plugins {
-    id "de.carne.java-tools" version "0.5.4" apply false
-    id "org.sonarqube" version "2.6.1" apply false
+	id "de.carne.java-tools" version "0.6.1" apply false
+	id "org.sonarqube" version "2.6.2" apply false
+	id "com.install4j.gradle" version "7.0.4" apply false
 }
 
 // Build helpers
@@ -14,6 +15,8 @@ subprojects {
 	apply plugin: "de.carne.java-tools"
 	apply plugin: "jacoco"
 	apply plugin: "org.sonarqube"
+	apply plugin: 'distribution'
+	apply plugin: 'com.install4j.gradle'
 	apply plugin: "eclipse"
 	
 	sourceCompatibility = JavaVersion.VERSION_1_8
@@ -48,14 +51,25 @@ subprojects {
 	def platformSuffix = project.name.substring(rootProject.name.length())
 
 	dependencies {
-		compile("de.carne.common:filescanner-engine:2-SNAPSHOT")
-		compile("de.carne.common:java-default:6")
-		compile("de.carne.common:java-swt${platformSuffix}:2-SNAPSHOT")
-		compile("org.apache.lucene:lucene-analyzers-common:7.2.0")
-		compile("org.apache.lucene:lucene-queryparser:7.2.0") {
+		compile("de.carne.common:java-swt${platformSuffix}:2.1.0-SNAPSHOT")
+		compile("de.carne.common:filescanner-engine:2.0.0-SNAPSHOT")
+		compile("org.apache.lucene:lucene-analyzers-common:7.2.1")
+		compile("org.apache.lucene:lucene-queryparser:7.2.1") {
 			exclude module: "lucene-sandbox"
 		}
-		testCompile("de.carne.common:java-test-swt${platformSuffix}:2-SNAPSHOT")
+		testCompile("de.carne.common:java-test-swt${platformSuffix}:2.1.0-SNAPSHOT")
+		testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.1.0")
+		testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.0.3")
+	}
+	
+	test {
+		useJUnitPlatform()
+		// SWT display can only be created once per VM
+		forkEvery = 1
+		testLogging {
+			events "failed"
+			exceptionFormat "full"
+		}
 	}
 	
 	javatools {
@@ -67,17 +81,67 @@ subprojects {
 	}
 
 	jar {
+		def buildTimestamp = new java.text.SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+
 		manifest {
 			attributes(
-				"Main-Class": "de.carne.Application",
 				"X-Application-Name": "FileScanner",
 				"X-Application-Version": project.version,
-				"X-Application-Build": "???"
+				"X-Application-Build": buildTimestamp
 			)
 		}
+	}
+	
+	task bootJar(type: Jar) {
+		appendix = 'boot'
+		entryCompression = ZipEntryCompression.STORED
+		from jar
 		from configurations.runtime.collect {
-			it.name.matches("(java-default-.*.jar)|(java-swt-.*.jar)") ? zipTree(it).matching { exclude "META-INF/**" } : it
+			it.name.matches('java-boot-.*.jar') ? zipTree(it) : it
 		}
+		manifest {
+			attributes(
+				'Main-Class': 'de.carne.boot.Application',
+			)
+		}
+	}
+
+	distributions {
+		main {
+			contents {
+				from bootJar
+			}
+		}
+	}
+	
+	tasks.withType(Tar){
+		compression = Compression.GZIP
+		extension = 'tar.gz'
+	}
+
+	install4j {
+		installDir = file(project.hasProperty("install4jHome") ? install4jHome : ".")
+	}
+	
+	task assembleMedia(type: com.install4j.gradle.Install4jTask, dependsOn: assembleDist) {
+		def i4jProjectApplicationID = project.getProperty(project.name + '.i4jProjectApplicationID')
+		def i4jProjectMediaID = project.getProperty(project.name + '.i4jProjectMediaID')
+		
+		enabled = i4jProjectApplicationID != 'false'
+
+		projectFile = file("../src/main/install4j/filescanner.install4j")
+		variables = [
+			i4jProjectBaseName: rootProject.name,
+			i4jProjectName: project.name,
+			i4jProjectVersion: version,
+			i4jProjectBaseDir: projectDir,
+			i4jProjectBuildDir: buildDir,
+			i4jProjectApplicationID: i4jProjectApplicationID,
+		]
+		buildIds = [
+			i4jProjectMediaID
+			]
+		quiet = true		
 	}
 
 	jacoco {
@@ -88,7 +152,7 @@ subprojects {
 		reports {
 			xml.enabled false
 			html.enabled true
-			html.destination file("${buildDir}/reports/jacocoHtml")
+			html.destination file("${buildDir}/reports/jacoco")
 			csv.enabled false
 		}
 	}

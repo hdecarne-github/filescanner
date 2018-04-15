@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2017 Holger de Carne and contributors, All Rights Reserved.
+ * Copyright (c) 2007-2018 Holger de Carne and contributors, All Rights Reserved.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,10 +28,10 @@ import org.eclipse.swt.widgets.Display;
 public class Hex extends Canvas {
 
 	/**
-	 * Construct {@linkplain Hex}.
+	 * Constructs a new {@linkplain Hex} instance.
 	 *
-	 * @param parent The widget's owner.
-	 * @param style The widget's style.
+	 * @param parent the widget's owner.
+	 * @param style the widget's style.
 	 */
 	public Hex(Composite parent, int style) {
 		super(parent, style);

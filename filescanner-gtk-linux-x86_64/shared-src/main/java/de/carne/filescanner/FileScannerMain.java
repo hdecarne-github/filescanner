@@ -21,22 +21,22 @@ import java.io.IOException;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import de.carne.ApplicationMain;
+import de.carne.boot.ApplicationMain;
+import de.carne.boot.Exceptions;
+import de.carne.boot.logging.Log;
+import de.carne.boot.logging.Logs;
 import de.carne.filescanner.swt.main.MainUI;
 import de.carne.filescanner.swt.resources.Images;
 import de.carne.swt.UserApplication;
 import de.carne.swt.graphics.ResourceException;
 import de.carne.swt.widgets.UserInterface;
-import de.carne.util.ApplicationManifestInfo;
-import de.carne.util.Exceptions;
 import de.carne.util.Late;
+import de.carne.util.ManifestInfos;
 import de.carne.util.cmdline.CmdLineException;
 import de.carne.util.cmdline.CmdLineProcessor;
-import de.carne.util.logging.Log;
-import de.carne.util.logging.Logs;
 
 /**
- * Application entry point.
+ * Application main class.
  */
 public class FileScannerMain extends UserApplication implements ApplicationMain {
 
@@ -64,7 +64,7 @@ public class FileScannerMain extends UserApplication implements ApplicationMain 
 
 			logConfigCmdLine.process();
 
-			LOG.notice("Running ''{0}''...", logConfigCmdLine);
+			LOG.notice("Running command ''{0}''...", logConfigCmdLine);
 
 			CmdLineProcessor applicationCmdLine = buildApplicationCmdLine(args);
 
@@ -80,8 +80,8 @@ public class FileScannerMain extends UserApplication implements ApplicationMain 
 
 	@Override
 	protected Display setupDisplay() throws ResourceException {
-		Display.setAppName(ApplicationManifestInfo.APPLICATION_NAME);
-		Display.setAppVersion(ApplicationManifestInfo.APPLICATION_VERSION);
+		Display.setAppName(ManifestInfos.APPLICATION_NAME);
+		Display.setAppVersion(ManifestInfos.APPLICATION_VERSION);
 
 		Display display = new Display();
 
@@ -96,14 +96,6 @@ public class FileScannerMain extends UserApplication implements ApplicationMain 
 
 		mainView.setup(root);
 		return mainView;
-	}
-
-	private static void applyLogConfig(String config) {
-		try {
-			Logs.readConfig(config);
-		} catch (IOException e) {
-			Exceptions.warn(e);
-		}
 	}
 
 	private CmdLineProcessor buildLogConfigCmdLine(String[] args) {
@@ -124,6 +116,14 @@ public class FileScannerMain extends UserApplication implements ApplicationMain 
 		cmdLine.onUnnamedOption(CmdLineProcessor::ignore);
 		cmdLine.onUnknownArg(CmdLineProcessor::ignore);
 		return cmdLine;
+	}
+
+	private static void applyLogConfig(String config) {
+		try {
+			Logs.readConfig(config);
+		} catch (IOException e) {
+			Exceptions.warn(e);
+		}
 	}
 
 }

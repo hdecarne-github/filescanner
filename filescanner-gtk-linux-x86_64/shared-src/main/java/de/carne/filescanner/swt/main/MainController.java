@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2017 Holger de Carne and contributors, All Rights Reserved.
+ * Copyright (c) 2007-2018 Holger de Carne and contributors, All Rights Reserved.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
  */
 package de.carne.filescanner.swt.main;
 
-import de.carne.util.logging.Log;
+import de.carne.boot.logging.Log;
 
 /**
- * Main window.
+ * Main window controll.
  */
 class MainController {
 

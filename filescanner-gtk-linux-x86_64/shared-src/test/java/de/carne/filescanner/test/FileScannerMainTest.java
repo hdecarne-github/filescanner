@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2017 Holger de Carne and contributors, All Rights Reserved.
+ * Copyright (c) 2007-2018 Holger de Carne and contributors, All Rights Reserved.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,36 +16,24 @@
  */
 package de.carne.filescanner.test;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import de.carne.Application;
+import de.carne.boot.Application;
 import de.carne.filescanner.FileScannerMain;
 import de.carne.test.swt.tester.SWTTester;
 
 /**
  * Test {@link FileScannerMain} class.
  */
-public class FileScannerMainTest extends SWTTester {
-
-	/**
-	 * Setup the necessary system properties.
-	 */
-	@BeforeClass
-	public static void setUpBeforeClass() {
-		System.setProperty("de.carne.Application.TEST_MODE", Boolean.TRUE.toString());
-	}
+class FileScannerMainTest extends SWTTester {
 
 	@Override
 	protected void runSWTApplication(String[] args) {
 		Application.main(args);
 	}
 
-	/**
-	 * Test basic application startup.
-	 */
 	@Test
-	public void testFileScanner() {
+	void testFileScanner() {
 		runner().check(this::checkMenuQuit).run();
 	}
 

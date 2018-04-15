@@ -1,5 +1,7 @@
 test {
 	enabled = false
+	// Do not enable while -XstartOnFirstThread is not supported 
+	//enabled = project.name.endsWith(javatools.platform.swtToolkit)
 }
 
 project.tasks["sonarqube"].enabled = test.enabled

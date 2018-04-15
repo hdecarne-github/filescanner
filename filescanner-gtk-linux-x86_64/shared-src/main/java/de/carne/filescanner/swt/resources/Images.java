@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2017 Holger de Carne and contributors, All Rights Reserved.
+ * Copyright (c) 2007-2018 Holger de Carne and contributors, All Rights Reserved.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,9 @@ package de.carne.filescanner.swt.resources;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
 
+import de.carne.boot.Exceptions;
 import de.carne.swt.graphics.ImageResourcePool;
 import de.carne.swt.graphics.ResourceException;
-import de.carne.util.Exceptions;
 import de.carne.util.Late;
 import de.carne.util.Lazy;
 
@@ -34,22 +34,22 @@ public final class Images {
 		// Prevent instantiation
 	}
 
-	private static final Late<ImageResourcePool> POOL_HOLDER = new Late<>();
+	private static final Late<ImageResourcePool> IMAGE_RESOURCE_POOL_HOLDER = new Late<>();
 
 	/**
-	 * Initialize the underlying {@linkplain Image}.
+	 * Initializes the underlying {@linkplain ImageResourcePool}.
 	 *
-	 * @param device The {@linkplain Device} device to create the {@linkplain Image}s for.
+	 * @param device The {@linkplain Device} device to create the {@linkplain ImageResourcePool} for.
 	 */
 	public static void setup(Device device) {
-		POOL_HOLDER.set(new ImageResourcePool(device));
+		IMAGE_RESOURCE_POOL_HOLDER.set(new ImageResourcePool(device));
 	}
 
 	private static synchronized Image getImage(String name) {
 		Image image;
 
 		try {
-			image = POOL_HOLDER.get().get(Images.class, name);
+			image = IMAGE_RESOURCE_POOL_HOLDER.get().get(Images.class, name);
 		} catch (ResourceException e) {
 			throw Exceptions.toRuntime(e);
 		}
