@@ -51,6 +51,7 @@ subprojects {
 	def platformSuffix = project.name.substring(rootProject.name.length())
 
 	dependencies {
+		compile("de.carne.common:java-default:8.5.0-SNAPSHOT")
 		compile("de.carne.common:java-swt${platformSuffix}:2.1.0-SNAPSHOT")
 		compile("de.carne.common:filescanner-engine:2.0.0-SNAPSHOT")
 		compile("org.apache.lucene:lucene-analyzers-common:7.2.1")
@@ -145,7 +146,7 @@ subprojects {
 	}
 
 	jacoco {
-		toolVersion = "0.8.0"
+		toolVersion = "0.8.1"
 	}
 		
 	jacocoTestReport {
