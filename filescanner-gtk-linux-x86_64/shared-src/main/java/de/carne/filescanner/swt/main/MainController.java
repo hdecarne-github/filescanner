@@ -16,27 +16,59 @@
  */
 package de.carne.filescanner.swt.main;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import de.carne.boot.Application;
+import de.carne.boot.Exceptions;
+import de.carne.boot.check.Nullable;
 import de.carne.boot.logging.Log;
+import de.carne.filescanner.FileScannerMain;
+import de.carne.filescanner.engine.FileScanner;
+import de.carne.filescanner.engine.FileScannerProgress;
+import de.carne.filescanner.engine.FileScannerResult;
+import de.carne.filescanner.engine.FileScannerStatus;
+import de.carne.filescanner.engine.Formats;
 
 /**
- * Main window controll.
+ * Main window controller.
  */
-class MainController {
+class MainController implements FileScannerStatus {
 
 	private static final Log LOG = new Log();
 
 	private final MainUI ui;
+	@Nullable
+	private FileScanner fileScanner = null;
 
 	MainController(MainUI ui) {
 		this.ui = ui;
 	}
 
-	void onOpenSelected() {
-		LOG.info("onOpenSelected");
+	FileScannerResult openFile(String file) throws IOException {
+		if (this.fileScanner != null) {
+			FileScanner oldFileScanner = this.fileScanner;
+
+			this.fileScanner = null;
+			oldFileScanner.close();
+		}
+		this.ui.resetSession(true);
+
+		Path filePath = Paths.get(file);
+
+		this.fileScanner = FileScanner.scan(filePath, Formats.all().enabledFormats(), this);
+		return this.fileScanner.result();
 	}
 
-	void onQuitSelected() {
-		this.ui.close();
+	void close() {
+		if (this.fileScanner != null) {
+			try {
+				this.fileScanner.close();
+			} catch (IOException e) {
+				Exceptions.ignore(e);
+			}
+		}
 	}
 
 	void onCopyObjectSelected() {
@@ -55,16 +87,43 @@ class MainController {
 		LOG.info("onGotoPreviousSelected");
 	}
 
-	void onGotoEndSelected() {
-		LOG.info("onGotoEndSelected");
-	}
-
-	void onGotoStartSelected() {
-		LOG.info("onGotoStartSelected");
-	}
-
 	void onStopScanSelected() {
 		LOG.info("onStopScanSelected");
+	}
+
+	@Override
+	public void scanStarted(FileScanner scanner) {
+		if (scanner.equals(this.fileScanner)) {
+			Application.getMain(FileScannerMain.class).runWait(() -> this.ui.sessionRunning(true));
+		}
+	}
+
+	@Override
+	public void scanFinished(FileScanner scanner) {
+		if (scanner.equals(this.fileScanner)) {
+			Application.getMain(FileScannerMain.class).runWait(() -> this.ui.sessionRunning(false));
+		}
+	}
+
+	@Override
+	public void scanProgress(FileScanner scanner, FileScannerProgress progress) {
+		if (scanner.equals(this.fileScanner)) {
+			Application.getMain(FileScannerMain.class).runWait(() -> this.ui.sessionProgress(progress));
+		}
+	}
+
+	@Override
+	public void scanResult(FileScanner scanner, FileScannerResult result) {
+		if (scanner.equals(this.fileScanner)) {
+			Application.getMain(FileScannerMain.class).runWait(() -> this.ui.sessionResult(result));
+		}
+	}
+
+	@Override
+	public void scanException(FileScanner scanner, Exception cause) {
+		if (scanner.equals(this.fileScanner)) {
+			// TODO Auto-generated method stub
+		}
 	}
 
 }

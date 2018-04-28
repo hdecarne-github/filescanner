@@ -26,7 +26,6 @@ import de.carne.boot.Exceptions;
 import de.carne.boot.logging.Log;
 import de.carne.boot.logging.Logs;
 import de.carne.filescanner.swt.main.MainUI;
-import de.carne.filescanner.swt.resources.Images;
 import de.carne.swt.UserApplication;
 import de.carne.swt.graphics.ResourceException;
 import de.carne.swt.widgets.UserInterface;
@@ -83,19 +82,12 @@ public class FileScannerMain extends UserApplication implements ApplicationMain 
 		Display.setAppName(ManifestInfos.APPLICATION_NAME);
 		Display.setAppVersion(ManifestInfos.APPLICATION_VERSION);
 
-		Display display = new Display();
-
-		Images.setup(display);
-		return display;
+		return new Display();
 	}
 
 	@Override
 	protected UserInterface<Shell> setupUserInterface(Display display) throws ResourceException {
-		Shell root = new Shell(display);
-		MainUI mainView = this.mainInterfaceHolder.set(new MainUI());
-
-		mainView.setup(root);
-		return mainView;
+		return this.mainInterfaceHolder.set(new MainUI(new Shell(display)));
 	}
 
 	private CmdLineProcessor buildLogConfigCmdLine(String[] args) {
