@@ -593,15 +593,15 @@ public class Hex extends Canvas implements DisposeListener, FocusListener, Trave
 
 	private static class Layout {
 
-		public final int originX;
-		public final int originY;
+		final int originX;
+		final int originY;
 		public final int scrollUnitX;
 		public final int scrollUnitY;
-		public boolean resized = true;
-		public int scrollPosX = 0;
-		public int scrollPosY = 0;
-		public long scrollPosYScale = 1;
-		public long scrollPosYScaled = 0;
+		boolean resized = true;
+		int scrollPosX = 0;
+		int scrollPosY = 0;
+		long scrollPosYScale = 1;
+		long scrollPosYScaled = 0;
 
 		Layout(GC gc, String template) {
 			this.originX = 3;
@@ -614,7 +614,7 @@ public class Hex extends Canvas implements DisposeListener, FocusListener, Trave
 			this.scrollUnitY = extent.y;
 		}
 
-		public boolean rescaleScrollPosY() {
+		boolean rescaleScrollPosY() {
 			long rescaledScrollPosY = this.scrollPosYScale * this.scrollPosY;
 			boolean rescaled = false;
 
