@@ -210,7 +210,7 @@ public class Hex extends Canvas implements DisposeListener, FocusListener, Trave
 		int scrollAmount = (unit == ScrollUnit.LINE ? verticalBar.getIncrement() : verticalBar.getPageIncrement());
 		long newScrollPosYScaled = Math.max(layout.scrollPosYScaled + direction * scrollAmount, 0);
 		int newScrollPosY = (int) Math.min(newScrollPosYScaled / layout.scrollPosYScale,
-				verticalBar.getMaximum() - verticalBar.getThumb());
+				(long) verticalBar.getMaximum() - verticalBar.getThumb());
 
 		if (layout.scrollPosYScaled != newScrollPosYScaled) {
 			layout.scrollPosYScaled = newScrollPosYScaled;
@@ -226,7 +226,7 @@ public class Hex extends Canvas implements DisposeListener, FocusListener, Trave
 		Layout layout = Check.notNull(this.cachedLayout);
 		long newScrollPosYScaled = Math.max(position >> DATA_LINE_SHIFT, 0);
 		int newScrollPosY = (int) Math.min(newScrollPosYScaled / layout.scrollPosYScale,
-				verticalBar.getMaximum() - verticalBar.getThumb());
+				(long) verticalBar.getMaximum() - verticalBar.getThumb());
 
 		if (layout.scrollPosYScaled != newScrollPosYScaled) {
 			layout.scrollPosYScaled = newScrollPosYScaled;
