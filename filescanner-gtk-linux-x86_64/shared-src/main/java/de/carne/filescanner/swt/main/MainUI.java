@@ -95,6 +95,15 @@ public class MainUI extends UserInterface<Shell> {
 	}
 
 	/**
+	 * Opens the given command line file for scanning.
+	 *
+	 * @param file the file to scan.
+	 */
+	public void openCommandLineFile(String file) {
+		openFile(file);
+	}
+
+	/**
 	 * Opens the given file for scanning.
 	 *
 	 * @param file the file to scan.

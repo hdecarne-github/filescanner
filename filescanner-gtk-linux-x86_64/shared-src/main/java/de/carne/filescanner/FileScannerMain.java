@@ -105,9 +105,17 @@ public class FileScannerMain extends UserApplication implements ApplicationMain 
 
 		cmdLine.onSwitch(CmdLineProcessor::ignore).arg("--verbose");
 		cmdLine.onSwitch(CmdLineProcessor::ignore).arg("--debug");
-		cmdLine.onUnnamedOption(CmdLineProcessor::ignore);
-		cmdLine.onUnknownArg(CmdLineProcessor::ignore);
+		cmdLine.onUnnamedOption(this::openFile);
+		cmdLine.onUnknownArg(this::logUnknownArg);
 		return cmdLine;
+	}
+
+	private void openFile(String arg) {
+		this.mainInterfaceHolder.get().openCommandLineFile(arg);
+	}
+
+	private void logUnknownArg(String arg) {
+		LOG.warning("Ignoring unknown command line argument ''{0}''", arg);
 	}
 
 	private static void applyLogConfig(String config) {
