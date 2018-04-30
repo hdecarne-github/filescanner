@@ -1,5 +1,5 @@
 Copyright FileScanner
-Copyright (c) 2015-2018 Holger de Carne and contributors,
+Copyright (c) 2007-2018 Holger de Carne and contributors,
 
 All Rights Reserved.
 
@@ -14,4 +14,4 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  If not, see <h href="http://www.gnu.org/licenses">http://www.gnu.org/licenses</a>.
+along with this program.  If not, see <a>http://www.gnu.org/licenses</a>.
