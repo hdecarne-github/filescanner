@@ -426,19 +426,19 @@ public class Hex extends Canvas implements DisposeListener, FocusListener, Trave
 									int nextDrawX = drawX;
 
 									event.gc.drawText(formatString1, nextDrawX, drawY, SWT.NONE);
-									nextDrawX += event.gc.textExtent(formatString1).x;
+									nextDrawX += event.gc.textExtent(formatString1, SWT.NONE).x;
 									event.gc.setBackground(backgroundSelected);
 									event.gc.setForeground(foregroundSelected);
 									event.gc.drawText(formatString2, nextDrawX, drawY, SWT.NONE);
-									nextDrawX += event.gc.textExtent(formatString2).x;
+									nextDrawX += event.gc.textExtent(formatString2, SWT.NONE).x;
 									event.gc.setBackground(background);
 									event.gc.setForeground(foreground);
 									event.gc.drawText(formatString3, nextDrawX, drawY, SWT.NONE);
-									nextDrawX += event.gc.textExtent(formatString3).x;
+									nextDrawX += event.gc.textExtent(formatString3, SWT.NONE).x;
 									event.gc.setBackground(backgroundSelected);
 									event.gc.setForeground(foregroundSelected);
 									event.gc.drawText(formatString4, nextDrawX, drawY, SWT.NONE);
-									nextDrawX += event.gc.textExtent(formatString4).x;
+									nextDrawX += event.gc.textExtent(formatString4, SWT.NONE).x;
 									event.gc.setBackground(background);
 									event.gc.setForeground(foreground);
 									event.gc.drawText(formatString5, nextDrawX, drawY, SWT.NONE);
