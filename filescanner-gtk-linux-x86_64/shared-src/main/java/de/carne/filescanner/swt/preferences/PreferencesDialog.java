@@ -33,7 +33,7 @@ public class PreferencesDialog extends Dialog {
 	 * @param parent the dialog parent to use.
 	 */
 	public PreferencesDialog(Shell parent) {
-		super(parent);
+		super(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.APPLICATION_MODAL);
 	}
 
 	/**
@@ -42,8 +42,7 @@ public class PreferencesDialog extends Dialog {
 	 * @throws ResourceException if a required resource is not available.
 	 */
 	public void open() throws ResourceException {
-		PreferencesUI userInterface = new PreferencesUI(
-				new Shell(getParent(), SWT.DIALOG_TRIM | SWT.RESIZE | SWT.APPLICATION_MODAL));
+		PreferencesUI userInterface = new PreferencesUI(new Shell(getParent(), getStyle()));
 
 		userInterface.open();
 		userInterface.run();

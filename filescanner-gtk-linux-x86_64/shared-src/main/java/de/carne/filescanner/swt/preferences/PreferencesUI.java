@@ -75,21 +75,7 @@ class PreferencesUI extends UserInterface<Shell> {
 
 	@Override
 	public void open() throws ResourceException {
-		Shell root = root();
-		ShellBuilder rootBuilder = new ShellBuilder(root);
-		CompositeBuilder<TabFolder> prefTabs = rootBuilder.addCompositeChild(TabFolder.class, SWT.TOP);
-		ControlBuilder<Label> separator = rootBuilder.addControlChild(Label.class, SWT.HORIZONTAL | SWT.SEPARATOR);
-		CompositeBuilder<Composite> buttons = rootBuilder.addCompositeChild(SWT.NO_BACKGROUND);
-		rootBuilder.withText(PreferencesI18N.i18nTitle());
-		setupPrefTabs(prefTabs);
-		setupButtons(buttons);
-
-		GridLayoutBuilder rootLayout = GridLayoutBuilder.layout().spacing(0, 0).margin(0, 0);
-
-		rootLayout.apply(rootBuilder);
-		GridLayoutBuilder.data(GridData.FILL_BOTH).apply(prefTabs);
-		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(separator);
-		GridLayoutBuilder.data().align(SWT.END, SWT.CENTER).grab(false, false).apply(buttons);
+		Shell root = buildRoot();
 
 		loadPreferences(UserPreferences.get());
 		root.pack();
@@ -97,18 +83,35 @@ class PreferencesUI extends UserInterface<Shell> {
 		root.open();
 	}
 
-	private void setupPrefTabs(CompositeBuilder<TabFolder> prefTabs) {
+	private Shell buildRoot() {
+		ShellBuilder rootBuilder = new ShellBuilder(root());
+		CompositeBuilder<TabFolder> prefTabs = rootBuilder.addCompositeChild(TabFolder.class, SWT.TOP);
+		ControlBuilder<Label> separator = rootBuilder.addControlChild(Label.class, SWT.HORIZONTAL | SWT.SEPARATOR);
+		CompositeBuilder<Composite> buttons = rootBuilder.addCompositeChild(SWT.NO_BACKGROUND);
+
+		rootBuilder.withText(PreferencesI18N.i18nTitle());
+		buildPrefTabs(prefTabs);
+		buildButtons(buttons);
+
+		GridLayoutBuilder.layout().spacing(0, 0).margin(0, 0).apply(rootBuilder);
+		GridLayoutBuilder.data(GridData.FILL_BOTH).apply(prefTabs);
+		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(separator);
+		GridLayoutBuilder.data().align(SWT.END, SWT.CENTER).grab(false, false).apply(buttons);
+		return rootBuilder.get();
+	}
+
+	private void buildPrefTabs(CompositeBuilder<TabFolder> prefTabs) {
 		TabFolder prefTabsFolder = prefTabs.get();
 		TabItem appearanceTab = new TabItem(prefTabsFolder, SWT.NONE);
 		TabItem formatsTab = new TabItem(prefTabsFolder, SWT.NONE);
 
 		appearanceTab.setText(PreferencesI18N.i18nTabAppearance());
-		setupAppearancePrefTab(prefTabs, appearanceTab);
+		buildAppearancePrefTab(prefTabs, appearanceTab);
 		formatsTab.setText(PreferencesI18N.i18nTabFormats());
-		setupFormatsPrefTab(prefTabs, formatsTab);
+		buildFormatsPrefTab(prefTabs, formatsTab);
 	}
 
-	private void setupAppearancePrefTab(CompositeBuilder<TabFolder> prefTabs, TabItem prefTab) {
+	private void buildAppearancePrefTab(CompositeBuilder<TabFolder> prefTabs, TabItem prefTab) {
 		CompositeBuilder<Composite> appearance = prefTabs.addCompositeChild(SWT.NO_BACKGROUND);
 		ControlBuilder<Label> inputViewLabel = appearance.addControlChild(Label.class, SWT.NONE);
 		ControlBuilder<Label> inputViewFontLabel = appearance.addControlChild(Label.class, SWT.NONE);
@@ -196,7 +199,7 @@ class PreferencesUI extends UserInterface<Shell> {
 		this.resultViewColorErrorButtonHolder.set(resultViewColorErrorButton.get());
 	}
 
-	private void setupFormatsPrefTab(CompositeBuilder<TabFolder> prefTabs, TabItem prefTab) {
+	private void buildFormatsPrefTab(CompositeBuilder<TabFolder> prefTabs, TabItem prefTab) {
 		CompositeBuilder<Composite> formats = prefTabs.addCompositeChild(SWT.NO_BACKGROUND);
 		ControlBuilder<Label> enabledFormatsLabel = formats.addControlChild(Label.class, SWT.NONE);
 		ControlBuilder<Table> formatsTable = formats.addControlChild(Table.class,
@@ -212,7 +215,7 @@ class PreferencesUI extends UserInterface<Shell> {
 		this.formatsTableHolder.set(formatsTable.get());
 	}
 
-	private void setupButtons(CompositeBuilder<Composite> buttons) {
+	private void buildButtons(CompositeBuilder<Composite> buttons) {
 		ControlBuilder<Button> cancelButton = buttons.addControlChild(Button.class, SWT.PUSH);
 		ControlBuilder<Button> applyButton = buttons.addControlChild(Button.class, SWT.PUSH);
 		ControlBuilder<Button> applyAndCloseButton = buttons.addControlChild(Button.class, SWT.PUSH);
