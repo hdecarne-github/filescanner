@@ -16,6 +16,7 @@
  */
 package de.carne.filescanner.swt.main;
 
+import java.net.URL;
 import java.util.function.Consumer;
 
 import org.eclipse.swt.SWT;
@@ -60,6 +61,7 @@ import de.carne.swt.widgets.MenuBuilder;
 import de.carne.swt.widgets.ShellBuilder;
 import de.carne.swt.widgets.ToolBarBuilder;
 import de.carne.swt.widgets.UserInterface;
+import de.carne.swt.widgets.aboutinfo.AboutInfoDialog;
 import de.carne.text.MemoryUnitFormat;
 import de.carne.util.Late;
 
@@ -304,8 +306,17 @@ public class MainUI extends UserInterface<Shell> {
 		}
 	}
 
-	private void onAboutSelected() {
+	private static final String RESOURCE_COPYRIGHT1 = "Copyright1.txt";
 
+	private void onAboutSelected() {
+		try {
+			URL logoUrl = Images.class.getResource(Images.IMAGE_FSLOGO48);
+			URL copyright1Url = MainUI.class.getResource(RESOURCE_COPYRIGHT1);
+
+			AboutInfoDialog.build(root()).withLogo(logoUrl).withCopyright(copyright1Url).open();
+		} catch (Exception e) {
+			Exceptions.warn(e);
+		}
 	}
 
 	private void onVSashSelected(SelectionEvent event) {
@@ -390,7 +401,15 @@ public class MainUI extends UserInterface<Shell> {
 
 		this.inputViewHolder.get().setFont(inputViewFont);
 		this.resultRenderServiceHolder.get().applyConfig(config);
-		this.resultViewHolder.get().refresh();
+
+		TreeItem[] resultTreeSelection = this.resultTreeHolder.get().getSelection();
+
+		if (resultTreeSelection.length > 0) {
+			FileScannerResult result = Check.isInstanceOf(resultTreeSelection[0].getData(), FileScannerResult.class);
+
+			this.inputViewHolder.get().setResult(result);
+			this.resultViewHolder.get().setUrl(this.resultRenderServiceHolder.get().setResult(result));
+		}
 	}
 
 	private void buildMenuBar(ShellBuilder rootBuilder) {
