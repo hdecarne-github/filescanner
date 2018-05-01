@@ -51,10 +51,10 @@ import de.carne.swt.widgets.CompositeBuilder;
 import de.carne.swt.widgets.ControlBuilder;
 import de.carne.swt.widgets.FontDialogBuilder;
 import de.carne.swt.widgets.ShellBuilder;
-import de.carne.swt.widgets.UserInterface;
+import de.carne.swt.widgets.ShellUserInterface;
 import de.carne.util.Late;
 
-class PreferencesUI extends UserInterface<Shell> {
+class PreferencesUI extends ShellUserInterface {
 
 	private final ResourceTracker resources;
 	private Late<Button> inputViewFontButtonHolder = new Late<>();
@@ -89,7 +89,7 @@ class PreferencesUI extends UserInterface<Shell> {
 		ControlBuilder<Label> separator = rootBuilder.addControlChild(Label.class, SWT.HORIZONTAL | SWT.SEPARATOR);
 		CompositeBuilder<Composite> buttons = rootBuilder.addCompositeChild(SWT.NO_BACKGROUND);
 
-		rootBuilder.withText(PreferencesI18N.i18nTitle());
+		rootBuilder.withText(PreferencesI18N.i18nTitle()).withDefaultImages();
 		buildPrefTabs(prefTabs);
 		buildButtons(buttons);
 
@@ -288,7 +288,7 @@ class PreferencesUI extends UserInterface<Shell> {
 		try {
 			storePreferences(UserPreferences.get());
 		} catch (BackingStoreException e) {
-			// TODO
+			unexpectedException(e);
 		}
 	}
 
@@ -297,7 +297,7 @@ class PreferencesUI extends UserInterface<Shell> {
 			storePreferences(UserPreferences.get());
 			root().close();
 		} catch (BackingStoreException e) {
-			// TODO
+			unexpectedException(e);
 		}
 	}
 

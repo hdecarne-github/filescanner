@@ -28,7 +28,7 @@ import de.carne.boot.logging.Logs;
 import de.carne.filescanner.swt.main.MainUI;
 import de.carne.swt.UserApplication;
 import de.carne.swt.graphics.ResourceException;
-import de.carne.swt.widgets.UserInterface;
+import de.carne.swt.widgets.ShellUserInterface;
 import de.carne.util.Late;
 import de.carne.util.ManifestInfos;
 import de.carne.util.cmdline.CmdLineException;
@@ -86,7 +86,7 @@ public class FileScannerMain extends UserApplication implements ApplicationMain 
 	}
 
 	@Override
-	protected UserInterface<Shell> setupUserInterface(Display display) throws ResourceException {
+	protected ShellUserInterface setupUserInterface(Display display) throws ResourceException {
 		return this.mainInterfaceHolder.set(new MainUI(new Shell(display)));
 	}
 

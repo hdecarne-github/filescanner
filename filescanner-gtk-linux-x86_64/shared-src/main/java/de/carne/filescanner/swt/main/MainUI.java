@@ -21,6 +21,7 @@ import java.util.function.Consumer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FormAttachment;
@@ -48,6 +49,7 @@ import de.carne.filescanner.swt.preferences.UserPreferences;
 import de.carne.filescanner.swt.resources.Images;
 import de.carne.filescanner.swt.widgets.Hex;
 import de.carne.nio.compression.Check;
+import de.carne.swt.dnd.DropTargetBuilder;
 import de.carne.swt.graphics.ResourceException;
 import de.carne.swt.graphics.ResourceTracker;
 import de.carne.swt.layout.FormLayoutBuilder;
@@ -59,8 +61,8 @@ import de.carne.swt.widgets.CoolBarBuilder;
 import de.carne.swt.widgets.FileDialogBuilder;
 import de.carne.swt.widgets.MenuBuilder;
 import de.carne.swt.widgets.ShellBuilder;
+import de.carne.swt.widgets.ShellUserInterface;
 import de.carne.swt.widgets.ToolBarBuilder;
-import de.carne.swt.widgets.UserInterface;
 import de.carne.swt.widgets.aboutinfo.AboutInfoDialog;
 import de.carne.text.MemoryUnitFormat;
 import de.carne.util.Late;
@@ -68,7 +70,7 @@ import de.carne.util.Late;
 /**
  * Main window UI.
  */
-public class MainUI extends UserInterface<Shell> {
+public class MainUI extends ShellUserInterface {
 
 	private static final Log LOG = new Log();
 
@@ -89,11 +91,11 @@ public class MainUI extends UserInterface<Shell> {
 	/**
 	 * Constructs a new {@linkplain MainUI} instance.
 	 *
-	 * @param root the root {@linkplain Shell}.
+	 * @param shell the user interface {@linkplain Shell}.
 	 */
-	public MainUI(Shell root) {
-		super(root);
-		this.resources = ResourceTracker.forDevice(root.getDisplay());
+	public MainUI(Shell shell) {
+		super(shell);
+		this.resources = ResourceTracker.forDevice(shell.getDisplay());
 	}
 
 	/**
@@ -103,6 +105,15 @@ public class MainUI extends UserInterface<Shell> {
 	 */
 	public void openCommandLineFile(String file) {
 		openFile(file);
+	}
+
+	/**
+	 * Opens the given dropped file for scanning.
+	 *
+	 * @param file the file to scan.
+	 */
+	public void openDroppedFile(String[] file) {
+		openFile(file[0]);
 	}
 
 	/**
@@ -119,7 +130,7 @@ public class MainUI extends UserInterface<Shell> {
 			setRootResultTreeItem(rootResult);
 			this.inputViewHolder.get().setResult(rootResult);
 		} catch (Exception e) {
-			Exceptions.warn(e);
+			unexpectedException(e);
 		}
 	}
 
@@ -350,48 +361,14 @@ public class MainUI extends UserInterface<Shell> {
 		this.resultRenderServiceHolder.set(new HtmlRenderService());
 
 		MainController controller = this.controllerHolder.set(new MainController(this));
-		Shell root = root();
-		ShellBuilder rootBuilder = new ShellBuilder(root);
-		ControlBuilder<Sash> vSash = rootBuilder.addControlChild(Sash.class, SWT.VERTICAL);
-		ControlBuilder<Sash> hSash = rootBuilder.addControlChild(Sash.class, SWT.HORIZONTAL);
-		CoolBarBuilder commands = buildCommandBar(rootBuilder, controller);
-		ControlBuilder<Tree> resultTree = rootBuilder.addControlChild(Tree.class,
-				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL);
-		ControlBuilder<Browser> resultView = rootBuilder.addControlChild(Browser.class, SWT.NONE);
-		ControlBuilder<Hex> inputView = rootBuilder.addControlChild(Hex.class, SWT.NONE);
-		CoolBarBuilder status = buildStatusBar(rootBuilder, controller);
-
-		rootBuilder.withText(MainI18N.i18nTitle())
-				.withImages(this.resources.getImages(Images.class, Images.IMAGES_FSLOGO));
-		rootBuilder.onDisposed(this::onDisposed);
-		buildMenuBar(rootBuilder);
-		vSash.onSelected(this::onVSashSelected);
-		hSash.onSelected(this::onHSashSelected);
-		resultTree.onEvent(SWT.SetData, this::onSetResultTreeItemData);
-		resultTree.onSelected(this::onResultTreeItemSelected);
-		resultView.onEvent(SWT.MenuDetect, event -> event.doit = false);
-
-		FormLayoutBuilder.layout().apply(root);
-		FormLayoutBuilder.data().left(40).top(commands).bottom(status).apply(vSash);
-		FormLayoutBuilder.data().left(vSash).top(50).right(100).apply(hSash);
-		FormLayoutBuilder.data().left(0).top(0).right(100).apply(commands);
-		FormLayoutBuilder.data().left(0).top(commands).right(vSash).bottom(status).apply(resultTree);
-		FormLayoutBuilder.data().left(vSash).top(commands).right(100).bottom(hSash).apply(resultView);
-		FormLayoutBuilder.data().left(vSash).top(hSash).right(100).bottom(status).apply(inputView);
-		FormLayoutBuilder.data().left(0).right(100).bottom(100).apply(status);
-
-		this.resultTreeHolder.set(resultTree.get());
-		this.resultViewHolder.set(resultView.get());
-		this.inputViewHolder.set(inputView.get());
-		this.vSashHolder.set(vSash.get());
-		this.hSashHolder.set(hSash.get());
+		Shell root = buildRoot(controller);
 
 		UserPreferences preferences = UserPreferences.get();
 
 		preferences.addConsumer(this.configConsumer);
 		this.configConsumer.accept(preferences);
+		this.resultTreeHolder.get().setFocus();
 		root.layout(true);
-		resultTree.get().setFocus();
 		resetSession(false);
 		root.open();
 	}
@@ -410,6 +387,47 @@ public class MainUI extends UserInterface<Shell> {
 			this.inputViewHolder.get().setResult(result);
 			this.resultViewHolder.get().setUrl(this.resultRenderServiceHolder.get().setResult(result));
 		}
+	}
+
+	private Shell buildRoot(MainController controller) {
+		ShellBuilder rootBuilder = new ShellBuilder(root());
+		ControlBuilder<Sash> vSash = rootBuilder.addControlChild(Sash.class, SWT.VERTICAL);
+		ControlBuilder<Sash> hSash = rootBuilder.addControlChild(Sash.class, SWT.HORIZONTAL);
+		CoolBarBuilder commands = buildCommandBar(rootBuilder, controller);
+		ControlBuilder<Tree> resultTree = rootBuilder.addControlChild(Tree.class,
+				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL);
+		ControlBuilder<Browser> resultView = rootBuilder.addControlChild(Browser.class, SWT.NONE);
+		ControlBuilder<Hex> inputView = rootBuilder.addControlChild(Hex.class, SWT.NONE);
+		CoolBarBuilder status = buildStatusBar(rootBuilder, controller);
+
+		rootBuilder.withText(MainI18N.i18nTitle())
+				.withImages(this.resources.getImages(Images.class, Images.IMAGES_FSLOGO)).onDisposed(this::onDisposed);
+		buildMenuBar(rootBuilder);
+		vSash.onSelected(this::onVSashSelected);
+		hSash.onSelected(this::onHSashSelected);
+		resultTree.onEvent(SWT.SetData, this::onSetResultTreeItemData);
+		resultTree.onSelected(this::onResultTreeItemSelected);
+		resultView.onEvent(SWT.MenuDetect, event -> event.doit = false);
+
+		FormLayoutBuilder.layout().apply(rootBuilder);
+		FormLayoutBuilder.data().left(40).top(commands).bottom(status).apply(vSash);
+		FormLayoutBuilder.data().left(vSash).top(50).right(100).apply(hSash);
+		FormLayoutBuilder.data().left(0).top(0).right(100).apply(commands);
+		FormLayoutBuilder.data().left(0).top(commands).right(vSash).bottom(status).apply(resultTree);
+		FormLayoutBuilder.data().left(vSash).top(commands).right(100).bottom(hSash).apply(resultView);
+		FormLayoutBuilder.data().left(vSash).top(hSash).right(100).bottom(status).apply(inputView);
+		FormLayoutBuilder.data().left(0).right(100).bottom(100).apply(status);
+
+		this.resultTreeHolder.set(resultTree.get());
+		this.resultViewHolder.set(resultView.get());
+		this.inputViewHolder.set(inputView.get());
+		this.vSashHolder.set(vSash.get());
+		this.hSashHolder.set(hSash.get());
+
+		DropTargetBuilder.fileTransfer(rootBuilder.get(), DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK)
+				.onFileDrop(this::openDroppedFile);
+
+		return rootBuilder.get();
 	}
 
 	private void buildMenuBar(ShellBuilder rootBuilder) {
