@@ -30,6 +30,7 @@ import de.carne.filescanner.engine.FileScannerProgress;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.FileScannerStatus;
 import de.carne.filescanner.engine.Formats;
+import de.carne.filescanner.swt.preferences.UserPreferences;
 
 /**
  * Main window controller.
@@ -56,8 +57,10 @@ class MainController implements FileScannerStatus {
 		this.ui.resetSession(true);
 
 		Path filePath = Paths.get(file);
+		Formats formats = Formats.all();
 
-		this.fileScanner = FileScanner.scan(filePath, Formats.all().enabledFormats(), this);
+		UserPreferences.get().getDisabledFormats().forEach(formats::disable);
+		this.fileScanner = FileScanner.scan(filePath, formats.enabledFormats(), this);
 		return this.fileScanner.result();
 	}
 
