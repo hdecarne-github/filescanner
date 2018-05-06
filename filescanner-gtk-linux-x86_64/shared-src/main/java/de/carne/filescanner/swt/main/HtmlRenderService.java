@@ -107,7 +107,7 @@ class HtmlRenderService extends HttpHandler implements Renderer {
 		} else {
 			css.append("normal;");
 		}
-		css.append("font-size:").append(font.getHeight()).append("px;");
+		css.append("font-size:").append(font.getHeight()).append("pt;");
 	}
 
 	private static void cssColor(StringBuilder css, RGB rgb) {
@@ -188,8 +188,8 @@ class HtmlRenderService extends HttpHandler implements Renderer {
 
 			if (checkedResult != null) {
 				this.responseHolder.set(response);
-				try (FileScannerResultOutput out = new FileScannerResultOutput(this)) {
-					checkedResult.render(out);
+				try {
+					FileScannerResultOutput.render(checkedResult, this);
 				} finally {
 					this.responseHolder.remove();
 				}

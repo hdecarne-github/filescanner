@@ -23,9 +23,14 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -35,11 +40,11 @@ import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 import de.carne.boot.Exceptions;
+import de.carne.boot.check.Nullable;
 import de.carne.boot.logging.Log;
 import de.carne.filescanner.engine.FileScannerProgress;
 import de.carne.filescanner.engine.FileScannerResult;
@@ -55,6 +60,8 @@ import de.carne.swt.graphics.ResourceTracker;
 import de.carne.swt.layout.FormLayoutBuilder;
 import de.carne.swt.layout.GridLayoutBuilder;
 import de.carne.swt.platform.PlatformIntegration;
+import de.carne.swt.util.Property;
+import de.carne.swt.util.UICommandSet;
 import de.carne.swt.widgets.CompositeBuilder;
 import de.carne.swt.widgets.ControlBuilder;
 import de.carne.swt.widgets.CoolBarBuilder;
@@ -66,6 +73,7 @@ import de.carne.swt.widgets.ToolBarBuilder;
 import de.carne.swt.widgets.aboutinfo.AboutInfoDialog;
 import de.carne.text.MemoryUnitFormat;
 import de.carne.util.Late;
+import de.carne.util.Strings;
 
 /**
  * Main window UI.
@@ -77,16 +85,16 @@ public class MainUI extends ShellUserInterface {
 	private final ResourceTracker resources;
 	private final Late<HtmlRenderService> resultRenderServiceHolder = new Late<>();
 	private final Late<MainController> controllerHolder = new Late<>();
-	private final Late<Text> searchPatternHolder = new Late<>();
+	private final Late<Text> searchQueryHolder = new Late<>();
 	private final Late<Tree> resultTreeHolder = new Late<>();
 	private final Late<Browser> resultViewHolder = new Late<>();
 	private final Late<Hex> inputViewHolder = new Late<>();
-	private final Late<ToolItem> cancelButtonHolder = new Late<>();
 	private final Late<ProgressBar> sessionProgressHolder = new Late<>();
 	private final Late<Label> sessionStatusHolder = new Late<>();
-	private final Late<Sash> vSashHolder = new Late<>();
-	private final Late<Sash> hSashHolder = new Late<>();
 	private final Consumer<Config> configConsumer = this::applyConfig;
+	private final UICommandSet sessionCommands = new UICommandSet();
+	private final UICommandSet resultSelectionCommands = new UICommandSet();
+	private final Property<FileScannerResult> resultSelection = new Property<>();
 
 	/**
 	 * Constructs a new {@linkplain MainUI} instance.
@@ -105,6 +113,7 @@ public class MainUI extends ShellUserInterface {
 	 */
 	public void openCommandLineFile(String file) {
 		openFile(file);
+		// TODO: Check for multiple files and show message
 	}
 
 	/**
@@ -114,6 +123,7 @@ public class MainUI extends ShellUserInterface {
 	 */
 	public void openDroppedFile(String[] file) {
 		openFile(file[0]);
+		// TODO: Check for multiple files and show message
 	}
 
 	/**
@@ -125,10 +135,10 @@ public class MainUI extends ShellUserInterface {
 		LOG.info("Opening file ''{0}''...", file);
 
 		try {
-			FileScannerResult rootResult = this.controllerHolder.get().openFile(file);
+			FileScannerResult rootResult = this.controllerHolder.get().openAndScanFile(file);
 
 			setRootResultTreeItem(rootResult);
-			this.inputViewHolder.get().setResult(rootResult);
+			this.resultSelection.set(rootResult);
 		} catch (Exception e) {
 			unexpectedException(e);
 		}
@@ -143,16 +153,16 @@ public class MainUI extends ShellUserInterface {
 
 	void resetSession(boolean session) {
 		this.resultRenderServiceHolder.get().clear();
-		this.searchPatternHolder.get().setEnabled(session);
 		this.resultTreeHolder.get().removeAll();
 		this.resultViewHolder.get().setText(MainI18N.i18nTextDefaultResultViewHtml());
-		this.cancelButtonHolder.get().setEnabled(session);
 		this.sessionProgressHolder.get().setSelection(0);
 		this.sessionStatusHolder.get().setText("");
+		this.sessionCommands.setEnabled(session);
+		this.resultSelection.set(null, true);
 	}
 
 	void sessionRunning(boolean running) {
-		this.cancelButtonHolder.get().setEnabled(running);
+		this.sessionCommands.setEnabled(running);
 	}
 
 	void sessionProgress(FileScannerProgress progress) {
@@ -188,11 +198,9 @@ public class MainUI extends ShellUserInterface {
 	}
 
 	void sessionResult(FileScannerResult result) {
-		Object data = result.getData();
+		TreeItem resultItem = result.getData(TreeItem.class);
 
-		if (data != null) {
-			TreeItem resultItem = Check.isInstanceOf(data, TreeItem.class);
-
+		if (resultItem != null) {
 			if (resultItem.getParentItem() == null && resultItem.getItemCount() == 0) {
 				resultItem.setItemCount(result.childrenCount());
 				resultItem.setExpanded(true);
@@ -224,18 +232,25 @@ public class MainUI extends ShellUserInterface {
 			TreeItem resultItem = resultItemParent.getItem(resultIndex);
 			FileScannerResult result = results[resultIndex];
 
-			decorateResultTreeItem(resultItem, result);
-			resultItem.setItemCount(result.childrenCount());
-			resultItem.setData(result);
-			result.setData(resultItem);
+			initializeResultTreeItem(resultItem, result);
 		}
 	}
 
+	private void initializeResultTreeItem(TreeItem item, FileScannerResult result) {
+		decorateResultTreeItem(item, result);
+		item.setItemCount(result.childrenCount());
+		item.setData(result);
+		result.setData(item);
+	}
+
 	private void decorateResultTreeItem(TreeItem item, FileScannerResult result) {
+		String shortInputName;
+
 		switch (result.type()) {
 		case INPUT:
-			item.setText(shortInputName(result.name()));
-			item.setImage(this.resources.getImage(Images.class, Images.IMAGE_RESULT_INPUT16));
+			shortInputName = shortInputName(result.name());
+			item.setText(shortInputName);
+			item.setImage(inputImage(shortInputName));
 			break;
 		case FORMAT:
 			item.setText(result.name());
@@ -257,13 +272,68 @@ public class MainUI extends ShellUserInterface {
 		return (shortNameIndex >= 0 && shortNameIndex + 1 < name.length() ? name.substring(shortNameIndex + 1) : name);
 	}
 
+	private Image inputImage(String shortInputName) {
+		int extensionIndex = shortInputName.lastIndexOf('.');
+		Image inputImage = null;
+
+		if (0 < extensionIndex) {
+			String extension = shortInputName.substring(extensionIndex);
+			Program program = Program.findProgram(extension);
+
+			if (program != null) {
+				inputImage = this.resources.getImage(program, this::createProgramImage);
+			}
+		}
+		return (inputImage != null ? inputImage : this.resources.getImage(Images.class, Images.IMAGE_RESULT_INPUT16));
+	}
+
+	private Image createProgramImage(Device device, Program program) {
+		ImageData imageData = program.getImageData();
+		Image image;
+
+		if (imageData != null) {
+			if (imageData.height != 16 || imageData.width != 16) {
+				imageData = imageData.scaledTo(16, 16);
+			}
+			image = new Image(device, imageData);
+		} else {
+			image = this.resources.getImage(Images.class, Images.IMAGE_RESULT_INPUT16);
+		}
+		return image;
+	}
+
+	private void expandAndSelectResultPath(FileScannerResult[] resultPath) {
+		int resultPathIndex = 0;
+		int resultPathTailIndex = resultPath.length - 1;
+
+		while (resultPathIndex < resultPathTailIndex) {
+			FileScannerResult result = resultPath[resultPathIndex];
+			TreeItem resultItem = Check.notNull(result.getData(TreeItem.class));
+
+			resultItem.setExpanded(true);
+
+			FileScannerResult[] resultChildren = result.children();
+
+			for (int resultChildrenIndex = 0; resultChildrenIndex < resultChildren.length; resultChildrenIndex++) {
+				FileScannerResult resultChild = resultChildren[resultChildrenIndex];
+				TreeItem resultChildItem = resultChild.getData(TreeItem.class);
+
+				if (resultChildItem == null) {
+					resultChildItem = resultItem.getItem(resultChildrenIndex);
+					initializeResultTreeItem(resultChildItem, resultChild);
+				}
+			}
+			resultPathIndex++;
+		}
+		this.resultSelection.set(resultPath[resultPathTailIndex]);
+	}
+
 	private void onResultTreeItemSelected(SelectionEvent event) {
 		try {
 			TreeItem resultItem = Check.isInstanceOf(event.item, TreeItem.class);
 			FileScannerResult result = Check.isInstanceOf(resultItem.getData(), FileScannerResult.class);
 
-			this.inputViewHolder.get().setResult(result);
-			this.resultViewHolder.get().setUrl(this.resultRenderServiceHolder.get().setResult(result));
+			this.resultSelection.set(result);
 		} catch (Exception e) {
 			Exceptions.warn(e);
 		}
@@ -290,30 +360,72 @@ public class MainUI extends ShellUserInterface {
 	}
 
 	private void onPreferencesSelected() {
-		PreferencesDialog preferencesDialog = new PreferencesDialog(root());
-
 		try {
+			PreferencesDialog preferencesDialog = new PreferencesDialog(root());
+
 			preferencesDialog.open();
 		} catch (Exception e) {
-			Exceptions.warn(e);
+			unexpectedException(e);
 		}
 	}
 
-	private void onGotoResultEnd() {
-		Hex inputView = this.inputViewHolder.get();
-		FileScannerResult result = inputView.getResult();
+	private void onGotoNextSelected() {
+		try {
+			FileScannerResult selection = this.resultSelection.get();
+			String query = getSearchQuery();
+			FileScannerResult[] searchResult = this.controllerHolder.get().searchNext(selection, query);
 
-		if (result != null) {
-			inputView.scrollTo(result.end());
+			if (searchResult != null) {
+				expandAndSelectResultPath(searchResult);
+			}
+		} catch (Exception e) {
+			unexpectedException(e);
 		}
 	}
 
-	private void onGotoResultStart() {
-		Hex inputView = this.inputViewHolder.get();
-		FileScannerResult result = inputView.getResult();
+	private void onGotoPreviousSelected() {
+		try {
+			FileScannerResult selection = this.resultSelection.get();
+			String query = getSearchQuery();
+			FileScannerResult[] searchResult = this.controllerHolder.get().searchPrevious(selection, query);
 
-		if (result != null) {
-			inputView.scrollTo(result.start());
+			if (searchResult != null) {
+				expandAndSelectResultPath(searchResult);
+			}
+		} catch (Exception e) {
+			unexpectedException(e);
+		}
+	}
+
+	private String getSearchQuery() {
+		String query = Strings.safeTrim(this.searchQueryHolder.get().getText());
+
+		return (Strings.notEmpty(query) ? query : "*");
+	}
+
+	private void onGotoEndSelected() {
+		try {
+			Hex inputView = this.inputViewHolder.get();
+			FileScannerResult result = this.resultSelection.get();
+
+			if (result != null) {
+				inputView.scrollTo(result.end());
+			}
+		} catch (Exception e) {
+			unexpectedException(e);
+		}
+	}
+
+	private void onGotoStartSelected() {
+		try {
+			Hex inputView = this.inputViewHolder.get();
+			FileScannerResult result = this.resultSelection.get();
+
+			if (result != null) {
+				inputView.scrollTo(result.start());
+			}
+		} catch (Exception e) {
+			unexpectedException(e);
 		}
 	}
 
@@ -326,12 +438,12 @@ public class MainUI extends ShellUserInterface {
 
 			AboutInfoDialog.build(root()).withLogo(logoUrl).withCopyright(copyright1Url).open();
 		} catch (Exception e) {
-			Exceptions.warn(e);
+			unexpectedException(e);
 		}
 	}
 
 	private void onVSashSelected(SelectionEvent event) {
-		Sash vSash = this.vSashHolder.get();
+		Sash vSash = Check.isInstanceOf(event.widget, Sash.class);
 
 		if ((event.detail & SWT.DRAG) != SWT.DRAG || (vSash.getStyle() & SWT.SMOOTH) == SWT.SMOOTH) {
 			FormData layoutData = (FormData) vSash.getLayoutData();
@@ -343,14 +455,28 @@ public class MainUI extends ShellUserInterface {
 	}
 
 	private void onHSashSelected(SelectionEvent event) {
-		Sash hSash = this.hSashHolder.get();
+		Sash hSash = Check.isInstanceOf(event.widget, Sash.class);
+		Rectangle vSashBounds = Check.isInstanceOf(hSash.getLayoutData(), FormData.class).left.control.getBounds();
 
+		event.y = Math.max(vSashBounds.y, Math.min(event.y, vSashBounds.y + vSashBounds.height));
 		if ((event.detail & SWT.DRAG) != SWT.DRAG || (hSash.getStyle() & SWT.SMOOTH) == SWT.SMOOTH) {
 			FormData layoutData = (FormData) hSash.getLayoutData();
 
 			layoutData.top = new FormAttachment(0, event.y);
 			hSash.setLayoutData(layoutData);
 			hSash.requestLayout();
+		}
+	}
+
+	private void onResultSelectionChanged(@Nullable FileScannerResult newResult,
+			@SuppressWarnings("unused") @Nullable FileScannerResult oldResult) {
+		if (newResult != null) {
+			this.resultTreeHolder.get().select(newResult.getData(TreeItem.class));
+			this.inputViewHolder.get().setResult(newResult);
+			this.resultViewHolder.get().setUrl(this.resultRenderServiceHolder.get().setResult(newResult));
+			this.resultSelectionCommands.setEnabled(true);
+		} else {
+			this.resultSelectionCommands.setEnabled(false);
 		}
 	}
 
@@ -421,25 +547,25 @@ public class MainUI extends ShellUserInterface {
 		this.resultTreeHolder.set(resultTree.get());
 		this.resultViewHolder.set(resultView.get());
 		this.inputViewHolder.set(inputView.get());
-		this.vSashHolder.set(vSash.get());
-		this.hSashHolder.set(hSash.get());
 
 		DropTargetBuilder.fileTransfer(rootBuilder.get(), DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK)
 				.onFileDrop(this::openDroppedFile);
+
+		this.resultSelection.addChangedListener(this::onResultSelectionChanged);
 
 		return rootBuilder.get();
 	}
 
 	private void buildMenuBar(ShellBuilder rootBuilder) {
+		Display display = rootBuilder.get().getDisplay();
 		MenuBuilder menu = MenuBuilder.menuBar(rootBuilder);
 
 		menu.addItem(SWT.CASCADE).withText(MainI18N.i18nMenuFile());
 		menu.beginMenu();
 		menu.addItem(SWT.PUSH).withText(MainI18N.i18nMenuFileOpen());
+		menu.withImage(this.resources.getImage(Images.class, Images.IMAGE_OPEN_FILE16));
 		menu.onSelected(this::onOpenSelected);
 		if (PlatformIntegration.isCocoa()) {
-			Display display = menu.get().getDisplay();
-
 			PlatformIntegration.cocoaAddPreferencesSelectionAction(display, this::onPreferencesSelected);
 			PlatformIntegration.cocoaAddQuitSelectionAction(display, this::close);
 		} else {
@@ -451,12 +577,35 @@ public class MainUI extends ShellUserInterface {
 			menu.onSelected(this::close);
 		}
 		menu.endMenu();
+		menu.addItem(SWT.CASCADE).withText(MainI18N.i18nMenuEdit());
+		menu.beginMenu();
+		menu.addItem(SWT.PUSH).withText(MainI18N.i18nMenuEditCopy());
+		menu.withImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_OBJECT16));
+		this.resultSelectionCommands.add(menu.currentItem());
+		menu.addItem(SWT.PUSH).withText(MainI18N.i18nMenuEditExport());
+		menu.withImage(this.resources.getImage(Images.class, Images.IMAGE_EXPORT_OBJECT16));
+		this.resultSelectionCommands.add(menu.currentItem());
+		menu.endMenu();
+		menu.addItem(SWT.CASCADE).withText(MainI18N.i18nMenuGoto());
+		menu.beginMenu();
+		menu.addItem(SWT.PUSH).withText(MainI18N.i18nMenuGotoNext());
+		menu.withImage(this.resources.getImage(Images.class, Images.IMAGE_GOTO_NEXT16));
+		this.resultSelectionCommands.add(menu.currentItem());
+		menu.addItem(SWT.PUSH).withText(MainI18N.i18nMenuGotoPrevious());
+		menu.withImage(this.resources.getImage(Images.class, Images.IMAGE_GOTO_PREVIOUS16));
+		this.resultSelectionCommands.add(menu.currentItem());
+		menu.addItem(SWT.SEPARATOR);
+		menu.addItem(SWT.PUSH).withText(MainI18N.i18nMenuGotoStart());
+		menu.withImage(this.resources.getImage(Images.class, Images.IMAGE_GOTO_START16));
+		this.resultSelectionCommands.add(menu.currentItem());
+		menu.addItem(SWT.PUSH).withText(MainI18N.i18nMenuGotoEnd());
+		menu.withImage(this.resources.getImage(Images.class, Images.IMAGE_GOTO_END16));
+		this.resultSelectionCommands.add(menu.currentItem());
+		menu.endMenu();
 		menu.addItem(SWT.CASCADE).withText(MainI18N.i18nMenuHelp());
 		menu.beginMenu();
 		menu.addItem(SWT.PUSH).withText(MainI18N.i18nMenuHelpLogs());
 		if (PlatformIntegration.isCocoa()) {
-			Display display = menu.get().getDisplay();
-
 			PlatformIntegration.cocoaAddAboutSelectionAction(display, this::onAboutSelected);
 		} else {
 			menu.addItem(SWT.SEPARATOR);
@@ -471,7 +620,7 @@ public class MainUI extends ShellUserInterface {
 		ToolBarBuilder fileTools = ToolBarBuilder.horizontal(commands, SWT.FLAT);
 		ToolBarBuilder editTools = ToolBarBuilder.horizontal(commands, SWT.FLAT);
 		CompositeBuilder<Composite> searchTools = commands.addCompositeChild(SWT.NONE);
-		ControlBuilder<Text> searchPattern = searchTools.addControlChild(Text.class, SWT.SEARCH | SWT.ICON_SEARCH);
+		ControlBuilder<Text> searchQuery = searchTools.addControlChild(Text.class, SWT.SEARCH | SWT.ICON_SEARCH);
 		ToolBarBuilder searchToolsButtons = ToolBarBuilder.horizontal(searchTools, SWT.FLAT);
 
 		// File tools
@@ -484,32 +633,40 @@ public class MainUI extends ShellUserInterface {
 		editTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_OBJECT16))
 				.withDisabledImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_OBJECT_DISABLED16));
 		editTools.onSelected(controller::onCopyObjectSelected);
+		this.resultSelectionCommands.add(editTools.currentItem());
 		editTools.addItem(SWT.PUSH);
 		editTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_EXPORT_OBJECT16))
 				.withDisabledImage(this.resources.getImage(Images.class, Images.IMAGE_EXPORT_OBJECT_DISABLED16));
 		editTools.onSelected(controller::onExportObjectSelected);
+		this.resultSelectionCommands.add(editTools.currentItem());
 		commands.addItem(SWT.NONE).withControl(editTools);
 		// Search tools
+		searchQuery.onSelected(this::onGotoNextSelected);
+		this.resultSelectionCommands.add(searchQuery.get());
 		searchToolsButtons.addItem(SWT.PUSH);
 		searchToolsButtons.withImage(this.resources.getImage(Images.class, Images.IMAGE_GOTO_NEXT16));
-		searchToolsButtons.onSelected(controller::onGotoNextSelected);
+		searchToolsButtons.onSelected(this::onGotoNextSelected);
+		this.resultSelectionCommands.add(searchToolsButtons.currentItem());
 		searchToolsButtons.addItem(SWT.PUSH);
 		searchToolsButtons.withImage(this.resources.getImage(Images.class, Images.IMAGE_GOTO_PREVIOUS16));
-		searchToolsButtons.onSelected(controller::onGotoPreviousSelected);
+		searchToolsButtons.onSelected(this::onGotoPreviousSelected);
+		this.resultSelectionCommands.add(searchToolsButtons.currentItem());
 		searchToolsButtons.addItem(SWT.SEPARATOR);
 		searchToolsButtons.addItem(SWT.PUSH);
 		searchToolsButtons.withImage(this.resources.getImage(Images.class, Images.IMAGE_GOTO_END16));
-		searchToolsButtons.onSelected(this::onGotoResultEnd);
+		searchToolsButtons.onSelected(this::onGotoEndSelected);
+		this.resultSelectionCommands.add(searchToolsButtons.currentItem());
 		searchToolsButtons.addItem(SWT.PUSH);
 		searchToolsButtons.withImage(this.resources.getImage(Images.class, Images.IMAGE_GOTO_START16));
-		searchToolsButtons.onSelected(this::onGotoResultStart);
+		searchToolsButtons.onSelected(this::onGotoStartSelected);
+		this.resultSelectionCommands.add(searchToolsButtons.currentItem());
 		GridLayoutBuilder.layout(2).margin(2, 2).apply(searchTools);
-		GridLayoutBuilder.data().align(SWT.FILL, SWT.CENTER).grab(true, false).apply(searchPattern);
+		GridLayoutBuilder.data().align(SWT.FILL, SWT.CENTER).grab(true, false).apply(searchQuery);
 		GridLayoutBuilder.data().apply(searchToolsButtons);
 		commands.addItem(SWT.NONE).withControl(searchTools);
 
 		commands.lock(true).pack();
-		this.searchPatternHolder.set(searchPattern.get());
+		this.searchQueryHolder.set(searchQuery.get());
 		return commands;
 	}
 
@@ -527,9 +684,9 @@ public class MainUI extends ShellUserInterface {
 		sessionTools.addItem(SWT.PUSH);
 		sessionTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_STOP_SCAN16))
 				.withDisabledImage(this.resources.getImage(Images.class, Images.IMAGE_STOP_SCAN_DISABLED16));
-		sessionTools.onSelected(controller::onStopScanSelected);
+		sessionTools.onSelected(controller::stopScan);
 		GridLayoutBuilder.data().apply(sessionTools);
-		this.cancelButtonHolder.set(sessionTools.currentItem());
+		this.sessionCommands.add(sessionTools.currentItem());
 
 		ProgressBar sessionProgress = new ProgressBar(session.get(), SWT.HORIZONTAL);
 

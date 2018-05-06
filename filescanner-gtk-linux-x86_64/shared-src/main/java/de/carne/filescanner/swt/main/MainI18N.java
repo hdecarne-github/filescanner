@@ -95,101 +95,6 @@ public final class MainI18N {
 	}
 
 	/**
-	 * Resource key {@code I18N_MENU_EDIT_GOTO}
-	 * <p>
-	 * &Goto
-	 */
-	public static final String I18N_MENU_EDIT_GOTO = "I18N_MENU_EDIT_GOTO";
-
-	/**
-	 * Resource string {@code I18N_MENU_EDIT_GOTO}
-	 * <p>
-	 * &Goto
-	 *
-	 * @param arguments Format arguments.
-	 * @return The formatted string.
-	 */
-	public static String i18nMenuEditGoto(Object... arguments) {
-		return format(I18N_MENU_EDIT_GOTO, arguments);
-	}
-
-	/**
-	 * Resource key {@code I18N_MENU_EDIT_GOTO_RESULT_END}
-	 * <p>
-	 * Result &end
-	 */
-	public static final String I18N_MENU_EDIT_GOTO_RESULT_END = "I18N_MENU_EDIT_GOTO_RESULT_END";
-
-	/**
-	 * Resource string {@code I18N_MENU_EDIT_GOTO_RESULT_END}
-	 * <p>
-	 * Result &end
-	 *
-	 * @param arguments Format arguments.
-	 * @return The formatted string.
-	 */
-	public static String i18nMenuEditGotoResultEnd(Object... arguments) {
-		return format(I18N_MENU_EDIT_GOTO_RESULT_END, arguments);
-	}
-
-	/**
-	 * Resource key {@code I18N_MENU_EDIT_GOTO_RESULT_START}
-	 * <p>
-	 * Result &start
-	 */
-	public static final String I18N_MENU_EDIT_GOTO_RESULT_START = "I18N_MENU_EDIT_GOTO_RESULT_START";
-
-	/**
-	 * Resource string {@code I18N_MENU_EDIT_GOTO_RESULT_START}
-	 * <p>
-	 * Result &start
-	 *
-	 * @param arguments Format arguments.
-	 * @return The formatted string.
-	 */
-	public static String i18nMenuEditGotoResultStart(Object... arguments) {
-		return format(I18N_MENU_EDIT_GOTO_RESULT_START, arguments);
-	}
-
-	/**
-	 * Resource key {@code I18N_MENU_EDIT_GOTO_SEARCH_NEXT}
-	 * <p>
-	 * Search &next
-	 */
-	public static final String I18N_MENU_EDIT_GOTO_SEARCH_NEXT = "I18N_MENU_EDIT_GOTO_SEARCH_NEXT";
-
-	/**
-	 * Resource string {@code I18N_MENU_EDIT_GOTO_SEARCH_NEXT}
-	 * <p>
-	 * Search &next
-	 *
-	 * @param arguments Format arguments.
-	 * @return The formatted string.
-	 */
-	public static String i18nMenuEditGotoSearchNext(Object... arguments) {
-		return format(I18N_MENU_EDIT_GOTO_SEARCH_NEXT, arguments);
-	}
-
-	/**
-	 * Resource key {@code I18N_MENU_EDIT_GOTO_SEARCH_PREV}
-	 * <p>
-	 * Search &previous
-	 */
-	public static final String I18N_MENU_EDIT_GOTO_SEARCH_PREV = "I18N_MENU_EDIT_GOTO_SEARCH_PREV";
-
-	/**
-	 * Resource string {@code I18N_MENU_EDIT_GOTO_SEARCH_PREV}
-	 * <p>
-	 * Search &previous
-	 *
-	 * @param arguments Format arguments.
-	 * @return The formatted string.
-	 */
-	public static String i18nMenuEditGotoSearchPrev(Object... arguments) {
-		return format(I18N_MENU_EDIT_GOTO_SEARCH_PREV, arguments);
-	}
-
-	/**
 	 * Resource key {@code I18N_MENU_FILE}
 	 * <p>
 	 * &File
@@ -263,6 +168,101 @@ public final class MainI18N {
 	 */
 	public static String i18nMenuFileQuit(Object... arguments) {
 		return format(I18N_MENU_FILE_QUIT, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_MENU_GOTO}
+	 * <p>
+	 * &Goto
+	 */
+	public static final String I18N_MENU_GOTO = "I18N_MENU_GOTO";
+
+	/**
+	 * Resource string {@code I18N_MENU_GOTO}
+	 * <p>
+	 * &Goto
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nMenuGoto(Object... arguments) {
+		return format(I18N_MENU_GOTO, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_MENU_GOTO_END}
+	 * <p>
+	 * Result &end
+	 */
+	public static final String I18N_MENU_GOTO_END = "I18N_MENU_GOTO_END";
+
+	/**
+	 * Resource string {@code I18N_MENU_GOTO_END}
+	 * <p>
+	 * Result &end
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nMenuGotoEnd(Object... arguments) {
+		return format(I18N_MENU_GOTO_END, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_MENU_GOTO_NEXT}
+	 * <p>
+	 * Search &next
+	 */
+	public static final String I18N_MENU_GOTO_NEXT = "I18N_MENU_GOTO_NEXT";
+
+	/**
+	 * Resource string {@code I18N_MENU_GOTO_NEXT}
+	 * <p>
+	 * Search &next
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nMenuGotoNext(Object... arguments) {
+		return format(I18N_MENU_GOTO_NEXT, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_MENU_GOTO_PREVIOUS}
+	 * <p>
+	 * Search &previous
+	 */
+	public static final String I18N_MENU_GOTO_PREVIOUS = "I18N_MENU_GOTO_PREVIOUS";
+
+	/**
+	 * Resource string {@code I18N_MENU_GOTO_PREVIOUS}
+	 * <p>
+	 * Search &previous
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nMenuGotoPrevious(Object... arguments) {
+		return format(I18N_MENU_GOTO_PREVIOUS, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_MENU_GOTO_START}
+	 * <p>
+	 * Result &start
+	 */
+	public static final String I18N_MENU_GOTO_START = "I18N_MENU_GOTO_START";
+
+	/**
+	 * Resource string {@code I18N_MENU_GOTO_START}
+	 * <p>
+	 * Result &start
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nMenuGotoStart(Object... arguments) {
+		return format(I18N_MENU_GOTO_START, arguments);
 	}
 
 	/**

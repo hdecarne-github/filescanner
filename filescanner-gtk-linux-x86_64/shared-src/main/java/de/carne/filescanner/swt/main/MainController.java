@@ -31,6 +31,7 @@ import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.FileScannerStatus;
 import de.carne.filescanner.engine.Formats;
 import de.carne.filescanner.swt.preferences.UserPreferences;
+import de.carne.nio.compression.Check;
 
 /**
  * Main window controller.
@@ -41,57 +42,95 @@ class MainController implements FileScannerStatus {
 
 	private final MainUI ui;
 	@Nullable
+	private SearchIndex searchIndex = null;
+	@Nullable
 	private FileScanner fileScanner = null;
 
 	MainController(MainUI ui) {
 		this.ui = ui;
 	}
 
-	FileScannerResult openFile(String file) throws IOException {
-		if (this.fileScanner != null) {
-			FileScanner oldFileScanner = this.fileScanner;
-
-			this.fileScanner = null;
-			oldFileScanner.close();
-		}
+	FileScannerResult openAndScanFile(String file) throws IOException {
+		closeScan();
 		this.ui.resetSession(true);
 
 		Path filePath = Paths.get(file);
 		Formats formats = Formats.all();
 
 		UserPreferences.get().getDisabledFormats().forEach(formats::disable);
+		this.searchIndex = new SearchIndex();
 		this.fileScanner = FileScanner.scan(filePath, formats.enabledFormats(), this);
 		return this.fileScanner.result();
 	}
 
 	void close() {
-		if (this.fileScanner != null) {
-			try {
-				this.fileScanner.close();
-			} catch (IOException e) {
-				Exceptions.ignore(e);
-			}
+		try {
+			closeScan();
+		} catch (IOException e) {
+			Exceptions.ignore(e);
 		}
+	}
+
+	private void closeScan() throws IOException {
+		FileScanner oldFileScanner = this.fileScanner;
+		SearchIndex oldSearchIndex = this.searchIndex;
+
+		this.fileScanner = null;
+		this.searchIndex = null;
+		if (oldSearchIndex != null) {
+			oldSearchIndex.close();
+		}
+		if (oldFileScanner != null) {
+			oldFileScanner.close();
+		}
+	}
+
+	void stopScan() {
+		LOG.info("stopScan");
 	}
 
 	void onCopyObjectSelected() {
 		LOG.info("onCopyObjectSelected");
+		// TODO: Move to UI
 	}
 
 	void onExportObjectSelected() {
 		LOG.info("onExportObjectSelected");
+		// TODO: Move to UI
 	}
 
-	void onGotoNextSelected() {
-		LOG.info("onGotoNextSelected");
+	@Nullable
+	FileScannerResult[] searchNext(@Nullable FileScannerResult from, String query) throws IOException {
+		SearchIndex checkedSearchIndex = this.searchIndex;
+		FileScanner checkedFileScanner = this.fileScanner;
+		FileScannerResult[] searchResult = null;
+
+		if (checkedSearchIndex != null && checkedFileScanner != null) {
+			byte[] resultKey = checkedSearchIndex.searchFoward((from != null ? from : checkedFileScanner.result()),
+					query);
+
+			if (resultKey != null) {
+				searchResult = checkedFileScanner.getResultPath(resultKey);
+			}
+		}
+		return searchResult;
 	}
 
-	void onGotoPreviousSelected() {
-		LOG.info("onGotoPreviousSelected");
-	}
+	@Nullable
+	FileScannerResult[] searchPrevious(@Nullable FileScannerResult from, String query) throws IOException {
+		SearchIndex checkedSearchIndex = this.searchIndex;
+		FileScanner checkedFileScanner = this.fileScanner;
+		FileScannerResult[] searchResult = null;
 
-	void onStopScanSelected() {
-		LOG.info("onStopScanSelected");
+		if (checkedSearchIndex != null && checkedFileScanner != null) {
+			byte[] resultKey = checkedSearchIndex.searchBackward((from != null ? from : checkedFileScanner.result()),
+					query);
+
+			if (resultKey != null) {
+				searchResult = checkedFileScanner.getResultPath(resultKey);
+			}
+		}
+		return searchResult;
 	}
 
 	@Override
@@ -104,6 +143,7 @@ class MainController implements FileScannerStatus {
 	@Override
 	public void scanFinished(FileScanner scanner) {
 		if (scanner.equals(this.fileScanner)) {
+			Check.notNull(this.searchIndex).seal();
 			Application.getMain(FileScannerMain.class).runWait(() -> this.ui.sessionRunning(false));
 		}
 	}
@@ -118,6 +158,7 @@ class MainController implements FileScannerStatus {
 	@Override
 	public void scanResult(FileScanner scanner, FileScannerResult result) {
 		if (scanner.equals(this.fileScanner)) {
+			Check.notNull(this.searchIndex).addResult(result);
 			Application.getMain(FileScannerMain.class).runWait(() -> this.ui.sessionResult(result));
 		}
 	}
