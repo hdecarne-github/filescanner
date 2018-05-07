@@ -39,6 +39,7 @@ import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.SearcherManager;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TopDocs;
@@ -208,11 +209,11 @@ final class SearchIndex implements AutoCloseable {
 	private static class Updater implements Closeable {
 
 		private final IndexWriter indexWriter;
-		private final ThreadLocal<DirectoryReader> cachedIndexReader = new ThreadLocal<>();
-		private final ThreadLocal<IndexSearcher> cachedIndexSearcher = new ThreadLocal<>();
+		private final SearcherManager searcherManager;
 
 		Updater(FSDirectory indexDirectory) throws IOException {
 			this.indexWriter = new IndexWriter(indexDirectory, new IndexWriterConfig().setOpenMode(OpenMode.CREATE));
+			this.searcherManager = new SearcherManager(this.indexWriter, null);
 		}
 
 		@Nullable
@@ -222,10 +223,19 @@ final class SearchIndex implements AutoCloseable {
 			queryBuilder.add(LongPoint.newExactQuery(FIELD_START, resultStart), Occur.MUST);
 			queryBuilder.add(SortedDocValuesField.newSlowExactQuery(FIELD_ID, resultKey), Occur.MUST);
 
-			IndexSearcher indexSearcher = getIndexSearcher();
-			TopDocs searchResult = indexSearcher.search(queryBuilder.build(), 1);
+			IndexSearcher indexSearcher = this.searcherManager.acquire();
+			Document document = null;
 
-			return (searchResult.totalHits != 0 ? indexSearcher.doc(searchResult.scoreDocs[0].doc) : null);
+			try {
+				TopDocs searchResult = indexSearcher.search(queryBuilder.build(), 1);
+
+				if (searchResult.totalHits != 0) {
+					document = indexSearcher.doc(searchResult.scoreDocs[0].doc);
+				}
+			} finally {
+				this.searcherManager.release(indexSearcher);
+			}
+			return document;
 		}
 
 		public void addDocument(Document document) throws IOException {
@@ -238,34 +248,15 @@ final class SearchIndex implements AutoCloseable {
 
 		public void commit() throws IOException {
 			try {
-				Closeables.close(this.cachedIndexReader);
 				this.indexWriter.commit();
 			} finally {
-				this.cachedIndexSearcher.remove();
-				this.cachedIndexReader.remove();
+				this.searcherManager.maybeRefresh();
 			}
 		}
 
 		@Override
 		public void close() throws IOException {
-			this.indexWriter.close();
-		}
-
-		private IndexSearcher getIndexSearcher() throws IOException {
-			DirectoryReader checkedIndexReader = this.cachedIndexReader.get();
-
-			if (checkedIndexReader == null) {
-				checkedIndexReader = DirectoryReader.open(this.indexWriter);
-				this.cachedIndexReader.set(checkedIndexReader);
-			}
-
-			IndexSearcher checkedIndexSearcher = this.cachedIndexSearcher.get();
-
-			if (checkedIndexSearcher == null) {
-				checkedIndexSearcher = new IndexSearcher(checkedIndexReader);
-				this.cachedIndexSearcher.set(checkedIndexSearcher);
-			}
-			return checkedIndexSearcher;
+			Closeables.closeAll(this.searcherManager, this.indexWriter);
 		}
 
 	}
