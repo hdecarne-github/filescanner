@@ -63,17 +63,14 @@ final class SearchIndex implements AutoCloseable {
 
 	private static final int MAX_INDEX_LENGTH = SystemProperties.intValue(SearchIndex.class, ".maxIndexLength", 4096);
 
-	private static final BytesRef MAX_RESULT_KEY = new BytesRef(new byte[] { (byte) 0xff });
-	private static final BytesRef MIN_RESULT_KEY = new BytesRef(new byte[] { 0x00 });
-
 	private static final String FIELD_ID = "id";
 	private static final String FIELD_KEY_STORED = "key";
 	private static final String FIELD_START = "start";
 	private static final String FIELD_END_STORED = "end";
 	private static final String FIELD_CONTENT = "content";
 
-	private static final Sort SORT_FORWARD = new Sort(new SortField(null, SortField.Type.DOC, false));
-	private static final Sort SORT_BACKWARD = new Sort(new SortField(null, SortField.Type.DOC, true));
+	private static final Sort SORT_FORWARD = new Sort(new SortField(FIELD_ID, SortField.Type.STRING, false));
+	private static final Sort SORT_BACKWARD = new Sort(new SortField(FIELD_ID, SortField.Type.STRING, true));
 
 	private final Path indexPath;
 	private final FSDirectory indexDirectory;
@@ -96,11 +93,11 @@ final class SearchIndex implements AutoCloseable {
 
 			addResultHelper(updater, result);
 			updater.commit();
-		} catch (IOException e) {
-			LOG.error(e, "Failed to add result to search index ''{0}''", this.indexPath);
 		} catch (InterruptedException e) {
 			Exceptions.ignore(e);
 			Thread.currentThread().interrupt();
+		} catch (Exception e) {
+			LOG.error(e, "Failed to add result to search index ''{0}''", this.indexPath);
 		}
 	}
 
@@ -159,12 +156,12 @@ final class SearchIndex implements AutoCloseable {
 
 	@Nullable
 	public byte[] searchFoward(FileScannerResult start, String query) throws IOException {
-		return getSearcher().search(new BytesRef(start.key()), MAX_RESULT_KEY, query, SORT_FORWARD);
+		return getSearcher().search(new BytesRef(start.key()), null, query, SORT_FORWARD);
 	}
 
 	@Nullable
 	public byte[] searchBackward(FileScannerResult start, String query) throws IOException {
-		return getSearcher().search(MIN_RESULT_KEY, new BytesRef(start.key()), query, SORT_BACKWARD);
+		return getSearcher().search(null, new BytesRef(start.key()), query, SORT_BACKWARD);
 	}
 
 	@Override
@@ -284,14 +281,14 @@ final class SearchIndex implements AutoCloseable {
 		}
 
 		@Nullable
-		public byte[] search(BytesRef resultKeyFrom, BytesRef resultKeyTo, String queryString, Sort sort)
-				throws IOException {
+		public byte[] search(@Nullable BytesRef resultKeyFrom, @Nullable BytesRef resultKeyTo, String queryString,
+				Sort sort) throws IOException {
 			SimpleQueryParser queryParser = new SimpleQueryParser(new StandardAnalyzer(), FIELD_CONTENT);
 			Query query = queryParser.parse(queryString);
 			BooleanQuery.Builder queryBuilder = new BooleanQuery.Builder();
 
-			queryBuilder.add(SortedDocValuesField.newSlowRangeQuery(FIELD_ID, resultKeyFrom, resultKeyTo, false, true),
-					Occur.MUST);
+			queryBuilder.add(SortedDocValuesField.newSlowRangeQuery(FIELD_ID, resultKeyFrom, resultKeyTo,
+					resultKeyFrom == null, resultKeyTo == null), Occur.MUST);
 			queryBuilder.add(query, Occur.MUST);
 
 			IndexSearcher indexSearcher = getIndexSearcher();
