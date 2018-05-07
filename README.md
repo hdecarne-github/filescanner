@@ -1,5 +1,5 @@
 ### FileScanner
-[![Build Status](https://travis-ci.org/hdecarne/filescanner.svg?branch=master)](https://travis-ci.org/hdecarne/filescanner)
+[![Build Status](https://travis-ci.com/hdecarne/filescanner.svg?branch=master)](https://travis-ci.com/hdecarne/filescanner)
 [![Quality Gate](https://sonarcloud.io/api/badges/gate?key=de.carne:filescanner:filescanner-gtk-linux-x86_64)](https://sonarcloud.io/dashboard/index/de.carne:filescanner:filescanner-gtk-linux-x86_64)
 
 Did you ever wonder what is inside a file. The FileScanner tool is capable to detect and decode several file
