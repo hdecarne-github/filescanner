@@ -23,7 +23,6 @@ import java.nio.file.Paths;
 import de.carne.boot.Application;
 import de.carne.boot.Exceptions;
 import de.carne.boot.check.Nullable;
-import de.carne.boot.logging.Log;
 import de.carne.filescanner.FileScannerMain;
 import de.carne.filescanner.engine.FileScanner;
 import de.carne.filescanner.engine.FileScannerProgress;
@@ -37,8 +36,6 @@ import de.carne.nio.compression.Check;
  * Main window controller.
  */
 class MainController implements FileScannerStatus {
-
-	private static final Log LOG = new Log();
 
 	private final MainUI ui;
 	@Nullable
