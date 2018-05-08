@@ -25,7 +25,6 @@ import java.nio.file.Path;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field.Store;
-import org.apache.lucene.document.LongPoint;
 import org.apache.lucene.document.SortedDocValuesField;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.TextField;
@@ -66,7 +65,6 @@ final class SearchIndex implements AutoCloseable {
 
 	private static final String FIELD_ID = "id";
 	private static final String FIELD_KEY_STORED = "key";
-	private static final String FIELD_START = "start";
 	private static final String FIELD_END_STORED = "end";
 	private static final String FIELD_CONTENT = "content";
 
@@ -92,7 +90,7 @@ final class SearchIndex implements AutoCloseable {
 		try {
 			Updater updater = getUpdater();
 
-			addResultHelper(updater, result);
+			addResultHelper(updater, result, true);
 			updater.commit();
 		} catch (InterruptedException e) {
 			Exceptions.ignore(e);
@@ -102,32 +100,35 @@ final class SearchIndex implements AutoCloseable {
 		}
 	}
 
-	private void addResultHelper(Updater updater, FileScannerResult result) throws IOException, InterruptedException {
+	private void addResultHelper(Updater updater, FileScannerResult result, boolean checkForUpdate)
+			throws IOException, InterruptedException {
 		BytesRef resultKey = new BytesRef(result.key());
-		long resultStart = result.start();
 		long resultEnd = result.end();
-		Document currentDocument = updater.getDocument(resultKey, resultStart);
+		Document currentDocument = (checkForUpdate ? updater.getDocument(resultKey) : null);
 		boolean processResultChildren;
+		boolean checkChildrenForUpdate;
 
 		if (currentDocument == null) {
 			LOG.debug("Adding result ''{0}'' to search index", result);
 
-			updater.addDocument(buildDocument(resultKey, resultStart, resultEnd, getResultContent(result)));
+			updater.addDocument(buildDocument(resultKey, resultEnd, getResultContent(result)));
 			processResultChildren = true;
+			checkChildrenForUpdate = false;
 		} else if (currentDocument.getField(FIELD_END_STORED).numericValue().longValue() != resultEnd) {
 			LOG.debug("Updating result ''{0}'' in search index", result);
 
-			updater.updateDocument(resultKey,
-					buildDocument(resultKey, resultStart, resultEnd, getResultContent(result)));
+			updater.updateDocument(resultKey, buildDocument(resultKey, resultEnd, getResultContent(result)));
 			processResultChildren = true;
+			checkChildrenForUpdate = true;
 		} else {
-			LOG.debug("Result ''{0}'' up-to-date in search index", result);
+			LOG.debug("Result ''{0}'' is already up-to-date in search index", result);
 
 			processResultChildren = result.type() == FileScannerResult.Type.INPUT;
+			checkChildrenForUpdate = true;
 		}
 		if (processResultChildren) {
 			for (FileScannerResult resultChild : result.children()) {
-				addResultHelper(updater, resultChild);
+				addResultHelper(updater, resultChild, checkChildrenForUpdate);
 			}
 		}
 	}
@@ -177,12 +178,11 @@ final class SearchIndex implements AutoCloseable {
 		}
 	}
 
-	private Document buildDocument(BytesRef resultKey, long resultStart, long resultEnd, String resultContent) {
+	private Document buildDocument(BytesRef resultKey, long resultEnd, String resultContent) {
 		Document document = new Document();
 
 		document.add(new SortedDocValuesField(FIELD_ID, resultKey));
 		document.add(new StoredField(FIELD_KEY_STORED, resultKey));
-		document.add(new LongPoint(FIELD_START, resultStart));
 		document.add(new StoredField(FIELD_END_STORED, resultEnd));
 		document.add(new TextField(FIELD_CONTENT, resultContent, Store.NO));
 		return document;
@@ -217,10 +217,9 @@ final class SearchIndex implements AutoCloseable {
 		}
 
 		@Nullable
-		public Document getDocument(BytesRef resultKey, long resultStart) throws IOException {
+		public Document getDocument(BytesRef resultKey) throws IOException {
 			BooleanQuery.Builder queryBuilder = new BooleanQuery.Builder();
 
-			queryBuilder.add(LongPoint.newExactQuery(FIELD_START, resultStart), Occur.MUST);
 			queryBuilder.add(SortedDocValuesField.newSlowExactQuery(FIELD_ID, resultKey), Occur.MUST);
 
 			IndexSearcher indexSearcher = this.searcherManager.acquire();
