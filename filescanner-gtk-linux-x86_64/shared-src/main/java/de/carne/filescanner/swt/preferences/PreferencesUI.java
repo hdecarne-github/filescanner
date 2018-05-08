@@ -232,6 +232,7 @@ class PreferencesUI extends ShellUserInterface {
 		applyAndCloseButton.onSelected(this::onApplyAndCloseSelected);
 		RowLayoutBuilder.layout().fill(true).apply(buttons);
 		RowLayoutBuilder.data().apply(cancelButton);
+		RowLayoutBuilder.data().apply(applyButton);
 		RowLayoutBuilder.data().apply(applyAndCloseButton);
 	}
 
