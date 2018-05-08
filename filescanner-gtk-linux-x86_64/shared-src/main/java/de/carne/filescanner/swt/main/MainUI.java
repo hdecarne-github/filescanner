@@ -134,6 +134,7 @@ public class MainUI extends ShellUserInterface {
 	public void openFile(String file) {
 		LOG.info("Opening file ''{0}''...", file);
 
+		this.resultSelection.set(null);
 		try {
 			FileScannerResult rootResult = this.controllerHolder.get().openAndScanFile(file);
 
