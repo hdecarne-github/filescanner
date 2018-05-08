@@ -48,6 +48,7 @@ import de.carne.boot.check.Nullable;
 import de.carne.boot.logging.Log;
 import de.carne.filescanner.engine.FileScannerProgress;
 import de.carne.filescanner.engine.FileScannerResult;
+import de.carne.filescanner.swt.export.ExportDialog;
 import de.carne.filescanner.swt.preferences.Config;
 import de.carne.filescanner.swt.preferences.PreferencesDialog;
 import de.carne.filescanner.swt.preferences.UserPreferences;
@@ -375,7 +376,17 @@ public class MainUI extends ShellUserInterface {
 	}
 
 	private void onExportObjectSelected() {
+		try {
+			FileScannerResult selection = this.resultSelection.get();
 
+			if (selection != null) {
+				ExportDialog exportDialog = new ExportDialog(get());
+
+				exportDialog.open(selection);
+			}
+		} catch (Exception e) {
+			unexpectedException(e);
+		}
 	}
 
 	private void onCopyObjectSelected() {
