@@ -55,13 +55,13 @@ public final class Images {
 	 */
 	public static final String IMAGE_OPEN_FILE16 = "open_file16.png";
 	/**
-	 * copy_object16.png
+	 * print_object16.png
 	 */
-	public static final String IMAGE_COPY_OBJECT16 = "copy_object16.png";
+	public static final String IMAGE_PRINT_OBJECT16 = "print_object16.png";
 	/**
-	 * copy_object_disabled16.png
+	 * print_object_disabled16.png
 	 */
-	public static final String IMAGE_COPY_OBJECT_DISABLED16 = "copy_object_disabled16.png";
+	public static final String IMAGE_PRINT_OBJECT_DISABLED16 = "print_object_disabled16.png";
 	/**
 	 * export_object16.png
 	 */
@@ -70,6 +70,14 @@ public final class Images {
 	 * export_object_disabled16.png
 	 */
 	public static final String IMAGE_EXPORT_OBJECT_DISABLED16 = "export_object_disabled16.png";
+	/**
+	 * copy_object16.png
+	 */
+	public static final String IMAGE_COPY_OBJECT16 = "copy_object16.png";
+	/**
+	 * copy_object_disabled16.png
+	 */
+	public static final String IMAGE_COPY_OBJECT_DISABLED16 = "copy_object_disabled16.png";
 	/**
 	 * goto_next16.png
 	 */

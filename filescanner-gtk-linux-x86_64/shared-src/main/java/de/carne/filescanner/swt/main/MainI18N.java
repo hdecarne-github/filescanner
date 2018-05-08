@@ -76,25 +76,6 @@ public final class MainI18N {
 	}
 
 	/**
-	 * Resource key {@code I18N_MENU_EDIT_EXPORT}
-	 * <p>
-	 * &Export…
-	 */
-	public static final String I18N_MENU_EDIT_EXPORT = "I18N_MENU_EDIT_EXPORT";
-
-	/**
-	 * Resource string {@code I18N_MENU_EDIT_EXPORT}
-	 * <p>
-	 * &Export…
-	 *
-	 * @param arguments Format arguments.
-	 * @return The formatted string.
-	 */
-	public static String i18nMenuEditExport(Object... arguments) {
-		return format(I18N_MENU_EDIT_EXPORT, arguments);
-	}
-
-	/**
 	 * Resource key {@code I18N_MENU_FILE}
 	 * <p>
 	 * &File
@@ -111,6 +92,25 @@ public final class MainI18N {
 	 */
 	public static String i18nMenuFile(Object... arguments) {
 		return format(I18N_MENU_FILE, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_MENU_FILE_EXPORT}
+	 * <p>
+	 * &Export…
+	 */
+	public static final String I18N_MENU_FILE_EXPORT = "I18N_MENU_FILE_EXPORT";
+
+	/**
+	 * Resource string {@code I18N_MENU_FILE_EXPORT}
+	 * <p>
+	 * &Export…
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nMenuFileExport(Object... arguments) {
+		return format(I18N_MENU_FILE_EXPORT, arguments);
 	}
 
 	/**
@@ -149,6 +149,25 @@ public final class MainI18N {
 	 */
 	public static String i18nMenuFilePreferences(Object... arguments) {
 		return format(I18N_MENU_FILE_PREFERENCES, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_MENU_FILE_PRINT}
+	 * <p>
+	 * &Print…
+	 */
+	public static final String I18N_MENU_FILE_PRINT = "I18N_MENU_FILE_PRINT";
+
+	/**
+	 * Resource string {@code I18N_MENU_FILE_PRINT}
+	 * <p>
+	 * &Print…
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nMenuFilePrint(Object... arguments) {
+		return format(I18N_MENU_FILE_PRINT, arguments);
 	}
 
 	/**

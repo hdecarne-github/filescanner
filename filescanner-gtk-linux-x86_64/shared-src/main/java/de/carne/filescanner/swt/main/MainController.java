@@ -89,16 +89,6 @@ class MainController implements FileScannerStatus {
 		LOG.info("stopScan");
 	}
 
-	void onCopyObjectSelected() {
-		LOG.info("onCopyObjectSelected");
-		// TODO: Move to UI
-	}
-
-	void onExportObjectSelected() {
-		LOG.info("onExportObjectSelected");
-		// TODO: Move to UI
-	}
-
 	@Nullable
 	FileScannerResult[] searchNext(@Nullable FileScannerResult from, String query) throws IOException {
 		SearchIndex checkedSearchIndex = this.searchIndex;

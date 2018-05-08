@@ -369,6 +369,18 @@ public class MainUI extends ShellUserInterface {
 		}
 	}
 
+	private void onPrintObjectSelected() {
+		this.resultViewHolder.get().execute("javascript:window.print();");
+	}
+
+	private void onExportObjectSelected() {
+
+	}
+
+	private void onCopyObjectSelected() {
+
+	}
+
 	private void onGotoNextSelected() {
 		try {
 			FileScannerResult selection = this.resultSelection.get();
@@ -519,7 +531,7 @@ public class MainUI extends ShellUserInterface {
 		ShellBuilder rootBuilder = new ShellBuilder(root());
 		ControlBuilder<Sash> vSash = rootBuilder.addControlChild(Sash.class, SWT.VERTICAL);
 		ControlBuilder<Sash> hSash = rootBuilder.addControlChild(Sash.class, SWT.HORIZONTAL);
-		CoolBarBuilder commands = buildCommandBar(rootBuilder, controller);
+		CoolBarBuilder commands = buildCommandBar(rootBuilder);
 		ControlBuilder<Tree> resultTree = rootBuilder.addControlChild(Tree.class,
 				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL);
 		ControlBuilder<Browser> resultView = rootBuilder.addControlChild(Browser.class, SWT.NONE);
@@ -565,6 +577,15 @@ public class MainUI extends ShellUserInterface {
 		menu.addItem(SWT.PUSH).withText(MainI18N.i18nMenuFileOpen());
 		menu.withImage(this.resources.getImage(Images.class, Images.IMAGE_OPEN_FILE16));
 		menu.onSelected(this::onOpenSelected);
+		menu.addItem(SWT.SEPARATOR);
+		menu.addItem(SWT.PUSH).withText(MainI18N.i18nMenuFilePrint());
+		menu.withImage(this.resources.getImage(Images.class, Images.IMAGE_PRINT_OBJECT16));
+		menu.onSelected(this::onPrintObjectSelected);
+		this.resultSelectionCommands.add(menu.currentItem());
+		menu.addItem(SWT.PUSH).withText(MainI18N.i18nMenuFileExport());
+		menu.withImage(this.resources.getImage(Images.class, Images.IMAGE_EXPORT_OBJECT16));
+		menu.onSelected(this::onExportObjectSelected);
+		this.resultSelectionCommands.add(menu.currentItem());
 		if (PlatformIntegration.isCocoa()) {
 			PlatformIntegration.cocoaAddPreferencesSelectionAction(display, this::onPreferencesSelected);
 			PlatformIntegration.cocoaAddQuitSelectionAction(display, this::close);
@@ -581,9 +602,7 @@ public class MainUI extends ShellUserInterface {
 		menu.beginMenu();
 		menu.addItem(SWT.PUSH).withText(MainI18N.i18nMenuEditCopy());
 		menu.withImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_OBJECT16));
-		this.resultSelectionCommands.add(menu.currentItem());
-		menu.addItem(SWT.PUSH).withText(MainI18N.i18nMenuEditExport());
-		menu.withImage(this.resources.getImage(Images.class, Images.IMAGE_EXPORT_OBJECT16));
+		menu.onSelected(this::onCopyObjectSelected);
 		this.resultSelectionCommands.add(menu.currentItem());
 		menu.endMenu();
 		menu.addItem(SWT.CASCADE).withText(MainI18N.i18nMenuGoto());
@@ -615,7 +634,7 @@ public class MainUI extends ShellUserInterface {
 		menu.endMenu();
 	}
 
-	private CoolBarBuilder buildCommandBar(ShellBuilder rootBuilder, MainController controller) {
+	private CoolBarBuilder buildCommandBar(ShellBuilder rootBuilder) {
 		CoolBarBuilder commands = CoolBarBuilder.horizontal(rootBuilder, SWT.NONE);
 		ToolBarBuilder fileTools = ToolBarBuilder.horizontal(commands, SWT.FLAT);
 		ToolBarBuilder editTools = ToolBarBuilder.horizontal(commands, SWT.FLAT);
@@ -627,17 +646,23 @@ public class MainUI extends ShellUserInterface {
 		fileTools.addItem(SWT.PUSH);
 		fileTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_OPEN_FILE16));
 		fileTools.onSelected(this::onOpenSelected);
+		fileTools.addItem(SWT.SEPARATOR);
+		fileTools.addItem(SWT.PUSH);
+		fileTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_PRINT_OBJECT16))
+				.withDisabledImage(this.resources.getImage(Images.class, Images.IMAGE_PRINT_OBJECT_DISABLED16));
+		fileTools.onSelected(this::onPrintObjectSelected);
+		this.resultSelectionCommands.add(fileTools.currentItem());
+		fileTools.addItem(SWT.PUSH);
+		fileTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_EXPORT_OBJECT16))
+				.withDisabledImage(this.resources.getImage(Images.class, Images.IMAGE_EXPORT_OBJECT_DISABLED16));
+		fileTools.onSelected(this::onExportObjectSelected);
+		this.resultSelectionCommands.add(fileTools.currentItem());
 		commands.addItem(SWT.NONE).withControl(fileTools);
 		// Edit tools
 		editTools.addItem(SWT.PUSH);
 		editTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_OBJECT16))
 				.withDisabledImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_OBJECT_DISABLED16));
-		editTools.onSelected(controller::onCopyObjectSelected);
-		this.resultSelectionCommands.add(editTools.currentItem());
-		editTools.addItem(SWT.PUSH);
-		editTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_EXPORT_OBJECT16))
-				.withDisabledImage(this.resources.getImage(Images.class, Images.IMAGE_EXPORT_OBJECT_DISABLED16));
-		editTools.onSelected(controller::onExportObjectSelected);
+		editTools.onSelected(this::onCopyObjectSelected);
 		this.resultSelectionCommands.add(editTools.currentItem());
 		commands.addItem(SWT.NONE).withControl(editTools);
 		// Search tools
