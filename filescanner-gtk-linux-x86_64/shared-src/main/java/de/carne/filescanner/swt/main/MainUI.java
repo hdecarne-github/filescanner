@@ -636,62 +636,60 @@ public class MainUI extends ShellUserInterface {
 
 	private CoolBarBuilder buildCommandBar(ShellBuilder rootBuilder) {
 		CoolBarBuilder commands = CoolBarBuilder.horizontal(rootBuilder, SWT.NONE);
-		ToolBarBuilder fileTools = ToolBarBuilder.horizontal(commands, SWT.FLAT);
-		ToolBarBuilder editTools = ToolBarBuilder.horizontal(commands, SWT.FLAT);
-		CompositeBuilder<Composite> searchTools = commands.addCompositeChild(SWT.NONE);
-		ControlBuilder<Text> searchQuery = searchTools.addControlChild(Text.class, SWT.SEARCH | SWT.ICON_SEARCH);
-		ToolBarBuilder searchToolsButtons = ToolBarBuilder.horizontal(searchTools, SWT.FLAT);
+		ToolBarBuilder fileAndEditTools = ToolBarBuilder.horizontal(commands, SWT.FLAT);
+		CompositeBuilder<Composite> queryInput = commands.addCompositeChild(SWT.NONE);
+		ControlBuilder<Text> queryText = queryInput.addControlChild(Text.class, SWT.SEARCH | SWT.ICON_SEARCH);
+		ToolBarBuilder gotoTools = ToolBarBuilder.horizontal(queryInput, SWT.FLAT);
 
-		// File tools
-		fileTools.addItem(SWT.PUSH);
-		fileTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_OPEN_FILE16));
-		fileTools.onSelected(this::onOpenSelected);
-		fileTools.addItem(SWT.SEPARATOR);
-		fileTools.addItem(SWT.PUSH);
-		fileTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_PRINT_OBJECT16))
+		// File & edit tools
+		fileAndEditTools.addItem(SWT.PUSH);
+		fileAndEditTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_OPEN_FILE16));
+		fileAndEditTools.onSelected(this::onOpenSelected);
+		fileAndEditTools.addItem(SWT.SEPARATOR);
+		fileAndEditTools.addItem(SWT.PUSH);
+		fileAndEditTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_PRINT_OBJECT16))
 				.withDisabledImage(this.resources.getImage(Images.class, Images.IMAGE_PRINT_OBJECT_DISABLED16));
-		fileTools.onSelected(this::onPrintObjectSelected);
-		this.resultSelectionCommands.add(fileTools.currentItem());
-		fileTools.addItem(SWT.PUSH);
-		fileTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_EXPORT_OBJECT16))
+		fileAndEditTools.onSelected(this::onPrintObjectSelected);
+		this.resultSelectionCommands.add(fileAndEditTools.currentItem());
+		fileAndEditTools.addItem(SWT.PUSH);
+		fileAndEditTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_EXPORT_OBJECT16))
 				.withDisabledImage(this.resources.getImage(Images.class, Images.IMAGE_EXPORT_OBJECT_DISABLED16));
-		fileTools.onSelected(this::onExportObjectSelected);
-		this.resultSelectionCommands.add(fileTools.currentItem());
-		commands.addItem(SWT.NONE).withControl(fileTools);
-		// Edit tools
-		editTools.addItem(SWT.PUSH);
-		editTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_OBJECT16))
+		fileAndEditTools.onSelected(this::onExportObjectSelected);
+		this.resultSelectionCommands.add(fileAndEditTools.currentItem());
+		fileAndEditTools.addItem(SWT.SEPARATOR);
+		fileAndEditTools.addItem(SWT.PUSH);
+		fileAndEditTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_OBJECT16))
 				.withDisabledImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_OBJECT_DISABLED16));
-		editTools.onSelected(this::onCopyObjectSelected);
-		this.resultSelectionCommands.add(editTools.currentItem());
-		commands.addItem(SWT.NONE).withControl(editTools);
+		fileAndEditTools.onSelected(this::onCopyObjectSelected);
+		this.resultSelectionCommands.add(fileAndEditTools.currentItem());
+		commands.addItem(SWT.NONE).withControl(fileAndEditTools);
 		// Search tools
-		searchQuery.onSelected(this::onGotoNextSelected);
-		this.resultSelectionCommands.add(searchQuery.get());
-		searchToolsButtons.addItem(SWT.PUSH);
-		searchToolsButtons.withImage(this.resources.getImage(Images.class, Images.IMAGE_GOTO_NEXT16));
-		searchToolsButtons.onSelected(this::onGotoNextSelected);
-		this.resultSelectionCommands.add(searchToolsButtons.currentItem());
-		searchToolsButtons.addItem(SWT.PUSH);
-		searchToolsButtons.withImage(this.resources.getImage(Images.class, Images.IMAGE_GOTO_PREVIOUS16));
-		searchToolsButtons.onSelected(this::onGotoPreviousSelected);
-		this.resultSelectionCommands.add(searchToolsButtons.currentItem());
-		searchToolsButtons.addItem(SWT.SEPARATOR);
-		searchToolsButtons.addItem(SWT.PUSH);
-		searchToolsButtons.withImage(this.resources.getImage(Images.class, Images.IMAGE_GOTO_END16));
-		searchToolsButtons.onSelected(this::onGotoEndSelected);
-		this.resultSelectionCommands.add(searchToolsButtons.currentItem());
-		searchToolsButtons.addItem(SWT.PUSH);
-		searchToolsButtons.withImage(this.resources.getImage(Images.class, Images.IMAGE_GOTO_START16));
-		searchToolsButtons.onSelected(this::onGotoStartSelected);
-		this.resultSelectionCommands.add(searchToolsButtons.currentItem());
-		GridLayoutBuilder.layout(2).margin(2, 2).apply(searchTools);
-		GridLayoutBuilder.data().align(SWT.FILL, SWT.CENTER).grab(true, false).apply(searchQuery);
-		GridLayoutBuilder.data().apply(searchToolsButtons);
-		commands.addItem(SWT.NONE).withControl(searchTools);
+		queryText.onSelected(this::onGotoNextSelected);
+		this.resultSelectionCommands.add(queryText.get());
+		gotoTools.addItem(SWT.PUSH);
+		gotoTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_GOTO_NEXT16));
+		gotoTools.onSelected(this::onGotoNextSelected);
+		this.resultSelectionCommands.add(gotoTools.currentItem());
+		gotoTools.addItem(SWT.PUSH);
+		gotoTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_GOTO_PREVIOUS16));
+		gotoTools.onSelected(this::onGotoPreviousSelected);
+		this.resultSelectionCommands.add(gotoTools.currentItem());
+		gotoTools.addItem(SWT.SEPARATOR);
+		gotoTools.addItem(SWT.PUSH);
+		gotoTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_GOTO_END16));
+		gotoTools.onSelected(this::onGotoEndSelected);
+		this.resultSelectionCommands.add(gotoTools.currentItem());
+		gotoTools.addItem(SWT.PUSH);
+		gotoTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_GOTO_START16));
+		gotoTools.onSelected(this::onGotoStartSelected);
+		this.resultSelectionCommands.add(gotoTools.currentItem());
+		GridLayoutBuilder.layout(2).margin(2, 2).apply(queryInput);
+		GridLayoutBuilder.data().align(SWT.FILL, SWT.CENTER).grab(true, false).apply(queryText);
+		GridLayoutBuilder.data().apply(gotoTools);
+		commands.addItem(SWT.NONE).withControl(queryInput);
 
 		commands.lock(true).pack();
-		this.searchQueryHolder.set(searchQuery.get());
+		this.searchQueryHolder.set(queryText.get());
 		return commands;
 	}
 
