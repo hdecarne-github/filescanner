@@ -65,6 +65,8 @@ public class FileScannerMain extends UserApplication implements ApplicationMain 
 
 			LOG.notice("Running command ''{0}''...", logConfigCmdLine);
 
+			Thread.currentThread().setPriority(Thread.NORM_PRIORITY + 1);
+
 			CmdLineProcessor applicationCmdLine = buildApplicationCmdLine(args);
 
 			status = run(applicationCmdLine);
