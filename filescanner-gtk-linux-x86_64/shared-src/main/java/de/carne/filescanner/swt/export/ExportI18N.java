@@ -76,6 +76,44 @@ public final class ExportI18N {
 	}
 
 	/**
+	 * Resource key {@code I18N_LABEL_EXPORT_PATH}
+	 * <p>
+	 * Path
+	 */
+	public static final String I18N_LABEL_EXPORT_PATH = "I18N_LABEL_EXPORT_PATH";
+
+	/**
+	 * Resource string {@code I18N_LABEL_EXPORT_PATH}
+	 * <p>
+	 * Path
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nLabelExportPath(Object... arguments) {
+		return format(I18N_LABEL_EXPORT_PATH, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_LABEL_EXPORT_TYPE}
+	 * <p>
+	 * Export
+	 */
+	public static final String I18N_LABEL_EXPORT_TYPE = "I18N_LABEL_EXPORT_TYPE";
+
+	/**
+	 * Resource string {@code I18N_LABEL_EXPORT_TYPE}
+	 * <p>
+	 * Export
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nLabelExportType(Object... arguments) {
+		return format(I18N_LABEL_EXPORT_TYPE, arguments);
+	}
+
+	/**
 	 * Resource key {@code I18N_TITLE}
 	 * <p>
 	 * Export result

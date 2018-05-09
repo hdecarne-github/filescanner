@@ -19,13 +19,16 @@ package de.carne.filescanner.swt.export;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.swt.graphics.ResourceException;
 import de.carne.swt.graphics.ResourceTracker;
+import de.carne.swt.layout.FillLayoutBuilder;
 import de.carne.swt.layout.GridLayoutBuilder;
 import de.carne.swt.layout.RowLayoutBuilder;
 import de.carne.swt.platform.PlatformIntegration;
@@ -56,15 +59,30 @@ class ExportUI extends ShellUserInterface {
 
 	private Shell buildRoot() {
 		ShellBuilder rootBuilder = new ShellBuilder(root());
+		ControlBuilder<Label> exportTypeLabel = rootBuilder.addControlChild(Label.class, SWT.NONE);
+		ControlBuilder<Combo> exportType = rootBuilder.addControlChild(Combo.class, SWT.READ_ONLY);
+		ControlBuilder<Label> exportPathLabel = rootBuilder.addControlChild(Label.class, SWT.NONE);
+		CompositeBuilder<Composite> exportPath = rootBuilder.addCompositeChild(SWT.NO_BACKGROUND);
+		ControlBuilder<Text> exportPathText = exportPath.addControlChild(Text.class, SWT.SINGLE);
+		ControlBuilder<Button> exportPathButton = exportPath.addControlChild(Button.class, SWT.PUSH);
 		ControlBuilder<Label> separator = rootBuilder.addControlChild(Label.class, SWT.HORIZONTAL | SWT.SEPARATOR);
 		CompositeBuilder<Composite> buttons = rootBuilder.addCompositeChild(SWT.NO_BACKGROUND);
 
 		rootBuilder.withText(ExportI18N.i18nTitle()).withDefaultImages();
+		exportTypeLabel.get().setText(ExportI18N.i18nLabelExportType());
+		exportPathLabel.get().setText(ExportI18N.i18nLabelExportPath());
+
 		buildButtons(buttons);
 
-		GridLayoutBuilder.layout().spacing(0, 0).margin(0, 0).apply(rootBuilder);
-		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(separator);
-		GridLayoutBuilder.data().align(SWT.END, SWT.CENTER).grab(false, false).apply(buttons);
+		FillLayoutBuilder.layout().apply(exportPath);
+
+		GridLayoutBuilder.layout(2).apply(rootBuilder);
+		GridLayoutBuilder.data().apply(exportTypeLabel);
+		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(exportType);
+		GridLayoutBuilder.data().apply(exportPathLabel);
+		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(exportPath);
+		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).span(2, 1).apply(separator);
+		GridLayoutBuilder.data().align(SWT.END, SWT.CENTER).grab(false, false).span(2, 1).apply(buttons);
 		return rootBuilder.get();
 	}
 
