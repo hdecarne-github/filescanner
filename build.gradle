@@ -23,6 +23,7 @@ subprojects {
 	targetCompatibility = JavaVersion.VERSION_1_8
 	
 	repositories {
+		mavenLocal()
 		jcenter()
 		maven { url "https://oss.jfrog.org/libs-release/" }
 		if(snapshotBuild) {
