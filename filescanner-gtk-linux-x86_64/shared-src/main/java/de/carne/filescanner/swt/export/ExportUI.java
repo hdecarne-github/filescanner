@@ -22,25 +22,32 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import de.carne.boot.check.Nullable;
 import de.carne.filescanner.engine.FileScannerResult;
+import de.carne.filescanner.engine.FileScannerResultExporter;
+import de.carne.filescanner.swt.resources.Images;
 import de.carne.swt.graphics.ResourceException;
 import de.carne.swt.graphics.ResourceTracker;
-import de.carne.swt.layout.FillLayoutBuilder;
 import de.carne.swt.layout.GridLayoutBuilder;
-import de.carne.swt.layout.RowLayoutBuilder;
 import de.carne.swt.platform.PlatformIntegration;
+import de.carne.swt.util.Property;
 import de.carne.swt.widgets.CompositeBuilder;
 import de.carne.swt.widgets.ControlBuilder;
 import de.carne.swt.widgets.ShellBuilder;
 import de.carne.swt.widgets.ShellUserInterface;
+import de.carne.util.Late;
 
 class ExportUI extends ShellUserInterface {
 
 	private final FileScannerResult result;
 	private final ResourceTracker resources;
+	private final Late<Combo> exportTypeHolder = new Late<>();
+	private final Late<Text> exportPathTextHolder = new Late<>();
+	private final Property<Integer> exporterTypeSelection = new Property<>(Integer.valueOf(0));
 
 	ExportUI(Shell root, FileScannerResult result) {
 		super(root);
@@ -62,44 +69,52 @@ class ExportUI extends ShellUserInterface {
 		ControlBuilder<Label> exportTypeLabel = rootBuilder.addControlChild(Label.class, SWT.NONE);
 		ControlBuilder<Combo> exportType = rootBuilder.addControlChild(Combo.class, SWT.READ_ONLY);
 		ControlBuilder<Label> exportPathLabel = rootBuilder.addControlChild(Label.class, SWT.NONE);
-		CompositeBuilder<Composite> exportPath = rootBuilder.addCompositeChild(SWT.NO_BACKGROUND);
-		ControlBuilder<Text> exportPathText = exportPath.addControlChild(Text.class, SWT.SINGLE);
-		ControlBuilder<Button> exportPathButton = exportPath.addControlChild(Button.class, SWT.PUSH);
+		ControlBuilder<Text> exportPathText = rootBuilder.addControlChild(Text.class, SWT.SINGLE | SWT.BORDER);
+		ControlBuilder<Button> exportPathButton = rootBuilder.addControlChild(Button.class, SWT.PUSH);
 		ControlBuilder<Label> separator = rootBuilder.addControlChild(Label.class, SWT.HORIZONTAL | SWT.SEPARATOR);
-		CompositeBuilder<Composite> buttons = rootBuilder.addCompositeChild(SWT.NO_BACKGROUND);
+		CompositeBuilder<Composite> buttons = rootBuilder.addCompositeChild(SWT.NONE);
 
 		rootBuilder.withText(ExportI18N.i18nTitle()).withDefaultImages();
 		exportTypeLabel.get().setText(ExportI18N.i18nLabelExportType());
 		exportPathLabel.get().setText(ExportI18N.i18nLabelExportPath());
+		exportPathButton.get().setImage(this.resources.getImage(Images.class, Images.IMAGE_OPEN_FILE16));
 
 		buildButtons(buttons);
 
-		FillLayoutBuilder.layout().apply(exportPath);
-
-		GridLayoutBuilder.layout(2).apply(rootBuilder);
+		GridLayoutBuilder.layout(3).apply(rootBuilder);
 		GridLayoutBuilder.data().apply(exportTypeLabel);
-		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(exportType);
+		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).span(2, 1).apply(exportType);
 		GridLayoutBuilder.data().apply(exportPathLabel);
-		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(exportPath);
-		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).span(2, 1).apply(separator);
-		GridLayoutBuilder.data().align(SWT.END, SWT.CENTER).grab(false, false).span(2, 1).apply(buttons);
+		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(exportPathText);
+		GridLayoutBuilder.data().apply(exportPathButton);
+		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).span(3, 1).apply(separator);
+		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).span(3, 1).apply(buttons);
+
+		this.exportTypeHolder.set(exportType.get());
+		this.exportPathTextHolder.set(exportPathText.get());
+		this.exporterTypeSelection.addChangedListener(this::onExporterTypeSelectionChanged);
+		initializeOptions();
+
 		return rootBuilder.get();
 	}
 
 	private void buildButtons(CompositeBuilder<Composite> buttons) {
+		ControlBuilder<ProgressBar> exportProgress = buttons.addControlChild(ProgressBar.class,
+				SWT.HORIZONTAL | SWT.SMOOTH);
 		ControlBuilder<Button> cancelButton = buttons.addControlChild(Button.class, SWT.PUSH);
 		ControlBuilder<Button> exportButton = buttons.addControlChild(Button.class, SWT.PUSH);
 
 		if (PlatformIntegration.isButtonOrderLeftToRight()) {
-			exportButton.get().moveAbove(null);
+			exportButton.get().moveAbove(cancelButton.get());
 		}
 		cancelButton.get().setText(ExportI18N.i18nButtonCancel());
 		cancelButton.onSelected(this::onCancelSelected);
 		exportButton.get().setText(ExportI18N.i18nButtonExport());
 		exportButton.onSelected(this::onExportSelected);
-		RowLayoutBuilder.layout().fill(true).apply(buttons);
-		RowLayoutBuilder.data().apply(cancelButton);
-		RowLayoutBuilder.data().apply(exportButton);
+		GridLayoutBuilder.layout(3).apply(buttons);
+		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(exportProgress);
+		GridLayoutBuilder.data().apply(cancelButton);
+		GridLayoutBuilder.data().apply(exportButton);
 	}
 
 	private void onCancelSelected() {
@@ -108,6 +123,31 @@ class ExportUI extends ShellUserInterface {
 
 	private void onExportSelected() {
 
+	}
+
+	private void onExporterTypeSelectionChanged(@Nullable Integer newValue,
+			@SuppressWarnings("unused") @Nullable Integer oldValue) {
+		if (newValue != null) {
+			int exporterIndex = newValue.intValue();
+			FileScannerResultExporter exporter = this.result.exporters()[exporterIndex];
+
+			this.exportTypeHolder.get().select(exporterIndex);
+			this.exportPathTextHolder.get().setText(determineExportPath(exporter.defaultStreamName(this.result)));
+		}
+	}
+
+	private String determineExportPath(String defaultStreamName) {
+		return defaultStreamName;
+	}
+
+	private void initializeOptions() {
+		Combo exportType = this.exportTypeHolder.get();
+		FileScannerResultExporter[] exporters = this.result.exporters();
+
+		for (FileScannerResultExporter exporter : exporters) {
+			exportType.add(String.format("%1$s (%2$s)", exporter.name(), exporter.type().mimeType()));
+		}
+		this.exporterTypeSelection.set(Integer.valueOf(0), true);
 	}
 
 }

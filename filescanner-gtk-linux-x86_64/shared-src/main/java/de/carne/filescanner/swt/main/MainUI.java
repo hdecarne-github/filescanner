@@ -21,7 +21,9 @@ import java.util.function.Consumer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Font;
@@ -36,10 +38,12 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
@@ -48,6 +52,7 @@ import de.carne.boot.check.Nullable;
 import de.carne.boot.logging.Log;
 import de.carne.filescanner.engine.FileScannerProgress;
 import de.carne.filescanner.engine.FileScannerResult;
+import de.carne.filescanner.engine.FileScannerResultExporter;
 import de.carne.filescanner.swt.export.ExportDialog;
 import de.carne.filescanner.swt.preferences.Config;
 import de.carne.filescanner.swt.preferences.PreferencesDialog;
@@ -92,6 +97,8 @@ public class MainUI extends ShellUserInterface {
 	private final Late<Hex> inputViewHolder = new Late<>();
 	private final Late<ProgressBar> sessionProgressHolder = new Late<>();
 	private final Late<Label> sessionStatusHolder = new Late<>();
+	private final Late<Menu> copyObjectMenuHolder = new Late<>();
+	private final Late<Menu> copyObjectToolHolder = new Late<>();
 	private final Consumer<Config> configConsumer = this::applyConfig;
 	private final UICommandSet sessionCommands = new UICommandSet();
 	private final UICommandSet resultSelectionCommands = new UICommandSet();
@@ -389,8 +396,28 @@ public class MainUI extends ShellUserInterface {
 		}
 	}
 
-	private void onCopyObjectSelected() {
+	private void onCopyObjectToolSelected(SelectionEvent event) {
+		if (event.detail == SWT.ARROW) {
+			ToolItem toolItem = Check.isInstanceOf(event.widget, ToolItem.class);
+			Rectangle toolItemBounds = toolItem.getBounds();
+			Menu menu = this.copyObjectToolHolder.get();
 
+			menu.setLocation(
+					toolItem.getParent().toDisplay(toolItemBounds.x, toolItemBounds.y + toolItemBounds.height));
+			menu.setVisible(true);
+		}
+	}
+
+	private void onCopyObjectSelected() {
+		Clipboard clipboard = new Clipboard(root().getDisplay());
+
+		try {
+			for (TransferData type : clipboard.getAvailableTypes()) {
+
+			}
+		} finally {
+			clipboard.dispose();
+		}
 	}
 
 	private void onGotoNextSelected() {
@@ -469,12 +496,12 @@ public class MainUI extends ShellUserInterface {
 	private void onVSashSelected(SelectionEvent event) {
 		Sash vSash = Check.isInstanceOf(event.widget, Sash.class);
 
-		if ((event.detail & SWT.DRAG) != SWT.DRAG || (vSash.getStyle() & SWT.SMOOTH) == SWT.SMOOTH) {
+		if (event.detail != SWT.DRAG || (vSash.getStyle() & SWT.SMOOTH) == SWT.SMOOTH) {
 			FormData layoutData = (FormData) vSash.getLayoutData();
 
 			layoutData.left = new FormAttachment(0, event.x);
 			vSash.setLayoutData(layoutData);
-			vSash.requestLayout();
+			vSash.getParent().layout();
 		}
 	}
 
@@ -483,12 +510,12 @@ public class MainUI extends ShellUserInterface {
 		Rectangle vSashBounds = Check.isInstanceOf(hSash.getLayoutData(), FormData.class).left.control.getBounds();
 
 		event.y = Math.max(vSashBounds.y, Math.min(event.y, vSashBounds.y + vSashBounds.height));
-		if ((event.detail & SWT.DRAG) != SWT.DRAG || (hSash.getStyle() & SWT.SMOOTH) == SWT.SMOOTH) {
+		if (event.detail != SWT.DRAG || (hSash.getStyle() & SWT.SMOOTH) == SWT.SMOOTH) {
 			FormData layoutData = (FormData) hSash.getLayoutData();
 
 			layoutData.top = new FormAttachment(0, event.y);
 			hSash.setLayoutData(layoutData);
-			hSash.requestLayout();
+			hSash.getParent().layout();
 		}
 	}
 
@@ -499,8 +526,40 @@ public class MainUI extends ShellUserInterface {
 			this.inputViewHolder.get().setResult(newResult);
 			this.resultViewHolder.get().setUrl(this.resultRenderServiceHolder.get().setResult(newResult));
 			this.resultSelectionCommands.setEnabled(true);
+			resetCopyObjectMenus(newResult);
 		} else {
 			this.resultSelectionCommands.setEnabled(false);
+			clearCopyObjectMenus();
+		}
+	}
+
+	private void clearCopyObjectMenus() {
+		clearCopyObjectMenu(this.copyObjectMenuHolder);
+		clearCopyObjectMenu(this.copyObjectToolHolder);
+	}
+
+	private void clearCopyObjectMenu(Late<Menu> menuHolder) {
+		MenuBuilder copyObject = new MenuBuilder(menuHolder);
+
+		copyObject.removeItems();
+	}
+
+	private void resetCopyObjectMenus(FileScannerResult result) {
+		FileScannerResultExporter[] exporters = result.exporters();
+
+		resetCopyObjectMenu(this.copyObjectMenuHolder, exporters);
+		resetCopyObjectMenu(this.copyObjectToolHolder, exporters);
+	}
+
+	private void resetCopyObjectMenu(Late<Menu> menuHolder, FileScannerResultExporter[] exporters) {
+		MenuBuilder copyObject = new MenuBuilder(menuHolder);
+
+		copyObject.removeItems();
+		copyObject.addItem(SWT.PUSH);
+		copyObject.withText("Default");
+		for (FileScannerResultExporter exporter : exporters) {
+			copyObject.addItem(SWT.PUSH);
+			copyObject.withText(String.format("%1$s (%2$s)", exporter.name(), exporter.type().mimeType()));
 		}
 	}
 
@@ -612,10 +671,12 @@ public class MainUI extends ShellUserInterface {
 		menu.endMenu();
 		menu.addItem(SWT.CASCADE).withText(MainI18N.i18nMenuEdit());
 		menu.beginMenu();
-		menu.addItem(SWT.PUSH).withText(MainI18N.i18nMenuEditCopy());
+		menu.addItem(SWT.CASCADE).withText(MainI18N.i18nMenuEditCopy());
 		menu.withImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_OBJECT16));
-		menu.onSelected(this::onCopyObjectSelected);
 		this.resultSelectionCommands.add(menu.currentItem());
+		menu.beginMenu();
+		this.copyObjectMenuHolder.set(menu.get());
+		menu.endMenu();
 		menu.endMenu();
 		menu.addItem(SWT.CASCADE).withText(MainI18N.i18nMenuGoto());
 		menu.beginMenu();
@@ -669,10 +730,11 @@ public class MainUI extends ShellUserInterface {
 		fileAndEditTools.onSelected(this::onExportObjectSelected);
 		this.resultSelectionCommands.add(fileAndEditTools.currentItem());
 		fileAndEditTools.addItem(SWT.SEPARATOR);
-		fileAndEditTools.addItem(SWT.PUSH);
+		fileAndEditTools.addItem(SWT.DROP_DOWN);
 		fileAndEditTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_OBJECT16))
 				.withDisabledImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_OBJECT_DISABLED16));
-		fileAndEditTools.onSelected(this::onCopyObjectSelected);
+		fileAndEditTools.onSelected(this::onCopyObjectToolSelected);
+		this.copyObjectToolHolder.set(new Menu(fileAndEditTools.get()));
 		this.resultSelectionCommands.add(fileAndEditTools.currentItem());
 		commands.addItem(SWT.NONE).withControl(fileAndEditTools);
 		// Search tools
@@ -723,7 +785,7 @@ public class MainUI extends ShellUserInterface {
 		GridLayoutBuilder.data().apply(sessionTools);
 		this.sessionCommands.add(sessionTools.currentItem());
 
-		ProgressBar sessionProgress = new ProgressBar(session.get(), SWT.HORIZONTAL);
+		ProgressBar sessionProgress = new ProgressBar(session.get(), SWT.HORIZONTAL | SWT.SMOOTH);
 
 		GridLayoutBuilder.data().apply(sessionProgress);
 		this.sessionProgressHolder.set(sessionProgress);
