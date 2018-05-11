@@ -87,7 +87,7 @@ class PreferencesUI extends ShellUserInterface {
 		ShellBuilder rootBuilder = new ShellBuilder(root());
 		CompositeBuilder<TabFolder> prefTabs = rootBuilder.addCompositeChild(TabFolder.class, SWT.TOP);
 		ControlBuilder<Label> separator = rootBuilder.addControlChild(Label.class, SWT.HORIZONTAL | SWT.SEPARATOR);
-		CompositeBuilder<Composite> buttons = rootBuilder.addCompositeChild(SWT.NO_BACKGROUND);
+		CompositeBuilder<Composite> buttons = rootBuilder.addCompositeChild(SWT.NONE);
 
 		rootBuilder.withText(PreferencesI18N.i18nTitle()).withDefaultImages();
 		buildPrefTabs(prefTabs);
@@ -135,10 +135,12 @@ class PreferencesUI extends ShellUserInterface {
 		ControlBuilder<Button> resultViewColorErrorButton = appearance.addControlChild(Button.class, SWT.PUSH);
 
 		inputViewLabel.get().setText(PreferencesI18N.i18nLabelInputView());
+		styleGroupLabel(inputViewLabel.get());
 		inputViewFontLabel.get().setText(PreferencesI18N.i18nLabelInputViewFont());
 		inputViewFontButton.get().setText(PreferencesI18N.i18nButtonInputViewFont());
 		inputViewFontButton.onSelected(this::onChooseInputViewFont);
 		resultViewLabel.get().setText(PreferencesI18N.i18nLabelResultView());
+		styleGroupLabel(resultViewLabel.get());
 		resultViewFontLabel.get().setText(PreferencesI18N.i18nLabelResultViewFont());
 		resultViewFontButton.get().setText(PreferencesI18N.i18nButtonResultViewFont());
 		resultViewFontButton.onSelected(this::onChooseResultViewFont);
@@ -206,7 +208,7 @@ class PreferencesUI extends ShellUserInterface {
 				SWT.CHECK | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 
 		enabledFormatsLabel.get().setText(PreferencesI18N.i18nLabelEnabledFormats());
-
+		styleGroupLabel(enabledFormatsLabel.get());
 		GridLayoutBuilder.layout().apply(formats);
 		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(enabledFormatsLabel);
 		GridLayoutBuilder.data(GridData.FILL_BOTH).apply(formatsTable);
@@ -234,6 +236,14 @@ class PreferencesUI extends ShellUserInterface {
 		RowLayoutBuilder.data().apply(cancelButton);
 		RowLayoutBuilder.data().apply(applyButton);
 		RowLayoutBuilder.data().apply(applyAndCloseButton);
+	}
+
+	private void styleGroupLabel(Label label) {
+		Font font = label.getFont();
+		FontData fontData = font.getFontData()[0];
+
+		fontData.setStyle(fontData.getStyle() | SWT.BOLD);
+		label.setFont(this.resources.getFont(fontData));
 	}
 
 	private void onChooseInputViewFont() {
