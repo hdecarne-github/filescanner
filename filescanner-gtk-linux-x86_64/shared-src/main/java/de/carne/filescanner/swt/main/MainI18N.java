@@ -76,6 +76,25 @@ public final class MainI18N {
 	}
 
 	/**
+	 * Resource key {@code I18N_MENU_EDIT_COPY_DEFAULT}
+	 * <p>
+	 * &Result display
+	 */
+	public static final String I18N_MENU_EDIT_COPY_DEFAULT = "I18N_MENU_EDIT_COPY_DEFAULT";
+
+	/**
+	 * Resource string {@code I18N_MENU_EDIT_COPY_DEFAULT}
+	 * <p>
+	 * &Result display
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nMenuEditCopyDefault(Object... arguments) {
+		return format(I18N_MENU_EDIT_COPY_DEFAULT, arguments);
+	}
+
+	/**
 	 * Resource key {@code I18N_MENU_FILE}
 	 * <p>
 	 * &File

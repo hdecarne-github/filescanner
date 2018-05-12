@@ -78,14 +78,14 @@ public final class ExportI18N {
 	/**
 	 * Resource key {@code I18N_LABEL_EXPORT_PATH}
 	 * <p>
-	 * Path
+	 * Path:
 	 */
 	public static final String I18N_LABEL_EXPORT_PATH = "I18N_LABEL_EXPORT_PATH";
 
 	/**
 	 * Resource string {@code I18N_LABEL_EXPORT_PATH}
 	 * <p>
-	 * Path
+	 * Path:
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -97,14 +97,14 @@ public final class ExportI18N {
 	/**
 	 * Resource key {@code I18N_LABEL_EXPORT_TYPE}
 	 * <p>
-	 * Export
+	 * Export:
 	 */
 	public static final String I18N_LABEL_EXPORT_TYPE = "I18N_LABEL_EXPORT_TYPE";
 
 	/**
 	 * Resource string {@code I18N_LABEL_EXPORT_TYPE}
 	 * <p>
-	 * Export
+	 * Export:
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -116,14 +116,14 @@ public final class ExportI18N {
 	/**
 	 * Resource key {@code I18N_TITLE}
 	 * <p>
-	 * Export result
+	 * Export scan result
 	 */
 	public static final String I18N_TITLE = "I18N_TITLE";
 
 	/**
 	 * Resource string {@code I18N_TITLE}
 	 * <p>
-	 * Export result
+	 * Export scan result
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.

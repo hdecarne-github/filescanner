@@ -20,11 +20,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Shell;
 
+import de.carne.boot.check.Nullable;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.swt.graphics.ResourceException;
 
 /**
- * Dialog for exporting file scanner results.
+ * Dialog for file scanner result export setup.
  */
 public class ExportDialog extends Dialog {
 
@@ -39,15 +40,18 @@ public class ExportDialog extends Dialog {
 
 	/**
 	 * Opens and runs the dialog.
-	 * 
+	 *
 	 * @param result the {@linkplain FileScannerResult} to export.
+	 * @return the export options selected by the user or {@code null} if the dialog has been cancelled.
 	 * @throws ResourceException if a required resource is not available.
 	 */
-	public void open(FileScannerResult result) throws ResourceException {
+	@Nullable
+	public ExportOptions open(FileScannerResult result) throws ResourceException {
 		ExportUI userInterface = new ExportUI(new Shell(getParent(), getStyle()), result);
 
 		userInterface.open();
 		userInterface.run();
+		return userInterface.getExportOptions();
 	}
 
 }

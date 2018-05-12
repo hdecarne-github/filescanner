@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -33,6 +32,7 @@ import de.carne.filescanner.swt.resources.Images;
 import de.carne.swt.graphics.ResourceException;
 import de.carne.swt.graphics.ResourceTracker;
 import de.carne.swt.layout.GridLayoutBuilder;
+import de.carne.swt.layout.RowLayoutBuilder;
 import de.carne.swt.platform.PlatformIntegration;
 import de.carne.swt.util.Property;
 import de.carne.swt.widgets.CompositeBuilder;
@@ -48,6 +48,8 @@ class ExportUI extends ShellUserInterface {
 	private final Late<Combo> exportTypeHolder = new Late<>();
 	private final Late<Text> exportPathTextHolder = new Late<>();
 	private final Property<Integer> exporterTypeSelection = new Property<>(Integer.valueOf(0));
+	@Nullable
+	private ExportOptions exportOptions = null;
 
 	ExportUI(Shell root, FileScannerResult result) {
 		super(root);
@@ -62,6 +64,11 @@ class ExportUI extends ShellUserInterface {
 		root.pack();
 		root.setMinimumSize(root.getSize());
 		root.open();
+	}
+
+	@Nullable
+	public ExportOptions getExportOptions() {
+		return this.exportOptions;
 	}
 
 	private Shell buildRoot() {
@@ -88,7 +95,7 @@ class ExportUI extends ShellUserInterface {
 		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(exportPathText);
 		GridLayoutBuilder.data().apply(exportPathButton);
 		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).span(3, 1).apply(separator);
-		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).span(3, 1).apply(buttons);
+		GridLayoutBuilder.data().align(SWT.END, SWT.TOP).grab(false, false).span(3, 1).apply(buttons);
 
 		this.exportTypeHolder.set(exportType.get());
 		this.exportPathTextHolder.set(exportPathText.get());
@@ -99,8 +106,6 @@ class ExportUI extends ShellUserInterface {
 	}
 
 	private void buildButtons(CompositeBuilder<Composite> buttons) {
-		ControlBuilder<ProgressBar> exportProgress = buttons.addControlChild(ProgressBar.class,
-				SWT.HORIZONTAL | SWT.SMOOTH);
 		ControlBuilder<Button> cancelButton = buttons.addControlChild(Button.class, SWT.PUSH);
 		ControlBuilder<Button> exportButton = buttons.addControlChild(Button.class, SWT.PUSH);
 
@@ -111,10 +116,9 @@ class ExportUI extends ShellUserInterface {
 		cancelButton.onSelected(this::onCancelSelected);
 		exportButton.get().setText(ExportI18N.i18nButtonExport());
 		exportButton.onSelected(this::onExportSelected);
-		GridLayoutBuilder.layout(3).apply(buttons);
-		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(exportProgress);
-		GridLayoutBuilder.data().apply(cancelButton);
-		GridLayoutBuilder.data().apply(exportButton);
+		RowLayoutBuilder.layout().fill(true).margin(0, 0, 0, 0).apply(buttons);
+		RowLayoutBuilder.data().apply(cancelButton);
+		RowLayoutBuilder.data().apply(exportButton);
 	}
 
 	private void onCancelSelected() {
@@ -122,7 +126,7 @@ class ExportUI extends ShellUserInterface {
 	}
 
 	private void onExportSelected() {
-
+		root().close();
 	}
 
 	private void onExporterTypeSelectionChanged(@Nullable Integer newValue,
@@ -132,7 +136,7 @@ class ExportUI extends ShellUserInterface {
 			FileScannerResultExporter exporter = this.result.exporters()[exporterIndex];
 
 			this.exportTypeHolder.get().select(exporterIndex);
-			this.exportPathTextHolder.get().setText(determineExportPath(exporter.defaultStreamName(this.result)));
+			this.exportPathTextHolder.get().setText(determineExportPath(exporter.defaultFileName(this.result)));
 		}
 	}
 

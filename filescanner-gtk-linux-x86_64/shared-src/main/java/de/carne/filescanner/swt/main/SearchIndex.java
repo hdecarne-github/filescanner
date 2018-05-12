@@ -49,7 +49,7 @@ import de.carne.boot.Exceptions;
 import de.carne.boot.check.Nullable;
 import de.carne.boot.logging.Log;
 import de.carne.filescanner.engine.FileScannerResult;
-import de.carne.filescanner.engine.transfer.FileScannerResultOutput;
+import de.carne.filescanner.engine.transfer.RenderOutput;
 import de.carne.filescanner.engine.transfer.RenderStyle;
 import de.carne.filescanner.engine.transfer.StringRenderer;
 import de.carne.io.Closeables;
@@ -139,7 +139,7 @@ final class SearchIndex implements AutoCloseable {
 
 		try {
 			resultContent.emitText(RenderStyle.NORMAL, result.name(), true);
-			FileScannerResultOutput.render(result, resultContent);
+			RenderOutput.render(result, resultContent);
 		} catch (InterruptedIOException e) {
 			LOG.debug(e, "Result ''{0}'' content truncated at length {1}", result, e.bytesTransferred);
 		} finally {

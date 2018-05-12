@@ -21,14 +21,13 @@ import java.util.function.Consumer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -39,6 +38,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
@@ -54,6 +54,7 @@ import de.carne.filescanner.engine.FileScannerProgress;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.FileScannerResultExporter;
 import de.carne.filescanner.swt.export.ExportDialog;
+import de.carne.filescanner.swt.export.ExportOptions;
 import de.carne.filescanner.swt.preferences.Config;
 import de.carne.filescanner.swt.preferences.PreferencesDialog;
 import de.carne.filescanner.swt.preferences.UserPreferences;
@@ -388,8 +389,11 @@ public class MainUI extends ShellUserInterface {
 
 			if (selection != null) {
 				ExportDialog exportDialog = new ExportDialog(get());
+				ExportOptions exportOptions = exportDialog.open(selection);
 
-				exportDialog.open(selection);
+				if (exportOptions != null) {
+
+				}
 			}
 		} catch (Exception e) {
 			unexpectedException(e);
@@ -401,22 +405,25 @@ public class MainUI extends ShellUserInterface {
 			ToolItem toolItem = Check.isInstanceOf(event.widget, ToolItem.class);
 			Rectangle toolItemBounds = toolItem.getBounds();
 			Menu menu = this.copyObjectToolHolder.get();
+			Point menuLocation = toolItem.getParent().toDisplay(toolItemBounds.x,
+					toolItemBounds.y + toolItemBounds.height);
 
-			menu.setLocation(
-					toolItem.getParent().toDisplay(toolItemBounds.x, toolItemBounds.y + toolItemBounds.height));
+			menu.setLocation(menuLocation);
 			menu.setVisible(true);
+		} else {
+
 		}
 	}
 
-	private void onCopyObjectSelected() {
-		Clipboard clipboard = new Clipboard(root().getDisplay());
+	private void onCopyObjectSelected(SelectionEvent event) {
+		MenuItem menuItem = Check.isInstanceOf(event.widget, MenuItem.class);
+		Object menuItemData = menuItem.getData();
 
-		try {
-			for (TransferData type : clipboard.getAvailableTypes()) {
+		if (menuItemData != null) {
+			FileScannerResultExporter exporter = Check.isInstanceOf(menuItemData, FileScannerResultExporter.class);
 
-			}
-		} finally {
-			clipboard.dispose();
+		} else {
+
 		}
 	}
 
@@ -556,10 +563,13 @@ public class MainUI extends ShellUserInterface {
 
 		copyObject.removeItems();
 		copyObject.addItem(SWT.PUSH);
-		copyObject.withText("Default");
+		copyObject.withText(MainI18N.i18nMenuEditCopyDefault());
+		copyObject.onSelected(this::onCopyObjectSelected);
 		for (FileScannerResultExporter exporter : exporters) {
 			copyObject.addItem(SWT.PUSH);
 			copyObject.withText(String.format("%1$s (%2$s)", exporter.name(), exporter.type().mimeType()));
+			copyObject.onSelected(this::onCopyObjectSelected);
+			copyObject.get().setData(exporter);
 		}
 	}
 

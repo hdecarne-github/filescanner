@@ -42,8 +42,8 @@ import de.carne.boot.check.Check;
 import de.carne.boot.check.Nullable;
 import de.carne.boot.logging.Log;
 import de.carne.filescanner.engine.FileScannerResult;
-import de.carne.filescanner.engine.transfer.FileScannerResultOutput;
 import de.carne.filescanner.engine.transfer.RenderOption;
+import de.carne.filescanner.engine.transfer.RenderOutput;
 import de.carne.filescanner.engine.transfer.RenderStyle;
 import de.carne.filescanner.engine.transfer.Renderer;
 import de.carne.filescanner.swt.preferences.Config;
@@ -182,6 +182,11 @@ class HtmlRenderService extends HttpHandler implements Renderer {
 	}
 
 	@Override
+	public void close() {
+		// Nothing to do here
+	}
+
+	@Override
 	public void service(@Nullable Request request, @Nullable Response response) throws Exception {
 		if (request != null && response != null) {
 			FileScannerResult checkedResult = this.result;
@@ -189,7 +194,7 @@ class HtmlRenderService extends HttpHandler implements Renderer {
 			if (checkedResult != null) {
 				this.responseHolder.set(response);
 				try {
-					FileScannerResultOutput.render(checkedResult, this);
+					RenderOutput.render(checkedResult, this);
 				} finally {
 					this.responseHolder.remove();
 				}
@@ -197,11 +202,6 @@ class HtmlRenderService extends HttpHandler implements Renderer {
 				response.finish();
 			}
 		}
-	}
-
-	@Override
-	public void close() {
-		// Nothing to do here
 	}
 
 	public void dispose() {
