@@ -48,6 +48,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 import de.carne.boot.Exceptions;
+import de.carne.boot.check.Check;
 import de.carne.boot.check.Nullable;
 import de.carne.boot.logging.Log;
 import de.carne.filescanner.engine.FileScannerProgress;
@@ -60,7 +61,6 @@ import de.carne.filescanner.swt.preferences.PreferencesDialog;
 import de.carne.filescanner.swt.preferences.UserPreferences;
 import de.carne.filescanner.swt.resources.Images;
 import de.carne.filescanner.swt.widgets.Hex;
-import de.carne.nio.compression.Check;
 import de.carne.swt.dnd.DropTargetBuilder;
 import de.carne.swt.graphics.ResourceException;
 import de.carne.swt.graphics.ResourceTracker;

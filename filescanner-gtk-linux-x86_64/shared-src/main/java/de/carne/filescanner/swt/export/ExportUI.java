@@ -16,6 +16,7 @@
  */
 package de.carne.filescanner.swt.export;
 
+import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -92,15 +93,18 @@ class ExportUI extends ShellUserInterface {
 
 	private Shell buildRoot() {
 		ShellBuilder rootBuilder = new ShellBuilder(root());
+		ControlBuilder<Label> title = rootBuilder.addControlChild(Label.class, SWT.NONE);
+		ControlBuilder<Label> separator1 = rootBuilder.addControlChild(Label.class, SWT.HORIZONTAL | SWT.SEPARATOR);
 		ControlBuilder<Label> exportTypeLabel = rootBuilder.addControlChild(Label.class, SWT.NONE);
 		ControlBuilder<Combo> exportType = rootBuilder.addControlChild(Combo.class, SWT.READ_ONLY);
 		ControlBuilder<Label> exportPathLabel = rootBuilder.addControlChild(Label.class, SWT.NONE);
 		ControlBuilder<Text> exportPathText = rootBuilder.addControlChild(Text.class, SWT.SINGLE | SWT.BORDER);
 		ControlBuilder<Button> exportPathButton = rootBuilder.addControlChild(Button.class, SWT.PUSH);
-		ControlBuilder<Label> separator = rootBuilder.addControlChild(Label.class, SWT.HORIZONTAL | SWT.SEPARATOR);
+		ControlBuilder<Label> separator2 = rootBuilder.addControlChild(Label.class, SWT.HORIZONTAL | SWT.SEPARATOR);
 		CompositeBuilder<Composite> buttons = rootBuilder.addCompositeChild(SWT.NONE);
 
 		rootBuilder.withText(ExportI18N.i18nTitle()).withDefaultImages();
+		title.get().setText(ExportI18N.i18nLabelExportResult(this.result.name()));
 		exportTypeLabel.get().setText(ExportI18N.i18nLabelExportType());
 		exportPathLabel.get().setText(ExportI18N.i18nLabelExportPath());
 		exportPathButton.get().setImage(this.resources.getImage(Images.class, Images.IMAGE_OPEN_FILE16));
@@ -109,12 +113,14 @@ class ExportUI extends ShellUserInterface {
 		buildButtons(buttons);
 
 		GridLayoutBuilder.layout(3).apply(rootBuilder);
+		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).span(3, 1).apply(title);
+		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).span(3, 1).apply(separator1);
 		GridLayoutBuilder.data().apply(exportTypeLabel);
 		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).span(2, 1).apply(exportType);
 		GridLayoutBuilder.data().apply(exportPathLabel);
 		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(exportPathText);
 		GridLayoutBuilder.data().apply(exportPathButton);
-		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).span(3, 1).apply(separator);
+		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).span(3, 1).apply(separator2);
 		GridLayoutBuilder.data().align(SWT.END, SWT.TOP).grab(false, false).span(3, 1).apply(buttons);
 
 		this.exportTypeHolder.set(exportType.get());
@@ -170,30 +176,17 @@ class ExportUI extends ShellUserInterface {
 	}
 
 	private void onExportSelected() {
-		int exporterIndex = -1;
-		Path exportPath = null;
-		ValidationException validationException = null;
-
 		try {
-			exporterIndex = InputValidator
-					.checkNotNull(this.exporterTypeSelection.get(), ExportI18N::i18nMessageNoExporter).get().intValue();
-			exportPath = StringValidator
-					.checkNotEmpty(this.exportPathTextHolder.get().getText(), ExportI18N::i18nMessageNoExportPath)
-					.convert(PathValidator::fromString, ExportI18N::i18nMessageInvalidExportPath).get();
-			this.exportOptions = new ExportOptions(this.result.exporters()[exporterIndex], exportPath);
-			root().close();
-		} catch (ValidationException e) {
-			validationException = e;
-		}
-		if (validationException != null) {
-			try {
-				MessageBox messageBox = MessageBoxBuilder.error(root()).withText(root().getText())
-						.withMessage(validationException.getMessage()).get();
+			ExportOptions validatedExportOptions = validateAndGetExportOptions();
 
-				messageBox.open();
-			} catch (Exception e) {
-				unexpectedException(e);
+			if (confirmOverwrite(validatedExportOptions)) {
+				this.exportOptions = validatedExportOptions;
+				root().close();
 			}
+		} catch (ValidationException e) {
+			validationMessageBox(e);
+		} catch (Exception e) {
+			unexpectedException(e);
 		}
 	}
 
@@ -239,6 +232,26 @@ class ExportUI extends ShellUserInterface {
 				.convert(PathValidator::fromString, ExportI18N::i18nMessageInvalidExportPath).get();
 
 		return new ExportOptions(this.result.exporters()[exporterIndex], exportPath);
+	}
+
+	private boolean confirmOverwrite(ExportOptions exportOptions) {
+		Path exportPath = exportOptions.path();
+		boolean confirmed = false;
+
+		if (Files.exists(exportPath)) {
+		}
+		return confirmed;
+	}
+
+	private void validationMessageBox(ValidationException validationException) {
+		try {
+			MessageBox messageBox = MessageBoxBuilder.error(root()).withText(root().getText())
+					.withMessage(validationException.getMessage()).get();
+
+			messageBox.open();
+		} catch (Exception e) {
+			unexpectedException(e);
+		}
 	}
 
 }
