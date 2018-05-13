@@ -80,7 +80,7 @@ final class SearchIndex implements AutoCloseable {
 
 	public SearchIndex() throws IOException {
 		this.indexPath = Files.createTempDirectory(getClass().getSimpleName(),
-				FileAttributes.userDirectoryDefault(FileUtil.TMP_DIR));
+				FileAttributes.userDirectoryDefault(FileUtil.tmpDir()));
 		this.indexDirectory = FSDirectory.open(this.indexPath);
 
 		LOG.info("Created search index ''{0}''", this.indexPath);

@@ -16,19 +16,28 @@
  */
 package de.carne.filescanner.swt.export;
 
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.prefs.Preferences;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import de.carne.boot.Exceptions;
 import de.carne.boot.check.Nullable;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.FileScannerResultExporter;
 import de.carne.filescanner.swt.resources.Images;
+import de.carne.nio.file.FileUtil;
 import de.carne.swt.graphics.ResourceException;
 import de.carne.swt.graphics.ResourceTracker;
 import de.carne.swt.layout.GridLayoutBuilder;
@@ -37,12 +46,22 @@ import de.carne.swt.platform.PlatformIntegration;
 import de.carne.swt.util.Property;
 import de.carne.swt.widgets.CompositeBuilder;
 import de.carne.swt.widgets.ControlBuilder;
+import de.carne.swt.widgets.FileDialogBuilder;
+import de.carne.swt.widgets.MessageBoxBuilder;
 import de.carne.swt.widgets.ShellBuilder;
 import de.carne.swt.widgets.ShellUserInterface;
 import de.carne.util.Late;
+import de.carne.util.prefs.PathPreference;
+import de.carne.util.validation.InputValidator;
+import de.carne.util.validation.PathValidator;
+import de.carne.util.validation.StringValidator;
+import de.carne.util.validation.ValidationException;
 
 class ExportUI extends ShellUserInterface {
 
+	private static final PathPreference PREF_EXPORT_DIR = new PathPreference("exportDir", FileUtil.workingDir());
+
+	private final Preferences preferences = Preferences.userNodeForPackage(ExportUI.class);
 	private final FileScannerResult result;
 	private final ResourceTracker resources;
 	private final Late<Combo> exportTypeHolder = new Late<>();
@@ -85,6 +104,7 @@ class ExportUI extends ShellUserInterface {
 		exportTypeLabel.get().setText(ExportI18N.i18nLabelExportType());
 		exportPathLabel.get().setText(ExportI18N.i18nLabelExportPath());
 		exportPathButton.get().setImage(this.resources.getImage(Images.class, Images.IMAGE_OPEN_FILE16));
+		exportPathButton.onSelected(this::onExportPathSelected);
 
 		buildButtons(buttons);
 
@@ -105,6 +125,16 @@ class ExportUI extends ShellUserInterface {
 		return rootBuilder.get();
 	}
 
+	private void initializeOptions() {
+		Combo exportType = this.exportTypeHolder.get();
+		FileScannerResultExporter[] exporters = this.result.exporters();
+
+		for (FileScannerResultExporter exporter : exporters) {
+			exportType.add(String.format("%1$s (%2$s)", exporter.name(), exporter.type().mimeType()));
+		}
+		this.exporterTypeSelection.set(Integer.valueOf(0), true);
+	}
+
 	private void buildButtons(CompositeBuilder<Composite> buttons) {
 		ControlBuilder<Button> cancelButton = buttons.addControlChild(Button.class, SWT.PUSH);
 		ControlBuilder<Button> exportButton = buttons.addControlChild(Button.class, SWT.PUSH);
@@ -121,12 +151,50 @@ class ExportUI extends ShellUserInterface {
 		RowLayoutBuilder.data().apply(exportButton);
 	}
 
+	private void onExportPathSelected() {
+		try {
+			FileDialog fileDialog = FileDialogBuilder.save(root()).withFileName(getCurrentExportPath())
+					.withOverwrite(false).get();
+			String exportPath = fileDialog.open();
+
+			if (exportPath != null) {
+				this.exportPathTextHolder.get().setText(exportPath);
+			}
+		} catch (Exception e) {
+			unexpectedException(e);
+		}
+	}
+
 	private void onCancelSelected() {
 		root().close();
 	}
 
 	private void onExportSelected() {
-		root().close();
+		int exporterIndex = -1;
+		Path exportPath = null;
+		ValidationException validationException = null;
+
+		try {
+			exporterIndex = InputValidator
+					.checkNotNull(this.exporterTypeSelection.get(), ExportI18N::i18nMessageNoExporter).get().intValue();
+			exportPath = StringValidator
+					.checkNotEmpty(this.exportPathTextHolder.get().getText(), ExportI18N::i18nMessageNoExportPath)
+					.convert(PathValidator::fromString, ExportI18N::i18nMessageInvalidExportPath).get();
+			this.exportOptions = new ExportOptions(this.result.exporters()[exporterIndex], exportPath);
+			root().close();
+		} catch (ValidationException e) {
+			validationException = e;
+		}
+		if (validationException != null) {
+			try {
+				MessageBox messageBox = MessageBoxBuilder.error(root()).withText(root().getText())
+						.withMessage(validationException.getMessage()).get();
+
+				messageBox.open();
+			} catch (Exception e) {
+				unexpectedException(e);
+			}
+		}
 	}
 
 	private void onExporterTypeSelectionChanged(@Nullable Integer newValue,
@@ -136,22 +204,41 @@ class ExportUI extends ShellUserInterface {
 			FileScannerResultExporter exporter = this.result.exporters()[exporterIndex];
 
 			this.exportTypeHolder.get().select(exporterIndex);
-			this.exportPathTextHolder.get().setText(determineExportPath(exporter.defaultFileName(this.result)));
+			this.exportPathTextHolder.get().setText(buildExportPath(exporter.defaultFileName(this.result)));
 		}
 	}
 
-	private String determineExportPath(String defaultStreamName) {
-		return defaultStreamName;
+	private String buildExportPath(String defaultFileName) {
+		Path baseDir = PREF_EXPORT_DIR.get(this.preferences);
+		Path exportPath = null;
+
+		try {
+			exportPath = baseDir.resolve(defaultFileName).normalize();
+		} catch (InvalidPathException e) {
+			Exceptions.ignore(e);
+		}
+		return (exportPath != null ? exportPath.toString() : "");
 	}
 
-	private void initializeOptions() {
-		Combo exportType = this.exportTypeHolder.get();
-		FileScannerResultExporter[] exporters = this.result.exporters();
+	private String getCurrentExportPath() {
+		Path currentExportPath = null;
 
-		for (FileScannerResultExporter exporter : exporters) {
-			exportType.add(String.format("%1$s (%2$s)", exporter.name(), exporter.type().mimeType()));
+		try {
+			currentExportPath = Paths.get(this.exportPathTextHolder.get().getText().trim());
+		} catch (InvalidPathException e) {
+			Exceptions.ignore(e);
 		}
-		this.exporterTypeSelection.set(Integer.valueOf(0), true);
+		return (currentExportPath != null ? currentExportPath.toString() : "");
+	}
+
+	private ExportOptions validateAndGetExportOptions() throws ValidationException {
+		int exporterIndex = InputValidator
+				.checkNotNull(this.exporterTypeSelection.get(), ExportI18N::i18nMessageNoExporter).get().intValue();
+		Path exportPath = StringValidator
+				.checkNotEmpty(this.exportPathTextHolder.get().getText(), ExportI18N::i18nMessageNoExportPath)
+				.convert(PathValidator::fromString, ExportI18N::i18nMessageInvalidExportPath).get();
+
+		return new ExportOptions(this.result.exporters()[exporterIndex], exportPath);
 	}
 
 }

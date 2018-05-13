@@ -566,10 +566,12 @@ public class MainUI extends ShellUserInterface {
 		copyObject.withText(MainI18N.i18nMenuEditCopyDefault());
 		copyObject.onSelected(this::onCopyObjectSelected);
 		for (FileScannerResultExporter exporter : exporters) {
-			copyObject.addItem(SWT.PUSH);
-			copyObject.withText(String.format("%1$s (%2$s)", exporter.name(), exporter.type().mimeType()));
-			copyObject.onSelected(this::onCopyObjectSelected);
-			copyObject.get().setData(exporter);
+			if (ClipboardTransfers.isTransferable(exporter.type())) {
+				copyObject.addItem(SWT.PUSH);
+				copyObject.withText(String.format("%1$s (%2$s)", exporter.name(), exporter.type().mimeType()));
+				copyObject.onSelected(this::onCopyObjectSelected);
+				copyObject.get().setData(exporter);
+			}
 		}
 	}
 

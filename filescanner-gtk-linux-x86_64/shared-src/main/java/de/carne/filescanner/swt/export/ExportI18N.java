@@ -114,6 +114,82 @@ public final class ExportI18N {
 	}
 
 	/**
+	 * Resource key {@code I18N_MESSAGE_INVALID_EXPORT_PATH}
+	 * <p>
+	 * ''{0}'' is not a valid export file path.<br>Please enter or select a valid export file path.
+	 */
+	public static final String I18N_MESSAGE_INVALID_EXPORT_PATH = "I18N_MESSAGE_INVALID_EXPORT_PATH";
+
+	/**
+	 * Resource string {@code I18N_MESSAGE_INVALID_EXPORT_PATH}
+	 * <p>
+	 * ''{0}'' is not a valid export file path.<br>Please enter or select a valid export file path.
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nMessageInvalidExportPath(Object... arguments) {
+		return format(I18N_MESSAGE_INVALID_EXPORT_PATH, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_MESSAGE_NO_EXPORTER}
+	 * <p>
+	 * Please select an export type.
+	 */
+	public static final String I18N_MESSAGE_NO_EXPORTER = "I18N_MESSAGE_NO_EXPORTER";
+
+	/**
+	 * Resource string {@code I18N_MESSAGE_NO_EXPORTER}
+	 * <p>
+	 * Please select an export type.
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nMessageNoExporter(Object... arguments) {
+		return format(I18N_MESSAGE_NO_EXPORTER, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_MESSAGE_NO_EXPORT_PATH}
+	 * <p>
+	 * Please enter or select an export file path.
+	 */
+	public static final String I18N_MESSAGE_NO_EXPORT_PATH = "I18N_MESSAGE_NO_EXPORT_PATH";
+
+	/**
+	 * Resource string {@code I18N_MESSAGE_NO_EXPORT_PATH}
+	 * <p>
+	 * Please enter or select an export file path.
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nMessageNoExportPath(Object... arguments) {
+		return format(I18N_MESSAGE_NO_EXPORT_PATH, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_MESSAGE_OVERWRITE_EXPORT_PATH}
+	 * <p>
+	 * File ''{0}'' already exists.<br>Do you want to overwrite the file?
+	 */
+	public static final String I18N_MESSAGE_OVERWRITE_EXPORT_PATH = "I18N_MESSAGE_OVERWRITE_EXPORT_PATH";
+
+	/**
+	 * Resource string {@code I18N_MESSAGE_OVERWRITE_EXPORT_PATH}
+	 * <p>
+	 * File ''{0}'' already exists.<br>Do you want to overwrite the file?
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nMessageOverwriteExportPath(Object... arguments) {
+		return format(I18N_MESSAGE_OVERWRITE_EXPORT_PATH, arguments);
+	}
+
+	/**
 	 * Resource key {@code I18N_TITLE}
 	 * <p>
 	 * Export scan result
