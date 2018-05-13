@@ -46,10 +46,12 @@ import de.carne.swt.graphics.ResourceTracker;
 import de.carne.swt.layout.GridLayoutBuilder;
 import de.carne.swt.layout.RowLayoutBuilder;
 import de.carne.swt.platform.PlatformIntegration;
+import de.carne.swt.widgets.ButtonBuilder;
 import de.carne.swt.widgets.ColorDialogBuilder;
 import de.carne.swt.widgets.CompositeBuilder;
 import de.carne.swt.widgets.ControlBuilder;
 import de.carne.swt.widgets.FontDialogBuilder;
+import de.carne.swt.widgets.LabelBuilder;
 import de.carne.swt.widgets.ShellBuilder;
 import de.carne.swt.widgets.ShellUserInterface;
 import de.carne.util.Late;
@@ -86,7 +88,7 @@ class PreferencesUI extends ShellUserInterface {
 	private Shell buildRoot() {
 		ShellBuilder rootBuilder = new ShellBuilder(root());
 		CompositeBuilder<TabFolder> prefTabs = rootBuilder.addCompositeChild(TabFolder.class, SWT.TOP);
-		ControlBuilder<Label> separator = rootBuilder.addControlChild(Label.class, SWT.HORIZONTAL | SWT.SEPARATOR);
+		LabelBuilder separator = rootBuilder.addLabelChild(SWT.HORIZONTAL | SWT.SEPARATOR);
 		CompositeBuilder<Composite> buttons = rootBuilder.addCompositeChild(SWT.NONE);
 
 		rootBuilder.withText(PreferencesI18N.i18nTitle()).withDefaultImages();
@@ -113,58 +115,58 @@ class PreferencesUI extends ShellUserInterface {
 
 	private void buildAppearancePrefTab(CompositeBuilder<TabFolder> prefTabs, TabItem prefTab) {
 		CompositeBuilder<Composite> appearance = prefTabs.addCompositeChild(SWT.NO_BACKGROUND);
-		ControlBuilder<Label> inputViewLabel = appearance.addControlChild(Label.class, SWT.NONE);
-		ControlBuilder<Label> inputViewFontLabel = appearance.addControlChild(Label.class, SWT.NONE);
-		ControlBuilder<Button> inputViewFontButton = appearance.addControlChild(Button.class, SWT.PUSH);
-		ControlBuilder<Label> resultViewLabel = appearance.addControlChild(Label.class, SWT.NONE);
-		ControlBuilder<Label> resultViewFontLabel = appearance.addControlChild(Label.class, SWT.NONE);
-		ControlBuilder<Button> resultViewFontButton = appearance.addControlChild(Button.class, SWT.PUSH);
-		ControlBuilder<Label> resultViewColorNormalLabel = appearance.addControlChild(Label.class, SWT.NONE);
-		ControlBuilder<Button> resultViewColorNormalButton = appearance.addControlChild(Button.class, SWT.PUSH);
-		ControlBuilder<Label> resultViewColorValueLabel = appearance.addControlChild(Label.class, SWT.NONE);
-		ControlBuilder<Button> resultViewColorValueButton = appearance.addControlChild(Button.class, SWT.PUSH);
-		ControlBuilder<Label> resultViewColorCommentLabel = appearance.addControlChild(Label.class, SWT.NONE);
-		ControlBuilder<Button> resultViewColorCommentButton = appearance.addControlChild(Button.class, SWT.PUSH);
-		ControlBuilder<Label> resultViewColorKeywordLabel = appearance.addControlChild(Label.class, SWT.NONE);
-		ControlBuilder<Button> resultViewColorKeywordButton = appearance.addControlChild(Button.class, SWT.PUSH);
-		ControlBuilder<Label> resultViewColorOperatorLabel = appearance.addControlChild(Label.class, SWT.NONE);
-		ControlBuilder<Button> resultViewColorOperatorButton = appearance.addControlChild(Button.class, SWT.PUSH);
-		ControlBuilder<Label> resultViewColorLabelLabel = appearance.addControlChild(Label.class, SWT.NONE);
-		ControlBuilder<Button> resultViewColorLabelButton = appearance.addControlChild(Button.class, SWT.PUSH);
-		ControlBuilder<Label> resultViewColorErrorLabel = appearance.addControlChild(Label.class, SWT.NONE);
-		ControlBuilder<Button> resultViewColorErrorButton = appearance.addControlChild(Button.class, SWT.PUSH);
+		LabelBuilder inputViewLabel = appearance.addLabelChild(SWT.NONE);
+		LabelBuilder inputViewFontLabel = appearance.addLabelChild(SWT.NONE);
+		ButtonBuilder inputViewFontButton = appearance.addButtonChild(SWT.PUSH);
+		LabelBuilder resultViewLabel = appearance.addLabelChild(SWT.NONE);
+		LabelBuilder resultViewFontLabel = appearance.addLabelChild(SWT.NONE);
+		ButtonBuilder resultViewFontButton = appearance.addButtonChild(SWT.PUSH);
+		LabelBuilder resultViewColorNormalLabel = appearance.addLabelChild(SWT.NONE);
+		ButtonBuilder resultViewColorNormalButton = appearance.addButtonChild(SWT.PUSH);
+		LabelBuilder resultViewColorValueLabel = appearance.addLabelChild(SWT.NONE);
+		ButtonBuilder resultViewColorValueButton = appearance.addButtonChild(SWT.PUSH);
+		LabelBuilder resultViewColorCommentLabel = appearance.addLabelChild(SWT.NONE);
+		ButtonBuilder resultViewColorCommentButton = appearance.addButtonChild(SWT.PUSH);
+		LabelBuilder resultViewColorKeywordLabel = appearance.addLabelChild(SWT.NONE);
+		ButtonBuilder resultViewColorKeywordButton = appearance.addButtonChild(SWT.PUSH);
+		LabelBuilder resultViewColorOperatorLabel = appearance.addLabelChild(SWT.NONE);
+		ButtonBuilder resultViewColorOperatorButton = appearance.addButtonChild(SWT.PUSH);
+		LabelBuilder resultViewColorLabelLabel = appearance.addLabelChild(SWT.NONE);
+		ButtonBuilder resultViewColorLabelButton = appearance.addButtonChild(SWT.PUSH);
+		LabelBuilder resultViewColorErrorLabel = appearance.addLabelChild(SWT.NONE);
+		ButtonBuilder resultViewColorErrorButton = appearance.addButtonChild(SWT.PUSH);
 
-		inputViewLabel.get().setText(PreferencesI18N.i18nLabelInputView());
+		inputViewLabel.withText(PreferencesI18N.i18nLabelInputView());
 		styleGroupLabel(inputViewLabel.get());
-		inputViewFontLabel.get().setText(PreferencesI18N.i18nLabelInputViewFont());
-		inputViewFontButton.get().setText(PreferencesI18N.i18nButtonInputViewFont());
+		inputViewFontLabel.withText(PreferencesI18N.i18nLabelInputViewFont());
+		inputViewFontButton.withText(PreferencesI18N.i18nButtonInputViewFont());
 		inputViewFontButton.onSelected(this::onChooseInputViewFont);
-		resultViewLabel.get().setText(PreferencesI18N.i18nLabelResultView());
+		resultViewLabel.withText(PreferencesI18N.i18nLabelResultView());
 		styleGroupLabel(resultViewLabel.get());
-		resultViewFontLabel.get().setText(PreferencesI18N.i18nLabelResultViewFont());
-		resultViewFontButton.get().setText(PreferencesI18N.i18nButtonResultViewFont());
+		resultViewFontLabel.withText(PreferencesI18N.i18nLabelResultViewFont());
+		resultViewFontButton.withText(PreferencesI18N.i18nButtonResultViewFont());
 		resultViewFontButton.onSelected(this::onChooseResultViewFont);
-		resultViewColorNormalLabel.get().setText(PreferencesI18N.i18nLabelResultViewColorNormal());
-		resultViewColorNormalButton.get().setText(PreferencesI18N.i18nButtonResultViewColorNormal());
+		resultViewColorNormalLabel.withText(PreferencesI18N.i18nLabelResultViewColorNormal());
+		resultViewColorNormalButton.withText(PreferencesI18N.i18nButtonResultViewColorNormal());
 		resultViewColorNormalButton.onSelected(() -> onChooseResultViewColor(this.resultViewColorNormalButtonHolder));
-		resultViewColorValueLabel.get().setText(PreferencesI18N.i18nLabelResultViewColorValue());
-		resultViewColorValueButton.get().setText(PreferencesI18N.i18nButtonResultViewColorValue());
+		resultViewColorValueLabel.withText(PreferencesI18N.i18nLabelResultViewColorValue());
+		resultViewColorValueButton.withText(PreferencesI18N.i18nButtonResultViewColorValue());
 		resultViewColorValueButton.onSelected(() -> onChooseResultViewColor(this.resultViewColorValueButtonHolder));
-		resultViewColorCommentLabel.get().setText(PreferencesI18N.i18nLabelResultViewColorComment());
-		resultViewColorCommentButton.get().setText(PreferencesI18N.i18nButtonResultViewColorComment());
+		resultViewColorCommentLabel.withText(PreferencesI18N.i18nLabelResultViewColorComment());
+		resultViewColorCommentButton.withText(PreferencesI18N.i18nButtonResultViewColorComment());
 		resultViewColorCommentButton.onSelected(() -> onChooseResultViewColor(this.resultViewColorCommentButtonHolder));
-		resultViewColorKeywordLabel.get().setText(PreferencesI18N.i18nLabelResultViewColorKeyword());
-		resultViewColorKeywordButton.get().setText(PreferencesI18N.i18nButtonResultViewColorKeyword());
+		resultViewColorKeywordLabel.withText(PreferencesI18N.i18nLabelResultViewColorKeyword());
+		resultViewColorKeywordButton.withText(PreferencesI18N.i18nButtonResultViewColorKeyword());
 		resultViewColorKeywordButton.onSelected(() -> onChooseResultViewColor(this.resultViewColorKeywordButtonHolder));
-		resultViewColorOperatorLabel.get().setText(PreferencesI18N.i18nLabelResultViewColorOperator());
-		resultViewColorOperatorButton.get().setText(PreferencesI18N.i18nButtonResultViewColorOperator());
+		resultViewColorOperatorLabel.withText(PreferencesI18N.i18nLabelResultViewColorOperator());
+		resultViewColorOperatorButton.withText(PreferencesI18N.i18nButtonResultViewColorOperator());
 		resultViewColorOperatorButton
 				.onSelected(() -> onChooseResultViewColor(this.resultViewColorOperatorButtonHolder));
-		resultViewColorLabelLabel.get().setText(PreferencesI18N.i18nLabelResultViewColorLabel());
-		resultViewColorLabelButton.get().setText(PreferencesI18N.i18nButtonResultViewColorLabel());
+		resultViewColorLabelLabel.withText(PreferencesI18N.i18nLabelResultViewColorLabel());
+		resultViewColorLabelButton.withText(PreferencesI18N.i18nButtonResultViewColorLabel());
 		resultViewColorLabelButton.onSelected(() -> onChooseResultViewColor(this.resultViewColorLabelButtonHolder));
-		resultViewColorErrorLabel.get().setText(PreferencesI18N.i18nLabelResultViewColorError());
-		resultViewColorErrorButton.get().setText(PreferencesI18N.i18nButtonResultViewColorError());
+		resultViewColorErrorLabel.withText(PreferencesI18N.i18nLabelResultViewColorError());
+		resultViewColorErrorButton.withText(PreferencesI18N.i18nButtonResultViewColorError());
 		resultViewColorErrorButton.onSelected(() -> onChooseResultViewColor(this.resultViewColorErrorButtonHolder));
 
 		GridLayoutBuilder.layout(2).spacing(5, 0).apply(appearance);
@@ -203,11 +205,11 @@ class PreferencesUI extends ShellUserInterface {
 
 	private void buildFormatsPrefTab(CompositeBuilder<TabFolder> prefTabs, TabItem prefTab) {
 		CompositeBuilder<Composite> formats = prefTabs.addCompositeChild(SWT.NO_BACKGROUND);
-		ControlBuilder<Label> enabledFormatsLabel = formats.addControlChild(Label.class, SWT.NONE);
+		LabelBuilder enabledFormatsLabel = formats.addLabelChild(SWT.NONE);
 		ControlBuilder<Table> formatsTable = formats.addControlChild(Table.class,
 				SWT.CHECK | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 
-		enabledFormatsLabel.get().setText(PreferencesI18N.i18nLabelEnabledFormats());
+		enabledFormatsLabel.withText(PreferencesI18N.i18nLabelEnabledFormats());
 		styleGroupLabel(enabledFormatsLabel.get());
 		GridLayoutBuilder.layout().apply(formats);
 		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(enabledFormatsLabel);
@@ -218,19 +220,19 @@ class PreferencesUI extends ShellUserInterface {
 	}
 
 	private void buildButtons(CompositeBuilder<Composite> buttons) {
-		ControlBuilder<Button> cancelButton = buttons.addControlChild(Button.class, SWT.PUSH);
-		ControlBuilder<Button> applyButton = buttons.addControlChild(Button.class, SWT.PUSH);
-		ControlBuilder<Button> applyAndCloseButton = buttons.addControlChild(Button.class, SWT.PUSH);
+		ButtonBuilder cancelButton = buttons.addButtonChild(SWT.PUSH);
+		ButtonBuilder applyButton = buttons.addButtonChild(SWT.PUSH);
+		ButtonBuilder applyAndCloseButton = buttons.addButtonChild(SWT.PUSH);
 
 		if (PlatformIntegration.isButtonOrderLeftToRight()) {
 			applyButton.get().moveAbove(null);
 			applyAndCloseButton.get().moveAbove(null);
 		}
-		cancelButton.get().setText(PreferencesI18N.i18nButtonCancel());
+		cancelButton.withText(PreferencesI18N.i18nButtonCancel());
 		cancelButton.onSelected(this::onCancelSelected);
-		applyButton.get().setText(PreferencesI18N.i18nButtonApply());
+		applyButton.withText(PreferencesI18N.i18nButtonApply());
 		applyButton.onSelected(this::onApplySelected);
-		applyAndCloseButton.get().setText(PreferencesI18N.i18nButtonApplyAndClose());
+		applyAndCloseButton.withText(PreferencesI18N.i18nButtonApplyAndClose());
 		applyAndCloseButton.onSelected(this::onApplyAndCloseSelected);
 		RowLayoutBuilder.layout().fill(true).apply(buttons);
 		RowLayoutBuilder.data().apply(cancelButton);

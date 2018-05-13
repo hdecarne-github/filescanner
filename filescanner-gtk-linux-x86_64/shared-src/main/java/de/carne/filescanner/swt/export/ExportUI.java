@@ -24,11 +24,9 @@ import java.util.prefs.Preferences;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -45,9 +43,11 @@ import de.carne.swt.layout.GridLayoutBuilder;
 import de.carne.swt.layout.RowLayoutBuilder;
 import de.carne.swt.platform.PlatformIntegration;
 import de.carne.swt.util.Property;
+import de.carne.swt.widgets.ButtonBuilder;
 import de.carne.swt.widgets.CompositeBuilder;
 import de.carne.swt.widgets.ControlBuilder;
 import de.carne.swt.widgets.FileDialogBuilder;
+import de.carne.swt.widgets.LabelBuilder;
 import de.carne.swt.widgets.MessageBoxBuilder;
 import de.carne.swt.widgets.ShellBuilder;
 import de.carne.swt.widgets.ShellUserInterface;
@@ -93,21 +93,21 @@ class ExportUI extends ShellUserInterface {
 
 	private Shell buildRoot() {
 		ShellBuilder rootBuilder = new ShellBuilder(root());
-		ControlBuilder<Label> title = rootBuilder.addControlChild(Label.class, SWT.NONE);
-		ControlBuilder<Label> separator1 = rootBuilder.addControlChild(Label.class, SWT.HORIZONTAL | SWT.SEPARATOR);
-		ControlBuilder<Label> exportTypeLabel = rootBuilder.addControlChild(Label.class, SWT.NONE);
+		LabelBuilder title = rootBuilder.addLabelChild(SWT.NONE);
+		LabelBuilder separator1 = rootBuilder.addLabelChild(SWT.HORIZONTAL | SWT.SEPARATOR);
+		LabelBuilder exportTypeLabel = rootBuilder.addLabelChild(SWT.NONE);
 		ControlBuilder<Combo> exportType = rootBuilder.addControlChild(Combo.class, SWT.READ_ONLY);
-		ControlBuilder<Label> exportPathLabel = rootBuilder.addControlChild(Label.class, SWT.NONE);
+		LabelBuilder exportPathLabel = rootBuilder.addLabelChild(SWT.NONE);
 		ControlBuilder<Text> exportPathText = rootBuilder.addControlChild(Text.class, SWT.SINGLE | SWT.BORDER);
-		ControlBuilder<Button> exportPathButton = rootBuilder.addControlChild(Button.class, SWT.PUSH);
-		ControlBuilder<Label> separator2 = rootBuilder.addControlChild(Label.class, SWT.HORIZONTAL | SWT.SEPARATOR);
+		ButtonBuilder exportPathButton = rootBuilder.addButtonChild(SWT.PUSH);
+		LabelBuilder separator2 = rootBuilder.addLabelChild(SWT.HORIZONTAL | SWT.SEPARATOR);
 		CompositeBuilder<Composite> buttons = rootBuilder.addCompositeChild(SWT.NONE);
 
 		rootBuilder.withText(ExportI18N.i18nTitle()).withDefaultImages();
-		title.get().setText(ExportI18N.i18nLabelExportResult(this.result.name()));
-		exportTypeLabel.get().setText(ExportI18N.i18nLabelExportType());
-		exportPathLabel.get().setText(ExportI18N.i18nLabelExportPath());
-		exportPathButton.get().setImage(this.resources.getImage(Images.class, Images.IMAGE_OPEN_FILE16));
+		title.withText(ExportI18N.i18nLabelExportResult(this.result.name()));
+		exportTypeLabel.withText(ExportI18N.i18nLabelExportType());
+		exportPathLabel.withText(ExportI18N.i18nLabelExportPath());
+		exportPathButton.withImage(this.resources.getImage(Images.class, Images.IMAGE_OPEN_FILE16));
 		exportPathButton.onSelected(this::onExportPathSelected);
 
 		buildButtons(buttons);
@@ -142,15 +142,15 @@ class ExportUI extends ShellUserInterface {
 	}
 
 	private void buildButtons(CompositeBuilder<Composite> buttons) {
-		ControlBuilder<Button> cancelButton = buttons.addControlChild(Button.class, SWT.PUSH);
-		ControlBuilder<Button> exportButton = buttons.addControlChild(Button.class, SWT.PUSH);
+		ButtonBuilder cancelButton = buttons.addButtonChild(SWT.PUSH);
+		ButtonBuilder exportButton = buttons.addButtonChild(SWT.PUSH);
 
 		if (PlatformIntegration.isButtonOrderLeftToRight()) {
 			exportButton.get().moveAbove(cancelButton.get());
 		}
-		cancelButton.get().setText(ExportI18N.i18nButtonCancel());
+		cancelButton.withText(ExportI18N.i18nButtonCancel());
 		cancelButton.onSelected(this::onCancelSelected);
-		exportButton.get().setText(ExportI18N.i18nButtonExport());
+		exportButton.withText(ExportI18N.i18nButtonExport());
 		exportButton.onSelected(this::onExportSelected);
 		RowLayoutBuilder.layout().fill(true).margin(0, 0, 0, 0).apply(buttons);
 		RowLayoutBuilder.data().apply(cancelButton);
