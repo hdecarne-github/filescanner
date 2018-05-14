@@ -27,14 +27,16 @@ public final class ExportOptions {
 
 	private final FileScannerResultExporter exporter;
 	private final Path path;
+	private final boolean overwrite;
 
-	ExportOptions(FileScannerResultExporter exporter, Path path) {
+	ExportOptions(FileScannerResultExporter exporter, Path path, boolean overwrite) {
 		this.exporter = exporter;
 		this.path = path;
+		this.overwrite = overwrite;
 	}
 
 	/**
-	 * The selected {@linkplain FileScannerResultExporter}.
+	 * Gets the selected {@linkplain FileScannerResultExporter}.
 	 *
 	 * @return the selected {@linkplain FileScannerResultExporter}.
 	 */
@@ -43,12 +45,21 @@ public final class ExportOptions {
 	}
 
 	/**
-	 * The selected export file path.
+	 * Gets the selected export file path.
 	 *
 	 * @return the selected export file path.
 	 */
 	public Path path() {
 		return this.path;
+	}
+
+	/**
+	 * Gets the overwrite confirmation.
+	 * 
+	 * @return the overwrite confirmation.
+	 */
+	public boolean overwrite() {
+		return this.overwrite;
 	}
 
 }

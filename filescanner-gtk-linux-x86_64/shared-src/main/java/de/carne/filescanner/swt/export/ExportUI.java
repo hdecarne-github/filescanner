@@ -16,7 +16,6 @@
  */
 package de.carne.filescanner.swt.export;
 
-import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -82,7 +81,7 @@ class ExportUI extends ShellUserInterface {
 		Shell root = buildRoot();
 
 		root.pack();
-		root.setMinimumSize(root.getSize());
+		root.setMinimumSize(0, root.getSize().y);
 		root.open();
 	}
 
@@ -179,7 +178,13 @@ class ExportUI extends ShellUserInterface {
 		try {
 			ExportOptions validatedExportOptions = validateAndGetExportOptions();
 
-			if (confirmOverwrite(validatedExportOptions)) {
+			if (!validatedExportOptions.overwrite() || confirmOverwrite(validatedExportOptions.path())) {
+				Path exportPathParent = validatedExportOptions.path().getParent();
+
+				if (exportPathParent != null) {
+					PREF_EXPORT_DIR.put(this.preferences, exportPathParent);
+					this.preferences.sync();
+				}
 				this.exportOptions = validatedExportOptions;
 				root().close();
 			}
@@ -230,17 +235,16 @@ class ExportUI extends ShellUserInterface {
 		Path exportPath = StringValidator
 				.checkNotEmpty(this.exportPathTextHolder.get().getText(), ExportI18N::i18nMessageNoExportPath)
 				.convert(PathValidator::fromString, ExportI18N::i18nMessageInvalidExportPath).get();
+		boolean overwrite = exportPath.toFile().exists();
 
-		return new ExportOptions(this.result.exporters()[exporterIndex], exportPath);
+		return new ExportOptions(this.result.exporters()[exporterIndex], exportPath, overwrite);
 	}
 
-	private boolean confirmOverwrite(ExportOptions exportOptions) {
-		Path exportPath = exportOptions.path();
-		boolean confirmed = false;
+	private boolean confirmOverwrite(Path exportPath) {
+		MessageBox messageBox = MessageBoxBuilder.build(root(), SWT.ICON_QUESTION | SWT.YES | SWT.NO)
+				.withText(root().getText()).withMessage(ExportI18N.i18nMessageOverwriteExportPath(exportPath)).get();
 
-		if (Files.exists(exportPath)) {
-		}
-		return confirmed;
+		return messageBox.open() == SWT.YES;
 	}
 
 	private void validationMessageBox(ValidationException validationException) {
