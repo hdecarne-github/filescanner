@@ -77,15 +77,19 @@ class PreferencesUI extends ShellUserInterface {
 
 	@Override
 	public void open() throws ResourceException {
-		Shell root = buildRoot();
+		ShellBuilder rootBuilder = buildRoot();
 
 		loadPreferences(UserPreferences.get());
-		root.pack();
+		rootBuilder.pack();
+		rootBuilder.position(SWT.DEFAULT, SWT.DEFAULT);
+
+		Shell root = rootBuilder.get();
+
 		root.setMinimumSize(root.getSize());
 		root.open();
 	}
 
-	private Shell buildRoot() {
+	private ShellBuilder buildRoot() {
 		ShellBuilder rootBuilder = new ShellBuilder(root());
 		CompositeBuilder<TabFolder> prefTabs = rootBuilder.addCompositeChild(TabFolder.class, SWT.TOP);
 		LabelBuilder separator = rootBuilder.addLabelChild(SWT.HORIZONTAL | SWT.SEPARATOR);
@@ -99,7 +103,7 @@ class PreferencesUI extends ShellUserInterface {
 		GridLayoutBuilder.data(GridData.FILL_BOTH).apply(prefTabs);
 		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(separator);
 		GridLayoutBuilder.data().align(SWT.END, SWT.CENTER).grab(false, false).apply(buttons);
-		return rootBuilder.get();
+		return rootBuilder;
 	}
 
 	private void buildPrefTabs(CompositeBuilder<TabFolder> prefTabs) {

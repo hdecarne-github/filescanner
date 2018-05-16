@@ -78,9 +78,13 @@ class ExportUI extends ShellUserInterface {
 
 	@Override
 	public void open() throws ResourceException {
-		Shell root = buildRoot();
+		ShellBuilder rootBuilder = buildRoot();
 
-		root.pack();
+		rootBuilder.pack();
+		rootBuilder.position(SWT.DEFAULT, SWT.DEFAULT);
+
+		Shell root = rootBuilder.get();
+
 		root.setMinimumSize(0, root.getSize().y);
 		root.open();
 	}
@@ -90,7 +94,7 @@ class ExportUI extends ShellUserInterface {
 		return this.exportOptions;
 	}
 
-	private Shell buildRoot() {
+	private ShellBuilder buildRoot() {
 		ShellBuilder rootBuilder = new ShellBuilder(root());
 		LabelBuilder title = rootBuilder.addLabelChild(SWT.NONE);
 		LabelBuilder separator1 = rootBuilder.addLabelChild(SWT.HORIZONTAL | SWT.SEPARATOR);
@@ -127,7 +131,7 @@ class ExportUI extends ShellUserInterface {
 		this.exporterTypeSelection.addChangedListener(this::onExporterTypeSelectionChanged);
 		initializeOptions();
 
-		return rootBuilder.get();
+		return rootBuilder;
 	}
 
 	private void initializeOptions() {
