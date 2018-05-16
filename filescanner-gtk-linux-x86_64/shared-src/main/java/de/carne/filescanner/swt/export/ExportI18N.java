@@ -97,14 +97,14 @@ public final class ExportI18N {
 	/**
 	 * Resource key {@code I18N_LABEL_EXPORT_RESULT}
 	 * <p>
-	 * Exporting ''{0}''
+	 * Scan result: ''{0}''
 	 */
 	public static final String I18N_LABEL_EXPORT_RESULT = "I18N_LABEL_EXPORT_RESULT";
 
 	/**
 	 * Resource string {@code I18N_LABEL_EXPORT_RESULT}
 	 * <p>
-	 * Exporting ''{0}''
+	 * Scan result: ''{0}''
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
