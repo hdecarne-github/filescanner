@@ -21,6 +21,7 @@ import java.util.function.Consumer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Device;
@@ -29,8 +30,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -40,7 +40,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ProgressBar;
-import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolItem;
@@ -64,7 +63,6 @@ import de.carne.filescanner.swt.widgets.Hex;
 import de.carne.swt.dnd.DropTargetBuilder;
 import de.carne.swt.graphics.ResourceException;
 import de.carne.swt.graphics.ResourceTracker;
-import de.carne.swt.layout.FormLayoutBuilder;
 import de.carne.swt.layout.GridLayoutBuilder;
 import de.carne.swt.platform.PlatformIntegration;
 import de.carne.swt.util.Property;
@@ -500,32 +498,6 @@ public class MainUI extends ShellUserInterface {
 		}
 	}
 
-	private void onVSashSelected(SelectionEvent event) {
-		Sash vSash = Check.isInstanceOf(event.widget, Sash.class);
-
-		if (event.detail != SWT.DRAG || (vSash.getStyle() & SWT.SMOOTH) == SWT.SMOOTH) {
-			FormData layoutData = (FormData) vSash.getLayoutData();
-
-			layoutData.left = new FormAttachment(0, event.x);
-			vSash.setLayoutData(layoutData);
-			vSash.getParent().layout();
-		}
-	}
-
-	private void onHSashSelected(SelectionEvent event) {
-		Sash hSash = Check.isInstanceOf(event.widget, Sash.class);
-		Rectangle vSashBounds = Check.isInstanceOf(hSash.getLayoutData(), FormData.class).left.control.getBounds();
-
-		event.y = Math.max(vSashBounds.y, Math.min(event.y, vSashBounds.y + vSashBounds.height));
-		if (event.detail != SWT.DRAG || (hSash.getStyle() & SWT.SMOOTH) == SWT.SMOOTH) {
-			FormData layoutData = (FormData) hSash.getLayoutData();
-
-			layoutData.top = new FormAttachment(0, event.y);
-			hSash.setLayoutData(layoutData);
-			hSash.getParent().layout();
-		}
-	}
-
 	private void onResultSelectionChanged(@Nullable FileScannerResult newResult,
 			@SuppressWarnings("unused") @Nullable FileScannerResult oldResult) {
 		if (newResult != null) {
@@ -612,33 +584,28 @@ public class MainUI extends ShellUserInterface {
 
 	private Shell buildRoot(MainController controller) {
 		ShellBuilder rootBuilder = new ShellBuilder(root());
-		ControlBuilder<Sash> vSash = rootBuilder.addControlChild(Sash.class, SWT.VERTICAL);
-		ControlBuilder<Sash> hSash = rootBuilder.addControlChild(Sash.class, SWT.HORIZONTAL);
 		CoolBarBuilder commands = buildCommandBar(rootBuilder);
-		ControlBuilder<Tree> resultTree = rootBuilder.addControlChild(Tree.class,
+		CompositeBuilder<SashForm> resultBuilder = rootBuilder.addCompositeChild(SashForm.class, SWT.HORIZONTAL);
+		ControlBuilder<Tree> resultTree = resultBuilder.addControlChild(Tree.class,
 				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL);
-		ControlBuilder<Browser> resultView = rootBuilder.addControlChild(Browser.class, SWT.NONE);
-		ControlBuilder<Hex> inputView = rootBuilder.addControlChild(Hex.class, SWT.NONE);
+		CompositeBuilder<SashForm> resultViewBuilder = resultBuilder.addCompositeChild(SashForm.class, SWT.VERTICAL);
+		ControlBuilder<Browser> resultView = resultViewBuilder.addControlChild(Browser.class, SWT.NONE);
+		ControlBuilder<Hex> inputView = resultViewBuilder.addControlChild(Hex.class, SWT.NONE);
 		CoolBarBuilder status = buildStatusBar(rootBuilder, controller);
 
 		rootBuilder.withText(MainI18N.i18nTitle())
 				.withImages(this.resources.getImages(Images.class, Images.IMAGES_FSLOGO)).onDisposed(this::onDisposed);
 		buildMenuBar(rootBuilder);
-		vSash.onSelected(this::onVSashSelected);
-		hSash.onSelected(this::onHSashSelected);
 		resultTree.onEvent(SWT.SetData, this::onSetResultTreeItemData);
 		resultTree.onSelected(this::onResultTreeItemSelected);
 		resultView.onEvent(SWT.MenuDetect, event -> event.doit = false);
 
-		FormLayoutBuilder.layout().apply(rootBuilder);
-		FormLayoutBuilder.data().left(40).top(commands).bottom(status).apply(vSash);
-		FormLayoutBuilder.data().left(vSash).top(50).right(100).apply(hSash);
-		FormLayoutBuilder.data().left(0).top(0).right(100).apply(commands);
-		FormLayoutBuilder.data().left(0).top(commands).right(vSash).bottom(status).apply(resultTree);
-		FormLayoutBuilder.data().left(vSash).top(commands).right(100).bottom(hSash).apply(resultView);
-		FormLayoutBuilder.data().left(vSash).top(hSash).right(100).bottom(status).apply(inputView);
-		FormLayoutBuilder.data().left(0).right(100).bottom(100).apply(status);
+		GridLayoutBuilder.layout().apply(rootBuilder);
+		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(commands);
+		GridLayoutBuilder.data(GridData.FILL_BOTH).apply(resultBuilder);
+		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(status);
 
+		resultBuilder.get().setWeights(new int[] { 40, 60 });
 		this.resultTreeHolder.set(resultTree.get());
 		this.resultViewHolder.set(resultView.get());
 		this.inputViewHolder.set(inputView.get());
