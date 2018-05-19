@@ -71,12 +71,15 @@ import de.carne.swt.widgets.CompositeBuilder;
 import de.carne.swt.widgets.ControlBuilder;
 import de.carne.swt.widgets.CoolBarBuilder;
 import de.carne.swt.widgets.FileDialogBuilder;
+import de.carne.swt.widgets.LabelBuilder;
 import de.carne.swt.widgets.MenuBuilder;
 import de.carne.swt.widgets.ShellBuilder;
 import de.carne.swt.widgets.ShellUserInterface;
 import de.carne.swt.widgets.ToolBarBuilder;
 import de.carne.swt.widgets.aboutinfo.AboutInfoDialog;
+import de.carne.swt.widgets.heapinfo.HeapInfo;
 import de.carne.text.MemoryUnitFormat;
+import de.carne.util.Debug;
 import de.carne.util.Late;
 import de.carne.util.Strings;
 
@@ -96,6 +99,7 @@ public class MainUI extends ShellUserInterface {
 	private final Late<Hex> inputViewHolder = new Late<>();
 	private final Late<ProgressBar> sessionProgressHolder = new Late<>();
 	private final Late<Label> sessionStatusHolder = new Late<>();
+	private final Late<HeapInfo> runtimeHeapHolder = new Late<>();
 	private final Late<Menu> copyObjectMenuHolder = new Late<>();
 	private final Late<Menu> copyObjectToolHolder = new Late<>();
 	private final Consumer<Config> configConsumer = this::applyConfig;
@@ -390,7 +394,10 @@ public class MainUI extends ShellUserInterface {
 				ExportOptions exportOptions = exportDialog.open(selection);
 
 				if (exportOptions != null) {
+					ProgressUI progress = new ProgressUI(new Shell(root(), SWT.TOOL | SWT.APPLICATION_MODAL));
 
+					progress.open();
+					progress.run();
 				}
 			}
 		} catch (Exception e) {
@@ -582,6 +589,22 @@ public class MainUI extends ShellUserInterface {
 		}
 	}
 
+	@SuppressWarnings("squid:S1215")
+	private void runGc() {
+		if (LOG.isDebugLoggable()) {
+			String before = Debug.formatUsedMemory();
+
+			Runtime.getRuntime().gc();
+
+			String after = Debug.formatUsedMemory();
+
+			LOG.debug("GC: {0} -> {1}", before, after);
+		} else {
+			Runtime.getRuntime().gc();
+		}
+		this.runtimeHeapHolder.get().redraw();
+	}
+
 	private Shell buildRoot(MainController controller) {
 		ShellBuilder rootBuilder = new ShellBuilder(root());
 		CoolBarBuilder commands = buildCommandBar(rootBuilder);
@@ -748,33 +771,46 @@ public class MainUI extends ShellUserInterface {
 
 	private CoolBarBuilder buildStatusBar(ShellBuilder rootBuilder, MainController controller) {
 		CoolBarBuilder status = CoolBarBuilder.horizontal(rootBuilder, SWT.NONE);
-
-		status.addItem(SWT.NONE);
-
 		CompositeBuilder<Composite> session = status.addCompositeChild(SWT.NONE);
-
-		GridLayoutBuilder.layout(3).margin(0, 0).apply(session);
-
-		ToolBarBuilder sessionTools = session.addChild(parent -> ToolBarBuilder.horizontal(parent, SWT.FLAT));
+		ToolBarBuilder sessionTools = ToolBarBuilder.horizontal(session, SWT.FLAT);
+		ControlBuilder<ProgressBar> sessionProgress = session.addControlChild(ProgressBar.class,
+				SWT.HORIZONTAL | SWT.SMOOTH);
+		LabelBuilder sessionStatus = session.addLabelChild(SWT.HORIZONTAL);
+		CompositeBuilder<Composite> runtime = status.addCompositeChild(SWT.NONE);
+		ControlBuilder<HeapInfo> runtimeHeap = runtime.addControlChild(HeapInfo.class, SWT.NONE);
+		ToolBarBuilder runtimeTools = ToolBarBuilder.horizontal(runtime, SWT.FLAT);
 
 		sessionTools.addItem(SWT.PUSH);
-		sessionTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_STOP_SCAN16))
-				.withDisabledImage(this.resources.getImage(Images.class, Images.IMAGE_STOP_SCAN_DISABLED16));
+		sessionTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_STOP16))
+				.withDisabledImage(this.resources.getImage(Images.class, Images.IMAGE_STOP_DISABLED16));
 		sessionTools.onSelected(controller::stopScan);
+
+		runtimeHeap.get().setTimer(500);
+
+		runtimeTools.addItem(SWT.PUSH);
+		runtimeTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_TRASH16));
+		runtimeTools.onSelected(this::runGc);
+
+		GridLayoutBuilder.layout(3).margin(0, 0).apply(session);
 		GridLayoutBuilder.data().apply(sessionTools);
-		this.sessionCommands.add(sessionTools.currentItem());
-
-		ProgressBar sessionProgress = new ProgressBar(session.get(), SWT.HORIZONTAL | SWT.SMOOTH);
-
 		GridLayoutBuilder.data().apply(sessionProgress);
-		this.sessionProgressHolder.set(sessionProgress);
+		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(sessionStatus);
 
-		Label sessionStatus = new Label(session.get(), SWT.HORIZONTAL);
+		GridLayoutBuilder.layout(2).margin(0, 0).apply(runtime);
+		GridLayoutBuilder.data().apply(runtimeHeap);
+		GridLayoutBuilder.data().apply(runtimeTools);
 
-		GridLayoutBuilder.data().align(SWT.FILL, SWT.CENTER).grab(true, false).apply(sessionStatus);
-		this.sessionStatusHolder.set(sessionStatus);
-
+		status.addItem(SWT.NONE);
 		status.withControl(session);
+		status.currentItem().setPreferredSize(Integer.MAX_VALUE, status.currentItem().getPreferredSize().y);
+		status.addItem(SWT.NONE);
+		status.withControl(runtime);
+
+		this.sessionProgressHolder.set(sessionProgress.get());
+		this.sessionCommands.add(sessionTools.currentItem());
+		this.sessionStatusHolder.set(sessionStatus.get());
+		this.runtimeHeapHolder.set(runtimeHeap.get());
+
 		status.lock(true).pack();
 		return status;
 	}

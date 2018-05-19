@@ -95,14 +95,6 @@ public final class Images {
 	 */
 	public static final String IMAGE_GOTO_START16 = "goto_start16.png";
 	/**
-	 * stop_scan16.png
-	 */
-	public static final String IMAGE_STOP_SCAN16 = "stop_scan16.png";
-	/**
-	 * stop_scan_disabled16.png
-	 */
-	public static final String IMAGE_STOP_SCAN_DISABLED16 = "stop_scan_disabled16.png";
-	/**
 	 * result_input16.png
 	 */
 	public static final String IMAGE_RESULT_INPUT16 = "result_input16.png";
@@ -114,5 +106,17 @@ public final class Images {
 	 * result_encoded_input16.png
 	 */
 	public static final String IMAGE_RESULT_ENCODED_INPUT16 = "result_encoded_input16.png";
+	/**
+	 * stop16.png
+	 */
+	public static final String IMAGE_STOP16 = "stop16.png";
+	/**
+	 * stop_disabled16.png
+	 */
+	public static final String IMAGE_STOP_DISABLED16 = "stop_disabled16.png";
+	/**
+	 * trash16.png
+	 */
+	public static final String IMAGE_TRASH16 = "trash16.png";
 
 }
