@@ -1,0 +1,8 @@
+Additional Copyrights
+Except for the application icons listed below all icons/images
+used by this program are subject to the Eclipse Foundation's
+Eclipse Public License (EPL) v1.0.
+See <a>http://www.eclipse.org/legal/epl-v10.html</a>.
+
+The application icons (fslogo*.png) are Copyright (c) 2009-2018 MazeNL77.
+See <a>https://mazenl77.deviantart.com/art/I-like-buttons-3a-113122067</a>.

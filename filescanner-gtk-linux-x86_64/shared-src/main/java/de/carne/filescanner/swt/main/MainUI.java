@@ -515,14 +515,19 @@ public class MainUI extends ShellUserInterface {
 		}
 	}
 
-	private static final String RESOURCE_COPYRIGHT1 = "Copyright1.txt";
+	private static final String[] RESOURCES_COPYRIGHT = { "Copyright1.txt", "Copyright2.txt" };
 
 	private void onAboutSelected() {
 		try {
 			URL logoUrl = Images.class.getResource(Images.IMAGE_FSLOGO48);
-			URL copyright1Url = MainUI.class.getResource(RESOURCE_COPYRIGHT1);
+			AboutInfoDialog aboutInfo = AboutInfoDialog.build(root()).withLogo(logoUrl);
 
-			AboutInfoDialog.build(root()).withLogo(logoUrl).withCopyright(copyright1Url).open();
+			for (String copyrightResource : RESOURCES_COPYRIGHT) {
+				URL copyrightUrl = MainUI.class.getResource(copyrightResource);
+
+				aboutInfo.withCopyright(copyrightUrl);
+			}
+			aboutInfo.open();
 		} catch (Exception e) {
 			unexpectedException(e);
 		}
