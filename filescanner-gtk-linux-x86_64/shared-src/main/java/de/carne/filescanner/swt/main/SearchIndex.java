@@ -18,7 +18,7 @@ package de.carne.filescanner.swt.main;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.InterruptedIOException;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -51,7 +51,7 @@ import de.carne.boot.logging.Log;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.transfer.RenderOutput;
 import de.carne.filescanner.engine.transfer.RenderStyle;
-import de.carne.filescanner.engine.transfer.StringRenderer;
+import de.carne.filescanner.engine.transfer.SimpleTextRenderer;
 import de.carne.io.Closeables;
 import de.carne.nio.file.FileUtil;
 import de.carne.nio.file.attribute.FileAttributes;
@@ -133,15 +133,13 @@ final class SearchIndex implements AutoCloseable {
 		}
 	}
 
-	private String getResultContent(FileScannerResult result) throws IOException, InterruptedException {
+	private String getResultContent(FileScannerResult result) throws IOException {
 		@SuppressWarnings("resource")
-		StringRenderer resultContent = new StringRenderer(MAX_INDEX_LENGTH);
+		SimpleTextRenderer resultContent = new SimpleTextRenderer(new StringWriter());
 
 		try {
 			resultContent.emitText(RenderStyle.NORMAL, result.name(), true);
-			RenderOutput.render(result, resultContent);
-		} catch (InterruptedIOException e) {
-			LOG.debug(e, "Result ''{0}'' content truncated at length {1}", result, e.bytesTransferred);
+			RenderOutput.render(result, resultContent, MAX_INDEX_LENGTH);
 		} finally {
 			resultContent.close();
 		}

@@ -18,17 +18,12 @@ package de.carne.filescanner.swt.main;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Writer;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.RGB;
 import org.glassfish.grizzly.PortRange;
 import org.glassfish.grizzly.http.server.HttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -42,16 +37,13 @@ import de.carne.boot.check.Check;
 import de.carne.boot.check.Nullable;
 import de.carne.boot.logging.Log;
 import de.carne.filescanner.engine.FileScannerResult;
-import de.carne.filescanner.engine.transfer.RenderOption;
 import de.carne.filescanner.engine.transfer.RenderOutput;
-import de.carne.filescanner.engine.transfer.RenderStyle;
-import de.carne.filescanner.engine.transfer.Renderer;
 import de.carne.filescanner.swt.preferences.Config;
 import de.carne.io.IOUtil;
 import de.carne.swt.graphics.ResourceException;
 import de.carne.util.SystemProperties;
 
-class HtmlRenderService extends HttpHandler implements Renderer {
+class HtmlRenderService extends HttpHandler {
 
 	private static final Log LOG = new Log();
 
@@ -61,9 +53,8 @@ class HtmlRenderService extends HttpHandler implements Renderer {
 	private static final String RESOURCE_TRANSPARENT = "transparent.png";
 
 	private final HttpServer httpServer;
-	private final ThreadLocal<Response> responseHolder = new ThreadLocal<>();
 	@Nullable
-	private String cachedPrologue = null;
+	private String cachedHeader = null;
 	@Nullable
 	private FileScannerResult result = null;
 	private final List<HttpHandler> resultHandlers = new ArrayList<>();
@@ -77,42 +68,7 @@ class HtmlRenderService extends HttpHandler implements Renderer {
 	}
 
 	public synchronized void applyConfig(Config config) {
-		StringBuilder prologue = new StringBuilder();
-
-		prologue.append("<!DOCTYPE HTML><html><head><meta charset=\"utf-8\"><style>");
-		prologue.append("body { ");
-		cssFont(prologue, config.getResultViewFont());
-		prologue.append(" }");
-		prologue.append(" .transparent { background-image: url(\"/").append(RESOURCE_TRANSPARENT).append("\"); }");
-		for (RenderStyle style : RenderStyle.values()) {
-			prologue.append(" .").append(style.name().toLowerCase()).append(" {");
-			cssColor(prologue, config.getResultViewColor(style));
-			prologue.append("}");
-		}
-		prologue.append(" </style></head>");
-		this.cachedPrologue = prologue.toString();
-	}
-
-	private static void cssFont(StringBuilder css, FontData font) {
-		css.append("font-family:\"").append(font.getName()).append("\";");
-		css.append("font-style:");
-		if ((font.getStyle() & SWT.ITALIC) != 0) {
-			css.append("italic;");
-		} else {
-			css.append("normal;");
-		}
-		css.append("font-weight:");
-		if ((font.getStyle() & SWT.BOLD) != 0) {
-			css.append("bold;");
-		} else {
-			css.append("normal;");
-		}
-		css.append("font-size:").append(font.getHeight()).append("pt;");
-	}
-
-	private static void cssColor(StringBuilder css, RGB rgb) {
-		css.append("color:rgb(").append(rgb.red).append(",").append(rgb.green).append(",").append(rgb.blue)
-				.append(");");
+		this.cachedHeader = HtmlRenderer.prepareHeader(config);
 	}
 
 	public synchronized void clear() {
@@ -145,62 +101,16 @@ class HtmlRenderService extends HttpHandler implements Renderer {
 	}
 
 	@Override
-	public void emitPrologue(Set<RenderOption> options) throws IOException, InterruptedException {
-		Response response = Check.notNull(this.responseHolder.get());
-		Writer responseWriter = response.getWriter();
-
-		responseWriter.write(Check.notNull(this.cachedPrologue));
-		if (options.contains(RenderOption.TRANSPARENCY)) {
-			responseWriter.write("<body class=\"transparent\">");
-		} else {
-			responseWriter.write("<body>");
-		}
-	}
-
-	@Override
-	public void emitText(RenderStyle style, String text, boolean lineBreak) throws IOException, InterruptedException {
-		Response response = Check.notNull(this.responseHolder.get());
-		Writer responseWriter = response.getWriter();
-
-		responseWriter.write("<span class=\"");
-		responseWriter.write(style.name().toLowerCase());
-		responseWriter.write("\">");
-		responseWriter.write(text);
-		responseWriter.write("</span>");
-		if (lineBreak) {
-			responseWriter.write("<br>");
-		}
-	}
-
-	@Override
-	public void emitEpilouge() throws IOException, InterruptedException {
-		Response response = Check.notNull(this.responseHolder.get());
-		Writer responseWriter = response.getWriter();
-
-		responseWriter.write("</body></html>");
-		response.finish();
-	}
-
-	@Override
-	public void close() {
-		// Nothing to do here
-	}
-
-	@Override
 	public void service(@Nullable Request request, @Nullable Response response) throws Exception {
 		if (request != null && response != null) {
 			FileScannerResult checkedResult = this.result;
 
 			if (checkedResult != null) {
-				this.responseHolder.set(response);
-				try {
-					RenderOutput.render(checkedResult, this);
-				} finally {
-					this.responseHolder.remove();
-				}
-			} else {
-				response.finish();
+				HtmlRenderer htmlRenderer = new HtmlRenderer(response.getWriter(), Check.notNull(this.cachedHeader));
+
+				RenderOutput.render(checkedResult, htmlRenderer);
 			}
+			response.finish();
 		}
 	}
 

@@ -411,7 +411,7 @@ public class MainUI extends ShellUserInterface {
 			menu.setLocation(menuLocation);
 			menu.setVisible(true);
 		} else {
-
+			copyObject(ClipboardTransferHandler.defaultHandler(UserPreferences.get()));
 		}
 	}
 
@@ -422,8 +422,9 @@ public class MainUI extends ShellUserInterface {
 		if (menuItemData != null) {
 			FileScannerResultExporter exporter = Check.isInstanceOf(menuItemData, FileScannerResultExporter.class);
 
+			copyObject(ClipboardTransferHandler.exporterHandler(exporter));
 		} else {
-
+			copyObject(ClipboardTransferHandler.defaultHandler(UserPreferences.get()));
 		}
 	}
 
