@@ -78,14 +78,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_MENU_EDIT_COPY_DEFAULT}
 	 * <p>
-	 * &Result display
+	 * &Default
 	 */
 	public static final String I18N_MENU_EDIT_COPY_DEFAULT = "I18N_MENU_EDIT_COPY_DEFAULT";
 
 	/**
 	 * Resource string {@code I18N_MENU_EDIT_COPY_DEFAULT}
 	 * <p>
-	 * &Result display
+	 * &Default
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
