@@ -396,7 +396,7 @@ public class Hex extends Canvas implements DisposeListener, FocusListener, Trave
 								formatBuffer.setLength(0);
 								formatDisplayLine(formatBuffer, dataPosition, dataBuffer);
 								if (selectionEnd <= dataPosition || dataPosition + DATA_LINE_SIZE <= selectionStart) {
-									event.gc.drawText(formatBuffer.toString(), drawX, drawY, SWT.NONE);
+									event.gc.drawString(formatBuffer.toString(), drawX, drawY, false);
 								} else {
 									int offset1 = DISPLAY_LINE_LENGTH1_BASE;
 									int offset3 = DISPLAY_LINE_LENGTH3_BASE;
@@ -425,23 +425,23 @@ public class Hex extends Canvas implements DisposeListener, FocusListener, Trave
 									String formatString5 = formatBuffer.substring(offset4);
 									int nextDrawX = drawX;
 
-									event.gc.drawText(formatString1, nextDrawX, drawY, SWT.NONE);
+									event.gc.drawString(formatString1, nextDrawX, drawY, false);
 									nextDrawX += event.gc.textExtent(formatString1, SWT.NONE).x;
 									event.gc.setBackground(backgroundSelected);
 									event.gc.setForeground(foregroundSelected);
-									event.gc.drawText(formatString2, nextDrawX, drawY, SWT.NONE);
+									event.gc.drawString(formatString2, nextDrawX, drawY, false);
 									nextDrawX += event.gc.textExtent(formatString2, SWT.NONE).x;
 									event.gc.setBackground(background);
 									event.gc.setForeground(foreground);
-									event.gc.drawText(formatString3, nextDrawX, drawY, SWT.NONE);
+									event.gc.drawString(formatString3, nextDrawX, drawY, false);
 									nextDrawX += event.gc.textExtent(formatString3, SWT.NONE).x;
 									event.gc.setBackground(backgroundSelected);
 									event.gc.setForeground(foregroundSelected);
-									event.gc.drawText(formatString4, nextDrawX, drawY, SWT.NONE);
+									event.gc.drawString(formatString4, nextDrawX, drawY, false);
 									nextDrawX += event.gc.textExtent(formatString4, SWT.NONE).x;
 									event.gc.setBackground(background);
 									event.gc.setForeground(foreground);
-									event.gc.drawText(formatString5, nextDrawX, drawY, SWT.NONE);
+									event.gc.drawString(formatString5, nextDrawX, drawY, false);
 								}
 							}
 							drawY += layout.scrollUnitY;
