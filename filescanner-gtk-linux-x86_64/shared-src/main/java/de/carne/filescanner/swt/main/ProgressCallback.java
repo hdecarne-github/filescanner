@@ -16,25 +16,12 @@
  */
 package de.carne.filescanner.swt.main;
 
-import java.util.HashSet;
-import java.util.Set;
+interface ProgressCallback {
 
-import de.carne.filescanner.engine.FileScannerResultExporter;
+	void setTotal(long total);
 
-final class ClipboardTransfers {
+	void addProgress(long progressDelta);
 
-	private static final Set<FileScannerResultExporter.Type> TRANSFERABLE_TYPES = new HashSet<>();
-
-	static {
-
-	}
-
-	private ClipboardTransfers() {
-		// prevent instantiation
-	}
-
-	public static boolean isTransferable(FileScannerResultExporter.Type type) {
-		return TRANSFERABLE_TYPES.contains(type);
-	}
+	void done();
 
 }

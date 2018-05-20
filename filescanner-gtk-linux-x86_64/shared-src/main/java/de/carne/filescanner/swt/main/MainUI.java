@@ -17,17 +17,20 @@
 package de.carne.filescanner.swt.main;
 
 import java.net.URL;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -106,6 +109,7 @@ public class MainUI extends ShellUserInterface {
 	private final UICommandSet sessionCommands = new UICommandSet();
 	private final UICommandSet resultSelectionCommands = new UICommandSet();
 	private final Property<FileScannerResult> resultSelection = new Property<>();
+	private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
 	/**
 	 * Constructs a new {@linkplain MainUI} instance.
@@ -175,6 +179,7 @@ public class MainUI extends ShellUserInterface {
 
 	void sessionRunning(boolean running) {
 		this.sessionCommands.setEnabled(running);
+		this.sessionProgressHolder.get().setEnabled(running);
 	}
 
 	void sessionProgress(FileScannerProgress progress) {
@@ -293,25 +298,10 @@ public class MainUI extends ShellUserInterface {
 			Program program = Program.findProgram(extension);
 
 			if (program != null) {
-				inputImage = this.resources.getImage(program, this::createProgramImage);
+				inputImage = this.resources.getImage(program, ProgramImageDataProvider::createImage);
 			}
 		}
 		return (inputImage != null ? inputImage : this.resources.getImage(Images.class, Images.IMAGE_RESULT_INPUT16));
-	}
-
-	private Image createProgramImage(Device device, Program program) {
-		ImageData imageData = program.getImageData();
-		Image image;
-
-		if (imageData != null) {
-			if (imageData.height != 16 || imageData.width != 16) {
-				imageData = imageData.scaledTo(16, 16);
-			}
-			image = new Image(device, imageData);
-		} else {
-			image = this.resources.getImage(Images.class, Images.IMAGE_RESULT_INPUT16);
-		}
-		return image;
 	}
 
 	private void expandAndSelectResultPath(FileScannerResult[] resultPath) {
@@ -354,6 +344,7 @@ public class MainUI extends ShellUserInterface {
 	private void onDisposed() {
 		LOG.info("Disposing Main UI...");
 
+		this.executor.shutdownNow();
 		UserPreferences.get().removeConsumer(this.configConsumer);
 		this.controllerHolder.get().close();
 		this.resultRenderServiceHolder.get().dispose();
@@ -387,19 +378,23 @@ public class MainUI extends ShellUserInterface {
 
 	private void onExportObjectSelected() {
 		try {
-			FileScannerResult selection = this.resultSelection.get();
+			FileScannerResult result = this.resultSelection.get();
 
-			if (selection != null) {
+			if (result != null) {
 				ExportDialog exportDialog = new ExportDialog(get());
-				ExportOptions exportOptions = exportDialog.open(selection);
+				ExportOptions exportOptions = exportDialog.open(result);
 
 				if (exportOptions != null) {
-					ProgressUI progress = new ProgressUI(new Shell(root(), SWT.TOOL | SWT.APPLICATION_MODAL));
+					ProgressUI progress = new ProgressUI(new Shell(root(), ProgressUI.STYLE));
 
 					progress.open();
-					progress.run();
+					progress.run(this.executor.submit(new ExportTask(progress, result, exportOptions))).get();
 				}
 			}
+		} catch (CancellationException e) {
+			Exceptions.ignore(e);
+		} catch (ExecutionException e) {
+			unexpectedException(e.getCause());
 		} catch (Exception e) {
 			unexpectedException(e);
 		}
@@ -429,6 +424,33 @@ public class MainUI extends ShellUserInterface {
 
 		} else {
 
+		}
+	}
+
+	private void copyObject(ClipboardTransferHandler handler) {
+		Clipboard clipboard = null;
+
+		try {
+			FileScannerResult result = this.resultSelection.get();
+
+			if (result != null) {
+				ProgressUI progress = new ProgressUI(new Shell(root(), ProgressUI.STYLE));
+
+				progress.open();
+				progress.run(this.executor.submit(new ClipboardTransferTask(progress, result, handler))).get();
+				clipboard = new Clipboard(root().getDisplay());
+				handler.transfer(clipboard);
+			}
+		} catch (CancellationException e) {
+			Exceptions.ignore(e);
+		} catch (ExecutionException e) {
+			unexpectedException(e.getCause());
+		} catch (Exception e) {
+			unexpectedException(e);
+		} finally {
+			if (clipboard != null) {
+				clipboard.dispose();
+			}
 		}
 	}
 
@@ -545,7 +567,7 @@ public class MainUI extends ShellUserInterface {
 		copyObject.withText(MainI18N.i18nMenuEditCopyDefault());
 		copyObject.onSelected(this::onCopyObjectSelected);
 		for (FileScannerResultExporter exporter : exporters) {
-			if (ClipboardTransfers.isTransferable(exporter.type())) {
+			if (ClipboardTransferHandler.isTransferable(exporter.type())) {
 				copyObject.addItem(SWT.PUSH);
 				copyObject.withText(String.format("%1$s (%2$s)", exporter.name(), exporter.type().mimeType()));
 				copyObject.onSelected(this::onCopyObjectSelected);
@@ -800,9 +822,11 @@ public class MainUI extends ShellUserInterface {
 		GridLayoutBuilder.data().apply(runtimeHeap);
 		GridLayoutBuilder.data().apply(runtimeTools);
 
+		Rectangle displayBounds = rootBuilder.get().getDisplay().getBounds();
+
 		status.addItem(SWT.NONE);
 		status.withControl(session);
-		status.currentItem().setPreferredSize(Integer.MAX_VALUE, status.currentItem().getPreferredSize().y);
+		status.currentItem().setPreferredSize(displayBounds.width, status.currentItem().getPreferredSize().y);
 		status.addItem(SWT.NONE);
 		status.withControl(runtime);
 

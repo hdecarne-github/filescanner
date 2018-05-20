@@ -16,6 +16,8 @@
  */
 package de.carne.filescanner.swt.main;
 
+import java.util.concurrent.Future;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.widgets.ProgressBar;
@@ -26,7 +28,6 @@ import de.carne.boot.Application;
 import de.carne.filescanner.FileScannerMain;
 import de.carne.filescanner.swt.resources.Images;
 import de.carne.nio.compression.Check;
-import de.carne.swt.graphics.ResourceException;
 import de.carne.swt.graphics.ResourceTracker;
 import de.carne.swt.layout.RowLayoutBuilder;
 import de.carne.swt.widgets.ControlBuilder;
@@ -35,17 +36,20 @@ import de.carne.swt.widgets.ShellUserInterface;
 import de.carne.swt.widgets.ToolBarBuilder;
 import de.carne.util.Late;
 
-class ProgressUI extends ShellUserInterface {
+class ProgressUI extends ShellUserInterface implements ProgressCallback {
+
+	public static int STYLE = SWT.TOOL | SWT.APPLICATION_MODAL;
 
 	private static final long UPDATE_FREQUENCY = 500 * 1000 * 1000;
 
 	private final ResourceTracker resources;
-	private long size = -1;
-	private long written = 0;
+	private long total = -1;
+	private long progress = 0;
 	private long lastUpdateNanos = System.nanoTime();
 	private Late<ToolItem> stopCommandHolder = new Late<>();
 	private Late<ProgressBar> determinateProgressHolder = new Late<>();
 	private Late<ProgressBar> indeterminateProgressHolder = new Late<>();
+	private Late<Future<Void>> taskHolder = new Late<>();
 
 	public ProgressUI(Shell shell) {
 		super(shell);
@@ -53,7 +57,7 @@ class ProgressUI extends ShellUserInterface {
 	}
 
 	@Override
-	public void open() throws ResourceException {
+	public void open() {
 		ShellBuilder rootBuilder = buildRoot();
 
 		rootBuilder.pack();
@@ -64,39 +68,67 @@ class ProgressUI extends ShellUserInterface {
 		root.open();
 	}
 
-	protected void progress(int progress) {
-		this.written += progress;
-		updateProgress();
+	public Future<Void> run(Future<Void> taskFuture) {
+		this.taskHolder.set(taskFuture);
+		super.run();
+		return taskFuture;
 	}
 
-	private synchronized void updateProgress() {
+	@Override
+	public synchronized void setTotal(long total) {
+		this.total = total;
+	}
+
+	@Override
+	public synchronized void addProgress(long progressDelta) {
+		this.progress += progressDelta;
+
 		long updateNanos = System.nanoTime();
 
-		if (this.size > 0 && (this.written == 0 || (updateNanos - this.lastUpdateNanos) >= UPDATE_FREQUENCY)) {
+		if (this.total > 0
+				&& (this.progress == progressDelta || (updateNanos - this.lastUpdateNanos) >= UPDATE_FREQUENCY)) {
 			this.lastUpdateNanos = updateNanos;
 			Application.getMain(FileScannerMain.class).runNoWait(this::updateProgressUI);
 		}
 	}
 
-	private void updateProgressUI() {
-		ProgressBar determinateProgress = this.determinateProgressHolder.get();
+	private synchronized void updateProgressUI() {
+		if (!root().isDisposed()) {
+			ProgressBar determinateProgress = this.determinateProgressHolder.get();
 
-		if (this.written == 0) {
-			determinateProgress.setVisible(true);
-			Check.isInstanceOf(determinateProgress.getLayoutData(), RowData.class).exclude = false;
+			if (!determinateProgress.isVisible()) {
+				determinateProgress.setVisible(true);
+				Check.isInstanceOf(determinateProgress.getLayoutData(), RowData.class).exclude = false;
 
-			ProgressBar indeterminateProgress = this.indeterminateProgressHolder.get();
+				ProgressBar indeterminateProgress = this.indeterminateProgressHolder.get();
 
-			indeterminateProgress.setVisible(false);
-			Check.isInstanceOf(indeterminateProgress.getLayoutData(), RowData.class).exclude = true;
+				indeterminateProgress.setVisible(false);
+				Check.isInstanceOf(indeterminateProgress.getLayoutData(), RowData.class).exclude = true;
+				root().layout();
+			}
+
+			int progressValue = 0;
+
+			if (this.total > 0) {
+				progressValue = (int) ((this.progress * 100) / this.total);
+			}
+			determinateProgress.setSelection(progressValue);
 		}
-		determinateProgress.setSelection((int) ((this.written * 100) / this.size));
-		if (this.written == this.size) {
+	}
+
+	@Override
+	public void done() {
+		Application.getMain(FileScannerMain.class).runNoWait(this::closeProgressUI);
+	}
+
+	private void closeProgressUI() {
+		if (!root().isDisposed()) {
 			root().close();
 		}
 	}
 
 	private void onStopSelected() {
+		this.taskHolder.get().cancel(true);
 		this.stopCommandHolder.get().setEnabled(false);
 		root().close();
 	}
