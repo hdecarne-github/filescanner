@@ -215,6 +215,7 @@ class PreferencesUI extends ShellUserInterface {
 
 		enabledFormatsLabel.withText(PreferencesI18N.i18nLabelEnabledFormats());
 		styleGroupLabel(enabledFormatsLabel.get());
+		formatsTable.get().setLinesVisible(true);
 		GridLayoutBuilder.layout().apply(formats);
 		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(enabledFormatsLabel);
 		GridLayoutBuilder.data(GridData.FILL_BOTH).apply(formatsTable);
