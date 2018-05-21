@@ -40,7 +40,7 @@ class ExportTask implements Callable<Void>, ExportTarget {
 
 	private final ProgressCallback progress;
 	private final FileScannerResult result;
-	private final FileScannerResultExporter exporter;
+	private final FileScannerResultExporter exportHandler;
 	private final Path path;
 	private final boolean overwrite;
 	@Nullable
@@ -49,7 +49,7 @@ class ExportTask implements Callable<Void>, ExportTarget {
 	public ExportTask(ProgressCallback progress, FileScannerResult result, ExportOptions options) {
 		this.progress = progress;
 		this.result = result;
-		this.exporter = options.exporter();
+		this.exportHandler = options.exportHandler();
 		this.path = options.path();
 		this.overwrite = options.overwrite();
 	}
@@ -60,7 +60,7 @@ class ExportTask implements Callable<Void>, ExportTarget {
 		LOG.info("Exporting result ''{0}'' to path ''{1}''...", this.result.name(), this.path);
 
 		try {
-			this.exporter.export(this.result, this);
+			this.result.export(this, this.exportHandler);
 		} finally {
 			this.progress.done();
 			close();

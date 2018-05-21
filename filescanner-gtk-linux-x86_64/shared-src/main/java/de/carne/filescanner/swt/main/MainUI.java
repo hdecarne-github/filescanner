@@ -55,7 +55,7 @@ import de.carne.boot.check.Nullable;
 import de.carne.boot.logging.Log;
 import de.carne.filescanner.engine.FileScannerProgress;
 import de.carne.filescanner.engine.FileScannerResult;
-import de.carne.filescanner.engine.FileScannerResultExporter;
+import de.carne.filescanner.engine.FileScannerResultExportHandler;
 import de.carne.filescanner.swt.export.ExportDialog;
 import de.carne.filescanner.swt.export.ExportOptions;
 import de.carne.filescanner.swt.preferences.Config;
@@ -420,9 +420,10 @@ public class MainUI extends ShellUserInterface {
 		Object menuItemData = menuItem.getData();
 
 		if (menuItemData != null) {
-			FileScannerResultExporter exporter = Check.isInstanceOf(menuItemData, FileScannerResultExporter.class);
+			FileScannerResultExportHandler exportHandler = Check.isInstanceOf(menuItemData,
+					FileScannerResultExportHandler.class);
 
-			copyObject(ClipboardTransferHandler.exporterHandler(exporter));
+			copyObject(ClipboardTransferHandler.exportHandler(exportHandler));
 		} else {
 			copyObject(ClipboardTransferHandler.defaultHandler(UserPreferences.get()));
 		}
@@ -559,25 +560,26 @@ public class MainUI extends ShellUserInterface {
 	}
 
 	private void resetCopyObjectMenus(FileScannerResult result) {
-		FileScannerResultExporter[] exporters = result.exporters();
+		FileScannerResultExportHandler[] exportHandlers = result.exportHandlers();
 
-		resetCopyObjectMenu(this.copyObjectMenuHolder, exporters);
-		resetCopyObjectMenu(this.copyObjectToolHolder, exporters);
+		resetCopyObjectMenu(this.copyObjectMenuHolder, exportHandlers);
+		resetCopyObjectMenu(this.copyObjectToolHolder, exportHandlers);
 	}
 
-	private void resetCopyObjectMenu(Late<Menu> menuHolder, FileScannerResultExporter[] exporters) {
+	private void resetCopyObjectMenu(Late<Menu> menuHolder, FileScannerResultExportHandler[] exportHandlers) {
 		MenuBuilder copyObject = new MenuBuilder(menuHolder);
 
 		copyObject.removeItems();
 		copyObject.addItem(SWT.PUSH);
 		copyObject.withText(MainI18N.i18nMenuEditCopyDefault());
 		copyObject.onSelected(this::onCopyObjectSelected);
-		for (FileScannerResultExporter exporter : exporters) {
-			if (ClipboardTransferHandler.isTransferable(exporter.type())) {
+		for (FileScannerResultExportHandler exportHandler : exportHandlers) {
+			if (ClipboardTransferHandler.isTransferable(exportHandler.type())) {
 				copyObject.addItem(SWT.PUSH);
-				copyObject.withText(String.format("%1$s (%2$s)", exporter.name(), exporter.type().mimeType()));
+				copyObject
+						.withText(String.format("%1$s (%2$s)", exportHandler.name(), exportHandler.type().mimeType()));
 				copyObject.onSelected(this::onCopyObjectSelected);
-				copyObject.get().setData(exporter);
+				copyObject.get().setData(exportHandler);
 			}
 		}
 	}

@@ -18,6 +18,7 @@ package de.carne.filescanner.swt.export;
 
 import java.nio.file.Path;
 
+import de.carne.filescanner.engine.FileScannerResultExportHandler;
 import de.carne.filescanner.engine.FileScannerResultExporter;
 
 /**
@@ -25,23 +26,23 @@ import de.carne.filescanner.engine.FileScannerResultExporter;
  */
 public final class ExportOptions {
 
-	private final FileScannerResultExporter exporter;
+	private final FileScannerResultExportHandler exportHandler;
 	private final Path path;
 	private final boolean overwrite;
 
-	ExportOptions(FileScannerResultExporter exporter, Path path, boolean overwrite) {
-		this.exporter = exporter;
+	ExportOptions(FileScannerResultExportHandler exportHandler, Path path, boolean overwrite) {
+		this.exportHandler = exportHandler;
 		this.path = path;
 		this.overwrite = overwrite;
 	}
 
 	/**
-	 * Gets the selected {@linkplain FileScannerResultExporter}.
+	 * Gets the selected {@linkplain FileScannerResultExportHandler}.
 	 *
-	 * @return the selected {@linkplain FileScannerResultExporter}.
+	 * @return the selected {@linkplain FileScannerResultExportHandler}.
 	 */
-	public FileScannerResultExporter exporter() {
-		return this.exporter;
+	public FileScannerResultExporter exportHandler() {
+		return this.exportHandler;
 	}
 
 	/**
@@ -55,7 +56,7 @@ public final class ExportOptions {
 
 	/**
 	 * Gets the overwrite confirmation.
-	 * 
+	 *
 	 * @return the overwrite confirmation.
 	 */
 	public boolean overwrite() {

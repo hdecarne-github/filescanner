@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Text;
 import de.carne.boot.Exceptions;
 import de.carne.boot.check.Nullable;
 import de.carne.filescanner.engine.FileScannerResult;
-import de.carne.filescanner.engine.FileScannerResultExporter;
+import de.carne.filescanner.engine.FileScannerResultExportHandler;
 import de.carne.filescanner.swt.resources.Images;
 import de.carne.nio.file.FileUtil;
 import de.carne.swt.graphics.ResourceException;
@@ -66,7 +66,7 @@ class ExportUI extends ShellUserInterface {
 	private final ResourceTracker resources;
 	private final Late<Combo> exportTypeHolder = new Late<>();
 	private final Late<Text> exportPathTextHolder = new Late<>();
-	private final Property<Integer> exporterTypeSelection = new Property<>(Integer.valueOf(0));
+	private final Property<Integer> exportTypeSelection = new Property<>(Integer.valueOf(0));
 	@Nullable
 	private ExportOptions exportOptions = null;
 
@@ -128,7 +128,7 @@ class ExportUI extends ShellUserInterface {
 
 		this.exportTypeHolder.set(exportType.get());
 		this.exportPathTextHolder.set(exportPathText.get());
-		this.exporterTypeSelection.addChangedListener(this::onExporterTypeSelectionChanged);
+		this.exportTypeSelection.addChangedListener(this::onExportTypeSelectionChanged);
 		initializeOptions();
 
 		return rootBuilder;
@@ -136,12 +136,12 @@ class ExportUI extends ShellUserInterface {
 
 	private void initializeOptions() {
 		Combo exportType = this.exportTypeHolder.get();
-		FileScannerResultExporter[] exporters = this.result.exporters();
+		FileScannerResultExportHandler[] exportHandlers = this.result.exportHandlers();
 
-		for (FileScannerResultExporter exporter : exporters) {
-			exportType.add(String.format("%1$s (%2$s)", exporter.name(), exporter.type().mimeType()));
+		for (FileScannerResultExportHandler exportHandler : exportHandlers) {
+			exportType.add(String.format("%1$s (%2$s)", exportHandler.name(), exportHandler.type().mimeType()));
 		}
-		this.exporterTypeSelection.set(Integer.valueOf(0), true);
+		this.exportTypeSelection.set(Integer.valueOf(0), true);
 	}
 
 	private void buildButtons(CompositeBuilder<Composite> buttons) {
@@ -199,14 +199,14 @@ class ExportUI extends ShellUserInterface {
 		}
 	}
 
-	private void onExporterTypeSelectionChanged(@Nullable Integer newValue,
+	private void onExportTypeSelectionChanged(@Nullable Integer newValue,
 			@SuppressWarnings("unused") @Nullable Integer oldValue) {
 		if (newValue != null) {
-			int exporterIndex = newValue.intValue();
-			FileScannerResultExporter exporter = this.result.exporters()[exporterIndex];
+			int exportTypeIndex = newValue.intValue();
+			FileScannerResultExportHandler exportHandler = this.result.exportHandlers()[exportTypeIndex];
 
-			this.exportTypeHolder.get().select(exporterIndex);
-			this.exportPathTextHolder.get().setText(buildExportPath(exporter.defaultFileName(this.result)));
+			this.exportTypeHolder.get().select(exportTypeIndex);
+			this.exportPathTextHolder.get().setText(buildExportPath(exportHandler.defaultFileName(this.result)));
 		}
 	}
 
@@ -234,14 +234,14 @@ class ExportUI extends ShellUserInterface {
 	}
 
 	private ExportOptions validateAndGetExportOptions() throws ValidationException {
-		int exporterIndex = InputValidator
-				.checkNotNull(this.exporterTypeSelection.get(), ExportI18N::i18nMessageNoExporter).get().intValue();
+		int exportTypeIndex = InputValidator
+				.checkNotNull(this.exportTypeSelection.get(), ExportI18N::i18nMessageNoExportType).get().intValue();
 		Path exportPath = StringValidator
 				.checkNotEmpty(this.exportPathTextHolder.get().getText(), ExportI18N::i18nMessageNoExportPath)
 				.convert(PathValidator::fromString, ExportI18N::i18nMessageInvalidExportPath).get();
 		boolean overwrite = exportPath.toFile().exists();
 
-		return new ExportOptions(this.result.exporters()[exporterIndex], exportPath, overwrite);
+		return new ExportOptions(this.result.exportHandlers()[exportTypeIndex], exportPath, overwrite);
 	}
 
 	private boolean confirmOverwrite(Path exportPath) {

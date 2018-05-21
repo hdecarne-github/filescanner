@@ -27,7 +27,7 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 
 import de.carne.filescanner.engine.FileScannerResult;
-import de.carne.filescanner.engine.FileScannerResultExporter;
+import de.carne.filescanner.engine.FileScannerResultExportHandler;
 import de.carne.filescanner.engine.transfer.RenderOutput;
 import de.carne.filescanner.engine.transfer.SimpleTextRenderer;
 import de.carne.filescanner.engine.util.CombinedRenderer;
@@ -36,13 +36,17 @@ import de.carne.nio.compression.Check;
 
 abstract class ClipboardTransferHandler {
 
-	private static final Set<FileScannerResultExporter.Type> TRANSFERABLE_TYPES = new HashSet<>();
+	private static final Set<FileScannerResultExportHandler.Type> TRANSFERABLE_TYPES = new HashSet<>();
 
 	static {
-		// add if available
+		TRANSFERABLE_TYPES.add(FileScannerResultExportHandler.Type.IMAGE_BMP);
+		TRANSFERABLE_TYPES.add(FileScannerResultExportHandler.Type.IMAGE_GIF);
+		TRANSFERABLE_TYPES.add(FileScannerResultExportHandler.Type.IMAGE_JPEG);
+		TRANSFERABLE_TYPES.add(FileScannerResultExportHandler.Type.IMAGE_PNG);
+		TRANSFERABLE_TYPES.add(FileScannerResultExportHandler.Type.IMAGE_TIFF);
 	}
 
-	public static boolean isTransferable(FileScannerResultExporter.Type type) {
+	public static boolean isTransferable(FileScannerResultExportHandler.Type type) {
 		return TRANSFERABLE_TYPES.contains(type);
 	}
 
@@ -73,24 +77,24 @@ abstract class ClipboardTransferHandler {
 		};
 	}
 
-	public static ClipboardTransferHandler exporterHandler(FileScannerResultExporter exporter) {
-		ClipboardTransferHandler handler;
+	public static ClipboardTransferHandler exportHandler(FileScannerResultExportHandler exportHandler) {
+		ClipboardTransferHandler transferHandler;
 
-		switch (exporter.type()) {
+		switch (exportHandler.type()) {
 		case IMAGE_BMP:
 		case IMAGE_GIF:
 		case IMAGE_JPEG:
 		case IMAGE_PNG:
 		case IMAGE_TIFF:
-			handler = imageDataHandler(exporter);
+			transferHandler = imageDataHandler(exportHandler);
 			break;
 		default:
-			handler = Check.fail("Unexpected exporter type: %1$s", exporter.type());
+			transferHandler = Check.fail("Unexpected exporter type: %1$s", exportHandler.type());
 		}
-		return handler;
+		return transferHandler;
 	}
 
-	private static ClipboardTransferHandler imageDataHandler(FileScannerResultExporter exporter) {
+	private static ClipboardTransferHandler imageDataHandler(FileScannerResultExportHandler exportHandler) {
 		return Check.fail("Not yet implemented");
 	}
 
