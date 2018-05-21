@@ -584,6 +584,7 @@ public class Hex extends Canvas implements DisposeListener, FocusListener, Trave
 						verticalDisplayUnits);
 			} else {
 				layout.scrollPosY = 0;
+				layout.rescaleScrollPosY();
 				verticalBar.setValues(0, 0, 0, 1, 1, 1);
 			}
 		} else {
@@ -607,7 +608,7 @@ public class Hex extends Canvas implements DisposeListener, FocusListener, Trave
 			this.originX = 3;
 			this.originY = 3;
 
-			Point extent = gc.textExtent(template);
+			Point extent = gc.textExtent(template, SWT.NONE);
 			int extentUnits = template.length();
 
 			this.scrollUnitX = (extent.x + extentUnits - 1) / extentUnits;
