@@ -535,7 +535,7 @@ public class MainUI extends ShellUserInterface {
 	}
 
 	private void onResultSelectionChanged(@Nullable FileScannerResult newResult,
-			@SuppressWarnings("unused") @Nullable FileScannerResult oldResult) {
+			@SuppressWarnings({ "unused", "squid:S1172" }) @Nullable FileScannerResult oldResult) {
 		if (newResult != null) {
 			this.resultTreeHolder.get().select(newResult.getData(TreeItem.class));
 			this.inputViewHolder.get().setResult(newResult);

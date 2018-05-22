@@ -200,7 +200,7 @@ class ExportUI extends ShellUserInterface {
 	}
 
 	private void onExportTypeSelectionChanged(@Nullable Integer newValue,
-			@SuppressWarnings("unused") @Nullable Integer oldValue) {
+			@SuppressWarnings({ "unused", "squid:S1172" }) @Nullable Integer oldValue) {
 		if (newValue != null) {
 			int exportTypeIndex = newValue.intValue();
 			FileScannerResultExportHandler exportHandler = this.result.exportHandlers()[exportTypeIndex];
