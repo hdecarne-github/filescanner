@@ -40,7 +40,7 @@ class ProgressUI extends ShellUserInterface implements ProgressCallback {
 
 	public static final int STYLE = SWT.TOOL | SWT.APPLICATION_MODAL;
 
-	private static final long UPDATE_FREQUENCY = 500 * 1000 * 1000;
+	private static final long UPDATE_FREQUENCY = 500l * 1000l * 1000l;
 
 	private final ResourceTracker resources;
 	private long total = -1;
