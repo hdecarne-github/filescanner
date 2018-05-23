@@ -537,7 +537,10 @@ public class MainUI extends ShellUserInterface {
 	private void onResultSelectionChanged(@Nullable FileScannerResult newResult,
 			@SuppressWarnings({ "unused", "squid:S1172" }) @Nullable FileScannerResult oldResult) {
 		if (newResult != null) {
-			this.resultTreeHolder.get().select(newResult.getData(TreeItem.class));
+			TreeItem resultItem = newResult.getData(TreeItem.class);
+
+			this.resultTreeHolder.get().select(resultItem);
+			this.resultTreeHolder.get().showItem(resultItem);
 			this.inputViewHolder.get().setResult(newResult);
 			this.resultViewHolder.get().setUrl(this.resultRenderServerHolder.get().setResult(newResult));
 			this.resultSelectionCommands.setEnabled(true);
