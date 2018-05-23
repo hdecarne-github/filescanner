@@ -111,6 +111,18 @@ public class MainUI extends ShellUserInterface {
 	private final Property<FileScannerResult> resultSelection = new Property<>();
 	private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
+	private enum SearchState {
+
+		DEFAULT,
+
+		WRAP_NEXT,
+
+		WRAP_PREVIOUS
+
+	}
+
+	private SearchState searchState = SearchState.DEFAULT;
+
 	/**
 	 * Constructs a new {@linkplain MainUI} instance.
 	 *
@@ -458,12 +470,20 @@ public class MainUI extends ShellUserInterface {
 
 	private void onGotoNextSelected() {
 		try {
-			FileScannerResult selection = this.resultSelection.get();
+			FileScannerResult from = null;
+
+			if (this.searchState != SearchState.WRAP_NEXT) {
+				from = this.resultSelection.get();
+			}
+
 			String query = getSearchQuery();
-			FileScannerResult[] searchResult = this.controllerHolder.get().searchNext(selection, query);
+			FileScannerResult[] searchResult = this.controllerHolder.get().searchNext(from, query);
 
 			if (searchResult != null) {
 				expandAndSelectResultPath(searchResult);
+				this.searchState = SearchState.DEFAULT;
+			} else {
+				this.searchState = SearchState.WRAP_NEXT;
 			}
 		} catch (Exception e) {
 			unexpectedException(e);
@@ -472,12 +492,20 @@ public class MainUI extends ShellUserInterface {
 
 	private void onGotoPreviousSelected() {
 		try {
-			FileScannerResult selection = this.resultSelection.get();
+			FileScannerResult from = null;
+
+			if (this.searchState != SearchState.WRAP_PREVIOUS) {
+				from = this.resultSelection.get();
+			}
+
 			String query = getSearchQuery();
-			FileScannerResult[] searchResult = this.controllerHolder.get().searchPrevious(selection, query);
+			FileScannerResult[] searchResult = this.controllerHolder.get().searchPrevious(from, query);
 
 			if (searchResult != null) {
 				expandAndSelectResultPath(searchResult);
+				this.searchState = SearchState.DEFAULT;
+			} else {
+				this.searchState = SearchState.WRAP_PREVIOUS;
 			}
 		} catch (Exception e) {
 			unexpectedException(e);
@@ -549,6 +577,7 @@ public class MainUI extends ShellUserInterface {
 			this.resultSelectionCommands.setEnabled(false);
 			clearCopyObjectMenus();
 		}
+		this.searchState = SearchState.DEFAULT;
 	}
 
 	private void clearCopyObjectMenus() {

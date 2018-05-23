@@ -98,8 +98,7 @@ class MainController implements FileScannerStatus {
 		FileScannerResult[] searchResult = null;
 
 		if (checkedSearchIndex != null && checkedFileScanner != null) {
-			byte[] resultKey = checkedSearchIndex.searchFoward((from != null ? from : checkedFileScanner.result()),
-					query);
+			byte[] resultKey = checkedSearchIndex.searchFoward(from, query);
 
 			if (resultKey != null) {
 				searchResult = checkedFileScanner.getResultPath(resultKey);
@@ -115,8 +114,7 @@ class MainController implements FileScannerStatus {
 		FileScannerResult[] searchResult = null;
 
 		if (checkedSearchIndex != null && checkedFileScanner != null) {
-			byte[] resultKey = checkedSearchIndex.searchBackward((from != null ? from : checkedFileScanner.result()),
-					query);
+			byte[] resultKey = checkedSearchIndex.searchBackward(from, query);
 
 			if (resultKey != null) {
 				searchResult = checkedFileScanner.getResultPath(resultKey);

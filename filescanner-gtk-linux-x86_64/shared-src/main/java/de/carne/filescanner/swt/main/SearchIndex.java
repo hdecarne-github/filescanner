@@ -155,13 +155,13 @@ final class SearchIndex implements AutoCloseable {
 	}
 
 	@Nullable
-	public byte[] searchFoward(FileScannerResult start, String query) throws IOException {
-		return getSearcher().search(new BytesRef(start.key()), null, query, SORT_FORWARD);
+	public byte[] searchFoward(@Nullable FileScannerResult start, String query) throws IOException {
+		return getSearcher().search((start != null ? new BytesRef(start.key()) : null), null, query, SORT_FORWARD);
 	}
 
 	@Nullable
-	public byte[] searchBackward(FileScannerResult start, String query) throws IOException {
-		return getSearcher().search(null, new BytesRef(start.key()), query, SORT_BACKWARD);
+	public byte[] searchBackward(@Nullable FileScannerResult start, String query) throws IOException {
+		return getSearcher().search(null, (start != null ? new BytesRef(start.key()) : null), query, SORT_BACKWARD);
 	}
 
 	@Override
