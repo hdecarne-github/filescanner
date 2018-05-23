@@ -139,7 +139,7 @@ class ExportUI extends ShellUserInterface {
 		FileScannerResultExportHandler[] exportHandlers = this.result.exportHandlers();
 
 		for (FileScannerResultExportHandler exportHandler : exportHandlers) {
-			exportType.add(String.format("%1$s (%2$s)", exportHandler.name(), exportHandler.type().mimeType()));
+			exportType.add(String.format("%1$s (%2$s)", exportHandler.name(), exportHandler.transferType().mimeType()));
 		}
 		this.exportTypeSelection.set(Integer.valueOf(0), true);
 	}

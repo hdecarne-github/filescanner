@@ -94,7 +94,7 @@ public class MainUI extends ShellUserInterface {
 	private static final Log LOG = new Log();
 
 	private final ResourceTracker resources;
-	private final Late<HtmlRenderService> resultRenderServiceHolder = new Late<>();
+	private final Late<HtmlRenderServer> resultRenderServerHolder = new Late<>();
 	private final Late<MainController> controllerHolder = new Late<>();
 	private final Late<Text> searchQueryHolder = new Late<>();
 	private final Late<Tree> resultTreeHolder = new Late<>();
@@ -168,7 +168,7 @@ public class MainUI extends ShellUserInterface {
 	}
 
 	void resetSession(boolean session) {
-		this.resultRenderServiceHolder.get().clear();
+		this.resultRenderServerHolder.get().clear();
 		this.resultTreeHolder.get().removeAll();
 		this.resultViewHolder.get().setText(MainI18N.i18nTextDefaultResultViewHtml());
 		this.sessionProgressHolder.get().setSelection(0);
@@ -347,7 +347,7 @@ public class MainUI extends ShellUserInterface {
 		this.executor.shutdownNow();
 		UserPreferences.get().removeConsumer(this.configConsumer);
 		this.controllerHolder.get().close();
-		this.resultRenderServiceHolder.get().dispose();
+		this.resultRenderServerHolder.get().dispose();
 		this.resources.disposeAll();
 
 		LOG.info("Main UI disposed");
@@ -539,7 +539,7 @@ public class MainUI extends ShellUserInterface {
 		if (newResult != null) {
 			this.resultTreeHolder.get().select(newResult.getData(TreeItem.class));
 			this.inputViewHolder.get().setResult(newResult);
-			this.resultViewHolder.get().setUrl(this.resultRenderServiceHolder.get().setResult(newResult));
+			this.resultViewHolder.get().setUrl(this.resultRenderServerHolder.get().setResult(newResult));
 			this.resultSelectionCommands.setEnabled(true);
 			resetCopyObjectMenus(newResult);
 		} else {
@@ -573,11 +573,18 @@ public class MainUI extends ShellUserInterface {
 		copyObject.addItem(SWT.PUSH);
 		copyObject.withText(MainI18N.i18nMenuEditCopyDefault());
 		copyObject.onSelected(this::onCopyObjectSelected);
+
+		boolean firstExportHandler = true;
+
 		for (FileScannerResultExportHandler exportHandler : exportHandlers) {
-			if (ClipboardTransferHandler.isTransferable(exportHandler.type())) {
+			if (firstExportHandler) {
+				copyObject.addItem(SWT.SEPARATOR);
+				firstExportHandler = false;
+			}
+			if (ClipboardTransferHandler.isTransferable(exportHandler.transferType())) {
 				copyObject.addItem(SWT.PUSH);
-				copyObject
-						.withText(String.format("%1$s (%2$s)", exportHandler.name(), exportHandler.type().mimeType()));
+				copyObject.withText(
+						String.format("%1$s (%2$s)", exportHandler.name(), exportHandler.transferType().mimeType()));
 				copyObject.onSelected(this::onCopyObjectSelected);
 				copyObject.get().setData(exportHandler);
 			}
@@ -588,7 +595,7 @@ public class MainUI extends ShellUserInterface {
 	public void open() throws ResourceException {
 		LOG.info("Opening Main UI...");
 
-		this.resultRenderServiceHolder.set(new HtmlRenderService());
+		this.resultRenderServerHolder.set(new HtmlRenderServer());
 
 		MainController controller = this.controllerHolder.set(new MainController(this));
 		Shell root = buildRoot(controller);
@@ -607,7 +614,7 @@ public class MainUI extends ShellUserInterface {
 		Font inputViewFont = this.resources.getFont(config.getInputViewFont());
 
 		this.inputViewHolder.get().setFont(inputViewFont);
-		this.resultRenderServiceHolder.get().applyConfig(config);
+		this.resultRenderServerHolder.get().applyConfig(config);
 
 		TreeItem[] resultTreeSelection = this.resultTreeHolder.get().getSelection();
 
@@ -615,7 +622,7 @@ public class MainUI extends ShellUserInterface {
 			FileScannerResult result = Check.isInstanceOf(resultTreeSelection[0].getData(), FileScannerResult.class);
 
 			this.inputViewHolder.get().setResult(result);
-			this.resultViewHolder.get().setUrl(this.resultRenderServiceHolder.get().setResult(result));
+			this.resultViewHolder.get().setUrl(this.resultRenderServerHolder.get().setResult(result));
 		}
 	}
 

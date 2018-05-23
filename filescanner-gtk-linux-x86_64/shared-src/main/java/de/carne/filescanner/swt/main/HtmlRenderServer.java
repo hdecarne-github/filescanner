@@ -17,9 +17,7 @@
 package de.carne.filescanner.swt.main;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -39,16 +37,15 @@ import de.carne.boot.logging.Log;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.transfer.RenderOutput;
 import de.carne.filescanner.swt.preferences.Config;
-import de.carne.io.IOUtil;
 import de.carne.swt.graphics.ResourceException;
 import de.carne.util.SystemProperties;
 
-class HtmlRenderService extends HttpHandler {
+class HtmlRenderServer extends HttpHandler {
 
 	private static final Log LOG = new Log();
 
 	private static final PortRange HTTP_PORT_RANGE = PortRange
-			.valueOf(SystemProperties.value(HtmlRenderService.class, ".portRange", "50101:50199"));
+			.valueOf(SystemProperties.value(HtmlRenderServer.class, ".portRange", "50101:50199"));
 
 	private static final String RESOURCE_TRANSPARENT = "transparent.png";
 
@@ -59,7 +56,7 @@ class HtmlRenderService extends HttpHandler {
 	private FileScannerResult result = null;
 	private final List<HttpHandler> resultHandlers = new ArrayList<>();
 
-	public HtmlRenderService() throws ResourceException {
+	public HtmlRenderServer() throws ResourceException {
 		try {
 			this.httpServer = startHttpServer();
 		} catch (IOException e) {
@@ -131,7 +128,7 @@ class HtmlRenderService extends HttpHandler {
 
 		ServerConfiguration configuration = httpServer.getServerConfiguration();
 
-		configuration.addHttpHandler(new StaticResourceHandler(RESOURCE_TRANSPARENT), "/" + RESOURCE_TRANSPARENT);
+		configuration.addHttpHandler(new HtmlResourceHandler(RESOURCE_TRANSPARENT), "/" + RESOURCE_TRANSPARENT);
 		httpServer.start();
 
 		LOG.info("Local HTTP server started at {0}", getHttpServerUri(httpServer));
@@ -149,29 +146,6 @@ class HtmlRenderService extends HttpHandler {
 				+ listener.getPort();
 
 		return URI.create(uriString);
-	}
-
-	private static class StaticResourceHandler extends HttpHandler {
-
-		private final URL resourceUrl;
-
-		StaticResourceHandler(String resource) {
-			this(HtmlRenderService.class.getResource(resource));
-		}
-
-		StaticResourceHandler(URL resourceUrl) {
-			this.resourceUrl = resourceUrl;
-		}
-
-		@Override
-		public void service(@Nullable Request request, @Nullable Response response) throws Exception {
-			if (request != null && response != null) {
-				try (InputStream resourceStream = this.resourceUrl.openStream()) {
-					IOUtil.copyStream(response.getOutputStream(), resourceStream);
-				}
-			}
-		}
-
 	}
 
 }
