@@ -148,15 +148,15 @@ class MainController implements FileScannerStatus {
 	@Override
 	public void scanResult(FileScanner scanner, FileScannerResult result) {
 		if (scanner.equals(this.fileScanner)) {
-			Check.notNull(this.searchIndex).addResult(result);
 			Application.getMain(FileScannerMain.class).runWait(() -> this.ui.sessionResult(result));
+			Check.notNull(this.searchIndex).addResult(result);
 		}
 	}
 
 	@Override
 	public void scanException(FileScanner scanner, Exception cause) {
 		if (scanner.equals(this.fileScanner)) {
-			// TODO Auto-generated method stub
+			Application.getMain(FileScannerMain.class).runWait(() -> this.ui.sessionException(cause));
 		}
 	}
 

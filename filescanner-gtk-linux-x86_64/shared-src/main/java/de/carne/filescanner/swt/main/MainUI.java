@@ -250,6 +250,11 @@ public class MainUI extends ShellUserInterface {
 		}
 	}
 
+	void sessionException(Throwable exception) {
+		Notification.error(root()).withText(MainI18N.i18nTextScanException())
+				.withMessage(MainI18N.i18nMessageScanException(Exceptions.toString(exception))).open();
+	}
+
 	private void setRootResultTreeItem(FileScannerResult rootResult) {
 		TreeItem rootResultItem = new TreeItem(this.resultTreeHolder.get(), SWT.NONE);
 

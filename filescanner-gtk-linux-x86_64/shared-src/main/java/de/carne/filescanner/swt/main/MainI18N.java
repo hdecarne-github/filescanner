@@ -418,6 +418,25 @@ public final class MainI18N {
 	}
 
 	/**
+	 * Resource key {@code I18N_MESSAGE_SCAN_EXCEPTION}
+	 * <p>
+	 * An error occurred while scanning the current file.Details: {0}
+	 */
+	public static final String I18N_MESSAGE_SCAN_EXCEPTION = "I18N_MESSAGE_SCAN_EXCEPTION";
+
+	/**
+	 * Resource string {@code I18N_MESSAGE_SCAN_EXCEPTION}
+	 * <p>
+	 * An error occurred while scanning the current file.Details: {0}
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nMessageScanException(Object... arguments) {
+		return format(I18N_MESSAGE_SCAN_EXCEPTION, arguments);
+	}
+
+	/**
 	 * Resource key {@code I18N_TEXT_DEFAULT_RESULT_VIEW_HTML}
 	 * <p>
 	 * &lt;!DOCTYPE HTML&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset="utf-8"&gt;&lt;&frasl;head&gt;&lt;body&gt;&lt;&frasl;body&gt;&lt;&frasl;html&gt;
@@ -491,6 +510,25 @@ public final class MainI18N {
 	 */
 	public static String i18nTextNoSearchResult(Object... arguments) {
 		return format(I18N_TEXT_NO_SEARCH_RESULT, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_TEXT_SCAN_EXCEPTION}
+	 * <p>
+	 * Scan failed
+	 */
+	public static final String I18N_TEXT_SCAN_EXCEPTION = "I18N_TEXT_SCAN_EXCEPTION";
+
+	/**
+	 * Resource string {@code I18N_TEXT_SCAN_EXCEPTION}
+	 * <p>
+	 * Scan failed
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nTextScanException(Object... arguments) {
+		return format(I18N_TEXT_SCAN_EXCEPTION, arguments);
 	}
 
 	/**
@@ -686,14 +724,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_TOOLTIP_QUERY_INPUT}
 	 * <p>
-	 * Enter search pattern (default &#42;)
+	 * Enter search pattern (&#42; is assumed if empty)
 	 */
 	public static final String I18N_TOOLTIP_QUERY_INPUT = "I18N_TOOLTIP_QUERY_INPUT";
 
 	/**
 	 * Resource string {@code I18N_TOOLTIP_QUERY_INPUT}
 	 * <p>
-	 * Enter search pattern (default &#42;)
+	 * Enter search pattern (&#42; is assumed if empty)
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
