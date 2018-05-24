@@ -81,6 +81,7 @@ import de.carne.swt.widgets.ShellUserInterface;
 import de.carne.swt.widgets.ToolBarBuilder;
 import de.carne.swt.widgets.aboutinfo.AboutInfoDialog;
 import de.carne.swt.widgets.heapinfo.HeapInfo;
+import de.carne.swt.widgets.notification.Notification;
 import de.carne.text.MemoryUnitFormat;
 import de.carne.util.Debug;
 import de.carne.util.Late;
@@ -139,8 +140,12 @@ public class MainUI extends ShellUserInterface {
 	 * @param file the file to scan.
 	 */
 	public void openCommandLineFile(String file) {
-		openFile(file);
-		// TODO: Check for multiple files and show message
+		if (this.resultSelection.get() == null) {
+			openFile(file);
+		} else {
+			Notification.information(root()).withText(MainI18N.i18nTextIgnoringExtraFile())
+					.withMessage(MainI18N.i18nMessageIgnoringCommandLineFile()).open();
+		}
 	}
 
 	/**
@@ -150,7 +155,10 @@ public class MainUI extends ShellUserInterface {
 	 */
 	public void openDroppedFile(String[] file) {
 		openFile(file[0]);
-		// TODO: Check for multiple files and show message
+		if (file.length > 0) {
+			Notification.information(root()).withText(MainI18N.i18nTextIgnoringExtraFile())
+					.withMessage(MainI18N.i18nMessageIgnoringDroppedFile()).open();
+		}
 	}
 
 	/**
@@ -484,6 +492,8 @@ public class MainUI extends ShellUserInterface {
 				this.searchState = SearchState.DEFAULT;
 			} else {
 				this.searchState = SearchState.WRAP_NEXT;
+				Notification.information(root()).withText(MainI18N.i18nTextNoSearchResult())
+						.withMessage(MainI18N.i18nMessageNoSearchResult()).open();
 			}
 		} catch (Exception e) {
 			unexpectedException(e);
@@ -506,6 +516,8 @@ public class MainUI extends ShellUserInterface {
 				this.searchState = SearchState.DEFAULT;
 			} else {
 				this.searchState = SearchState.WRAP_PREVIOUS;
+				Notification.information(root()).withText(MainI18N.i18nTextNoSearchResult())
+						.withMessage(MainI18N.i18nMessageNoSearchResult()).open();
 			}
 		} catch (Exception e) {
 			unexpectedException(e);
@@ -753,16 +765,20 @@ public class MainUI extends ShellUserInterface {
 		menu.beginMenu();
 		menu.addItem(SWT.PUSH).withText(MainI18N.i18nMenuGotoNext());
 		menu.withImage(this.resources.getImage(Images.class, Images.IMAGE_GOTO_NEXT16));
+		menu.onSelected(this::onGotoNextSelected);
 		this.resultSelectionCommands.add(menu.currentItem());
 		menu.addItem(SWT.PUSH).withText(MainI18N.i18nMenuGotoPrevious());
 		menu.withImage(this.resources.getImage(Images.class, Images.IMAGE_GOTO_PREVIOUS16));
+		menu.onSelected(this::onGotoPreviousSelected);
 		this.resultSelectionCommands.add(menu.currentItem());
 		menu.addItem(SWT.SEPARATOR);
 		menu.addItem(SWT.PUSH).withText(MainI18N.i18nMenuGotoStart());
 		menu.withImage(this.resources.getImage(Images.class, Images.IMAGE_GOTO_START16));
+		menu.onSelected(this::onGotoStartSelected);
 		this.resultSelectionCommands.add(menu.currentItem());
 		menu.addItem(SWT.PUSH).withText(MainI18N.i18nMenuGotoEnd());
 		menu.withImage(this.resources.getImage(Images.class, Images.IMAGE_GOTO_END16));
+		menu.onSelected(this::onGotoEndSelected);
 		this.resultSelectionCommands.add(menu.currentItem());
 		menu.endMenu();
 		menu.addItem(SWT.CASCADE).withText(MainI18N.i18nMenuHelp());
@@ -787,45 +803,54 @@ public class MainUI extends ShellUserInterface {
 
 		// File & edit tools
 		fileAndEditTools.addItem(SWT.PUSH);
-		fileAndEditTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_OPEN_FILE16));
+		fileAndEditTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_OPEN_FILE16))
+				.withToolTipText(MainI18N.i18nTooltipFileOpen());
 		fileAndEditTools.onSelected(this::onOpenSelected);
 		fileAndEditTools.addItem(SWT.SEPARATOR);
 		fileAndEditTools.addItem(SWT.PUSH);
 		fileAndEditTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_PRINT_OBJECT16))
-				.withDisabledImage(this.resources.getImage(Images.class, Images.IMAGE_PRINT_OBJECT_DISABLED16));
+				.withDisabledImage(this.resources.getImage(Images.class, Images.IMAGE_PRINT_OBJECT_DISABLED16))
+				.withToolTipText(MainI18N.i18nTooltipFilePrint());
 		fileAndEditTools.onSelected(this::onPrintObjectSelected);
 		this.resultSelectionCommands.add(fileAndEditTools.currentItem());
 		fileAndEditTools.addItem(SWT.PUSH);
 		fileAndEditTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_EXPORT_OBJECT16))
-				.withDisabledImage(this.resources.getImage(Images.class, Images.IMAGE_EXPORT_OBJECT_DISABLED16));
+				.withDisabledImage(this.resources.getImage(Images.class, Images.IMAGE_EXPORT_OBJECT_DISABLED16))
+				.withToolTipText(MainI18N.i18nTooltipFileExport());
 		fileAndEditTools.onSelected(this::onExportObjectSelected);
 		this.resultSelectionCommands.add(fileAndEditTools.currentItem());
 		fileAndEditTools.addItem(SWT.SEPARATOR);
 		fileAndEditTools.addItem(SWT.DROP_DOWN);
 		fileAndEditTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_OBJECT16))
-				.withDisabledImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_OBJECT_DISABLED16));
+				.withDisabledImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_OBJECT_DISABLED16))
+				.withToolTipText(MainI18N.i18nTooltipEditCopy());
 		fileAndEditTools.onSelected(this::onCopyObjectToolSelected);
 		this.copyObjectToolHolder.set(new Menu(fileAndEditTools.get()));
 		this.resultSelectionCommands.add(fileAndEditTools.currentItem());
 		commands.addItem(SWT.NONE).withControl(fileAndEditTools);
 		// Search tools
+		queryText.get().setToolTipText(MainI18N.i18nTooltipQueryInput());
 		queryText.onSelected(this::onGotoNextSelected);
 		this.resultSelectionCommands.add(queryText.get());
 		gotoTools.addItem(SWT.PUSH);
-		gotoTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_GOTO_NEXT16));
+		gotoTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_GOTO_NEXT16))
+				.withToolTipText(MainI18N.i18nTooltipGotoNext());
 		gotoTools.onSelected(this::onGotoNextSelected);
 		this.resultSelectionCommands.add(gotoTools.currentItem());
 		gotoTools.addItem(SWT.PUSH);
-		gotoTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_GOTO_PREVIOUS16));
+		gotoTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_GOTO_PREVIOUS16))
+				.withToolTipText(MainI18N.i18nTooltipGotoPrevious());
 		gotoTools.onSelected(this::onGotoPreviousSelected);
 		this.resultSelectionCommands.add(gotoTools.currentItem());
 		gotoTools.addItem(SWT.SEPARATOR);
 		gotoTools.addItem(SWT.PUSH);
-		gotoTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_GOTO_END16));
+		gotoTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_GOTO_END16))
+				.withToolTipText(MainI18N.i18nTooltipGotoEnd());
 		gotoTools.onSelected(this::onGotoEndSelected);
 		this.resultSelectionCommands.add(gotoTools.currentItem());
 		gotoTools.addItem(SWT.PUSH);
-		gotoTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_GOTO_START16));
+		gotoTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_GOTO_START16))
+				.withToolTipText(MainI18N.i18nTooltipGotoStart());
 		gotoTools.onSelected(this::onGotoStartSelected);
 		this.resultSelectionCommands.add(gotoTools.currentItem());
 		GridLayoutBuilder.layout(2).margin(2, 2).apply(queryInput);
@@ -851,13 +876,15 @@ public class MainUI extends ShellUserInterface {
 
 		sessionTools.addItem(SWT.PUSH);
 		sessionTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_STOP16))
-				.withDisabledImage(this.resources.getImage(Images.class, Images.IMAGE_STOP_DISABLED16));
+				.withDisabledImage(this.resources.getImage(Images.class, Images.IMAGE_STOP_DISABLED16))
+				.withToolTipText(MainI18N.i18nTooltipStopScan());
 		sessionTools.onSelected(controller::stopScan);
 
 		runtimeHeap.get().setTimer(500);
 
 		runtimeTools.addItem(SWT.PUSH);
-		runtimeTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_TRASH16));
+		runtimeTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_TRASH16))
+				.withToolTipText(MainI18N.i18nTooltipRunGc());
 		runtimeTools.onSelected(this::runGc);
 
 		GridLayoutBuilder.layout(3).margin(0, 0).apply(session);

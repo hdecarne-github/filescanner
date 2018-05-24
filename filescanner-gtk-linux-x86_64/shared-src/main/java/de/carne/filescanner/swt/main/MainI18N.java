@@ -361,6 +361,63 @@ public final class MainI18N {
 	}
 
 	/**
+	 * Resource key {@code I18N_MESSAGE_IGNORING_COMMAND_LINE_FILE}
+	 * <p>
+	 * Ignoring extra file(s) submitted via command line.
+	 */
+	public static final String I18N_MESSAGE_IGNORING_COMMAND_LINE_FILE = "I18N_MESSAGE_IGNORING_COMMAND_LINE_FILE";
+
+	/**
+	 * Resource string {@code I18N_MESSAGE_IGNORING_COMMAND_LINE_FILE}
+	 * <p>
+	 * Ignoring extra file(s) submitted via command line.
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nMessageIgnoringCommandLineFile(Object... arguments) {
+		return format(I18N_MESSAGE_IGNORING_COMMAND_LINE_FILE, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_MESSAGE_IGNORING_DROPPED_FILE}
+	 * <p>
+	 * Ignoring additional dropped file(s).
+	 */
+	public static final String I18N_MESSAGE_IGNORING_DROPPED_FILE = "I18N_MESSAGE_IGNORING_DROPPED_FILE";
+
+	/**
+	 * Resource string {@code I18N_MESSAGE_IGNORING_DROPPED_FILE}
+	 * <p>
+	 * Ignoring additional dropped file(s).
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nMessageIgnoringDroppedFile(Object... arguments) {
+		return format(I18N_MESSAGE_IGNORING_DROPPED_FILE, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_MESSAGE_NO_SEARCH_RESULT}
+	 * <p>
+	 * Search again to wrap search
+	 */
+	public static final String I18N_MESSAGE_NO_SEARCH_RESULT = "I18N_MESSAGE_NO_SEARCH_RESULT";
+
+	/**
+	 * Resource string {@code I18N_MESSAGE_NO_SEARCH_RESULT}
+	 * <p>
+	 * Search again to wrap search
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nMessageNoSearchResult(Object... arguments) {
+		return format(I18N_MESSAGE_NO_SEARCH_RESULT, arguments);
+	}
+
+	/**
 	 * Resource key {@code I18N_TEXT_DEFAULT_RESULT_VIEW_HTML}
 	 * <p>
 	 * &lt;!DOCTYPE HTML&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset="utf-8"&gt;&lt;&frasl;head&gt;&lt;body&gt;&lt;&frasl;body&gt;&lt;&frasl;html&gt;
@@ -399,6 +456,44 @@ public final class MainI18N {
 	}
 
 	/**
+	 * Resource key {@code I18N_TEXT_IGNORING_EXTRA_FILE}
+	 * <p>
+	 * Only one file can be scanned at a time.
+	 */
+	public static final String I18N_TEXT_IGNORING_EXTRA_FILE = "I18N_TEXT_IGNORING_EXTRA_FILE";
+
+	/**
+	 * Resource string {@code I18N_TEXT_IGNORING_EXTRA_FILE}
+	 * <p>
+	 * Only one file can be scanned at a time.
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nTextIgnoringExtraFile(Object... arguments) {
+		return format(I18N_TEXT_IGNORING_EXTRA_FILE, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_TEXT_NO_SEARCH_RESULT}
+	 * <p>
+	 * Nothing found
+	 */
+	public static final String I18N_TEXT_NO_SEARCH_RESULT = "I18N_TEXT_NO_SEARCH_RESULT";
+
+	/**
+	 * Resource string {@code I18N_TEXT_NO_SEARCH_RESULT}
+	 * <p>
+	 * Nothing found
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nTextNoSearchResult(Object... arguments) {
+		return format(I18N_TEXT_NO_SEARCH_RESULT, arguments);
+	}
+
+	/**
 	 * Resource key {@code I18N_TEXT_SESSION_STATUS}
 	 * <p>
 	 * Scanned: {0} ({1}&frasl;s) Elapsed: {2}:{3,number,00}:{4,number,00}.{5,number,000}
@@ -434,6 +529,215 @@ public final class MainI18N {
 	 */
 	public static String i18nTitle(Object... arguments) {
 		return format(I18N_TITLE, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_TOOLTIP_EDIT_COPY}
+	 * <p>
+	 * Copy the current result view or one of the additional data types (if available)
+	 */
+	public static final String I18N_TOOLTIP_EDIT_COPY = "I18N_TOOLTIP_EDIT_COPY";
+
+	/**
+	 * Resource string {@code I18N_TOOLTIP_EDIT_COPY}
+	 * <p>
+	 * Copy the current result view or one of the additional data types (if available)
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nTooltipEditCopy(Object... arguments) {
+		return format(I18N_TOOLTIP_EDIT_COPY, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_TOOLTIP_FILE_EXPORT}
+	 * <p>
+	 * Export the currently selected scan result
+	 */
+	public static final String I18N_TOOLTIP_FILE_EXPORT = "I18N_TOOLTIP_FILE_EXPORT";
+
+	/**
+	 * Resource string {@code I18N_TOOLTIP_FILE_EXPORT}
+	 * <p>
+	 * Export the currently selected scan result
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nTooltipFileExport(Object... arguments) {
+		return format(I18N_TOOLTIP_FILE_EXPORT, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_TOOLTIP_FILE_OPEN}
+	 * <p>
+	 * Open and scan a file
+	 */
+	public static final String I18N_TOOLTIP_FILE_OPEN = "I18N_TOOLTIP_FILE_OPEN";
+
+	/**
+	 * Resource string {@code I18N_TOOLTIP_FILE_OPEN}
+	 * <p>
+	 * Open and scan a file
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nTooltipFileOpen(Object... arguments) {
+		return format(I18N_TOOLTIP_FILE_OPEN, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_TOOLTIP_FILE_PRINT}
+	 * <p>
+	 * Print the current result view
+	 */
+	public static final String I18N_TOOLTIP_FILE_PRINT = "I18N_TOOLTIP_FILE_PRINT";
+
+	/**
+	 * Resource string {@code I18N_TOOLTIP_FILE_PRINT}
+	 * <p>
+	 * Print the current result view
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nTooltipFilePrint(Object... arguments) {
+		return format(I18N_TOOLTIP_FILE_PRINT, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_TOOLTIP_GOTO_END}
+	 * <p>
+	 * Scroll hex view to the end position of the current scan result
+	 */
+	public static final String I18N_TOOLTIP_GOTO_END = "I18N_TOOLTIP_GOTO_END";
+
+	/**
+	 * Resource string {@code I18N_TOOLTIP_GOTO_END}
+	 * <p>
+	 * Scroll hex view to the end position of the current scan result
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nTooltipGotoEnd(Object... arguments) {
+		return format(I18N_TOOLTIP_GOTO_END, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_TOOLTIP_GOTO_NEXT}
+	 * <p>
+	 * Search the next scan result matching the entered pattern
+	 */
+	public static final String I18N_TOOLTIP_GOTO_NEXT = "I18N_TOOLTIP_GOTO_NEXT";
+
+	/**
+	 * Resource string {@code I18N_TOOLTIP_GOTO_NEXT}
+	 * <p>
+	 * Search the next scan result matching the entered pattern
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nTooltipGotoNext(Object... arguments) {
+		return format(I18N_TOOLTIP_GOTO_NEXT, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_TOOLTIP_GOTO_PREVIOUS}
+	 * <p>
+	 * Search the previous scan result matching the entered pattern
+	 */
+	public static final String I18N_TOOLTIP_GOTO_PREVIOUS = "I18N_TOOLTIP_GOTO_PREVIOUS";
+
+	/**
+	 * Resource string {@code I18N_TOOLTIP_GOTO_PREVIOUS}
+	 * <p>
+	 * Search the previous scan result matching the entered pattern
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nTooltipGotoPrevious(Object... arguments) {
+		return format(I18N_TOOLTIP_GOTO_PREVIOUS, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_TOOLTIP_GOTO_START}
+	 * <p>
+	 * Scroll hex view to the start position of the current scan result
+	 */
+	public static final String I18N_TOOLTIP_GOTO_START = "I18N_TOOLTIP_GOTO_START";
+
+	/**
+	 * Resource string {@code I18N_TOOLTIP_GOTO_START}
+	 * <p>
+	 * Scroll hex view to the start position of the current scan result
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nTooltipGotoStart(Object... arguments) {
+		return format(I18N_TOOLTIP_GOTO_START, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_TOOLTIP_QUERY_INPUT}
+	 * <p>
+	 * Enter search pattern (default &#42;)
+	 */
+	public static final String I18N_TOOLTIP_QUERY_INPUT = "I18N_TOOLTIP_QUERY_INPUT";
+
+	/**
+	 * Resource string {@code I18N_TOOLTIP_QUERY_INPUT}
+	 * <p>
+	 * Enter search pattern (default &#42;)
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nTooltipQueryInput(Object... arguments) {
+		return format(I18N_TOOLTIP_QUERY_INPUT, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_TOOLTIP_RUN_GC}
+	 * <p>
+	 * Run heap garbage collection
+	 */
+	public static final String I18N_TOOLTIP_RUN_GC = "I18N_TOOLTIP_RUN_GC";
+
+	/**
+	 * Resource string {@code I18N_TOOLTIP_RUN_GC}
+	 * <p>
+	 * Run heap garbage collection
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nTooltipRunGc(Object... arguments) {
+		return format(I18N_TOOLTIP_RUN_GC, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_TOOLTIP_STOP_SCAN}
+	 * <p>
+	 * Stop the currently running scan (if any)
+	 */
+	public static final String I18N_TOOLTIP_STOP_SCAN = "I18N_TOOLTIP_STOP_SCAN";
+
+	/**
+	 * Resource string {@code I18N_TOOLTIP_STOP_SCAN}
+	 * <p>
+	 * Stop the currently running scan (if any)
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nTooltipStopScan(Object... arguments) {
+		return format(I18N_TOOLTIP_STOP_SCAN, arguments);
 	}
 
 }
