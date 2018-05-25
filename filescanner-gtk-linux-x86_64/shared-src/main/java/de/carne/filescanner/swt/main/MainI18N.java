@@ -420,14 +420,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_MESSAGE_SCAN_EXCEPTION}
 	 * <p>
-	 * An error occurred while scanning the current file.Details: {0}
+	 * An error occurred while scanning the current file.<br>Details: {0}
 	 */
 	public static final String I18N_MESSAGE_SCAN_EXCEPTION = "I18N_MESSAGE_SCAN_EXCEPTION";
 
 	/**
 	 * Resource string {@code I18N_MESSAGE_SCAN_EXCEPTION}
 	 * <p>
-	 * An error occurred while scanning the current file.Details: {0}
+	 * An error occurred while scanning the current file.<br>Details: {0}
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
