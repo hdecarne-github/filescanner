@@ -23,7 +23,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.core.SimpleAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.SortedDocValuesField;
@@ -84,7 +83,7 @@ final class SearchIndex implements AutoCloseable {
 		this.indexPath = Files.createTempDirectory(getClass().getSimpleName(),
 				FileAttributes.userDirectoryDefault(FileUtil.tmpDir()));
 		this.indexDirectory = FSDirectory.open(this.indexPath);
-		this.analyzer = new SimpleAnalyzer();
+		this.analyzer = new SearchIndexAnalyzer();
 
 		LOG.info("Created search index ''{0}''", this.indexPath);
 	}
