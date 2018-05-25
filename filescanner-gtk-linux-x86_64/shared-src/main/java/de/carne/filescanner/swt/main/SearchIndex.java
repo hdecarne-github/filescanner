@@ -22,7 +22,8 @@ import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.core.SimpleAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.SortedDocValuesField;
@@ -32,6 +33,7 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
+import org.apache.lucene.index.SerialMergeScheduler;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.simple.SimpleQueryParser;
 import org.apache.lucene.search.BooleanClause.Occur;
@@ -45,7 +47,6 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.BytesRef;
 
-import de.carne.boot.Exceptions;
 import de.carne.boot.check.Nullable;
 import de.carne.boot.logging.Log;
 import de.carne.filescanner.engine.FileScannerResult;
@@ -73,6 +74,7 @@ final class SearchIndex implements AutoCloseable {
 
 	private final Path indexPath;
 	private final FSDirectory indexDirectory;
+	private final Analyzer analyzer;
 	@Nullable
 	private Updater indexUpdater = null;
 	@Nullable
@@ -82,6 +84,7 @@ final class SearchIndex implements AutoCloseable {
 		this.indexPath = Files.createTempDirectory(getClass().getSimpleName(),
 				FileAttributes.userDirectoryDefault(FileUtil.tmpDir()));
 		this.indexDirectory = FSDirectory.open(this.indexPath);
+		this.analyzer = new SimpleAnalyzer();
 
 		LOG.info("Created search index ''{0}''", this.indexPath);
 	}
@@ -92,16 +95,12 @@ final class SearchIndex implements AutoCloseable {
 
 			addResultHelper(updater, result, true);
 			updater.commit();
-		} catch (InterruptedException e) {
-			Exceptions.ignore(e);
-			Thread.currentThread().interrupt();
 		} catch (Exception e) {
 			LOG.error(e, "Failed to add result to search index ''{0}''", this.indexPath);
 		}
 	}
 
-	private void addResultHelper(Updater updater, FileScannerResult result, boolean checkForUpdate)
-			throws IOException, InterruptedException {
+	private void addResultHelper(Updater updater, FileScannerResult result, boolean checkForUpdate) throws IOException {
 		BytesRef resultKey = new BytesRef(result.key());
 		long resultEnd = result.end();
 		Document currentDocument = (checkForUpdate ? updater.getDocument(resultKey) : null);
@@ -169,7 +168,7 @@ final class SearchIndex implements AutoCloseable {
 		try {
 			LOG.info("Closing and discarding search index ''{0}''...", this.indexPath);
 
-			Closeables.closeAll(this.indexUpdater, this.indexSearcher);
+			Closeables.closeAll(this.analyzer, this.indexUpdater, this.indexSearcher);
 			FileUtil.delete(this.indexPath);
 		} catch (IOException e) {
 			LOG.error(e, "Failed to close and discard search index ''{0}''", this.indexPath);
@@ -190,7 +189,7 @@ final class SearchIndex implements AutoCloseable {
 		Updater checkedUpdater = this.indexUpdater;
 
 		if (checkedUpdater == null) {
-			checkedUpdater = this.indexUpdater = new Updater(this.indexDirectory);
+			checkedUpdater = this.indexUpdater = new Updater(this.indexDirectory, this.analyzer);
 		}
 		return checkedUpdater;
 	}
@@ -199,7 +198,7 @@ final class SearchIndex implements AutoCloseable {
 		Searcher checkedSearcher = this.indexSearcher;
 
 		if (checkedSearcher == null) {
-			checkedSearcher = this.indexSearcher = new Searcher(this.indexDirectory);
+			checkedSearcher = this.indexSearcher = new Searcher(this.indexDirectory, this.analyzer);
 		}
 		return checkedSearcher;
 	}
@@ -209,8 +208,11 @@ final class SearchIndex implements AutoCloseable {
 		private final IndexWriter indexWriter;
 		private final SearcherManager searcherManager;
 
-		Updater(FSDirectory indexDirectory) throws IOException {
-			this.indexWriter = new IndexWriter(indexDirectory, new IndexWriterConfig().setOpenMode(OpenMode.CREATE));
+		Updater(FSDirectory indexDirectory, Analyzer analyzer) throws IOException {
+			IndexWriterConfig config = new IndexWriterConfig(analyzer).setOpenMode(OpenMode.CREATE)
+					.setMergeScheduler(new SerialMergeScheduler());
+
+			this.indexWriter = new IndexWriter(indexDirectory, config);
 			this.searcherManager = new SearcherManager(this.indexWriter, null);
 		}
 
@@ -261,18 +263,19 @@ final class SearchIndex implements AutoCloseable {
 	private static class Searcher implements Closeable {
 
 		private DirectoryReader indexReader;
+		private final SimpleQueryParser queryParser;
 		@Nullable
 		private IndexSearcher cachedIndexSearcher = null;
 
-		Searcher(FSDirectory indexDirectory) throws IOException {
+		Searcher(FSDirectory indexDirectory, Analyzer analyzer) throws IOException {
 			this.indexReader = DirectoryReader.open(indexDirectory);
+			this.queryParser = new SimpleQueryParser(analyzer, FIELD_CONTENT);
 		}
 
 		@Nullable
 		public byte[] search(@Nullable BytesRef resultKeyFrom, @Nullable BytesRef resultKeyTo, String queryString,
 				Sort sort) throws IOException {
-			SimpleQueryParser queryParser = new SimpleQueryParser(new StandardAnalyzer(), FIELD_CONTENT);
-			Query query = queryParser.parse(queryString);
+			Query query = this.queryParser.parse(queryString);
 			BooleanQuery.Builder queryBuilder = new BooleanQuery.Builder();
 
 			queryBuilder.add(SortedDocValuesField.newSlowRangeQuery(FIELD_ID, resultKeyFrom, resultKeyTo,
