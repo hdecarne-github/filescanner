@@ -23,13 +23,17 @@ import java.util.Set;
 
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.HTMLTransfer;
+import org.eclipse.swt.dnd.ImageTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.graphics.ImageData;
 
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.FileScannerResultExportHandler;
+import de.carne.filescanner.engine.FileScannerResultExporter;
 import de.carne.filescanner.engine.transfer.TransferType;
 import de.carne.nio.compression.Check;
+import de.carne.util.Late;
 
 abstract class ClipboardTransferHandler {
 
@@ -51,8 +55,8 @@ abstract class ClipboardTransferHandler {
 
 	public abstract void transfer(Clipboard clipboard);
 
-	public static ClipboardTransferHandler defaultHandler(HtmlRenderServer renderServer) {
-		return new ClipboardTransferHandler() {
+	public static ClipboardTransfer defaultHandler(HtmlRenderServer renderServer) {
+		return progress -> new ClipboardTransferHandler() {
 
 			private final StringWriter htmlText = new StringWriter();
 			private final StringWriter plainText = new StringWriter();
@@ -73,25 +77,46 @@ abstract class ClipboardTransferHandler {
 		};
 	}
 
-	public static ClipboardTransferHandler exportHandler(FileScannerResultExportHandler exportHandler) {
-		ClipboardTransferHandler transferHandler;
+	public static ClipboardTransfer exportHandler(FileScannerResultExportHandler exportHandler) {
+		return progress -> {
+			ClipboardTransferHandler transferHandler;
 
-		switch (exportHandler.transferType()) {
-		case IMAGE_BMP:
-		case IMAGE_GIF:
-		case IMAGE_JPEG:
-		case IMAGE_PNG:
-		case IMAGE_TIFF:
-			transferHandler = imageDataHandler(exportHandler);
-			break;
-		default:
-			transferHandler = Check.fail("Unexpected exporter type: %1$s", exportHandler.transferType());
-		}
-		return transferHandler;
+			switch (exportHandler.transferType()) {
+			case IMAGE_BMP:
+			case IMAGE_GIF:
+			case IMAGE_JPEG:
+			case IMAGE_PNG:
+			case IMAGE_TIFF:
+				transferHandler = imageDataHandler(progress, exportHandler);
+				break;
+			default:
+				transferHandler = Check.fail("Unexpected exporter type: %1$s", exportHandler.transferType());
+			}
+			return transferHandler;
+		};
 	}
 
-	private static ClipboardTransferHandler imageDataHandler(FileScannerResultExportHandler exportHandler) {
-		return Check.fail("Not yet implemented");
+	private static ClipboardTransferHandler imageDataHandler(ProgressCallback progress,
+			FileScannerResultExporter exporter) {
+		return new ClipboardTransferHandler() {
+
+			private final Late<ImageData> imageDataHolder = new Late<>();
+
+			@Override
+			public void prepareTransfer(FileScannerResult result) throws IOException {
+				try (PipedExporterInputStream pipe = new PipedExporterInputStream(progress, exporter)) {
+					pipe.start(result);
+					this.imageDataHolder.set(new ImageData(pipe));
+				}
+			}
+
+			@Override
+			public void transfer(Clipboard clipboard) {
+				clipboard.setContents(new Object[] { this.imageDataHolder.get() },
+						new Transfer[] { ImageTransfer.getInstance() });
+			}
+
+		};
 	}
 
 }

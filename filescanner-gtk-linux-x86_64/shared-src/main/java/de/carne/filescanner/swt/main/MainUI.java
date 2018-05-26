@@ -454,7 +454,7 @@ public class MainUI extends ShellUserInterface {
 		}
 	}
 
-	private void copyObject(ClipboardTransferHandler handler) {
+	private void copyObject(ClipboardTransfer transfer) {
 		Clipboard clipboard = null;
 
 		try {
@@ -462,6 +462,7 @@ public class MainUI extends ShellUserInterface {
 
 			if (result != null) {
 				ProgressUI progress = new ProgressUI(new Shell(root(), ProgressUI.STYLE));
+				ClipboardTransferHandler handler = transfer.getInstance(progress);
 
 				progress.open();
 				progress.run(this.executor.submit(new ClipboardTransferTask(progress, result, handler))).get();
@@ -639,7 +640,7 @@ public class MainUI extends ShellUserInterface {
 				copyObject.withText(
 						String.format("%1$s (%2$s)", exportHandler.name(), exportHandler.transferType().mimeType()));
 				copyObject.onSelected(this::onCopyObjectSelected);
-				copyObject.get().setData(exportHandler);
+				copyObject.currentItem().setData(exportHandler);
 			}
 		}
 	}
