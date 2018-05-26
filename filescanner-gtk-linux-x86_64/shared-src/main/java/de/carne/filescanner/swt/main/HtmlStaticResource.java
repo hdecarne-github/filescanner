@@ -26,21 +26,24 @@ import org.glassfish.grizzly.http.server.Response;
 import de.carne.boot.check.Nullable;
 import de.carne.io.IOUtil;
 
-class HtmlResourceHandler extends HttpHandler {
+class HtmlStaticResource extends HttpHandler {
 
+	private final HtmlResourceType type;
 	private final URL resourceUrl;
 
-	HtmlResourceHandler(String resource) {
-		this(HtmlResourceHandler.class.getResource(resource));
+	HtmlStaticResource(HtmlResourceType type, String resource) {
+		this(type, HtmlStaticResource.class.getResource(resource));
 	}
 
-	HtmlResourceHandler(URL resourceUrl) {
+	HtmlStaticResource(HtmlResourceType type, URL resourceUrl) {
+		this.type = type;
 		this.resourceUrl = resourceUrl;
 	}
 
 	@Override
 	public void service(@Nullable Request request, @Nullable Response response) throws Exception {
 		if (request != null && response != null) {
+			response.setContentType(this.type.contentType());
 			try (InputStream resourceStream = this.resourceUrl.openStream()) {
 				IOUtil.copyStream(response.getOutputStream(), resourceStream);
 			}

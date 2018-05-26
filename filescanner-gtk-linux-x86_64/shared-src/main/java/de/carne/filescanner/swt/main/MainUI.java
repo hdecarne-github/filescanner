@@ -188,7 +188,7 @@ public class MainUI extends ShellUserInterface {
 	}
 
 	void resetSession(boolean session) {
-		this.resultRenderServerHolder.get().clear();
+		this.resultRenderServerHolder.get().clearSession();
 		this.resultTreeHolder.get().removeAll();
 		this.resultViewHolder.get().setText(MainI18N.i18nTextDefaultResultViewHtml());
 		this.sessionProgressHolder.get().setSelection(0);
@@ -372,7 +372,7 @@ public class MainUI extends ShellUserInterface {
 		this.executor.shutdownNow();
 		UserPreferences.get().removeConsumer(this.configConsumer);
 		this.controllerHolder.get().close();
-		this.resultRenderServerHolder.get().dispose();
+		this.resultRenderServerHolder.get().stop();
 		this.resources.disposeAll();
 
 		LOG.info("Main UI disposed");
@@ -436,7 +436,7 @@ public class MainUI extends ShellUserInterface {
 			menu.setLocation(menuLocation);
 			menu.setVisible(true);
 		} else {
-			copyObject(ClipboardTransferHandler.defaultHandler(UserPreferences.get()));
+			copyObject(ClipboardTransferHandler.defaultHandler(this.resultRenderServerHolder.get()));
 		}
 	}
 
@@ -450,7 +450,7 @@ public class MainUI extends ShellUserInterface {
 
 			copyObject(ClipboardTransferHandler.exportHandler(exportHandler));
 		} else {
-			copyObject(ClipboardTransferHandler.defaultHandler(UserPreferences.get()));
+			copyObject(ClipboardTransferHandler.defaultHandler(this.resultRenderServerHolder.get()));
 		}
 	}
 
@@ -587,7 +587,11 @@ public class MainUI extends ShellUserInterface {
 			this.resultTreeHolder.get().select(resultItem);
 			this.resultTreeHolder.get().showItem(resultItem);
 			this.inputViewHolder.get().setResult(newResult);
-			this.resultViewHolder.get().setUrl(this.resultRenderServerHolder.get().setResult(newResult));
+
+			HtmlResultDocument resultDocument = this.resultRenderServerHolder.get().createResultDocument(newResult,
+					false);
+
+			this.resultViewHolder.get().setUrl(resultDocument.documentUrl());
 			this.resultSelectionCommands.setEnabled(true);
 			resetCopyObjectMenus(newResult);
 		} else {
@@ -644,7 +648,7 @@ public class MainUI extends ShellUserInterface {
 	public void open() throws ResourceException {
 		LOG.info("Opening Main UI...");
 
-		this.resultRenderServerHolder.set(new HtmlRenderServer());
+		this.resultRenderServerHolder.set(new HtmlRenderServer(UserPreferences.get()));
 
 		MainController controller = this.controllerHolder.set(new MainController(this));
 		Shell root = buildRoot(controller);
@@ -671,7 +675,10 @@ public class MainUI extends ShellUserInterface {
 			FileScannerResult result = Check.isInstanceOf(resultTreeSelection[0].getData(), FileScannerResult.class);
 
 			this.inputViewHolder.get().setResult(result);
-			this.resultViewHolder.get().setUrl(this.resultRenderServerHolder.get().setResult(result));
+
+			HtmlResultDocument resultDocument = this.resultRenderServerHolder.get().createResultDocument(result, false);
+
+			this.resultViewHolder.get().setUrl(resultDocument.documentUrl());
 		}
 	}
 

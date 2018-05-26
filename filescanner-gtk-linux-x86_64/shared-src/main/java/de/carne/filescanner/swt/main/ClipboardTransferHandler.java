@@ -28,11 +28,7 @@ import org.eclipse.swt.dnd.Transfer;
 
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.FileScannerResultExportHandler;
-import de.carne.filescanner.engine.transfer.RenderOutput;
-import de.carne.filescanner.engine.transfer.SimpleTextRenderer;
 import de.carne.filescanner.engine.transfer.TransferType;
-import de.carne.filescanner.engine.util.CombinedRenderer;
-import de.carne.filescanner.swt.preferences.Config;
 import de.carne.nio.compression.Check;
 
 abstract class ClipboardTransferHandler {
@@ -55,23 +51,22 @@ abstract class ClipboardTransferHandler {
 
 	public abstract void transfer(Clipboard clipboard);
 
-	public static ClipboardTransferHandler defaultHandler(Config config) {
+	public static ClipboardTransferHandler defaultHandler(HtmlRenderServer renderServer) {
 		return new ClipboardTransferHandler() {
 
 			private final StringWriter htmlText = new StringWriter();
-			private final StringWriter simpleText = new StringWriter();
+			private final StringWriter plainText = new StringWriter();
 
 			@Override
 			public void prepareTransfer(FileScannerResult result) throws IOException {
-				HtmlRenderer htmlTextRenderer = new HtmlRenderer(this.htmlText, config);
-				SimpleTextRenderer simpleTextRenderer = new SimpleTextRenderer(this.simpleText);
+				HtmlResultDocument resultDocument = renderServer.createResultDocument(result, true);
 
-				RenderOutput.render(result, new CombinedRenderer(htmlTextRenderer, simpleTextRenderer));
+				resultDocument.writeTo(this.htmlText, this.plainText);
 			}
 
 			@Override
 			public void transfer(Clipboard clipboard) {
-				clipboard.setContents(new Object[] { this.htmlText.toString(), this.simpleText.toString() },
+				clipboard.setContents(new Object[] { this.htmlText.toString(), this.plainText.toString() },
 						new Transfer[] { HTMLTransfer.getInstance(), TextTransfer.getInstance(), });
 			}
 
