@@ -23,8 +23,8 @@ import java.nio.ByteBuffer;
 
 import de.carne.boot.check.Nullable;
 import de.carne.filescanner.engine.FileScannerResult;
-import de.carne.filescanner.engine.FileScannerResultExporter;
 import de.carne.filescanner.engine.transfer.ExportTarget;
+import de.carne.filescanner.engine.transfer.FileScannerResultExporter;
 import de.carne.io.IOUtil;
 import de.carne.nio.compression.Check;
 

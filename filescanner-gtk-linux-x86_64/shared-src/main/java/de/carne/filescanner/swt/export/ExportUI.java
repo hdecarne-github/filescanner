@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Text;
 import de.carne.boot.Exceptions;
 import de.carne.boot.check.Nullable;
 import de.carne.filescanner.engine.FileScannerResult;
-import de.carne.filescanner.engine.FileScannerResultExportHandler;
+import de.carne.filescanner.engine.transfer.FileScannerResultExportHandler;
 import de.carne.filescanner.swt.resources.Images;
 import de.carne.nio.file.FileUtil;
 import de.carne.swt.graphics.ResourceException;

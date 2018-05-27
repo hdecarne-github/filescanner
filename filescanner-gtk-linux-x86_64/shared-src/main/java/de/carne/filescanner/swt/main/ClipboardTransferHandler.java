@@ -29,8 +29,8 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.ImageData;
 
 import de.carne.filescanner.engine.FileScannerResult;
-import de.carne.filescanner.engine.FileScannerResultExportHandler;
-import de.carne.filescanner.engine.FileScannerResultExporter;
+import de.carne.filescanner.engine.transfer.FileScannerResultExportHandler;
+import de.carne.filescanner.engine.transfer.FileScannerResultExporter;
 import de.carne.filescanner.engine.transfer.TransferType;
 import de.carne.nio.compression.Check;
 import de.carne.util.Late;

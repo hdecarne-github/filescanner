@@ -30,8 +30,8 @@ import java.util.concurrent.Callable;
 import de.carne.boot.check.Nullable;
 import de.carne.boot.logging.Log;
 import de.carne.filescanner.engine.FileScannerResult;
-import de.carne.filescanner.engine.FileScannerResultExporter;
 import de.carne.filescanner.engine.transfer.ExportTarget;
+import de.carne.filescanner.engine.transfer.FileScannerResultExporter;
 import de.carne.filescanner.swt.export.ExportOptions;
 
 class ExportTask implements Callable<Void>, ExportTarget {

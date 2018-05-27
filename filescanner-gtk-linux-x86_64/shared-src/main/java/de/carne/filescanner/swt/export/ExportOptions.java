@@ -18,8 +18,8 @@ package de.carne.filescanner.swt.export;
 
 import java.nio.file.Path;
 
-import de.carne.filescanner.engine.FileScannerResultExportHandler;
-import de.carne.filescanner.engine.FileScannerResultExporter;
+import de.carne.filescanner.engine.transfer.FileScannerResultExportHandler;
+import de.carne.filescanner.engine.transfer.FileScannerResultExporter;
 
 /**
  * This class holds the export options selected during an {@linkplain ExportDialog} invocation.
