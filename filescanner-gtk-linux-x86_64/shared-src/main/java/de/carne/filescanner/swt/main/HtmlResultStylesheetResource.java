@@ -31,13 +31,13 @@ class HtmlResultStylesheetResource extends HttpHandler {
 
 	private String stylesheet;
 
-	public HtmlResultStylesheetResource(Config config, String transparentBackgroundUrl) {
+	public HtmlResultStylesheetResource(Config config, String transparentBackgroundPath) {
 		StringBuilder header = new StringBuilder();
 
 		header.append("body { ");
 		cssFont(header, config.getResultViewFont());
 		header.append(" }");
-		header.append(" .transparent { background-image: url(\"").append(transparentBackgroundUrl).append("\"); }");
+		header.append(" .transparent { background-image: url(\"").append(transparentBackgroundPath).append("\"); }");
 		for (RenderStyle style : RenderStyle.values()) {
 			header.append(" .").append(style.name().toLowerCase()).append(" {");
 			cssColor(header, config.getResultViewColor(style));

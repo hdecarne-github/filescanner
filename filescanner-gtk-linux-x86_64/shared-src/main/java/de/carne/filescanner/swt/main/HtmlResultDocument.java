@@ -18,6 +18,7 @@ package de.carne.filescanner.swt.main;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.net.URI;
 import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 import java.util.HashMap;
@@ -42,15 +43,17 @@ import de.carne.filescanner.engine.util.EmitCounter;
 
 class HtmlResultDocument extends HttpHandler {
 
-	private final String documentUrl;
+	private final URI serverUri;
+	private final String documentPath;
+	private final String stylesheetPath;
 	private final FileScannerResult result;
-	private final String stylesheetUrl;
 	private final Map<String, TransferSource> mediaDataSources = new HashMap<>();
 
-	public HtmlResultDocument(String documentUrl, FileScannerResult result, String stylesheetUrl) {
-		this.documentUrl = documentUrl;
+	public HtmlResultDocument(URI serverUri, String documentPath, String stylesheetPath, FileScannerResult result) {
+		this.serverUri = serverUri;
+		this.documentPath = documentPath;
+		this.stylesheetPath = stylesheetPath;
 		this.result = result;
-		this.stylesheetUrl = stylesheetUrl;
 	}
 
 	public FileScannerResult result() {
@@ -58,7 +61,7 @@ class HtmlResultDocument extends HttpHandler {
 	}
 
 	public String documentUrl() {
-		return this.documentUrl;
+		return this.serverUri.resolve(this.documentPath).toASCIIString();
 	}
 
 	public void writeTo(Writer htmlWriter) throws IOException {
@@ -90,19 +93,31 @@ class HtmlResultDocument extends HttpHandler {
 				try (WritableByteChannel outputChannel = Channels.newChannel(response.getOutputStream())) {
 					mediaSource.transfer(outputChannel);
 				}
+			} else {
+				response.sendError(404);
 			}
 		}
 	}
 
-	String stylesheetUrl() {
-		return this.stylesheetUrl;
+	@Override
+	public String toString() {
+		return this.serverUri.resolve(this.documentPath).toASCIIString();
 	}
 
-	String createMediaDataSource(TransferSource source) {
+	String serverUri() {
+		return this.serverUri.toASCIIString();
+	}
+
+	String stylesheetPath() {
+		return this.stylesheetPath;
+	}
+
+	String createMediaDataPath(TransferSource source) {
 		String mediaDataSourceId = Integer.toHexString(this.mediaDataSources.size() + 1);
 
 		this.mediaDataSources.put(mediaDataSourceId, source);
-		return "?" + REQUEST_PARAMETER_MEDIA_SOURCE_ID + "=" + mediaDataSourceId;
+
+		return this.documentPath + "/?" + REQUEST_PARAMETER_MEDIA_SOURCE_ID + "=" + mediaDataSourceId;
 	}
 
 	private class HtmlRenderer implements Renderer {
@@ -120,13 +135,14 @@ class HtmlResultDocument extends HttpHandler {
 
 		@Override
 		public void emitPrologue(Set<RenderOption> options) throws IOException {
-			this.writer.write("<!DOCTYPE HTML><html><head><meta charset=\"utf-8\">"
-					+ "<head><link rel=\"stylesheet\" type=\"text/css\" href=\"");
-			this.writer.write(stylesheetUrl());
+			this.writer.write("<!DOCTYPE HTML>\n<html>\n<head>\n<meta charset=\"utf-8\">\n<base href=\"");
+			this.writer.write(serverUri());
+			this.writer.write("\">\n<link rel=\"stylesheet\" type=\"text/css\" href=\"");
+			this.writer.write(stylesheetPath());
 			if (options.contains(RenderOption.TRANSPARENCY)) {
-				this.writer.write("\"></head><body class=\"transparent\">");
+				this.writer.write("\">\n</head>\n<body class=\"transparent\">\n");
 			} else {
-				this.writer.write("\"></head><body>");
+				this.writer.write("\">\n</head>\n<body>\n");
 			}
 		}
 
@@ -140,7 +156,7 @@ class HtmlResultDocument extends HttpHandler {
 			this.writer.write(counter.count(text));
 			this.writer.write(counter.count("</span>"));
 			if (lineBreak) {
-				this.writer.write(counter.count("<br>"));
+				this.writer.write(counter.count("<br>\n"));
 			}
 			return counter.value();
 		}
@@ -153,18 +169,18 @@ class HtmlResultDocument extends HttpHandler {
 
 		@Override
 		public int emitMediaData(RenderStyle style, TransferSource source, boolean lineBreak) throws IOException {
-			String mediaDataSourceUrl = createMediaDataSource(source);
+			String mediaDataSourcePath = createMediaDataPath(source);
 			EmitCounter counter = new EmitCounter();
 
 			this.writer.write(counter.count("<span class=\""));
 			this.writer.write(counter.count(style.name().toLowerCase()));
 			this.writer.write(counter.count("\"><img src=\""));
-			this.writer.write(counter.count(mediaDataSourceUrl));
+			this.writer.write(counter.count(mediaDataSourcePath));
 			this.writer.write(counter.count("\" alt=\""));
 			this.writer.write(counter.count(source.name()));
 			this.writer.write(counter.count("\"></span>"));
 			if (lineBreak) {
-				this.writer.write(counter.count("<br>"));
+				this.writer.write(counter.count("<br>\n"));
 			}
 			return counter.value();
 		}
@@ -178,7 +194,7 @@ class HtmlResultDocument extends HttpHandler {
 
 		@Override
 		public void emitEpilouge() throws IOException {
-			this.writer.write("</body></html>");
+			this.writer.write("</body>\n</html>");
 		}
 
 		@Override

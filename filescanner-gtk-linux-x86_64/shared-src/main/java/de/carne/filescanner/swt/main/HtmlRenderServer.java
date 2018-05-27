@@ -45,13 +45,15 @@ class HtmlRenderServer {
 			.valueOf(SystemProperties.value(HtmlRenderServer.class, ".portRange", "50101:50199"));
 
 	private static final String TRANSPARENT_BACKGROUND_RESOURCE = "transparent.png";
-	private static final String TRANSPARENT_BACKGROUND_URL = "/" + TRANSPARENT_BACKGROUND_RESOURCE;
+	@SuppressWarnings("squid:S1075")
+	private static final String TRANSPARENT_BACKGROUND_PATH = "/" + TRANSPARENT_BACKGROUND_RESOURCE;
+	private static final String STYLESHEET_RESOURCE = "result.css";
+	@SuppressWarnings("squid:S1075")
+	private static final String STYLESHEET_PATH = "/" + STYLESHEET_RESOURCE;
 
 	private final HttpServer httpServer;
 	@Nullable
 	private HttpHandler stylesheetHandler;
-	@Nullable
-	private String stylesheetUrl;
 	private final List<HttpHandler> persistentSessionHandlers = new ArrayList<>();
 	private final List<HttpHandler> transientSessionHandlers = new ArrayList<>();
 
@@ -71,9 +73,8 @@ class HtmlRenderServer {
 		if (checkedStylesheetHandler != null) {
 			configuration.removeHttpHandler(checkedStylesheetHandler);
 		}
-		this.stylesheetUrl = "/result.css";
-		this.stylesheetHandler = new HtmlResultStylesheetResource(config, TRANSPARENT_BACKGROUND_URL);
-		configuration.addHttpHandler(this.stylesheetHandler, this.stylesheetUrl);
+		this.stylesheetHandler = new HtmlResultStylesheetResource(config, TRANSPARENT_BACKGROUND_PATH);
+		configuration.addHttpHandler(this.stylesheetHandler, STYLESHEET_PATH);
 	}
 
 	public synchronized void clearSession() {
@@ -95,26 +96,33 @@ class HtmlRenderServer {
 			configuration.removeHttpHandler(sessionHandler);
 		}
 
-		URI resultDocumentUri = getHttpServerUri(this.httpServer).resolve("/" + UUID.randomUUID().toString());
-		HtmlResultDocument resultDocumentHandler = new HtmlResultDocument(resultDocumentUri.toASCIIString(), result,
-				Check.notNull(this.stylesheetUrl));
+		URI serverUri = getHttpServerUri(this.httpServer);
+		@SuppressWarnings("squid:S1075")
+		String resultDocumentPath = "/" + UUID.randomUUID().toString();
+		HtmlResultDocument resultDocument = new HtmlResultDocument(serverUri, resultDocumentPath, STYLESHEET_PATH,
+				result);
 
-		configuration.addHttpHandler(resultDocumentHandler, resultDocumentUri.getPath());
+		configuration.addHttpHandler(resultDocument, resultDocumentPath);
 		if (persistent) {
-			this.persistentSessionHandlers.add(resultDocumentHandler);
+			this.persistentSessionHandlers.add(resultDocument);
 		} else {
-			this.transientSessionHandlers.add(resultDocumentHandler);
+			this.transientSessionHandlers.add(resultDocument);
 		}
 
-		LOG.info("Created result document URI ''{0}''", resultDocumentUri);
+		LOG.info("Created result document ''{0}''", resultDocument);
 
-		return resultDocumentHandler;
+		return resultDocument;
 	}
 
 	public void stop() {
-		LOG.info("Stopping local HTTP server at {0}...", getHttpServerUri(this.httpServer));
+		LOG.info("Stopping local HTTP server at {0}...", this);
 
 		this.httpServer.shutdownNow();
+	}
+
+	@Override
+	public String toString() {
+		return getHttpServerUri(this.httpServer).toASCIIString();
 	}
 
 	private static HttpServer startHttpServer() throws IOException {
@@ -130,7 +138,7 @@ class HtmlRenderServer {
 
 		configuration.addHttpHandler(
 				new HtmlStaticResource(HtmlResourceType.IMAGE_PNG, TRANSPARENT_BACKGROUND_RESOURCE),
-				TRANSPARENT_BACKGROUND_URL);
+				TRANSPARENT_BACKGROUND_PATH);
 		httpServer.start();
 
 		LOG.info("Local HTTP server started at {0}", getHttpServerUri(httpServer));
