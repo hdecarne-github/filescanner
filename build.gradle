@@ -23,12 +23,12 @@ subprojects {
 	targetCompatibility = JavaVersion.VERSION_1_8
 	
 	repositories {
-		mavenLocal()
-		jcenter()
-		maven { url "https://oss.jfrog.org/libs-release/" }
 		if(snapshotBuild) {
+			mavenLocal()
 			maven { url "https://oss.jfrog.org/libs-snapshot/" }
 		}
+		jcenter()
+		maven { url "https://oss.jfrog.org/libs-release/" }
 	}
 
 	def sharedSrcDir = "../filescanner-gtk-linux-x86_64/shared-src"
