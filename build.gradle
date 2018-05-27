@@ -53,7 +53,7 @@ subprojects {
 
 	dependencies {
 		compile("de.carne.common:java-boot:2.4.0")
-		compile("de.carne.common:java-default:8.5.0")
+		compile("de.carne.common:java-default:8.5.1")
 		compile("de.carne.common:java-swt${platformSuffix}:2.1.0")
 		compile("de.carne.common:filescanner-engine:2.0.0")
 		compile("org.glassfish.grizzly:grizzly-http-server:2.4.3")
