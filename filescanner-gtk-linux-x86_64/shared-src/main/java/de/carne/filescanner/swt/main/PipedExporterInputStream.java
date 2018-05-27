@@ -25,6 +25,7 @@ import de.carne.boot.check.Nullable;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.FileScannerResultExporter;
 import de.carne.filescanner.engine.transfer.ExportTarget;
+import de.carne.io.IOUtil;
 import de.carne.nio.compression.Check;
 
 class PipedExporterInputStream extends PipedInputStream {
@@ -63,23 +64,6 @@ class PipedExporterInputStream extends PipedInputStream {
 		}
 	}
 
-	int write0(PipedOutputStream pipe, ByteBuffer src) throws IOException {
-		byte[] b;
-		int off;
-		int len = src.remaining();
-
-		if (src.hasArray()) {
-			b = src.array();
-			off = src.arrayOffset();
-		} else {
-			b = new byte[len];
-			src.get(b);
-			off = 0;
-		}
-		pipe.write(b, off, len);
-		return len;
-	}
-
 	void setSize0(long size) {
 		this.progress.setTotal(size);
 	}
@@ -95,7 +79,7 @@ class PipedExporterInputStream extends PipedInputStream {
 
 		@Override
 		public int write(@Nullable ByteBuffer src) throws IOException {
-			return write0(this.pipe, Check.notNull(src));
+			return IOUtil.copyBuffer(this.pipe, Check.notNull(src));
 		}
 
 		@Override

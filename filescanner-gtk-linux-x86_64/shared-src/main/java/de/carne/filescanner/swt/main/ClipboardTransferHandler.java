@@ -34,6 +34,7 @@ import de.carne.filescanner.engine.FileScannerResultExporter;
 import de.carne.filescanner.engine.transfer.TransferType;
 import de.carne.nio.compression.Check;
 import de.carne.util.Late;
+import de.carne.util.Strings;
 
 abstract class ClipboardTransferHandler {
 
@@ -70,8 +71,15 @@ abstract class ClipboardTransferHandler {
 
 			@Override
 			public void transfer(Clipboard clipboard) {
-				clipboard.setContents(new Object[] { this.htmlText.toString(), this.plainText.toString() },
-						new Transfer[] { HTMLTransfer.getInstance(), TextTransfer.getInstance(), });
+				String htmlString = this.htmlText.toString();
+				String plainString = this.plainText.toString();
+
+				if (Strings.notEmpty(plainString)) {
+					clipboard.setContents(new Object[] { htmlString, plainString },
+							new Transfer[] { HTMLTransfer.getInstance(), TextTransfer.getInstance() });
+				} else {
+					clipboard.setContents(new Object[] { htmlString }, new Transfer[] { HTMLTransfer.getInstance() });
+				}
 			}
 
 		};
