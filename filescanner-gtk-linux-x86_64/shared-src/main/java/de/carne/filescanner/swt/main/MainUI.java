@@ -155,7 +155,7 @@ public class MainUI extends ShellUserInterface {
 	 */
 	public void openDroppedFile(String[] file) {
 		openFile(file[0]);
-		if (file.length > 0) {
+		if (file.length > 1) {
 			Notification.information(root()).withText(MainI18N.i18nTextIgnoringExtraFile())
 					.withMessage(MainI18N.i18nMessageIgnoringDroppedFile()).open();
 		}

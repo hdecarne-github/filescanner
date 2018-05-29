@@ -113,7 +113,7 @@ abstract class ClipboardTransferHandler {
 			@Override
 			public void prepareTransfer(FileScannerResult result) throws IOException {
 				try (PipedExporterInputStream pipe = new PipedExporterInputStream(progress, exporter)) {
-					pipe.start(result);
+					pipe.startExport(result);
 					this.imageDataHolder.set(new ImageData(pipe));
 				}
 			}

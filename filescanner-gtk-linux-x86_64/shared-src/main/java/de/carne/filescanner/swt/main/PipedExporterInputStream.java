@@ -32,23 +32,25 @@ class PipedExporterInputStream extends PipedInputStream {
 
 	private final ProgressCallback progress;
 	private final FileScannerResultExporter exporter;
+	private final PipedExportTarget pipedTarget;
 	@Nullable
 	private IOException ioException = null;
 
-	public PipedExporterInputStream(ProgressCallback progress, FileScannerResultExporter exporter) {
+	public PipedExporterInputStream(ProgressCallback progress, FileScannerResultExporter exporter) throws IOException {
 		this.progress = progress;
 		this.exporter = exporter;
+		this.pipedTarget = new PipedExportTarget(new PipedOutputStream(this));
 	}
 
-	public void start(FileScannerResult result) {
-		Thread exportThread = new Thread(() -> export0(result));
+	public void startExport(FileScannerResult result) {
+		Thread exportThread = new Thread(() -> export(result));
 
 		exportThread.start();
 	}
 
-	private void export0(FileScannerResult result) {
-		try (PipedOutputStream pipe = new PipedOutputStream(this)) {
-			result.export(new PipedExportTarget(pipe), this.exporter);
+	private void export(FileScannerResult result) {
+		try {
+			result.export(this.pipedTarget, this.exporter);
 		} catch (IOException e) {
 			this.ioException = e;
 		} catch (RuntimeException e) {
@@ -58,9 +60,10 @@ class PipedExporterInputStream extends PipedInputStream {
 
 	@Override
 	public void close() throws IOException {
-		super.close();
-		if (this.ioException != null) {
-			throw this.ioException;
+		try {
+			super.close();
+		} catch (IOException e) {
+			throw (this.ioException != null ? this.ioException : e);
 		}
 	}
 
@@ -90,6 +93,7 @@ class PipedExporterInputStream extends PipedInputStream {
 		@Override
 		public synchronized void close() throws IOException {
 			this.open = false;
+			this.pipe.close();
 		}
 
 		@Override
