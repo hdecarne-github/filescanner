@@ -153,7 +153,7 @@ class HtmlResultDocument extends HttpHandler {
 			this.writer.write(counter.count("<span class=\""));
 			this.writer.write(counter.count(style.name().toLowerCase()));
 			this.writer.write(counter.count("\">"));
-			this.writer.write(counter.count(text));
+			this.writer.write(counter.count(encodeText(text)));
 			this.writer.write(counter.count("</span>"));
 			if (lineBreak) {
 				this.writer.write(counter.count("<br>\n"));
@@ -177,7 +177,7 @@ class HtmlResultDocument extends HttpHandler {
 			this.writer.write(counter.count("\"><img src=\""));
 			this.writer.write(counter.count(mediaDataSourcePath));
 			this.writer.write(counter.count("\" alt=\""));
-			this.writer.write(counter.count(source.name()));
+			this.writer.write(counter.count(encodeText(source.name())));
 			this.writer.write(counter.count("\"></span>"));
 			if (lineBreak) {
 				this.writer.write(counter.count("<br>\n"));
@@ -200,6 +200,31 @@ class HtmlResultDocument extends HttpHandler {
 		@Override
 		public String toString() {
 			return this.writer.toString();
+		}
+
+		private String encodeText(String text) {
+			StringBuilder encoded = new StringBuilder();
+
+			text.chars().forEach(c -> {
+
+				switch (c) {
+				case '<':
+					encoded.append("&lt;");
+					break;
+				case '>':
+					encoded.append("&gt;");
+					break;
+				case '&':
+					encoded.append("&amp;");
+					break;
+				case '"':
+					encoded.append("&quot;");
+					break;
+				default:
+					encoded.append((char) c);
+				}
+			});
+			return encoded.toString();
 		}
 
 	}
