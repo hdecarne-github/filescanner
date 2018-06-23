@@ -439,14 +439,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_TEXT_DEFAULT_RESULT_VIEW_HTML}
 	 * <p>
-	 * &lt;!DOCTYPE HTML&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset="utf-8"&gt;&lt;&frasl;head&gt;&lt;body&gt;&lt;&frasl;body&gt;&lt;&frasl;html&gt;
+	 * &lt;!DOCTYPE HTML&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset="utf-8"&gt;&lt;&frasl;head&gt;&lt;body&gt;&lt;code style="color:silver;"&gt;{0} {1} (build: {2})&lt;&frasl;code&gt;&lt;&frasl;body&gt;&lt;&frasl;html&gt;
 	 */
 	public static final String I18N_TEXT_DEFAULT_RESULT_VIEW_HTML = "I18N_TEXT_DEFAULT_RESULT_VIEW_HTML";
 
 	/**
 	 * Resource string {@code I18N_TEXT_DEFAULT_RESULT_VIEW_HTML}
 	 * <p>
-	 * &lt;!DOCTYPE HTML&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset="utf-8"&gt;&lt;&frasl;head&gt;&lt;body&gt;&lt;&frasl;body&gt;&lt;&frasl;html&gt;
+	 * &lt;!DOCTYPE HTML&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset="utf-8"&gt;&lt;&frasl;head&gt;&lt;body&gt;&lt;code style="color:silver;"&gt;{0} {1} (build: {2})&lt;&frasl;code&gt;&lt;&frasl;body&gt;&lt;&frasl;html&gt;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.

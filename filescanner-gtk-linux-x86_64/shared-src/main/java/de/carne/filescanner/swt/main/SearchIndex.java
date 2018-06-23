@@ -272,6 +272,7 @@ final class SearchIndex implements AutoCloseable {
 		Searcher(FSDirectory indexDirectory, Analyzer analyzer) throws IOException {
 			this.indexReader = DirectoryReader.open(indexDirectory);
 			this.queryParser = new SimpleQueryParser(analyzer, FIELD_CONTENT);
+			this.queryParser.setDefaultOperator(Occur.MUST);
 		}
 
 		@Nullable

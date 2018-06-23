@@ -85,6 +85,7 @@ import de.carne.swt.widgets.notification.Notification;
 import de.carne.text.MemoryUnitFormat;
 import de.carne.util.Debug;
 import de.carne.util.Late;
+import de.carne.util.ManifestInfos;
 import de.carne.util.Strings;
 
 /**
@@ -190,7 +191,8 @@ public class MainUI extends ShellUserInterface {
 	void resetSession(boolean session) {
 		this.resultRenderServerHolder.get().clearSession();
 		this.resultTreeHolder.get().removeAll();
-		this.resultViewHolder.get().setText(MainI18N.i18nTextDefaultResultViewHtml());
+		this.resultViewHolder.get().setText(MainI18N.i18nTextDefaultResultViewHtml(ManifestInfos.APPLICATION_NAME,
+				ManifestInfos.APPLICATION_VERSION, ManifestInfos.APPLICATION_BUILD));
 		this.sessionProgressHolder.get().setSelection(0);
 		this.sessionStatusHolder.get().setText("");
 		this.sessionCommands.setEnabled(session);
@@ -357,9 +359,13 @@ public class MainUI extends ShellUserInterface {
 
 	private void onResultTreeItemSelected(SelectionEvent event) {
 		try {
-			TreeItem resultItem = Check.isInstanceOf(event.item, TreeItem.class);
-			FileScannerResult result = Check.isInstanceOf(resultItem.getData(), FileScannerResult.class);
+			FileScannerResult result = null;
 
+			if (event.item != null) {
+				TreeItem resultItem = Check.isInstanceOf(event.item, TreeItem.class);
+
+				result = Check.isInstanceOf(resultItem.getData(), FileScannerResult.class);
+			}
 			this.resultSelection.set(result);
 		} catch (Exception e) {
 			Exceptions.warn(e);
@@ -596,6 +602,8 @@ public class MainUI extends ShellUserInterface {
 			this.resultSelectionCommands.setEnabled(true);
 			resetCopyObjectMenus(newResult);
 		} else {
+			this.resultViewHolder.get().setText(MainI18N.i18nTextDefaultResultViewHtml(ManifestInfos.APPLICATION_NAME,
+					ManifestInfos.APPLICATION_VERSION, ManifestInfos.APPLICATION_BUILD));
 			this.resultSelectionCommands.setEnabled(false);
 			clearCopyObjectMenus();
 		}
