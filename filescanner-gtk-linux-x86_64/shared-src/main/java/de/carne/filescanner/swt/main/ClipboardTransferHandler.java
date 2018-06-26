@@ -97,6 +97,7 @@ abstract class ClipboardTransferHandler {
 			case IMAGE_TIFF:
 				transferHandler = imageDataHandler(progress, exportHandler);
 				break;
+			case APPLICATION_OCTET_STREAM:
 			default:
 				transferHandler = Check.fail("Unexpected exporter type: %1$s", exportHandler.transferType());
 			}
