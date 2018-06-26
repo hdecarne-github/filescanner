@@ -351,7 +351,7 @@ final class SearchIndex implements AutoCloseable {
 
 		@Override
 		protected boolean isTokenChar(int c) {
-			return !Character.isWhitespace(c);
+			return Character.isLetterOrDigit(c);
 		}
 
 		@Override
