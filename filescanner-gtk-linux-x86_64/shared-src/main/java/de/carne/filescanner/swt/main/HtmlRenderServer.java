@@ -27,7 +27,6 @@ import org.glassfish.grizzly.http.server.HttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.NetworkListener;
 import org.glassfish.grizzly.http.server.ServerConfiguration;
-import org.glassfish.grizzly.strategies.SameThreadIOStrategy;
 
 import de.carne.boot.check.Check;
 import de.carne.boot.check.Nullable;
@@ -129,11 +128,6 @@ class HtmlRenderServer {
 		LOG.info("Starting local HTTP server at localhost:{0}", HTTP_PORT_RANGE);
 
 		HttpServer httpServer = HttpServer.createSimpleServer(null, "localhost", HTTP_PORT_RANGE);
-
-		NetworkListener listener = getHttpServerNetworkListener(httpServer);
-
-		listener.getTransport().setIOStrategy(SameThreadIOStrategy.getInstance());
-
 		ServerConfiguration configuration = httpServer.getServerConfiguration();
 
 		configuration.addHttpHandler(
