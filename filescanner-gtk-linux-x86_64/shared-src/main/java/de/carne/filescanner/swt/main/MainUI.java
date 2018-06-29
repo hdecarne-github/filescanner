@@ -639,11 +639,11 @@ public class MainUI extends ShellUserInterface {
 		boolean firstExportHandler = true;
 
 		for (FileScannerResultExportHandler exportHandler : exportHandlers) {
-			if (firstExportHandler) {
-				copyObject.addItem(SWT.SEPARATOR);
-				firstExportHandler = false;
-			}
 			if (ClipboardTransferHandler.isTransferable(exportHandler.transferType())) {
+				if (firstExportHandler) {
+					copyObject.addItem(SWT.SEPARATOR);
+					firstExportHandler = false;
+				}
 				copyObject.addItem(SWT.PUSH);
 				copyObject.withText(
 						String.format("%1$s (%2$s)", exportHandler.name(), exportHandler.transferType().mimeType()));
