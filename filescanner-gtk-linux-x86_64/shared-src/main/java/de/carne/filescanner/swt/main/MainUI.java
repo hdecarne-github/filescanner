@@ -107,6 +107,7 @@ public class MainUI extends ShellUserInterface {
 	private final Late<HeapInfo> runtimeHeapHolder = new Late<>();
 	private final Late<Menu> copyObjectMenuHolder = new Late<>();
 	private final Late<Menu> copyObjectToolHolder = new Late<>();
+	private final Late<Menu> contextMenuCopyObjectMenuHolder = new Late<>();
 	private final Consumer<Config> configConsumer = this::applyConfig;
 	private final UICommandSet sessionCommands = new UICommandSet();
 	private final UICommandSet resultSelectionCommands = new UICommandSet();
@@ -613,6 +614,7 @@ public class MainUI extends ShellUserInterface {
 	private void clearCopyObjectMenus() {
 		clearCopyObjectMenu(this.copyObjectMenuHolder);
 		clearCopyObjectMenu(this.copyObjectToolHolder);
+		clearCopyObjectMenu(this.contextMenuCopyObjectMenuHolder);
 	}
 
 	private void clearCopyObjectMenu(Late<Menu> menuHolder) {
@@ -626,6 +628,7 @@ public class MainUI extends ShellUserInterface {
 
 		resetCopyObjectMenu(this.copyObjectMenuHolder, exportHandlers);
 		resetCopyObjectMenu(this.copyObjectToolHolder, exportHandlers);
+		resetCopyObjectMenu(this.contextMenuCopyObjectMenuHolder, exportHandlers);
 	}
 
 	private void resetCopyObjectMenu(Late<Menu> menuHolder, FileScannerResultExportHandler[] exportHandlers) {
@@ -721,6 +724,7 @@ public class MainUI extends ShellUserInterface {
 		rootBuilder.withText(MainI18N.i18nTitle())
 				.withImages(this.resources.getImages(Images.class, Images.IMAGES_FSLOGO)).onDisposed(this::onDisposed);
 		buildMenuBar(rootBuilder);
+		buildContextMenu(resultTree.get());
 		resultTree.onEvent(SWT.SetData, this::onSetResultTreeItemData);
 		resultTree.onSelected(this::onResultTreeItemSelected);
 		resultView.onEvent(SWT.MenuDetect, event -> event.doit = false);
@@ -813,6 +817,25 @@ public class MainUI extends ShellUserInterface {
 			menu.onSelected(this::onAboutSelected);
 		}
 		menu.endMenu();
+	}
+
+	private void buildContextMenu(Tree resultTree) {
+		MenuBuilder menu = MenuBuilder.popupMenu(resultTree);
+
+		menu.addItem(SWT.PUSH).withText(MainI18N.i18nMenuFilePrint());
+		menu.withImage(this.resources.getImage(Images.class, Images.IMAGE_PRINT_OBJECT16));
+		menu.onSelected(this::onPrintObjectSelected);
+		this.resultSelectionCommands.add(menu.currentItem());
+		menu.addItem(SWT.PUSH).withText(MainI18N.i18nMenuFileExport());
+		menu.withImage(this.resources.getImage(Images.class, Images.IMAGE_EXPORT_OBJECT16));
+		menu.onSelected(this::onExportObjectSelected);
+		menu.addItem(SWT.CASCADE).withText(MainI18N.i18nMenuEditCopy());
+		menu.withImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_OBJECT16));
+		this.resultSelectionCommands.add(menu.currentItem());
+		menu.beginMenu();
+		this.contextMenuCopyObjectMenuHolder.set(menu.get());
+		menu.endMenu();
+		resultTree.setMenu(menu.get());
 	}
 
 	private CoolBarBuilder buildCommandBar(ShellBuilder rootBuilder) {
