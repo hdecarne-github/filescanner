@@ -829,6 +829,7 @@ public class MainUI extends ShellUserInterface {
 		menu.addItem(SWT.PUSH).withText(MainI18N.i18nMenuFileExport());
 		menu.withImage(this.resources.getImage(Images.class, Images.IMAGE_EXPORT_OBJECT16));
 		menu.onSelected(this::onExportObjectSelected);
+		this.resultSelectionCommands.add(menu.currentItem());
 		menu.addItem(SWT.CASCADE).withText(MainI18N.i18nMenuEditCopy());
 		menu.withImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_OBJECT16));
 		this.resultSelectionCommands.add(menu.currentItem());
