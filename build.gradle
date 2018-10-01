@@ -2,7 +2,7 @@
 plugins {
 	id "de.carne.java-tools" version "0.6.3" apply false
 	id "org.sonarqube" version "2.6.2" apply false
-	id "com.install4j.gradle" version "7.0.5" apply false
+	id "com.install4j.gradle" version "7.0.7" apply false
 }
 
 // Build helpers
@@ -52,8 +52,6 @@ subprojects {
 	def platformSuffix = project.name.substring(rootProject.name.length())
 
 	dependencies {
-		compile("de.carne.common:java-boot:2.4.0")
-		compile("de.carne.common:java-default:8.5.1")
 		compile("de.carne.common:java-swt${platformSuffix}:2.1.0")
 		compile("de.carne.common:filescanner-engine:2.1.0-SNAPSHOT")
 		compile("org.glassfish.grizzly:grizzly-http-server:2.4.3")
@@ -80,6 +78,7 @@ subprojects {
 			enabled = true
 			genDir = file("../filescanner-gtk-linux-x86_64/shared-src/main/java")
 			bundles = fileTree("../filescanner-gtk-linux-x86_64/shared-src/main/resources").include("**/*I18N.properties")
+//			lineSeparator = "\n"
 		}
 	}
 
@@ -148,7 +147,7 @@ subprojects {
 	}
 
 	jacoco {
-		toolVersion = "0.8.1"
+		toolVersion = "0.8.2"
 	}
 		
 	jacocoTestReport {
