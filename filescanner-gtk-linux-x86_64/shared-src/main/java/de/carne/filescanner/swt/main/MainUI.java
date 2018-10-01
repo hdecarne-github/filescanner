@@ -715,10 +715,10 @@ public class MainUI extends ShellUserInterface {
 		CoolBarBuilder commands = buildCommandBar(rootBuilder);
 		CompositeBuilder<SashForm> resultBuilder = rootBuilder.addCompositeChild(SashForm.class, SWT.HORIZONTAL);
 		ControlBuilder<Tree> resultTree = resultBuilder.addControlChild(Tree.class,
-				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL);
+				SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL);
 		CompositeBuilder<SashForm> resultViewBuilder = resultBuilder.addCompositeChild(SashForm.class, SWT.VERTICAL);
-		ControlBuilder<Browser> resultView = resultViewBuilder.addControlChild(Browser.class, SWT.NONE);
-		ControlBuilder<Hex> inputView = resultViewBuilder.addControlChild(Hex.class, SWT.NONE);
+		ControlBuilder<Browser> resultView = resultViewBuilder.addControlChild(Browser.class, SWT.BORDER);
+		ControlBuilder<Hex> inputView = resultViewBuilder.addControlChild(Hex.class, SWT.BORDER);
 		CoolBarBuilder status = buildStatusBar(rootBuilder, controller);
 
 		rootBuilder.withText(MainI18N.i18nTitle())
