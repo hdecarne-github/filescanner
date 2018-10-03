@@ -122,25 +122,5 @@ public final class Images {
 	 * copy_default16.png
 	 */
 	public static final String IMAGE_COPY_DEFAULT16 = "copy_default16.png";
-	/**
-	 * copy_image_bmp16.png
-	 */
-	public static final String IMAGE_COPY_IMAGE_BMP16 = "copy_image_bmp16.png";
-	/**
-	 * copy_image_gif16.png
-	 */
-	public static final String IMAGE_COPY_IMAGE_GIF16 = "copy_image_gif16.png";
-	/**
-	 * copy_image_jpeg16.png
-	 */
-	public static final String IMAGE_COPY_IMAGE_JPEG16 = "copy_image_jpeg16.png";
-	/**
-	 * copy_image_tiff16.png
-	 */
-	public static final String IMAGE_COPY_IMAGE_PNG16 = "copy_image_png16.png";
-	/**
-	 * copy_image_tiff16.png
-	 */
-	public static final String IMAGE_COPY_IMAGE_TIFF16 = "copy_image_tiff16.png";
 
 }

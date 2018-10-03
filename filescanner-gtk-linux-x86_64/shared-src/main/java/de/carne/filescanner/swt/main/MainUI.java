@@ -323,11 +323,18 @@ public class MainUI extends ShellUserInterface {
 
 		if (0 < extensionIndex) {
 			String extension = shortInputName.substring(extensionIndex);
-			Program program = Program.findProgram(extension);
 
-			if (program != null) {
-				inputImage = this.resources.getImage(program, ProgramImageDataProvider::createImage);
-			}
+			inputImage = extensionImage(extension);
+		}
+		return (inputImage != null ? inputImage : this.resources.getImage(Images.class, Images.IMAGE_RESULT_INPUT16));
+	}
+
+	private Image extensionImage(String extension) {
+		Program program = Program.findProgram(extension);
+		Image inputImage = null;
+
+		if (program != null) {
+			inputImage = this.resources.getImage(program, ProgramImageDataProvider::createImage);
 		}
 		return (inputImage != null ? inputImage : this.resources.getImage(Images.class, Images.IMAGE_RESULT_INPUT16));
 	}
@@ -651,33 +658,10 @@ public class MainUI extends ShellUserInterface {
 				copyObject.addItem(SWT.PUSH);
 				copyObject.withText(
 						String.format("%1$s (%2$s)", exportHandler.name(), exportHandler.transferType().mimeType()));
-				decorateCopyObjectMenuItem(copyObject, exportHandler);
+				copyObject.withImage(extensionImage(exportHandler.defaultFileExtension()));
 				copyObject.onSelected(this::onCopyObjectSelected);
 				copyObject.currentItem().setData(exportHandler);
 			}
-		}
-	}
-
-	private void decorateCopyObjectMenuItem(MenuBuilder copyObject, FileScannerResultExportHandler exportHandler) {
-		switch (exportHandler.transferType()) {
-		case IMAGE_BMP:
-			copyObject.withImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_IMAGE_BMP16));
-			break;
-		case IMAGE_GIF:
-			copyObject.withImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_IMAGE_GIF16));
-			break;
-		case IMAGE_JPEG:
-			copyObject.withImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_IMAGE_JPEG16));
-			break;
-		case IMAGE_PNG:
-			copyObject.withImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_IMAGE_PNG16));
-			break;
-		case IMAGE_TIFF:
-			copyObject.withImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_IMAGE_TIFF16));
-			break;
-		default:
-			// no decoration
-			break;
 		}
 	}
 
