@@ -637,6 +637,7 @@ public class MainUI extends ShellUserInterface {
 		copyObject.removeItems();
 		copyObject.addItem(SWT.PUSH);
 		copyObject.withText(MainI18N.i18nMenuEditCopyDefault());
+		copyObject.withImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_DEFAULT16));
 		copyObject.onSelected(this::onCopyObjectSelected);
 
 		boolean firstExportHandler = true;
@@ -650,9 +651,33 @@ public class MainUI extends ShellUserInterface {
 				copyObject.addItem(SWT.PUSH);
 				copyObject.withText(
 						String.format("%1$s (%2$s)", exportHandler.name(), exportHandler.transferType().mimeType()));
+				decorateCopyObjectMenuItem(copyObject, exportHandler);
 				copyObject.onSelected(this::onCopyObjectSelected);
 				copyObject.currentItem().setData(exportHandler);
 			}
+		}
+	}
+
+	private void decorateCopyObjectMenuItem(MenuBuilder copyObject, FileScannerResultExportHandler exportHandler) {
+		switch (exportHandler.transferType()) {
+		case IMAGE_BMP:
+			copyObject.withImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_IMAGE_BMP16));
+			break;
+		case IMAGE_GIF:
+			copyObject.withImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_IMAGE_GIF16));
+			break;
+		case IMAGE_JPEG:
+			copyObject.withImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_IMAGE_JPEG16));
+			break;
+		case IMAGE_PNG:
+			copyObject.withImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_IMAGE_PNG16));
+			break;
+		case IMAGE_TIFF:
+			copyObject.withImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_IMAGE_TIFF16));
+			break;
+		default:
+			// no decoration
+			break;
 		}
 	}
 
@@ -840,7 +865,7 @@ public class MainUI extends ShellUserInterface {
 	}
 
 	private CoolBarBuilder buildCommandBar(ShellBuilder rootBuilder) {
-		CoolBarBuilder commands = CoolBarBuilder.horizontal(rootBuilder, SWT.NONE);
+		CoolBarBuilder commands = CoolBarBuilder.horizontal(rootBuilder, SWT.FLAT);
 		ToolBarBuilder fileAndEditTools = ToolBarBuilder.horizontal(commands, SWT.FLAT);
 		CompositeBuilder<Composite> queryInput = commands.addCompositeChild(SWT.NONE);
 		ControlBuilder<Text> queryText = queryInput.addControlChild(Text.class, SWT.SEARCH | SWT.ICON_SEARCH);
@@ -909,7 +934,7 @@ public class MainUI extends ShellUserInterface {
 	}
 
 	private CoolBarBuilder buildStatusBar(ShellBuilder rootBuilder, MainController controller) {
-		CoolBarBuilder status = CoolBarBuilder.horizontal(rootBuilder, SWT.NONE);
+		CoolBarBuilder status = CoolBarBuilder.horizontal(rootBuilder, SWT.FLAT);
 		CompositeBuilder<Composite> session = status.addCompositeChild(SWT.NONE);
 		ToolBarBuilder sessionTools = ToolBarBuilder.horizontal(session, SWT.FLAT);
 		ControlBuilder<ProgressBar> sessionProgress = session.addControlChild(ProgressBar.class,
