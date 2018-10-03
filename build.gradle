@@ -1,6 +1,6 @@
 // Plugins
 plugins {
-	id "de.carne.java-tools" version "0.6.3" apply false
+	id "de.carne.java-tools" version "0.6.5" apply false
 	id "org.sonarqube" version "2.6.2" apply false
 	id "com.install4j.gradle" version "7.0.7" apply false
 }
@@ -78,7 +78,7 @@ subprojects {
 			enabled = true
 			genDir = file("../filescanner-gtk-linux-x86_64/shared-src/main/java")
 			bundles = fileTree("../filescanner-gtk-linux-x86_64/shared-src/main/resources").include("**/*I18N.properties")
-//			lineSeparator = "\n"
+			lineSeparator = "\n"
 		}
 	}
 
