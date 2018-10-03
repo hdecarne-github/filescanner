@@ -71,8 +71,9 @@ class HtmlResultDocument extends HttpHandler {
 	}
 
 	public void writeTo(Writer htmlWriter, Writer plainWriter) throws IOException {
-		try (CombinedRenderer renderer = new CombinedRenderer(new HtmlRenderer(htmlWriter),
-				new SimpleTextRenderer(plainWriter))) {
+		try (HtmlRenderer htmlRenderer = new HtmlRenderer(htmlWriter);
+				SimpleTextRenderer textRenderer = new SimpleTextRenderer(plainWriter);
+				CombinedRenderer renderer = new CombinedRenderer(htmlRenderer, textRenderer)) {
 			RenderOutput.render(this.result, renderer);
 		}
 	}

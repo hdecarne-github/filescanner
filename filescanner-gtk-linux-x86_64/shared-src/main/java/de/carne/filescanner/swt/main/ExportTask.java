@@ -71,6 +71,7 @@ class ExportTask implements Callable<Void>, ExportTarget {
 		return null;
 	}
 
+	@SuppressWarnings("resource")
 	@Override
 	public int write(@Nullable ByteBuffer src) throws IOException {
 		int written = 0;
