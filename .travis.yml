@@ -31,7 +31,7 @@ script:
   - ./gradlew --stacktrace clean build
 
 after_success:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./gradlew --stacktrace artifactoryPublish sonarqube; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./gradlew --stacktrace sonarqube; fi
 
 notifications:
   email:
