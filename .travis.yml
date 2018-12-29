@@ -1,30 +1,37 @@
 language: java
 
-addons:
-  apt:
-    packages:
-    - metacity
-  sonarcloud:
-    organization: "hdecarne-github"
-
 jdk:
   - oraclejdk8
 
 os:
   - linux
+  - osx
+
+dist: trusty
+osx_image: xcode9.3
+
+env:
+  JAVA_OPTS="-Xmx2g -Dfile.encoding=UTF-8"
+  DISPLAY=":99.0"
+  DBUS_SESSION_BUS_ADDRESS="/dev/null"
+
+addons:
+  apt:
+    packages:
+      - metacity
+  sonarcloud:
+    organization: "hdecarne-github"
 
 git:
   depth: false  
 
 before_script:
-  - "export DISPLAY=:99.0"
-  - "export DBUS_SESSION_BUS_ADDRESS=/dev/null"
-  - "sh -e /etc/init.d/xvfb start"
-  - sleep 10 # give xvfb some time to start
-  - "metacity --sm-disable --replace 2> metacity.err &"
-  - sleep 10 # give metacity some time to start
+  - if [[ -e "./.travis/$TRAVIS_OS_NAME/before_script.sh" ]]; then bash -x ./.travis/$TRAVIS_OS_NAME/before_script.sh; fi
 script:
-  - ./gradlew --stacktrace build sonarqube
+  - ./gradlew --stacktrace clean build
+
+after_success:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./gradlew --stacktrace artifactoryPublish sonarqube; fi
 
 notifications:
   email:
