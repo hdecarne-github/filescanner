@@ -27,14 +27,15 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import de.carne.boot.check.Nullable;
+import org.eclipse.jdt.annotation.Nullable;
+
 import de.carne.boot.logging.Log;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.transfer.ExportTarget;
 import de.carne.filescanner.engine.transfer.FileScannerResultExporter;
 import de.carne.filescanner.swt.export.ExportOptions;
 
-class ExportTask implements Callable<Void>, ExportTarget {
+class ExportTask implements Callable<@Nullable Void>, ExportTarget {
 
 	private static final Log LOG = new Log();
 
@@ -55,8 +56,7 @@ class ExportTask implements Callable<Void>, ExportTarget {
 	}
 
 	@Override
-	@Nullable
-	public Void call() throws Exception {
+	public @Nullable Void call() throws Exception {
 		LOG.info("Exporting result ''{0}'' to path ''{1}''...", this.result.name(), this.path);
 
 		try {

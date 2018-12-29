@@ -16,13 +16,12 @@
  */
 package de.carne.filescanner.swt.main;
 
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageDataProvider;
 import org.eclipse.swt.program.Program;
-
-import de.carne.boot.check.Nullable;
 
 final class ProgramImageDataProvider implements ImageDataProvider {
 

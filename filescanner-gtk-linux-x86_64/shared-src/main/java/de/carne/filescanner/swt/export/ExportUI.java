@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.prefs.Preferences;
 
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Combo;
@@ -31,7 +32,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import de.carne.boot.Exceptions;
-import de.carne.boot.check.Nullable;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.transfer.FileScannerResultExportHandler;
 import de.carne.filescanner.swt.resources.Images;
@@ -254,7 +254,7 @@ class ExportUI extends ShellUserInterface {
 	private void validationMessageBox(ValidationException validationException) {
 		try {
 			MessageBox messageBox = MessageBoxBuilder.error(root()).withText(root().getText())
-					.withMessage(validationException.getMessage()).get();
+					.withMessage(validationException.getLocalizedMessage()).get();
 
 			messageBox.open();
 		} catch (Exception e) {

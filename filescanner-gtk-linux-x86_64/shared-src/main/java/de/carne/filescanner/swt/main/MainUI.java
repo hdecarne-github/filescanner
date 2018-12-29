@@ -17,12 +17,14 @@
 package de.carne.filescanner.swt.main;
 
 import java.net.URL;
+import java.util.Objects;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.SashForm;
@@ -51,7 +53,6 @@ import org.eclipse.swt.widgets.TreeItem;
 
 import de.carne.boot.Exceptions;
 import de.carne.boot.check.Check;
-import de.carne.boot.check.Nullable;
 import de.carne.boot.logging.Log;
 import de.carne.filescanner.engine.FileScannerProgress;
 import de.carne.filescanner.engine.FileScannerResult;
@@ -345,7 +346,7 @@ public class MainUI extends ShellUserInterface {
 
 		while (resultPathIndex < resultPathTailIndex) {
 			FileScannerResult result = resultPath[resultPathIndex];
-			TreeItem resultItem = Check.notNull(result.getData(TreeItem.class));
+			TreeItem resultItem = Objects.requireNonNull(result.getData(TreeItem.class));
 
 			resultItem.setExpanded(true);
 

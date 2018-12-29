@@ -19,10 +19,12 @@ package de.carne.filescanner.swt.main;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
+
+import org.eclipse.jdt.annotation.Nullable;
 
 import de.carne.boot.Application;
 import de.carne.boot.Exceptions;
-import de.carne.boot.check.Nullable;
 import de.carne.filescanner.FileScannerMain;
 import de.carne.filescanner.engine.FileScanner;
 import de.carne.filescanner.engine.FileScannerProgress;
@@ -30,7 +32,6 @@ import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.FileScannerStatus;
 import de.carne.filescanner.engine.Formats;
 import de.carne.filescanner.swt.preferences.UserPreferences;
-import de.carne.nio.compression.Check;
 
 /**
  * Main window controller.
@@ -133,7 +134,7 @@ class MainController implements FileScannerStatus {
 	@Override
 	public void scanFinished(FileScanner scanner) {
 		if (scanner.equals(this.fileScanner)) {
-			Check.notNull(this.searchIndex).seal();
+			Objects.requireNonNull(this.searchIndex).seal();
 			Application.getMain(FileScannerMain.class).runWait(() -> this.ui.sessionRunning(false));
 		}
 	}
@@ -149,7 +150,7 @@ class MainController implements FileScannerStatus {
 	public void scanResult(FileScanner scanner, FileScannerResult result) {
 		if (scanner.equals(this.fileScanner)) {
 			Application.getMain(FileScannerMain.class).runWait(() -> this.ui.sessionResult(result));
-			Check.notNull(this.searchIndex).addResult(result);
+			Objects.requireNonNull(this.searchIndex).addResult(result);
 		}
 	}
 

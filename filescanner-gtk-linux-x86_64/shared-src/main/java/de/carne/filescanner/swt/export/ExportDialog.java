@@ -16,11 +16,11 @@
  */
 package de.carne.filescanner.swt.export;
 
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Shell;
 
-import de.carne.boot.check.Nullable;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.swt.graphics.ResourceException;
 

@@ -2,7 +2,7 @@
 plugins {
 	id "de.carne.java-tools" version "0.6.5" apply false
 	id "org.sonarqube" version "2.6.2" apply false
-	id "com.install4j.gradle" version "7.0.7" apply false
+	id "com.install4j.gradle" version "7.0.8" apply false
 }
 
 // Build helpers
@@ -15,8 +15,8 @@ subprojects {
 	apply plugin: "de.carne.java-tools"
 	apply plugin: "jacoco"
 	apply plugin: "org.sonarqube"
-	apply plugin: 'distribution'
-	apply plugin: 'com.install4j.gradle'
+	apply plugin: "distribution"
+	apply plugin: "com.install4j.gradle"
 	apply plugin: "eclipse"
 	
 	sourceCompatibility = JavaVersion.VERSION_1_8
@@ -52,15 +52,15 @@ subprojects {
 	def platformSuffix = project.name.substring(rootProject.name.length())
 
 	dependencies {
-		compile("de.carne.common:java-swt${platformSuffix}:2.1.0")
-		compile("de.carne.common:filescanner-engine:2.1.0-SNAPSHOT")
-		compile("org.glassfish.grizzly:grizzly-http-server:2.4.3")
-		compile("org.apache.lucene:lucene-analyzers-common:7.4.0")
-		compile("org.apache.lucene:lucene-queryparser:7.4.0") {
-			exclude module: "lucene-sandbox"
+		configurations.runtime.exclude(group: "org.eclipse.jdt", module: "org.eclipse.jdt.annotation")
+		implementation(group: "de.carne.common", name: "java-swt${platformSuffix}", version: "2.2.0-SNAPSHOT")
+		implementation(group: "de.carne.common", name: "filescanner-engine", version: "2.1.0-SNAPSHOT")
+		implementation(group: "org.glassfish.grizzly", name: "grizzly-http-server", version: "2.4.3")
+		implementation(group: "org.apache.lucene", name: "lucene-analyzers-common", version: "7.5.0")
+		implementation(group: "org.apache.lucene", name: "lucene-queryparser", version: "7.5.0") {
+			exclude(group: "org.apache.lucene", module: "lucene-sandbox")
 		}
-		testCompile("de.carne.common:java-test-swt${platformSuffix}:2.1.0")
-		testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.2.0")
+		testImplementation(group: "de.carne.common", name: "java-test-swt${platformSuffix}", version: "2.2.0-SNAPSHOT")
 	}
 	
 	test {
@@ -95,15 +95,15 @@ subprojects {
 	}
 	
 	task bootJar(type: Jar) {
-		appendix = 'boot'
+		appendix = "boot"
 		entryCompression = ZipEntryCompression.STORED
 		from jar
-		from configurations.runtime.collect {
-			it.name.matches('java-boot-.*.jar') ? zipTree(it) : it
+		from configurations.runtimeClasspath.collect {
+			it.name.matches("java-boot-.*.jar") ? zipTree(it) : it
 		}
 		manifest {
 			attributes(
-				'Main-Class': 'de.carne.boot.Application',
+				"Main-Class": "de.carne.boot.Application",
 			)
 		}
 	}
@@ -118,7 +118,7 @@ subprojects {
 	
 	tasks.withType(Tar){
 		compression = Compression.GZIP
-		extension = 'tar.gz'
+		extension = "tar.gz"
 	}
 
 	install4j {
@@ -126,10 +126,10 @@ subprojects {
 	}
 	
 	task assembleMedia(type: com.install4j.gradle.Install4jTask, dependsOn: assembleDist) {
-		def i4jProjectApplicationID = project.getProperty(project.name + '.i4jProjectApplicationID')
-		def i4jProjectMediaID = project.getProperty(project.name + '.i4jProjectMediaID')
+		def i4jProjectApplicationID = project.getProperty(project.name + ".i4jProjectApplicationID")
+		def i4jProjectMediaID = project.getProperty(project.name + ".i4jProjectMediaID")
 		
-		enabled = i4jProjectApplicationID != 'false'
+		enabled = i4jProjectApplicationID != "false"
 
 		projectFile = file("../src/main/install4j/filescanner.install4j")
 		variables = [
@@ -163,6 +163,23 @@ subprojects {
 		classpath {
 			downloadSources = true
 			downloadJavadoc = true
+			file {
+				whenMerged {
+					def eeaPath = project.findProperty("eclipse.eeaPath");
+					 
+					entries.forEach {
+						if(it.path.startsWith("org.eclipse.jdt.launching.JRE_CONTAINER")) {
+							if(eeaPath != null) {
+								it.entryAttributes.put("annotationpath", eeaPath)
+							}
+						} else if(it.path.contains("/caches/modules-2/")) {
+							if(eeaPath != null) {
+								it.entryAttributes.put("annotationpath", eeaPath)
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 }

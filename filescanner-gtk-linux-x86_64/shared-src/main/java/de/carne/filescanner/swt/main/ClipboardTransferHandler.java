@@ -28,11 +28,11 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.ImageData;
 
+import de.carne.boot.check.Check;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.transfer.FileScannerResultExportHandler;
 import de.carne.filescanner.engine.transfer.FileScannerResultExporter;
 import de.carne.filescanner.engine.transfer.TransferType;
-import de.carne.nio.compression.Check;
 import de.carne.util.Late;
 import de.carne.util.Strings;
 
@@ -99,7 +99,7 @@ abstract class ClipboardTransferHandler {
 				break;
 			case APPLICATION_OCTET_STREAM:
 			default:
-				transferHandler = Check.fail("Unexpected exporter type: %1$s", exportHandler.transferType());
+				throw Check.fail("Unexpected exporter type: %1$s", exportHandler.transferType());
 			}
 			return transferHandler;
 		};

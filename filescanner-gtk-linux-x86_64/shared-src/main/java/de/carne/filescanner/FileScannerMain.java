@@ -18,6 +18,7 @@ package de.carne.filescanner;
 
 import java.io.IOException;
 
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -55,7 +56,7 @@ public class FileScannerMain extends UserApplication implements ApplicationMain 
 	}
 
 	@Override
-	public int run(String[] args) {
+	public int run(@Nullable String[] args) {
 		int status;
 
 		try {

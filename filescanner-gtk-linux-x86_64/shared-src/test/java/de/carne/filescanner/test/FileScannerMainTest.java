@@ -20,11 +20,13 @@ import org.junit.jupiter.api.Test;
 
 import de.carne.boot.Application;
 import de.carne.filescanner.FileScannerMain;
+import de.carne.test.swt.DisableIfThreadNotSWTCapable;
 import de.carne.test.swt.tester.SWTTester;
 
 /**
  * Test {@link FileScannerMain} class.
  */
+@DisableIfThreadNotSWTCapable
 class FileScannerMainTest extends SWTTester {
 
 	@Override

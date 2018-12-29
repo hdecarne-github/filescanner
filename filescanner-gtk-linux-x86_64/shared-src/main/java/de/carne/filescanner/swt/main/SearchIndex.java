@@ -48,8 +48,8 @@ import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.BytesRef;
+import org.eclipse.jdt.annotation.Nullable;
 
-import de.carne.boot.check.Nullable;
 import de.carne.boot.logging.Log;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.transfer.RenderOutput;
@@ -155,13 +155,11 @@ final class SearchIndex implements AutoCloseable {
 		}
 	}
 
-	@Nullable
-	public byte[] searchFoward(@Nullable FileScannerResult start, String query) throws IOException {
+	public byte @Nullable [] searchFoward(@Nullable FileScannerResult start, String query) throws IOException {
 		return getSearcher().search((start != null ? new BytesRef(start.key()) : null), null, query, SORT_FORWARD);
 	}
 
-	@Nullable
-	public byte[] searchBackward(@Nullable FileScannerResult start, String query) throws IOException {
+	public byte @Nullable [] searchBackward(@Nullable FileScannerResult start, String query) throws IOException {
 		return getSearcher().search(null, (start != null ? new BytesRef(start.key()) : null), query, SORT_BACKWARD);
 	}
 
@@ -275,9 +273,8 @@ final class SearchIndex implements AutoCloseable {
 			this.queryParser.setDefaultOperator(Occur.MUST);
 		}
 
-		@Nullable
-		public byte[] search(@Nullable BytesRef resultKeyFrom, @Nullable BytesRef resultKeyTo, String queryString,
-				Sort sort) throws IOException {
+		public byte @Nullable [] search(@Nullable BytesRef resultKeyFrom, @Nullable BytesRef resultKeyTo,
+				String queryString, Sort sort) throws IOException {
 			Query query = this.queryParser.parse(queryString);
 			BooleanQuery.Builder queryBuilder = new BooleanQuery.Builder();
 

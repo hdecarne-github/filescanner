@@ -16,6 +16,7 @@
  */
 package de.carne.filescanner.swt.main;
 
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
@@ -23,7 +24,6 @@ import org.glassfish.grizzly.http.server.HttpHandler;
 import org.glassfish.grizzly.http.server.Request;
 import org.glassfish.grizzly.http.server.Response;
 
-import de.carne.boot.check.Nullable;
 import de.carne.filescanner.engine.transfer.RenderStyle;
 import de.carne.filescanner.swt.preferences.Config;
 

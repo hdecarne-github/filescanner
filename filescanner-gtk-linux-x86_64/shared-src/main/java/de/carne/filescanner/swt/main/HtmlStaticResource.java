@@ -19,11 +19,11 @@ package de.carne.filescanner.swt.main;
 import java.io.InputStream;
 import java.net.URL;
 
+import org.eclipse.jdt.annotation.Nullable;
 import org.glassfish.grizzly.http.server.HttpHandler;
 import org.glassfish.grizzly.http.server.Request;
 import org.glassfish.grizzly.http.server.Response;
 
-import de.carne.boot.check.Nullable;
 import de.carne.io.IOUtil;
 
 class HtmlStaticResource extends HttpHandler {

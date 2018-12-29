@@ -20,16 +20,16 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
+import org.eclipse.jdt.annotation.Nullable;
 import org.glassfish.grizzly.PortRange;
 import org.glassfish.grizzly.http.server.HttpHandler;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.NetworkListener;
 import org.glassfish.grizzly.http.server.ServerConfiguration;
 
-import de.carne.boot.check.Check;
-import de.carne.boot.check.Nullable;
 import de.carne.boot.logging.Log;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.swt.preferences.Config;
@@ -96,8 +96,7 @@ class HtmlRenderServer {
 		}
 
 		URI serverUri = getHttpServerUri(this.httpServer);
-		@SuppressWarnings("squid:S1075")
-		String resultDocumentPath = "/" + UUID.randomUUID().toString();
+		@SuppressWarnings("squid:S1075") String resultDocumentPath = "/" + UUID.randomUUID().toString();
 		HtmlResultDocument resultDocument = new HtmlResultDocument(serverUri, resultDocumentPath, STYLESHEET_PATH,
 				result);
 
@@ -141,7 +140,7 @@ class HtmlRenderServer {
 	}
 
 	private static NetworkListener getHttpServerNetworkListener(HttpServer httpServer) {
-		return Check.notNull(httpServer.getListener("grizzly"));
+		return Objects.requireNonNull(httpServer.getListener("grizzly"));
 	}
 
 	private static URI getHttpServerUri(HttpServer httpServer) {

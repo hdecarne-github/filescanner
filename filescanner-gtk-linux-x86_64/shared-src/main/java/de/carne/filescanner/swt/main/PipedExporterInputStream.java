@@ -20,13 +20,14 @@ import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.nio.ByteBuffer;
+import java.util.Objects;
 
-import de.carne.boot.check.Nullable;
+import org.eclipse.jdt.annotation.Nullable;
+
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.transfer.ExportTarget;
 import de.carne.filescanner.engine.transfer.FileScannerResultExporter;
 import de.carne.io.IOUtil;
-import de.carne.nio.compression.Check;
 
 class PipedExporterInputStream extends PipedInputStream {
 
@@ -82,7 +83,7 @@ class PipedExporterInputStream extends PipedInputStream {
 
 		@Override
 		public int write(@Nullable ByteBuffer src) throws IOException {
-			return IOUtil.copyBuffer(this.pipe, Check.notNull(src));
+			return IOUtil.copyBuffer(this.pipe, Objects.requireNonNull(src));
 		}
 
 		@Override

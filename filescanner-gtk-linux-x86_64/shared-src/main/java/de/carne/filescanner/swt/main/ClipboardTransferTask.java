@@ -18,10 +18,11 @@ package de.carne.filescanner.swt.main;
 
 import java.util.concurrent.Callable;
 
-import de.carne.boot.check.Nullable;
+import org.eclipse.jdt.annotation.Nullable;
+
 import de.carne.filescanner.engine.FileScannerResult;
 
-final class ClipboardTransferTask implements Callable<Void> {
+final class ClipboardTransferTask implements Callable<@Nullable Void> {
 
 	private final ProgressCallback progress;
 	private final FileScannerResult result;
@@ -35,8 +36,7 @@ final class ClipboardTransferTask implements Callable<Void> {
 	}
 
 	@Override
-	@Nullable
-	public Void call() throws Exception {
+	public @Nullable Void call() throws Exception {
 		try {
 			this.handler.prepareTransfer(this.result);
 		} finally {

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Objects;
 
+import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -47,11 +48,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ScrollBar;
 
 import de.carne.boot.Exceptions;
-import de.carne.boot.check.Nullable;
+import de.carne.boot.check.Check;
 import de.carne.boot.platform.Platform;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.input.FileScannerInput;
-import de.carne.nio.compression.Check;
 
 /**
  * Custom control for displaying raw hexadecimal data to the user.
@@ -138,7 +138,7 @@ public class Hex extends Canvas implements DisposeListener, FocusListener, Trave
 
 	@Override
 	public void keyTraversed(@Nullable TraverseEvent event) {
-		Check.notNull(event).doit = true;
+		Objects.requireNonNull(event).doit = true;
 	}
 
 	@Override
@@ -187,7 +187,7 @@ public class Hex extends Canvas implements DisposeListener, FocusListener, Trave
 
 	private void hScroll(int direction, ScrollUnit unit) {
 		ScrollBar horizontalBar = getHorizontalBar();
-		Layout layout = Check.notNull(this.cachedLayout);
+		Layout layout = Objects.requireNonNull(this.cachedLayout);
 		int scrollAmount = (unit == ScrollUnit.LINE ? horizontalBar.getIncrement() : horizontalBar.getPageIncrement());
 		int newScrollPosX;
 
@@ -206,7 +206,7 @@ public class Hex extends Canvas implements DisposeListener, FocusListener, Trave
 
 	private void vScroll(int direction, ScrollUnit unit) {
 		ScrollBar verticalBar = getVerticalBar();
-		Layout layout = Check.notNull(this.cachedLayout);
+		Layout layout = Objects.requireNonNull(this.cachedLayout);
 		int scrollAmount = (unit == ScrollUnit.LINE ? verticalBar.getIncrement() : verticalBar.getPageIncrement());
 		long newScrollPosYScaled = Math.max(layout.scrollPosYScaled + direction * scrollAmount, 0);
 		int newScrollPosY = (int) Math.min(newScrollPosYScaled / layout.scrollPosYScale,
@@ -223,7 +223,7 @@ public class Hex extends Canvas implements DisposeListener, FocusListener, Trave
 
 	private void vScroll(long position) {
 		ScrollBar verticalBar = getVerticalBar();
-		Layout layout = Check.notNull(this.cachedLayout);
+		Layout layout = Objects.requireNonNull(this.cachedLayout);
 		long newScrollPosYScaled = Math.max(position >> DATA_LINE_SHIFT, 0);
 		int newScrollPosY = (int) Math.min(newScrollPosYScaled / layout.scrollPosYScale,
 				(long) verticalBar.getMaximum() - verticalBar.getThumb());
@@ -246,7 +246,7 @@ public class Hex extends Canvas implements DisposeListener, FocusListener, Trave
 	@SuppressWarnings("squid:S3776")
 	public void widgetSelected(@Nullable SelectionEvent event) {
 		if (event != null) {
-			Layout layout = Check.notNull(this.cachedLayout);
+			Layout layout = Objects.requireNonNull(this.cachedLayout);
 
 			if ((event.widget.getStyle() & SWT.HORIZONTAL) != 0) {
 				ScrollBar horizontalBar = Check.isInstanceOf(event.widget, ScrollBar.class);
