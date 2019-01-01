@@ -16,31 +16,39 @@
  */
 package de.carne.filescanner.test;
 
-import org.junit.jupiter.api.Test;
+import java.util.Locale;
 
-import de.carne.boot.Application;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.MethodOrderer.Alphanumeric;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+
 import de.carne.filescanner.FileScannerMain;
 import de.carne.test.swt.DisableIfThreadNotSWTCapable;
-import de.carne.test.swt.tester.SWTTester;
+import de.carne.test.swt.tester.SWTTest;
 
 /**
  * Test {@link FileScannerMain} class.
  */
 @DisableIfThreadNotSWTCapable
-class FileScannerMainTest extends SWTTester {
+@TestMethodOrder(Alphanumeric.class)
+class FileScannerMainTest extends SWTTest {
 
-	@Override
-	protected void runSWTApplication(String[] args) {
-		Application.main(args);
+	@BeforeAll
+	static void setLocale() {
+		Locale.setDefault(Locale.US);
 	}
 
 	@Test
 	void testFileScanner() {
-		runner().check(this::checkMenuQuit).run();
+		Script script = script(new FileScannerMain());
+
+		script.add(this::clossMain);
+		script.execute();
 	}
 
-	private void checkMenuQuit() {
-		getShell("FileScanner").menuBar().item("&Quit").select();
+	private void clossMain() {
+		accessShell().get().close();
 	}
 
 }
