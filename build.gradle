@@ -55,9 +55,9 @@ subprojects {
 		configurations.runtime.exclude(group: "org.eclipse.jdt", module: "org.eclipse.jdt.annotation")
 		implementation(group: "de.carne.common", name: "java-swt${platformSuffix}", version: "2.2.0-SNAPSHOT")
 		implementation(group: "de.carne.common", name: "filescanner-engine", version: "2.1.0-SNAPSHOT")
-		implementation(group: "org.glassfish.grizzly", name: "grizzly-http-server", version: "2.4.3")
-		implementation(group: "org.apache.lucene", name: "lucene-analyzers-common", version: "7.5.0")
-		implementation(group: "org.apache.lucene", name: "lucene-queryparser", version: "7.5.0") {
+		implementation(group: "org.glassfish.grizzly", name: "grizzly-http-server", version: "2.4.3.1")
+		implementation(group: "org.apache.lucene", name: "lucene-analyzers-common", version: "7.6.0")
+		implementation(group: "org.apache.lucene", name: "lucene-queryparser", version: "7.6.0") {
 			exclude(group: "org.apache.lucene", module: "lucene-sandbox")
 		}
 		testImplementation(group: "de.carne.common", name: "java-test-swt${platformSuffix}", version: "2.2.0-SNAPSHOT")
