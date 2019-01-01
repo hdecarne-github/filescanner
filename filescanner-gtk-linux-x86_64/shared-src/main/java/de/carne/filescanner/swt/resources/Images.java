@@ -17,8 +17,6 @@
 package de.carne.filescanner.swt.resources;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Image resources.
@@ -48,8 +46,8 @@ public final class Images {
 	/**
 	 * fslogo{16,32,48,128}.png
 	 */
-	public static final List<String> IMAGES_FSLOGO = Collections
-			.unmodifiableList(Arrays.asList(IMAGE_FSLOGO16, IMAGE_FSLOGO32, IMAGE_FSLOGO48, IMAGE_FSLOGO128));
+	public static final Iterable<String> IMAGES_FSLOGO = Arrays.asList(IMAGE_FSLOGO16, IMAGE_FSLOGO32, IMAGE_FSLOGO48,
+			IMAGE_FSLOGO128);
 	/**
 	 * open_file16.png
 	 */

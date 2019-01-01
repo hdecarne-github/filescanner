@@ -18,6 +18,7 @@ package de.carne.filescanner.swt.main;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Objects;
 
 import org.eclipse.jdt.annotation.Nullable;
 import org.glassfish.grizzly.http.server.HttpHandler;
@@ -32,7 +33,7 @@ class HtmlStaticResource extends HttpHandler {
 	private final URL resourceUrl;
 
 	HtmlStaticResource(HtmlResourceType type, String resource) {
-		this(type, HtmlStaticResource.class.getResource(resource));
+		this(type, Objects.requireNonNull(HtmlStaticResource.class.getResource(resource)));
 	}
 
 	HtmlStaticResource(HtmlResourceType type, URL resourceUrl) {

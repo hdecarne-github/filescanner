@@ -23,6 +23,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.jdt.annotation.Nullable;
@@ -200,7 +201,7 @@ class HtmlResultDocument extends HttpHandler {
 
 		@Override
 		public String toString() {
-			return this.writer.toString();
+			return Objects.toString(this.writer);
 		}
 
 		private String encodeText(String text) {

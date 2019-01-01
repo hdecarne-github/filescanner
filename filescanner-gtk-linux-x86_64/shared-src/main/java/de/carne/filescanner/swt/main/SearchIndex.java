@@ -93,7 +93,7 @@ final class SearchIndex implements AutoCloseable {
 
 	public void addResult(FileScannerResult result) {
 		try {
-			Updater updater = getUpdater();
+			@SuppressWarnings("resource") Updater updater = getUpdater();
 
 			addResultHelper(updater, result, true);
 			updater.commit();
@@ -135,8 +135,7 @@ final class SearchIndex implements AutoCloseable {
 	}
 
 	private String getResultContent(FileScannerResult result) throws IOException {
-		@SuppressWarnings("resource")
-		SimpleTextRenderer resultContent = new SimpleTextRenderer(new StringWriter());
+		@SuppressWarnings("resource") SimpleTextRenderer resultContent = new SimpleTextRenderer(new StringWriter());
 
 		try {
 			resultContent.emitText(RenderStyle.NORMAL, result.name(), true);
@@ -209,8 +208,8 @@ final class SearchIndex implements AutoCloseable {
 		private final SearcherManager searcherManager;
 
 		Updater(FSDirectory indexDirectory, Analyzer analyzer) throws IOException {
-			IndexWriterConfig config = new IndexWriterConfig(analyzer).setOpenMode(OpenMode.CREATE)
-					.setMergeScheduler(new SerialMergeScheduler());
+			@SuppressWarnings("resource") IndexWriterConfig config = new IndexWriterConfig(analyzer)
+					.setOpenMode(OpenMode.CREATE).setMergeScheduler(new SerialMergeScheduler());
 
 			this.indexWriter = new IndexWriter(indexDirectory, config);
 			this.searcherManager = new SearcherManager(this.indexWriter, null);

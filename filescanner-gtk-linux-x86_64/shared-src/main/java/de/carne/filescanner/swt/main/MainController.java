@@ -92,8 +92,7 @@ class MainController implements FileScannerStatus {
 		this.ui.sessionRunning(false);
 	}
 
-	@Nullable
-	FileScannerResult[] searchNext(@Nullable FileScannerResult from, String query) throws IOException {
+	FileScannerResult @Nullable [] searchNext(@Nullable FileScannerResult from, String query) throws IOException {
 		SearchIndex checkedSearchIndex = this.searchIndex;
 		FileScanner checkedFileScanner = this.fileScanner;
 		FileScannerResult[] searchResult = null;
@@ -108,8 +107,7 @@ class MainController implements FileScannerStatus {
 		return searchResult;
 	}
 
-	@Nullable
-	FileScannerResult[] searchPrevious(@Nullable FileScannerResult from, String query) throws IOException {
+	FileScannerResult @Nullable [] searchPrevious(@Nullable FileScannerResult from, String query) throws IOException {
 		SearchIndex checkedSearchIndex = this.searchIndex;
 		FileScanner checkedFileScanner = this.fileScanner;
 		FileScannerResult[] searchResult = null;

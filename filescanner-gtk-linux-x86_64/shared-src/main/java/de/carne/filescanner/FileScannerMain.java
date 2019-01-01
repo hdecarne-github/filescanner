@@ -93,7 +93,7 @@ public class FileScannerMain extends UserApplication implements ApplicationMain 
 		return this.mainInterfaceHolder.set(new MainUI(new Shell(display)));
 	}
 
-	private CmdLineProcessor buildLogConfigCmdLine(String[] args) {
+	private CmdLineProcessor buildLogConfigCmdLine(@Nullable String[] args) {
 		CmdLineProcessor cmdLine = new CmdLineProcessor(name(), args);
 
 		cmdLine.onSwitch(arg -> applyLogConfig(Logs.CONFIG_VERBOSE)).arg("--verbose");
@@ -103,7 +103,7 @@ public class FileScannerMain extends UserApplication implements ApplicationMain 
 		return cmdLine;
 	}
 
-	private CmdLineProcessor buildApplicationCmdLine(String[] args) {
+	private CmdLineProcessor buildApplicationCmdLine(@Nullable String[] args) {
 		CmdLineProcessor cmdLine = new CmdLineProcessor(name(), args);
 
 		cmdLine.onSwitch(CmdLineProcessor::ignore).arg("--verbose");

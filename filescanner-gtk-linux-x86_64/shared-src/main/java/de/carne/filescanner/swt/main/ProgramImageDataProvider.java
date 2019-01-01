@@ -54,13 +54,15 @@ final class ProgramImageDataProvider implements ImageDataProvider {
 	}
 
 	@Nullable
-	private ImageData scaleImageData(ImageData imageData, int size, boolean force) {
+	private ImageData scaleImageData(@Nullable ImageData imageData, int size, boolean force) {
 		ImageData scaledImageData = null;
 
-		if (imageData.width == size && imageData.height == size) {
-			scaledImageData = imageData;
-		} else if (force) {
-			scaledImageData = imageData.scaledTo(size, size);
+		if (imageData != null) {
+			if (imageData.width == size && imageData.height == size) {
+				scaledImageData = imageData;
+			} else if (force) {
+				scaledImageData = imageData.scaledTo(size, size);
+			}
 		}
 		return scaledImageData;
 	}
