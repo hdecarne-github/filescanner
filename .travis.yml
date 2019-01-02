@@ -19,6 +19,7 @@ addons:
   apt:
     packages:
       - fluxbox
+      - libwebkitgtk-3.0-0
   sonarcloud:
     organization: "hdecarne-github"
 
