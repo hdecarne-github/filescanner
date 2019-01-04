@@ -32,7 +32,7 @@ script:
   - ./gradlew --stacktrace clean build
 
 after_success:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./gradlew --stacktrace sonarqube; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./gradlew --stacktrace sonarqube checkDependencyVersions; fi
 
 notifications:
   email:

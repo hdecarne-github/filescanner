@@ -1,6 +1,6 @@
 // Plugins
 plugins {
-	id "de.carne.java-tools" version "0.6.5" apply false
+	id "de.carne.java-tools" version "0.7.1" apply false
 	id "org.sonarqube" version "2.6.2" apply false
 	id "com.install4j.gradle" version "7.0.8" apply false
 }
@@ -53,6 +53,10 @@ subprojects {
 
 	dependencies {
 		configurations.runtime.exclude(group: "org.eclipse.jdt", module: "org.eclipse.jdt.annotation")
+
+		// TODO: Remove
+		implementation(group: "de.carne.common", name: "java-boot", version: "2.7.0-SNAPSHOT")
+
 		implementation(group: "de.carne.common", name: "java-swt${platformSuffix}", version: "2.2.0-SNAPSHOT")
 		implementation(group: "de.carne.common", name: "filescanner-engine", version: "2.1.0-SNAPSHOT")
 		implementation(group: "org.glassfish.grizzly", name: "grizzly-http-server", version: "2.4.3.1")
