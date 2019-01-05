@@ -26,13 +26,13 @@ addons:
 git:
   depth: false  
 
-before_script:
-  - if [[ -e "./.travis/$TRAVIS_OS_NAME/before_script.sh" ]]; then bash -x ./.travis/$TRAVIS_OS_NAME/before_script.sh; fi
-script:
-  - ./gradlew --stacktrace clean build
+install: ./gradlew --refresh-dependencies clean assemble
 
-after_success:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./gradlew --stacktrace sonarqube checkDependencyVersions; fi
+before_script: if [[ -e "./.travis/$TRAVIS_OS_NAME/before_script.sh" ]]; then bash -x ./.travis/$TRAVIS_OS_NAME/before_script.sh; fi
+
+script: ./gradlew --stacktrace build
+
+after_success: if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./gradlew --stacktrace sonarqube checkDependencyVersions; fi
 
 notifications:
   email: false
