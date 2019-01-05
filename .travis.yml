@@ -29,9 +29,9 @@ git:
 install: ./gradlew --refresh-dependencies --stacktrace clean assemble testClasses
 
 before_script: if [[ -e "./.travis/$TRAVIS_OS_NAME/before_script.sh" ]]; then bash -x ./.travis/$TRAVIS_OS_NAME/before_script.sh; fi
-script: ./gradlew --stacktrace build
-
-after_success: if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./gradlew --stacktrace sonarqube checkDependencyVersions; fi
+script:
+  - ./gradlew --stacktrace build
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./gradlew --stacktrace sonarqube checkDependencyVersions; fi
 
 notifications:
   email: false
