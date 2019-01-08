@@ -49,22 +49,27 @@ subprojects {
 		}
 	}
 
+	javatools {
+		generateI18N {
+			enabled = true
+			genDir = file("${sharedSrcDir}/main/java")
+			bundles = fileTree("${sharedSrcDir}/main/resources").include("**/*I18N.properties")
+			lineSeparator = "\n"
+		}
+	}
+
 	def platformSuffix = project.name.substring(rootProject.name.length())
 
 	dependencies {
 		configurations.runtime.exclude(group: "org.eclipse.jdt", module: "org.eclipse.jdt.annotation")
-
-		// TODO: Remove
-		implementation(group: "de.carne.common", name: "java-boot", version: "2.7.0-SNAPSHOT")
-
-		implementation(group: "de.carne.common", name: "java-swt${platformSuffix}", version: "2.2.0-SNAPSHOT")
+		implementation(group: "de.carne.common", name: "java-swt${platformSuffix}", version: "3.0.0-SNAPSHOT")
 		implementation(group: "de.carne.common", name: "filescanner-engine", version: "2.1.0-SNAPSHOT")
 		implementation(group: "org.glassfish.grizzly", name: "grizzly-http-server", version: "2.4.3.1")
 		implementation(group: "org.apache.lucene", name: "lucene-analyzers-common", version: "7.6.0")
 		implementation(group: "org.apache.lucene", name: "lucene-queryparser", version: "7.6.0") {
 			exclude(group: "org.apache.lucene", module: "lucene-sandbox")
 		}
-		testImplementation(group: "de.carne.common", name: "java-test-swt${platformSuffix}", version: "2.2.0-SNAPSHOT")
+		testImplementation(group: "de.carne.common", name: "java-test-swt${platformSuffix}", version: "3.0.0-SNAPSHOT")
 	}
 	
 	test {
@@ -75,16 +80,11 @@ subprojects {
 			events "failed"
 			exceptionFormat "full"
 		}
+		jvmArgs "-javaagent:${classpath.find { it.name.contains('jmockit') }.absolutePath}"
+		enabled = project.name.endsWith(javatools.platform.swtToolkit)
 	}
-	
-	javatools {
-		generateI18N {
-			enabled = true
-			genDir = file("../filescanner-gtk-linux-x86_64/shared-src/main/java")
-			bundles = fileTree("../filescanner-gtk-linux-x86_64/shared-src/main/resources").include("**/*I18N.properties")
-			lineSeparator = "\n"
-		}
-	}
+
+	project.tasks["sonarqube"].enabled = test.enabled
 
 	jar {
 		def buildTimestamp = new java.text.SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
@@ -142,11 +142,18 @@ subprojects {
 			i4jProjectVersion: version,
 			i4jProjectBaseDir: projectDir,
 			i4jProjectBuildDir: buildDir,
-			i4jProjectApplicationID: i4jProjectApplicationID,
+			i4jProjectSigningDir: file(project.hasProperty("install4jSigningHome") ? install4jSigningHome : "."),
+			i4jProjectApplicationID: i4jProjectApplicationID
 		]
 		buildIds = [
 			i4jProjectMediaID
 			]
+		if(project.hasProperty("install4jSigningPassword")) {
+			disableSigning = false
+			macKeystorePassword = install4jSigningPassword
+		} else {
+			disableSigning = true
+		}
 		quiet = true		
 	}
 

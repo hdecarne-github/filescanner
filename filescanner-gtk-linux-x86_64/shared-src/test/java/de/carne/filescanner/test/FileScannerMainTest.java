@@ -19,9 +19,7 @@ package de.carne.filescanner.test;
 import java.util.Locale;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.MethodOrderer.Alphanumeric;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 
 import de.carne.filescanner.FileScannerMain;
 import de.carne.test.swt.DisableIfThreadNotSWTCapable;
@@ -31,7 +29,6 @@ import de.carne.test.swt.tester.SWTTest;
  * Test {@link FileScannerMain} class.
  */
 @DisableIfThreadNotSWTCapable
-@TestMethodOrder(Alphanumeric.class)
 class FileScannerMainTest extends SWTTest {
 
 	@BeforeAll
@@ -43,11 +40,13 @@ class FileScannerMainTest extends SWTTest {
 	void testFileScanner() {
 		Script script = script(new FileScannerMain());
 
-		script.add(this::clossMain);
+		script.add(this::doCloss);
 		script.execute();
 	}
 
-	private void clossMain() {
+	private void doCloss() {
+		traceAction();
+
 		accessShell().get().close();
 	}
 
