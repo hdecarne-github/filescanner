@@ -55,7 +55,7 @@ class FileScannerMainTest extends SWTTest {
 		Script script = script(Application::run).args("--debug");
 
 		script.add(this::doOpenFile);
-		script.add(this::waitScanFinished, this::doVerifyScanResult, 300 * 1000);
+		script.add(this::waitScanFinished, this::doVerifyScanResult, 60 * 1000);
 		script.add(this::doClose);
 		script.execute();
 	}
