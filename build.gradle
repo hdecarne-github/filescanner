@@ -65,7 +65,7 @@ subprojects {
 		testCompileOnly(group: "org.eclipse.jdt", name: "org.eclipse.jdt.annotation", version: project.annotationVersion)
 		implementation(group: "de.carne.common", name: "java-swt${platformSuffix}", version: project.javaSwtVersion)
 		implementation(group: "de.carne.common", name: "filescanner-engine", version: project.filescannerEngineVersion)
-		implementation(group: "org.glassfish.grizzly", name: "grizzly-http-server", version: project.grizzlyVersion)
+		implementation(group: "org.glassfish.grizzly", name: "grizzly-http-server", version: project.glassfishGrizzlyVersion)
 		implementation(group: "org.apache.lucene", name: "lucene-analyzers-common", version: project.luceneVersion)
 		implementation(group: "org.apache.lucene", name: "lucene-queryparser", version: project.luceneVersion) {
 			exclude(group: "org.apache.lucene", module: "lucene-sandbox")

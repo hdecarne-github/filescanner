@@ -54,6 +54,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import de.carne.boot.Exceptions;
 import de.carne.boot.check.Check;
 import de.carne.boot.logging.Log;
+import de.carne.filescanner.ModuleManifestInfos;
 import de.carne.filescanner.engine.FileScannerProgress;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.transfer.FileScannerResultExportHandler;
@@ -86,7 +87,6 @@ import de.carne.swt.widgets.notification.Notification;
 import de.carne.text.MemoryUnitFormat;
 import de.carne.util.Debug;
 import de.carne.util.Late;
-import de.carne.util.ManifestInfos;
 import de.carne.util.Strings;
 
 /**
@@ -193,8 +193,7 @@ public class MainUI extends ShellUserInterface {
 	void resetSession(boolean session) {
 		this.resultRenderServerHolder.get().clearSession();
 		this.resultTreeHolder.get().removeAll();
-		this.resultViewHolder.get().setText(MainI18N.i18nTextDefaultResultViewHtml(ManifestInfos.APPLICATION_NAME,
-				ManifestInfos.APPLICATION_VERSION, ManifestInfos.APPLICATION_BUILD));
+		this.resultViewHolder.get().setText(getDefaultResultView());
 		this.sessionProgressHolder.get().setSelection(0);
 		this.sessionStatusHolder.get().setText("");
 		this.sessionCommands.setEnabled(session);
@@ -582,7 +581,7 @@ public class MainUI extends ShellUserInterface {
 	private void onAboutSelected() {
 		try {
 			URL logoUrl = Images.class.getResource(Images.IMAGE_FSLOGO48);
-			AboutInfoDialog aboutInfo = AboutInfoDialog.build(root()).withLogo(logoUrl);
+			AboutInfoDialog aboutInfo = AboutInfoDialog.build(root(), new ModuleManifestInfos()).withLogo(logoUrl);
 
 			for (String copyrightResource : RESOURCES_COPYRIGHT) {
 				URL copyrightUrl = MainUI.class.getResource(copyrightResource);
@@ -611,12 +610,18 @@ public class MainUI extends ShellUserInterface {
 			this.resultSelectionCommands.setEnabled(true);
 			resetCopyObjectMenus(newResult);
 		} else {
-			this.resultViewHolder.get().setText(MainI18N.i18nTextDefaultResultViewHtml(ManifestInfos.APPLICATION_NAME,
-					ManifestInfos.APPLICATION_VERSION, ManifestInfos.APPLICATION_BUILD));
+			this.resultViewHolder.get().setText(getDefaultResultView());
 			this.resultSelectionCommands.setEnabled(false);
 			clearCopyObjectMenus();
 		}
 		this.searchState = SearchState.DEFAULT;
+	}
+
+	private String getDefaultResultView() {
+		de.carne.filescanner.engine.ModuleManifestInfos engineInfos = new de.carne.filescanner.engine.ModuleManifestInfos();
+
+		return MainI18N.i18nTextDefaultResultViewHtml(Strings.encodeHtml(engineInfos.name()),
+				Strings.encodeHtml(engineInfos.version()), Strings.encodeHtml(engineInfos.build()));
 	}
 
 	private void clearCopyObjectMenus() {
