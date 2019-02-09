@@ -92,9 +92,9 @@ subprojects {
 
 		manifest {
 			attributes(
-				"X-Application-Name": "FileScanner",
-				"X-Application-Version": project.version,
-				"X-Application-Build": buildTimestamp
+				"X-Module-Name": "FileScanner",
+				"X-Module-Version": project.version,
+				"X-Module-Build": buildTimestamp
 			)
 		}
 	}
