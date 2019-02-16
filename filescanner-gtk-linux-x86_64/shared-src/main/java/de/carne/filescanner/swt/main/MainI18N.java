@@ -40,14 +40,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_MENU_EDIT}
 	 * <p>
-	 * &Edit
+	 * &#38;Edit
 	 */
 	public static final String I18N_MENU_EDIT = "I18N_MENU_EDIT";
 
 	/**
 	 * Resource string {@code I18N_MENU_EDIT}
 	 * <p>
-	 * &Edit
+	 * &#38;Edit
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -59,14 +59,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_MENU_EDIT_COPY}
 	 * <p>
-	 * &Copy
+	 * &#38;Copy
 	 */
 	public static final String I18N_MENU_EDIT_COPY = "I18N_MENU_EDIT_COPY";
 
 	/**
 	 * Resource string {@code I18N_MENU_EDIT_COPY}
 	 * <p>
-	 * &Copy
+	 * &#38;Copy
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -78,14 +78,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_MENU_EDIT_COPY_DEFAULT}
 	 * <p>
-	 * &Default
+	 * &#38;Default
 	 */
 	public static final String I18N_MENU_EDIT_COPY_DEFAULT = "I18N_MENU_EDIT_COPY_DEFAULT";
 
 	/**
 	 * Resource string {@code I18N_MENU_EDIT_COPY_DEFAULT}
 	 * <p>
-	 * &Default
+	 * &#38;Default
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -97,14 +97,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_MENU_FILE}
 	 * <p>
-	 * &File
+	 * &#38;File
 	 */
 	public static final String I18N_MENU_FILE = "I18N_MENU_FILE";
 
 	/**
 	 * Resource string {@code I18N_MENU_FILE}
 	 * <p>
-	 * &File
+	 * &#38;File
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -116,14 +116,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_MENU_FILE_EXPORT}
 	 * <p>
-	 * &Export…
+	 * &#38;Export&#8230;
 	 */
 	public static final String I18N_MENU_FILE_EXPORT = "I18N_MENU_FILE_EXPORT";
 
 	/**
 	 * Resource string {@code I18N_MENU_FILE_EXPORT}
 	 * <p>
-	 * &Export…
+	 * &#38;Export&#8230;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -135,14 +135,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_MENU_FILE_OPEN}
 	 * <p>
-	 * &Open…
+	 * &#38;Open&#8230;
 	 */
 	public static final String I18N_MENU_FILE_OPEN = "I18N_MENU_FILE_OPEN";
 
 	/**
 	 * Resource string {@code I18N_MENU_FILE_OPEN}
 	 * <p>
-	 * &Open…
+	 * &#38;Open&#8230;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -154,14 +154,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_MENU_FILE_PREFERENCES}
 	 * <p>
-	 * &Preferences…
+	 * &#38;Preferences&#8230;
 	 */
 	public static final String I18N_MENU_FILE_PREFERENCES = "I18N_MENU_FILE_PREFERENCES";
 
 	/**
 	 * Resource string {@code I18N_MENU_FILE_PREFERENCES}
 	 * <p>
-	 * &Preferences…
+	 * &#38;Preferences&#8230;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -173,14 +173,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_MENU_FILE_PRINT}
 	 * <p>
-	 * &Print…
+	 * &#38;Print&#8230;
 	 */
 	public static final String I18N_MENU_FILE_PRINT = "I18N_MENU_FILE_PRINT";
 
 	/**
 	 * Resource string {@code I18N_MENU_FILE_PRINT}
 	 * <p>
-	 * &Print…
+	 * &#38;Print&#8230;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -192,14 +192,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_MENU_FILE_QUIT}
 	 * <p>
-	 * &Quit
+	 * &#38;Quit
 	 */
 	public static final String I18N_MENU_FILE_QUIT = "I18N_MENU_FILE_QUIT";
 
 	/**
 	 * Resource string {@code I18N_MENU_FILE_QUIT}
 	 * <p>
-	 * &Quit
+	 * &#38;Quit
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -211,14 +211,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_MENU_GOTO}
 	 * <p>
-	 * &Goto
+	 * &#38;Goto
 	 */
 	public static final String I18N_MENU_GOTO = "I18N_MENU_GOTO";
 
 	/**
 	 * Resource string {@code I18N_MENU_GOTO}
 	 * <p>
-	 * &Goto
+	 * &#38;Goto
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -230,14 +230,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_MENU_GOTO_END}
 	 * <p>
-	 * Result &end
+	 * Result&#32;&#38;end
 	 */
 	public static final String I18N_MENU_GOTO_END = "I18N_MENU_GOTO_END";
 
 	/**
 	 * Resource string {@code I18N_MENU_GOTO_END}
 	 * <p>
-	 * Result &end
+	 * Result&#32;&#38;end
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -249,14 +249,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_MENU_GOTO_NEXT}
 	 * <p>
-	 * Search &next
+	 * Search&#32;&#38;next
 	 */
 	public static final String I18N_MENU_GOTO_NEXT = "I18N_MENU_GOTO_NEXT";
 
 	/**
 	 * Resource string {@code I18N_MENU_GOTO_NEXT}
 	 * <p>
-	 * Search &next
+	 * Search&#32;&#38;next
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -268,14 +268,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_MENU_GOTO_PREVIOUS}
 	 * <p>
-	 * Search &previous
+	 * Search&#32;&#38;previous
 	 */
 	public static final String I18N_MENU_GOTO_PREVIOUS = "I18N_MENU_GOTO_PREVIOUS";
 
 	/**
 	 * Resource string {@code I18N_MENU_GOTO_PREVIOUS}
 	 * <p>
-	 * Search &previous
+	 * Search&#32;&#38;previous
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -287,14 +287,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_MENU_GOTO_START}
 	 * <p>
-	 * Result &start
+	 * Result&#32;&#38;start
 	 */
 	public static final String I18N_MENU_GOTO_START = "I18N_MENU_GOTO_START";
 
 	/**
 	 * Resource string {@code I18N_MENU_GOTO_START}
 	 * <p>
-	 * Result &start
+	 * Result&#32;&#38;start
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -306,14 +306,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_MENU_HELP}
 	 * <p>
-	 * &Help
+	 * &#38;Help
 	 */
 	public static final String I18N_MENU_HELP = "I18N_MENU_HELP";
 
 	/**
 	 * Resource string {@code I18N_MENU_HELP}
 	 * <p>
-	 * &Help
+	 * &#38;Help
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -325,14 +325,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_MENU_HELP_ABOUT}
 	 * <p>
-	 * &About…
+	 * &#38;About&#8230;
 	 */
 	public static final String I18N_MENU_HELP_ABOUT = "I18N_MENU_HELP_ABOUT";
 
 	/**
 	 * Resource string {@code I18N_MENU_HELP_ABOUT}
 	 * <p>
-	 * &About…
+	 * &#38;About&#8230;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -344,14 +344,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_MENU_HELP_LOGS}
 	 * <p>
-	 * &Logs…
+	 * &#38;Logs&#8230;
 	 */
 	public static final String I18N_MENU_HELP_LOGS = "I18N_MENU_HELP_LOGS";
 
 	/**
 	 * Resource string {@code I18N_MENU_HELP_LOGS}
 	 * <p>
-	 * &Logs…
+	 * &#38;Logs&#8230;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -363,14 +363,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_MESSAGE_IGNORING_COMMAND_LINE_FILE}
 	 * <p>
-	 * Ignoring extra file(s) submitted via command line.
+	 * Ignoring&#32;extra&#32;file&#40;s&#41;&#32;submitted&#32;via&#32;command&#32;line&#46;
 	 */
 	public static final String I18N_MESSAGE_IGNORING_COMMAND_LINE_FILE = "I18N_MESSAGE_IGNORING_COMMAND_LINE_FILE";
 
 	/**
 	 * Resource string {@code I18N_MESSAGE_IGNORING_COMMAND_LINE_FILE}
 	 * <p>
-	 * Ignoring extra file(s) submitted via command line.
+	 * Ignoring&#32;extra&#32;file&#40;s&#41;&#32;submitted&#32;via&#32;command&#32;line&#46;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -382,14 +382,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_MESSAGE_IGNORING_DROPPED_FILE}
 	 * <p>
-	 * Ignoring additional dropped file(s).
+	 * Ignoring&#32;additional&#32;dropped&#32;file&#40;s&#41;&#46;
 	 */
 	public static final String I18N_MESSAGE_IGNORING_DROPPED_FILE = "I18N_MESSAGE_IGNORING_DROPPED_FILE";
 
 	/**
 	 * Resource string {@code I18N_MESSAGE_IGNORING_DROPPED_FILE}
 	 * <p>
-	 * Ignoring additional dropped file(s).
+	 * Ignoring&#32;additional&#32;dropped&#32;file&#40;s&#41;&#46;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -401,14 +401,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_MESSAGE_NO_SEARCH_RESULT}
 	 * <p>
-	 * Search again to wrap search
+	 * Search&#32;again&#32;to&#32;wrap&#32;search
 	 */
 	public static final String I18N_MESSAGE_NO_SEARCH_RESULT = "I18N_MESSAGE_NO_SEARCH_RESULT";
 
 	/**
 	 * Resource string {@code I18N_MESSAGE_NO_SEARCH_RESULT}
 	 * <p>
-	 * Search again to wrap search
+	 * Search&#32;again&#32;to&#32;wrap&#32;search
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -420,14 +420,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_MESSAGE_SCAN_EXCEPTION}
 	 * <p>
-	 * An error occurred while scanning the current file.<br>Details: {0}
+	 * An&#32;error&#32;occurred&#32;while&#32;scanning&#32;the&#32;current&#32;file&#46;<br>Details&#58;&#32;&#123;0&#125;
 	 */
 	public static final String I18N_MESSAGE_SCAN_EXCEPTION = "I18N_MESSAGE_SCAN_EXCEPTION";
 
 	/**
 	 * Resource string {@code I18N_MESSAGE_SCAN_EXCEPTION}
 	 * <p>
-	 * An error occurred while scanning the current file.<br>Details: {0}
+	 * An&#32;error&#32;occurred&#32;while&#32;scanning&#32;the&#32;current&#32;file&#46;<br>Details&#58;&#32;&#123;0&#125;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -439,14 +439,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_TEXT_DEFAULT_RESULT_VIEW_HTML}
 	 * <p>
-	 * &lt;!DOCTYPE HTML&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset="utf-8"&gt;&lt;&frasl;head&gt;&lt;body&gt;&lt;code style="color:silver;"&gt;{0} {1} (build: {2})&lt;&frasl;code&gt;&lt;&frasl;body&gt;&lt;&frasl;html&gt;
+	 * &lt;&#33;DOCTYPE&#32;HTML&gt;&lt;html&gt;&lt;head&gt;&lt;meta&#32;charset&#61;&#34;utf&#45;8&#34;&gt;&lt;&frasl;head&gt;&lt;body&gt;&lt;code&#32;style&#61;&#34;color&#58;silver&#59;&#34;&gt;&#123;0&#125;&#32;&#123;1&#125;&#32;&#40;build&#58;&#32;&#123;2&#125;&#41;&lt;&frasl;code&gt;&lt;&frasl;body&gt;&lt;&frasl;html&gt;
 	 */
 	public static final String I18N_TEXT_DEFAULT_RESULT_VIEW_HTML = "I18N_TEXT_DEFAULT_RESULT_VIEW_HTML";
 
 	/**
 	 * Resource string {@code I18N_TEXT_DEFAULT_RESULT_VIEW_HTML}
 	 * <p>
-	 * &lt;!DOCTYPE HTML&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset="utf-8"&gt;&lt;&frasl;head&gt;&lt;body&gt;&lt;code style="color:silver;"&gt;{0} {1} (build: {2})&lt;&frasl;code&gt;&lt;&frasl;body&gt;&lt;&frasl;html&gt;
+	 * &lt;&#33;DOCTYPE&#32;HTML&gt;&lt;html&gt;&lt;head&gt;&lt;meta&#32;charset&#61;&#34;utf&#45;8&#34;&gt;&lt;&frasl;head&gt;&lt;body&gt;&lt;code&#32;style&#61;&#34;color&#58;silver&#59;&#34;&gt;&#123;0&#125;&#32;&#123;1&#125;&#32;&#40;build&#58;&#32;&#123;2&#125;&#41;&lt;&frasl;code&gt;&lt;&frasl;body&gt;&lt;&frasl;html&gt;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -458,14 +458,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_TEXT_FILE_OPEN_FILTER}
 	 * <p>
-	 * &#42;|All files
+	 * &#42;&#124;All&#32;files
 	 */
 	public static final String I18N_TEXT_FILE_OPEN_FILTER = "I18N_TEXT_FILE_OPEN_FILTER";
 
 	/**
 	 * Resource string {@code I18N_TEXT_FILE_OPEN_FILTER}
 	 * <p>
-	 * &#42;|All files
+	 * &#42;&#124;All&#32;files
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -477,14 +477,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_TEXT_IGNORING_EXTRA_FILE}
 	 * <p>
-	 * Only one file can be scanned at a time.
+	 * Only&#32;one&#32;file&#32;can&#32;be&#32;scanned&#32;at&#32;a&#32;time&#46;
 	 */
 	public static final String I18N_TEXT_IGNORING_EXTRA_FILE = "I18N_TEXT_IGNORING_EXTRA_FILE";
 
 	/**
 	 * Resource string {@code I18N_TEXT_IGNORING_EXTRA_FILE}
 	 * <p>
-	 * Only one file can be scanned at a time.
+	 * Only&#32;one&#32;file&#32;can&#32;be&#32;scanned&#32;at&#32;a&#32;time&#46;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -496,14 +496,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_TEXT_NO_SEARCH_RESULT}
 	 * <p>
-	 * Nothing found
+	 * Nothing&#32;found
 	 */
 	public static final String I18N_TEXT_NO_SEARCH_RESULT = "I18N_TEXT_NO_SEARCH_RESULT";
 
 	/**
 	 * Resource string {@code I18N_TEXT_NO_SEARCH_RESULT}
 	 * <p>
-	 * Nothing found
+	 * Nothing&#32;found
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -515,14 +515,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_TEXT_SCAN_EXCEPTION}
 	 * <p>
-	 * Scan failed
+	 * Scan&#32;failed
 	 */
 	public static final String I18N_TEXT_SCAN_EXCEPTION = "I18N_TEXT_SCAN_EXCEPTION";
 
 	/**
 	 * Resource string {@code I18N_TEXT_SCAN_EXCEPTION}
 	 * <p>
-	 * Scan failed
+	 * Scan&#32;failed
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -534,14 +534,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_TEXT_SESSION_STATUS}
 	 * <p>
-	 * Scanned: {0} ({1}&frasl;s) Elapsed: {2}:{3,number,00}:{4,number,00}.{5,number,000}
+	 * Scanned&#58;&#32;&#123;0&#125;&#32;&#40;&#123;1&#125;&frasl;s&#41;&#32;Elapsed&#58;&#32;&#123;2&#125;&#58;&#123;3&#44;number&#44;00&#125;&#58;&#123;4&#44;number&#44;00&#125;&#46;&#123;5&#44;number&#44;000&#125;
 	 */
 	public static final String I18N_TEXT_SESSION_STATUS = "I18N_TEXT_SESSION_STATUS";
 
 	/**
 	 * Resource string {@code I18N_TEXT_SESSION_STATUS}
 	 * <p>
-	 * Scanned: {0} ({1}&frasl;s) Elapsed: {2}:{3,number,00}:{4,number,00}.{5,number,000}
+	 * Scanned&#58;&#32;&#123;0&#125;&#32;&#40;&#123;1&#125;&frasl;s&#41;&#32;Elapsed&#58;&#32;&#123;2&#125;&#58;&#123;3&#44;number&#44;00&#125;&#58;&#123;4&#44;number&#44;00&#125;&#46;&#123;5&#44;number&#44;000&#125;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -572,14 +572,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_TOOLTIP_EDIT_COPY}
 	 * <p>
-	 * Copy the current result view or one of the additional data types (if available)
+	 * Copy&#32;the&#32;current&#32;result&#32;view&#32;or&#32;one&#32;of&#32;the&#32;additional&#32;data&#32;types&#32;&#40;if&#32;available&#41;
 	 */
 	public static final String I18N_TOOLTIP_EDIT_COPY = "I18N_TOOLTIP_EDIT_COPY";
 
 	/**
 	 * Resource string {@code I18N_TOOLTIP_EDIT_COPY}
 	 * <p>
-	 * Copy the current result view or one of the additional data types (if available)
+	 * Copy&#32;the&#32;current&#32;result&#32;view&#32;or&#32;one&#32;of&#32;the&#32;additional&#32;data&#32;types&#32;&#40;if&#32;available&#41;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -591,14 +591,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_TOOLTIP_FILE_EXPORT}
 	 * <p>
-	 * Export the currently selected scan result
+	 * Export&#32;the&#32;currently&#32;selected&#32;scan&#32;result
 	 */
 	public static final String I18N_TOOLTIP_FILE_EXPORT = "I18N_TOOLTIP_FILE_EXPORT";
 
 	/**
 	 * Resource string {@code I18N_TOOLTIP_FILE_EXPORT}
 	 * <p>
-	 * Export the currently selected scan result
+	 * Export&#32;the&#32;currently&#32;selected&#32;scan&#32;result
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -610,14 +610,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_TOOLTIP_FILE_OPEN}
 	 * <p>
-	 * Open and scan a file
+	 * Open&#32;and&#32;scan&#32;a&#32;file
 	 */
 	public static final String I18N_TOOLTIP_FILE_OPEN = "I18N_TOOLTIP_FILE_OPEN";
 
 	/**
 	 * Resource string {@code I18N_TOOLTIP_FILE_OPEN}
 	 * <p>
-	 * Open and scan a file
+	 * Open&#32;and&#32;scan&#32;a&#32;file
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -629,14 +629,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_TOOLTIP_FILE_PRINT}
 	 * <p>
-	 * Print the current result view
+	 * Print&#32;the&#32;current&#32;result&#32;view
 	 */
 	public static final String I18N_TOOLTIP_FILE_PRINT = "I18N_TOOLTIP_FILE_PRINT";
 
 	/**
 	 * Resource string {@code I18N_TOOLTIP_FILE_PRINT}
 	 * <p>
-	 * Print the current result view
+	 * Print&#32;the&#32;current&#32;result&#32;view
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -648,14 +648,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_TOOLTIP_GOTO_END}
 	 * <p>
-	 * Scroll hex view to the end position of the current scan result
+	 * Scroll&#32;hex&#32;view&#32;to&#32;the&#32;end&#32;position&#32;of&#32;the&#32;current&#32;scan&#32;result
 	 */
 	public static final String I18N_TOOLTIP_GOTO_END = "I18N_TOOLTIP_GOTO_END";
 
 	/**
 	 * Resource string {@code I18N_TOOLTIP_GOTO_END}
 	 * <p>
-	 * Scroll hex view to the end position of the current scan result
+	 * Scroll&#32;hex&#32;view&#32;to&#32;the&#32;end&#32;position&#32;of&#32;the&#32;current&#32;scan&#32;result
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -667,14 +667,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_TOOLTIP_GOTO_NEXT}
 	 * <p>
-	 * Search the next scan result matching the entered pattern
+	 * Search&#32;the&#32;next&#32;scan&#32;result&#32;matching&#32;the&#32;entered&#32;pattern
 	 */
 	public static final String I18N_TOOLTIP_GOTO_NEXT = "I18N_TOOLTIP_GOTO_NEXT";
 
 	/**
 	 * Resource string {@code I18N_TOOLTIP_GOTO_NEXT}
 	 * <p>
-	 * Search the next scan result matching the entered pattern
+	 * Search&#32;the&#32;next&#32;scan&#32;result&#32;matching&#32;the&#32;entered&#32;pattern
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -686,14 +686,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_TOOLTIP_GOTO_PREVIOUS}
 	 * <p>
-	 * Search the previous scan result matching the entered pattern
+	 * Search&#32;the&#32;previous&#32;scan&#32;result&#32;matching&#32;the&#32;entered&#32;pattern
 	 */
 	public static final String I18N_TOOLTIP_GOTO_PREVIOUS = "I18N_TOOLTIP_GOTO_PREVIOUS";
 
 	/**
 	 * Resource string {@code I18N_TOOLTIP_GOTO_PREVIOUS}
 	 * <p>
-	 * Search the previous scan result matching the entered pattern
+	 * Search&#32;the&#32;previous&#32;scan&#32;result&#32;matching&#32;the&#32;entered&#32;pattern
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -705,14 +705,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_TOOLTIP_GOTO_START}
 	 * <p>
-	 * Scroll hex view to the start position of the current scan result
+	 * Scroll&#32;hex&#32;view&#32;to&#32;the&#32;start&#32;position&#32;of&#32;the&#32;current&#32;scan&#32;result
 	 */
 	public static final String I18N_TOOLTIP_GOTO_START = "I18N_TOOLTIP_GOTO_START";
 
 	/**
 	 * Resource string {@code I18N_TOOLTIP_GOTO_START}
 	 * <p>
-	 * Scroll hex view to the start position of the current scan result
+	 * Scroll&#32;hex&#32;view&#32;to&#32;the&#32;start&#32;position&#32;of&#32;the&#32;current&#32;scan&#32;result
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -724,14 +724,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_TOOLTIP_QUERY_INPUT}
 	 * <p>
-	 * Enter search pattern (&#42; is assumed if empty)
+	 * Enter&#32;search&#32;pattern&#32;&#40;&#42;&#32;is&#32;assumed&#32;if&#32;empty&#41;
 	 */
 	public static final String I18N_TOOLTIP_QUERY_INPUT = "I18N_TOOLTIP_QUERY_INPUT";
 
 	/**
 	 * Resource string {@code I18N_TOOLTIP_QUERY_INPUT}
 	 * <p>
-	 * Enter search pattern (&#42; is assumed if empty)
+	 * Enter&#32;search&#32;pattern&#32;&#40;&#42;&#32;is&#32;assumed&#32;if&#32;empty&#41;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -743,14 +743,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_TOOLTIP_RUN_GC}
 	 * <p>
-	 * Run heap garbage collection
+	 * Run&#32;heap&#32;garbage&#32;collection
 	 */
 	public static final String I18N_TOOLTIP_RUN_GC = "I18N_TOOLTIP_RUN_GC";
 
 	/**
 	 * Resource string {@code I18N_TOOLTIP_RUN_GC}
 	 * <p>
-	 * Run heap garbage collection
+	 * Run&#32;heap&#32;garbage&#32;collection
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -762,14 +762,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_TOOLTIP_STOP_SCAN}
 	 * <p>
-	 * Stop the currently running scan (if any)
+	 * Stop&#32;the&#32;currently&#32;running&#32;scan&#32;&#40;if&#32;any&#41;
 	 */
 	public static final String I18N_TOOLTIP_STOP_SCAN = "I18N_TOOLTIP_STOP_SCAN";
 
 	/**
 	 * Resource string {@code I18N_TOOLTIP_STOP_SCAN}
 	 * <p>
-	 * Stop the currently running scan (if any)
+	 * Stop&#32;the&#32;currently&#32;running&#32;scan&#32;&#40;if&#32;any&#41;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.

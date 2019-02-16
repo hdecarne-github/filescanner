@@ -1,6 +1,6 @@
 // Plugins
 plugins {
-	id "de.carne.java-tools" version "0.7.1" apply false
+	id "de.carne.java-tools" version "0.7.2" apply false
 	id "org.sonarqube" version "2.7" apply false
 	id "com.install4j.gradle" version "7.0.8" apply false
 }
@@ -78,7 +78,7 @@ subprojects {
 		// SWT display can only be created once per VM
 		forkEvery = 1
 		testLogging {
-			events "failed"
+			events "started", "failed", "passed", "skipped"
 			exceptionFormat "full"
 		}
 		jvmArgs "-javaagent:${classpath.find { it.name.contains('jmockit') }.absolutePath}"
@@ -159,7 +159,7 @@ subprojects {
 	}
 
 	jacoco {
-		toolVersion = "0.8.2"
+		toolVersion = "0.8.3"
 	}
 		
 	jacocoTestReport {

@@ -78,14 +78,14 @@ public final class ExportI18N {
 	/**
 	 * Resource key {@code I18N_LABEL_EXPORT_PATH}
 	 * <p>
-	 * Path:
+	 * Path&#58;
 	 */
 	public static final String I18N_LABEL_EXPORT_PATH = "I18N_LABEL_EXPORT_PATH";
 
 	/**
 	 * Resource string {@code I18N_LABEL_EXPORT_PATH}
 	 * <p>
-	 * Path:
+	 * Path&#58;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -97,14 +97,14 @@ public final class ExportI18N {
 	/**
 	 * Resource key {@code I18N_LABEL_EXPORT_RESULT}
 	 * <p>
-	 * Scan result: ''{0}''
+	 * Scan&#32;result&#58;&#32;&#39;&#39;&#123;0&#125;&#39;&#39;
 	 */
 	public static final String I18N_LABEL_EXPORT_RESULT = "I18N_LABEL_EXPORT_RESULT";
 
 	/**
 	 * Resource string {@code I18N_LABEL_EXPORT_RESULT}
 	 * <p>
-	 * Scan result: ''{0}''
+	 * Scan&#32;result&#58;&#32;&#39;&#39;&#123;0&#125;&#39;&#39;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -116,14 +116,14 @@ public final class ExportI18N {
 	/**
 	 * Resource key {@code I18N_LABEL_EXPORT_TYPE}
 	 * <p>
-	 * Export:
+	 * Export&#58;
 	 */
 	public static final String I18N_LABEL_EXPORT_TYPE = "I18N_LABEL_EXPORT_TYPE";
 
 	/**
 	 * Resource string {@code I18N_LABEL_EXPORT_TYPE}
 	 * <p>
-	 * Export:
+	 * Export&#58;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -135,14 +135,14 @@ public final class ExportI18N {
 	/**
 	 * Resource key {@code I18N_MESSAGE_INVALID_EXPORT_PATH}
 	 * <p>
-	 * ''{0}'' is not a valid export file path.<br>Please enter or select a valid export file path.
+	 * &#39;&#39;&#123;0&#125;&#39;&#39;&#32;is&#32;not&#32;a&#32;valid&#32;export&#32;file&#32;path&#46;<br>Please&#32;enter&#32;or&#32;select&#32;a&#32;valid&#32;export&#32;file&#32;path&#46;
 	 */
 	public static final String I18N_MESSAGE_INVALID_EXPORT_PATH = "I18N_MESSAGE_INVALID_EXPORT_PATH";
 
 	/**
 	 * Resource string {@code I18N_MESSAGE_INVALID_EXPORT_PATH}
 	 * <p>
-	 * ''{0}'' is not a valid export file path.<br>Please enter or select a valid export file path.
+	 * &#39;&#39;&#123;0&#125;&#39;&#39;&#32;is&#32;not&#32;a&#32;valid&#32;export&#32;file&#32;path&#46;<br>Please&#32;enter&#32;or&#32;select&#32;a&#32;valid&#32;export&#32;file&#32;path&#46;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -154,14 +154,14 @@ public final class ExportI18N {
 	/**
 	 * Resource key {@code I18N_MESSAGE_NO_EXPORT_PATH}
 	 * <p>
-	 * Please enter or select an export file path.
+	 * Please&#32;enter&#32;or&#32;select&#32;an&#32;export&#32;file&#32;path&#46;
 	 */
 	public static final String I18N_MESSAGE_NO_EXPORT_PATH = "I18N_MESSAGE_NO_EXPORT_PATH";
 
 	/**
 	 * Resource string {@code I18N_MESSAGE_NO_EXPORT_PATH}
 	 * <p>
-	 * Please enter or select an export file path.
+	 * Please&#32;enter&#32;or&#32;select&#32;an&#32;export&#32;file&#32;path&#46;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -173,14 +173,14 @@ public final class ExportI18N {
 	/**
 	 * Resource key {@code I18N_MESSAGE_NO_EXPORT_TYPE}
 	 * <p>
-	 * Please select an export type.
+	 * Please&#32;select&#32;an&#32;export&#32;type&#46;
 	 */
 	public static final String I18N_MESSAGE_NO_EXPORT_TYPE = "I18N_MESSAGE_NO_EXPORT_TYPE";
 
 	/**
 	 * Resource string {@code I18N_MESSAGE_NO_EXPORT_TYPE}
 	 * <p>
-	 * Please select an export type.
+	 * Please&#32;select&#32;an&#32;export&#32;type&#46;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -192,14 +192,14 @@ public final class ExportI18N {
 	/**
 	 * Resource key {@code I18N_MESSAGE_OVERWRITE_EXPORT_PATH}
 	 * <p>
-	 * File ''{0}'' already exists.<br>Do you want to overwrite the file?
+	 * File&#32;&#39;&#39;&#123;0&#125;&#39;&#39;&#32;already&#32;exists&#46;<br>Do&#32;you&#32;want&#32;to&#32;overwrite&#32;the&#32;file&#63;
 	 */
 	public static final String I18N_MESSAGE_OVERWRITE_EXPORT_PATH = "I18N_MESSAGE_OVERWRITE_EXPORT_PATH";
 
 	/**
 	 * Resource string {@code I18N_MESSAGE_OVERWRITE_EXPORT_PATH}
 	 * <p>
-	 * File ''{0}'' already exists.<br>Do you want to overwrite the file?
+	 * File&#32;&#39;&#39;&#123;0&#125;&#39;&#39;&#32;already&#32;exists&#46;<br>Do&#32;you&#32;want&#32;to&#32;overwrite&#32;the&#32;file&#63;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -211,14 +211,14 @@ public final class ExportI18N {
 	/**
 	 * Resource key {@code I18N_TITLE}
 	 * <p>
-	 * Export scan result
+	 * Export&#32;scan&#32;result
 	 */
 	public static final String I18N_TITLE = "I18N_TITLE";
 
 	/**
 	 * Resource string {@code I18N_TITLE}
 	 * <p>
-	 * Export scan result
+	 * Export&#32;scan&#32;result
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
