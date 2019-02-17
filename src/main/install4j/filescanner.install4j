@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="7.0.8" transformSequenceNumber="7">
+<install4j version="7.0.9" transformSequenceNumber="7">
   <directoryPresets config="${compiler:i4jProjectBuildDir}/libs/${compiler:sys.shortName}-boot-${compiler:sys.version}.jar" />
   <application name="${compiler:i4jProjectFullName}" distributionSourceDir="" applicationId="${compiler:i4jProjectApplicationID}" mediaDir="${compiler:i4jProjectBuildDir}/distributions" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="${compiler:i4jProjectName}" publisher="" publisherWeb="${compiler:i4jProjectUrl}" version="${compiler:i4jProjectVersion}" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" macVolumeId="8caddfd136c560fa" javaMinVersion="1.8" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
@@ -15,12 +15,12 @@
     </searchSequence>
     <variables>
       <variable name="i4jProjectName" value="filescanner-cocoa-macosx-x86_64" description="" category="" />
-      <variable name="i4jProjectVersion" value="2.0.0-SNAPSHOT" description="" category="" />
+      <variable name="i4jProjectVersion" value="2.0.0-alpha2-SNAPSHOT" description="" category="" />
       <variable name="i4jProjectBuildDir" value="${compiler:i4jProjectBaseDir}/build" description="" category="" />
       <variable name="i4jProjectBaseDir" value="../../../${compiler:i4jProjectName}" description="" category="" />
       <variable name="i4lProjectCopyright" value="Copyright © 2007-2019 Holger de Carne and contributors, All Rights Reserved." description="" category="" />
       <variable name="i4jProjectDescription" value="Analyse file data and identify known file formats and structures" description="" category="" />
-      <variable name="i4jProjectUrl" value="http://www.filescanner.org" description="" category="" />
+      <variable name="i4jProjectUrl" value="https://www.filescanner.org" description="" category="" />
       <variable name="i4jProjectFullName" value="FileScanner" description="" category="" />
       <variable name="i4jProjectBaseName" value="filescanner" description="" category="" />
       <variable name="i4jProjectApplicationID" value="7478-5469-8818-1476" description="" category="" />
