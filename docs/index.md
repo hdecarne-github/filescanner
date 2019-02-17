@@ -22,7 +22,7 @@ If you downloaded one of the generic archives, simply extract it to a folder of 
 The archive contains a single executable Jar as well as a folder with the license information. Invoke the application by either double clicking the jar or invoke the command
 
 ```
-java -jar filescanner<platform>-boot-<version>.jar [command line arguments]
+java -jar filescanner-<platform>-boot-<version>.jar [command line arguments]
 ```
 
 in a terminal. The application command line supports the following options:
