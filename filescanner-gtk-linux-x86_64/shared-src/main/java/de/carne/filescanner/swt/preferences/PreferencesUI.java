@@ -348,7 +348,7 @@ class PreferencesUI extends ShellUserInterface {
 		this.resultViewColorErrorButtonHolder.get().setForeground(errorColor);
 
 		Set<String> disabledFormats = preferences.getDisabledFormats();
-		SortedSet<String> formatNames = new TreeSet<>();
+		SortedSet<String> formatNames = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
 
 		Format.providers().forEach(format -> formatNames.add(format.name()));
 		for (String formatName : formatNames) {
