@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.com/hdecarne/filescanner.svg?branch=master)](https://travis-ci.com/hdecarne/filescanner)
+[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=de.carne%3Afilescanner%3Afilescanner-gtk-linux-x86_64&metric=alert_status)](https://sonarcloud.io/dashboard/index/de.carne:filescanner:filescanner-gtk-linux-x86_64)
+[![Downloads](https://img.shields.io/github/downloads/hdecarne/filescanner/total.svg)](https://github.com/hdecarne/filescanner/releases)
+
 ### About FileManager
 Did you ever wonder what is inside a file. The FileScanner tool is capable to detect and decode several file formats even recursively. Data structures can be inspected in detail. Contained data can be viewed or exported.
 
