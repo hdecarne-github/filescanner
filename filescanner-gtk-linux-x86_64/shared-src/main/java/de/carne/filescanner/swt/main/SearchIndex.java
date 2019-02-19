@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.LowerCaseFilter;
 import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.util.CharTokenizer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field.Store;
@@ -321,38 +322,31 @@ final class SearchIndex implements AutoCloseable {
 
 	}
 
-	class ResultAnalyzer extends Analyzer {
+	private static class ResultAnalyzer extends Analyzer {
 
 		public ResultAnalyzer() {
 			// Nothing to do here
 		}
 
+		@SuppressWarnings("resource")
 		@Override
 		protected TokenStreamComponents createComponents(@Nullable String fieldName) {
-			return new TokenStreamComponents(new ResultTokenizer());
+			Tokenizer source = new CharTokenizer() {
+
+				@Override
+				protected boolean isTokenChar(int c) {
+					return Character.isLetterOrDigit(c);
+				}
+
+			};
+			TokenStream result = normalize(fieldName, source);
+
+			return new TokenStreamComponents(source, result);
 		}
 
 		@Override
 		protected TokenStream normalize(@Nullable String fieldName, @Nullable TokenStream in) {
 			return new LowerCaseFilter(in);
-		}
-
-	}
-
-	static class ResultTokenizer extends CharTokenizer {
-
-		public ResultTokenizer() {
-			// Nothing to do here
-		}
-
-		@Override
-		protected boolean isTokenChar(int c) {
-			return Character.isLetterOrDigit(c);
-		}
-
-		@Override
-		protected int normalize(int c) {
-			return Character.toLowerCase(c);
 		}
 
 	}
