@@ -1,4 +1,4 @@
-### About FileManager
+### About FileScanner
 Did you ever wonder what is inside a file. The FileScanner tool is capable to detect and decode several file formats even recursively. Data structures can be inspected in detail. Contained data can be viewed or exported.
 
 This makes FileScanner a suitable tool for those who want to see the details or want to get a better understanding of a file format.
