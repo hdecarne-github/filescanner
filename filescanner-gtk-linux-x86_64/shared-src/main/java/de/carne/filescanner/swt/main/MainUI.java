@@ -931,7 +931,7 @@ public class MainUI extends ShellUserInterface {
 				SWT.HORIZONTAL | SWT.SMOOTH);
 		LabelBuilder sessionStatus = session.addLabelChild(SWT.HORIZONTAL);
 		CompositeBuilder<Composite> runtime = status.addCompositeChild(SWT.NONE);
-		ControlBuilder<HeapInfo> runtimeHeap = runtime.addControlChild(HeapInfo.class, SWT.NONE);
+		ControlBuilder<HeapInfo> runtimeHeap = runtime.addControlChild(HeapInfo.class, SWT.BORDER);
 		ToolBarBuilder runtimeTools = ToolBarBuilder.horizontal(runtime, SWT.FLAT);
 
 		sessionTools.addItem(SWT.PUSH);
