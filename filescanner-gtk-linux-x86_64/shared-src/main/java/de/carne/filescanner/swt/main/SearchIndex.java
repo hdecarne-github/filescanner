@@ -228,7 +228,7 @@ final class SearchIndex implements AutoCloseable {
 			try {
 				TopDocs searchResult = indexSearcher.search(queryBuilder.build(), 1);
 
-				if (searchResult.totalHits != 0) {
+				if (searchResult.totalHits.value != 0) {
 					document = indexSearcher.doc(searchResult.scoreDocs[0].doc);
 				}
 			} finally {
@@ -286,7 +286,7 @@ final class SearchIndex implements AutoCloseable {
 			TopDocs searchResult = indexSearcher.search(queryBuilder.build(), 1, sort);
 			byte[] resultKey = null;
 
-			if (searchResult.totalHits != 0) {
+			if (searchResult.totalHits.value != 0) {
 				Document document = indexSearcher.doc(searchResult.scoreDocs[0].doc);
 				BytesRef storedResultKey = document.getField(FIELD_KEY_STORED).binaryValue();
 
