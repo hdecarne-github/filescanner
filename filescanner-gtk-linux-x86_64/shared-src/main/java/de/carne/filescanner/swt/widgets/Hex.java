@@ -32,8 +32,6 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
@@ -45,10 +43,8 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.ScrollBar;
 
 import de.carne.boot.Exceptions;
-import de.carne.boot.check.Check;
 import de.carne.boot.platform.Platform;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.input.FileScannerInput;
@@ -57,19 +53,14 @@ import de.carne.filescanner.engine.input.FileScannerInput;
  * Custom control for displaying raw hexadecimal data to the user.
  */
 @SuppressWarnings("squid:MaximumInheritanceDepth")
-public class Hex extends Canvas implements DisposeListener, FocusListener, TraverseListener, KeyListener,
-		SelectionListener, ControlListener, PaintListener {
+public class Hex extends Canvas
+		implements DisposeListener, FocusListener, TraverseListener, KeyListener, ControlListener, PaintListener {
 
-	private enum ScrollUnit {
-		LINE, PAGE
-	}
-
-	@Nullable
-	private FileScannerResult result = null;
-	@Nullable
-	private Font defaultFont = null;
-	@Nullable
-	private Layout cachedLayout = null;
+	private final IntScrollBarProxy horizontal;
+	private final LongScrollBarProxy vertical;
+	private @Nullable FileScannerResult result = null;
+	private @Nullable Font defaultFont = null;
+	private @Nullable Layout cachedLayout = null;
 
 	/**
 	 * Constructs a new {@linkplain Hex} instance.
@@ -79,6 +70,8 @@ public class Hex extends Canvas implements DisposeListener, FocusListener, Trave
 	 */
 	public Hex(Composite parent, int style) {
 		super(parent, style | SWT.H_SCROLL | SWT.V_SCROLL);
+		this.horizontal = new IntScrollBarProxy(Objects.requireNonNull(getHorizontalBar()));
+		this.vertical = new LongScrollBarProxy(Objects.requireNonNull(getVerticalBar()));
 
 		Display display = getDisplay();
 
@@ -89,8 +82,6 @@ public class Hex extends Canvas implements DisposeListener, FocusListener, Trave
 		addFocusListener(this);
 		addTraverseListener(this);
 		addKeyListener(this);
-		getHorizontalBar().addSelectionListener(this);
-		getVerticalBar().addSelectionListener(this);
 		addControlListener(this);
 		addPaintListener(this);
 	}
@@ -109,186 +100,101 @@ public class Hex extends Canvas implements DisposeListener, FocusListener, Trave
 	}
 
 	/**
-	 * Get's the currently displayed {@linkplain FileScannerResult}.
+	 * Gets the currently displayed {@linkplain FileScannerResult}.
 	 *
 	 * @return the currently displayed {@linkplain FileScannerResult} or {@code null} if none has been set.
 	 */
-	@Nullable
-	public FileScannerResult getResult() {
+	public @Nullable FileScannerResult getResult() {
 		return this.result;
 	}
 
 	/**
-	 * Scroll to the given position.
+	 * Scrolls to the given position.
 	 * <p>
-	 * If submitted position is automatically mapped to the range of the currently displayed data.
+	 * The submitted position is automatically clamped to the range of the currently displayed data.
+	 * </p>
 	 *
 	 * @param position the position to scroll to.
 	 */
 	public void scrollTo(long position) {
-		vScroll(position);
+		this.vertical.scrollTo(position >> DATA_LINE_SHIFT);
+		redraw();
 	}
 
 	@Override
-	public void widgetDisposed(@Nullable DisposeEvent event) {
+	public void widgetDisposed(DisposeEvent event) {
 		if (this.defaultFont != null) {
 			this.defaultFont.dispose();
 		}
 	}
 
 	@Override
-	public void keyTraversed(@Nullable TraverseEvent event) {
-		Objects.requireNonNull(event).doit = true;
+	public void keyTraversed(TraverseEvent event) {
+		event.doit = true;
 	}
 
 	@Override
-	public void focusGained(@Nullable FocusEvent event) {
+	public void focusGained(FocusEvent event) {
 		redraw();
 	}
 
 	@Override
-	public void focusLost(@Nullable FocusEvent event) {
+	public void focusLost(FocusEvent event) {
 		redraw();
 	}
 
 	@Override
-	public void keyPressed(@Nullable KeyEvent event) {
-		if (event != null) {
-			switch (event.keyCode) {
-			case SWT.ARROW_LEFT:
-				hScroll(-1, ScrollUnit.LINE);
-				break;
-			case SWT.ARROW_RIGHT:
-				hScroll(1, ScrollUnit.LINE);
-				break;
-			case SWT.ARROW_UP:
-				vScroll(-1, ScrollUnit.LINE);
-				break;
-			case SWT.ARROW_DOWN:
-				vScroll(1, ScrollUnit.LINE);
-				break;
-			case SWT.PAGE_UP:
-				vScroll(-1, ScrollUnit.PAGE);
-				break;
-			case SWT.PAGE_DOWN:
-				vScroll(1, ScrollUnit.PAGE);
-				break;
-			case SWT.HOME:
-				vScroll(0);
-				break;
-			case SWT.END:
-				vScroll(Long.MAX_VALUE);
-				break;
-			default:
-				// Nothing to do here
-			}
-		}
-	}
-
-	private void hScroll(int direction, ScrollUnit unit) {
-		ScrollBar horizontalBar = getHorizontalBar();
-		Layout layout = Objects.requireNonNull(this.cachedLayout);
-		int scrollAmount = (unit == ScrollUnit.LINE ? horizontalBar.getIncrement() : horizontalBar.getPageIncrement());
-		int newScrollPosX;
-
-		if (direction >= 0) {
-			newScrollPosX = Math.min(layout.scrollPosX + scrollAmount,
-					horizontalBar.getMaximum() - horizontalBar.getThumb());
-		} else {
-			newScrollPosX = Math.max(layout.scrollPosX - scrollAmount, horizontalBar.getMinimum());
-		}
-		if (layout.scrollPosX != newScrollPosX) {
-			layout.scrollPosX = newScrollPosX;
-			horizontalBar.setSelection(newScrollPosX);
+	public void keyPressed(KeyEvent event) {
+		switch (event.keyCode) {
+		case SWT.ARROW_LEFT:
+			this.horizontal.scrollLine(-1);
 			redraw();
-		}
-	}
-
-	private void vScroll(int direction, ScrollUnit unit) {
-		ScrollBar verticalBar = getVerticalBar();
-		Layout layout = Objects.requireNonNull(this.cachedLayout);
-		int scrollAmount = (unit == ScrollUnit.LINE ? verticalBar.getIncrement() : verticalBar.getPageIncrement());
-		long newScrollPosYScaled = Math.max(layout.scrollPosYScaled + direction * scrollAmount, 0);
-		int newScrollPosY = (int) Math.min(newScrollPosYScaled / layout.scrollPosYScale,
-				(long) verticalBar.getMaximum() - verticalBar.getThumb());
-
-		if (layout.scrollPosYScaled != newScrollPosYScaled) {
-			layout.scrollPosYScaled = newScrollPosYScaled;
-			layout.scrollPosY = newScrollPosY;
-			layout.rescaleScrollPosY();
-			verticalBar.setSelection(newScrollPosY);
+			break;
+		case SWT.ARROW_RIGHT:
+			this.horizontal.scrollLine(1);
 			redraw();
-		}
-	}
-
-	private void vScroll(long position) {
-		ScrollBar verticalBar = getVerticalBar();
-		Layout layout = Objects.requireNonNull(this.cachedLayout);
-		long newScrollPosYScaled = Math.max(position >> DATA_LINE_SHIFT, 0);
-		int newScrollPosY = (int) Math.min(newScrollPosYScaled / layout.scrollPosYScale,
-				(long) verticalBar.getMaximum() - verticalBar.getThumb());
-
-		if (layout.scrollPosYScaled != newScrollPosYScaled) {
-			layout.scrollPosYScaled = newScrollPosYScaled;
-			layout.scrollPosY = newScrollPosY;
-			layout.rescaleScrollPosY();
-			verticalBar.setSelection(newScrollPosY);
+			break;
+		case SWT.ARROW_UP:
+			this.vertical.scrollLine(-1);
 			redraw();
+			break;
+		case SWT.ARROW_DOWN:
+			this.vertical.scrollLine(1);
+			redraw();
+			break;
+		case SWT.PAGE_UP:
+			this.vertical.scrollPage(-1);
+			redraw();
+			break;
+		case SWT.PAGE_DOWN:
+			this.vertical.scrollPage(1);
+			redraw();
+			break;
+		case SWT.HOME:
+			this.vertical.scrollTo(0);
+			redraw();
+			break;
+		case SWT.END:
+			this.vertical.scrollTo(Long.MAX_VALUE);
+			redraw();
+			break;
+		default:
+			// Nothing to do here
 		}
 	}
 
 	@Override
-	public void keyReleased(@Nullable KeyEvent event) {
+	public void keyReleased(KeyEvent event) {
 		// Nothing to do here
 	}
 
 	@Override
-	@SuppressWarnings("squid:S3776")
-	public void widgetSelected(@Nullable SelectionEvent event) {
-		if (event != null) {
-			Layout layout = Objects.requireNonNull(this.cachedLayout);
-
-			if ((event.widget.getStyle() & SWT.HORIZONTAL) != 0) {
-				ScrollBar horizontalBar = Check.isInstanceOf(event.widget, ScrollBar.class);
-				int selection = horizontalBar.getSelection();
-				int newScrollPosX = Math.min(selection, horizontalBar.getMaximum() - horizontalBar.getThumb());
-
-				if (selection != newScrollPosX) {
-					horizontalBar.setSelection(newScrollPosX);
-				}
-				if (layout.scrollPosX != newScrollPosX) {
-					layout.scrollPosX = newScrollPosX;
-					redraw();
-				}
-			} else {
-				ScrollBar verticalBar = Check.isInstanceOf(event.widget, ScrollBar.class);
-				int selection = verticalBar.getSelection();
-				int newScrollPosY = Math.min(selection, verticalBar.getMaximum() - verticalBar.getThumb());
-
-				if (selection != newScrollPosY) {
-					verticalBar.setSelection(newScrollPosY);
-				}
-				if (layout.scrollPosY != newScrollPosY) {
-					layout.scrollPosY = newScrollPosY;
-					layout.rescaleScrollPosY();
-					redraw();
-				}
-			}
-		}
-	}
-
-	@Override
-	public void widgetDefaultSelected(@Nullable SelectionEvent event) {
+	public void controlMoved(ControlEvent event) {
 		// Nothing to do here
 	}
 
 	@Override
-	public void controlMoved(@Nullable ControlEvent event) {
-		// Nothing to do here
-	}
-
-	@Override
-	public void controlResized(@Nullable ControlEvent event) {
+	public void controlResized(ControlEvent event) {
 		Layout checkedLayout = this.cachedLayout;
 
 		if (checkedLayout != null) {
@@ -342,118 +248,116 @@ public class Hex extends Canvas implements DisposeListener, FocusListener, Trave
 			0xed, 0xee, 0xef, 0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xfe,
 			0xff };
 
-	@Override
 	@SuppressWarnings("squid:S3776")
-	public void paintControl(@Nullable PaintEvent event) {
-		if (event != null) {
-			FileScannerResult checkedResult = this.result;
+	@Override
+	public void paintControl(PaintEvent event) {
+		FileScannerResult checkedResult = this.result;
 
-			if (checkedResult != null) {
-				Display display = getDisplay();
-				Color background = getBackground();
-				Color foreground = getForeground();
-				Color backgroundSelected;
-				Color foregroundSelected;
+		if (checkedResult != null) {
+			Display display = getDisplay();
+			Color background = getBackground();
+			Color foreground = getForeground();
+			Color backgroundSelected;
+			Color foregroundSelected;
 
-				if (isFocusControl()) {
-					backgroundSelected = display.getSystemColor(SWT.COLOR_LIST_SELECTION);
-					foregroundSelected = display.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT);
-				} else {
-					backgroundSelected = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-					foregroundSelected = display.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND);
-				}
-
-				try {
-					FileScannerInput input = checkedResult.input();
-					long inputSize = input.size();
-					long selectionStart;
-					long selectionEnd;
-
-					if (checkedResult.type() != FileScannerResult.Type.INPUT) {
-						selectionStart = checkedResult.start();
-						selectionEnd = checkedResult.end();
-					} else {
-						selectionStart = 0;
-						selectionEnd = 0;
-					}
-
-					Layout layout = calculationAndUpdateLayout(event.gc, inputSize, checkedResult.start());
-
-					if (!layout.resized) {
-						int skipLineCount = event.y / layout.scrollUnitY;
-						int drawX = layout.originX - layout.scrollPosX * layout.scrollUnitX;
-						int drawY = layout.originY - layout.scrollUnitY + skipLineCount * layout.scrollUnitY;
-						int drawYLimit = event.y + event.height;
-						long dataPosition = (layout.scrollPosYScaled + skipLineCount - 1) << DATA_LINE_SHIFT;
-						ByteBuffer dataBuffer = ByteBuffer.allocate(DATA_LINE_SIZE);
-						StringBuilder formatBuffer = new StringBuilder(DISPLAY_LINE_LENGTH);
-
-						while (drawY < drawYLimit && dataPosition < inputSize) {
-							if (dataPosition >= 0) {
-								dataBuffer.clear();
-								input.read(dataBuffer, dataPosition);
-								dataBuffer.flip();
-								formatBuffer.setLength(0);
-								formatDisplayLine(formatBuffer, dataPosition, dataBuffer);
-								if (selectionEnd <= dataPosition || dataPosition + DATA_LINE_SIZE <= selectionStart) {
-									event.gc.drawString(formatBuffer.toString(), drawX, drawY, false);
-								} else {
-									int offset1 = DISPLAY_LINE_LENGTH1_BASE;
-									int offset3 = DISPLAY_LINE_LENGTH3_BASE;
-
-									if (selectionStart > dataPosition) {
-										int delta = (int) (selectionStart - dataPosition);
-
-										offset1 += delta * 3;
-										offset3 += delta;
-									}
-
-									int offset2 = DISPLAY_LINE_LENGTH2_BASE;
-									int offset4 = DISPLAY_LINE_LENGTH;
-
-									if (selectionEnd < dataPosition + DATA_LINE_SIZE) {
-										int delta = (int) (dataPosition + DATA_LINE_SIZE - selectionEnd);
-
-										offset2 -= delta * 3;
-										offset4 -= delta;
-									}
-
-									String formatString1 = formatBuffer.substring(0, offset1);
-									String formatString2 = formatBuffer.substring(offset1, offset2);
-									String formatString3 = formatBuffer.substring(offset2, offset3);
-									String formatString4 = formatBuffer.substring(offset3, offset4);
-									String formatString5 = formatBuffer.substring(offset4);
-									int nextDrawX = drawX;
-
-									event.gc.drawString(formatString1, nextDrawX, drawY, false);
-									nextDrawX += event.gc.textExtent(formatString1, SWT.NONE).x;
-									event.gc.setBackground(backgroundSelected);
-									event.gc.setForeground(foregroundSelected);
-									event.gc.drawString(formatString2, nextDrawX, drawY, false);
-									nextDrawX += event.gc.textExtent(formatString2, SWT.NONE).x;
-									event.gc.setBackground(background);
-									event.gc.setForeground(foreground);
-									event.gc.drawString(formatString3, nextDrawX, drawY, false);
-									nextDrawX += event.gc.textExtent(formatString3, SWT.NONE).x;
-									event.gc.setBackground(backgroundSelected);
-									event.gc.setForeground(foregroundSelected);
-									event.gc.drawString(formatString4, nextDrawX, drawY, false);
-									nextDrawX += event.gc.textExtent(formatString4, SWT.NONE).x;
-									event.gc.setBackground(background);
-									event.gc.setForeground(foreground);
-									event.gc.drawString(formatString5, nextDrawX, drawY, false);
-								}
-							}
-							drawY += layout.scrollUnitY;
-							dataPosition += DATA_LINE_SIZE;
-						}
-					}
-				} catch (IOException e) {
-					Exceptions.warn(e);
-				}
+			if (isFocusControl()) {
+				backgroundSelected = display.getSystemColor(SWT.COLOR_LIST_SELECTION);
+				foregroundSelected = display.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT);
 			} else {
-				calculationAndUpdateLayout(event.gc, 0, 0);
+				backgroundSelected = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+				foregroundSelected = display.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND);
 			}
+
+			try {
+				FileScannerInput input = checkedResult.input();
+				long inputSize = input.size();
+				long selectionStart;
+				long selectionEnd;
+
+				if (checkedResult.type() != FileScannerResult.Type.INPUT) {
+					selectionStart = checkedResult.start();
+					selectionEnd = checkedResult.end();
+				} else {
+					selectionStart = 0;
+					selectionEnd = 0;
+				}
+
+				Layout layout = calculationAndUpdateLayout(event.gc, inputSize, selectionStart);
+
+				if (!layout.resized) {
+					int skipLineCount = Math.max(((event.y - layout.originY) / layout.scrollUnitY), 0);
+					int drawX = layout.originX - this.horizontal.getSelection() * layout.scrollUnitX;
+					int drawY = layout.originY + (skipLineCount - 1) * layout.scrollUnitY;
+					int drawYLimit = event.y + event.height;
+					long dataPosition = (this.vertical.selection() + skipLineCount - 1) << DATA_LINE_SHIFT;
+					ByteBuffer dataBuffer = ByteBuffer.allocate(DATA_LINE_SIZE);
+					StringBuilder formatBuffer = new StringBuilder(DISPLAY_LINE_LENGTH);
+
+					while (drawY < drawYLimit && dataPosition < inputSize) {
+						if (dataPosition >= 0) {
+							dataBuffer.clear();
+							input.read(dataBuffer, dataPosition);
+							dataBuffer.flip();
+							formatBuffer.setLength(0);
+							formatDisplayLine(formatBuffer, dataPosition, dataBuffer);
+							if (selectionEnd <= dataPosition || dataPosition + DATA_LINE_SIZE <= selectionStart) {
+								event.gc.drawString(formatBuffer.toString(), drawX, drawY, false);
+							} else {
+								int offset1 = DISPLAY_LINE_LENGTH1_BASE;
+								int offset3 = DISPLAY_LINE_LENGTH3_BASE;
+
+								if (selectionStart > dataPosition) {
+									int delta = (int) (selectionStart - dataPosition);
+
+									offset1 += delta * 3;
+									offset3 += delta;
+								}
+
+								int offset2 = DISPLAY_LINE_LENGTH2_BASE;
+								int offset4 = DISPLAY_LINE_LENGTH;
+
+								if (selectionEnd < dataPosition + DATA_LINE_SIZE) {
+									int delta = (int) (dataPosition + DATA_LINE_SIZE - selectionEnd);
+
+									offset2 -= delta * 3;
+									offset4 -= delta;
+								}
+
+								String formatString1 = formatBuffer.substring(0, offset1);
+								String formatString2 = formatBuffer.substring(offset1, offset2);
+								String formatString3 = formatBuffer.substring(offset2, offset3);
+								String formatString4 = formatBuffer.substring(offset3, offset4);
+								String formatString5 = formatBuffer.substring(offset4);
+								int nextDrawX = drawX;
+
+								event.gc.drawString(formatString1, nextDrawX, drawY, false);
+								nextDrawX += event.gc.textExtent(formatString1, SWT.NONE).x;
+								event.gc.setBackground(backgroundSelected);
+								event.gc.setForeground(foregroundSelected);
+								event.gc.drawString(formatString2, nextDrawX, drawY, false);
+								nextDrawX += event.gc.textExtent(formatString2, SWT.NONE).x;
+								event.gc.setBackground(background);
+								event.gc.setForeground(foreground);
+								event.gc.drawString(formatString3, nextDrawX, drawY, false);
+								nextDrawX += event.gc.textExtent(formatString3, SWT.NONE).x;
+								event.gc.setBackground(backgroundSelected);
+								event.gc.setForeground(foregroundSelected);
+								event.gc.drawString(formatString4, nextDrawX, drawY, false);
+								nextDrawX += event.gc.textExtent(formatString4, SWT.NONE).x;
+								event.gc.setBackground(background);
+								event.gc.setForeground(foreground);
+								event.gc.drawString(formatString5, nextDrawX, drawY, false);
+							}
+						}
+						drawY += layout.scrollUnitY;
+						dataPosition += DATA_LINE_SIZE;
+					}
+				}
+			} catch (IOException e) {
+				Exceptions.warn(e);
+			}
+		} else {
+			calculationAndUpdateLayout(event.gc, 0, 0);
 		}
 	}
 
@@ -510,32 +414,21 @@ public class Hex extends Canvas implements DisposeListener, FocusListener, Trave
 		return checkedFont;
 	}
 
-	private Layout calculationAndUpdateLayout(GC gc, long inputSize, long position) {
+	private Layout calculationAndUpdateLayout(GC gc, long inputSize, long defaultPosition) {
 		Layout layout = this.cachedLayout;
 
 		if (layout == null) {
 			layout = this.cachedLayout = new Layout(gc, DISPLAY_TEMPLATE);
-			updateScrollBars(layout, inputSize, position >> DATA_LINE_SHIFT);
+			updateScrollBars(layout, inputSize, defaultPosition >> DATA_LINE_SHIFT);
 		} else if (layout.resized) {
-			updateScrollBars(layout, inputSize, layout.scrollPosYScaled);
+			updateScrollBars(layout, inputSize, -1);
 		}
 		return layout;
 	}
 
 	@SuppressWarnings("squid:S3776")
-	private void updateScrollBars(Layout layout, long inputSize, long scrollPosYScaled) {
-		long inputLines = ((inputSize + DATA_LINE_SIZE - 1) >> DATA_LINE_SHIFT) + 1;
-
-		layout.scrollPosYScale = 1;
-		while ((inputLines + layout.scrollPosYScale - 1) / layout.scrollPosYScale >= Integer.MAX_VALUE) {
-			layout.scrollPosYScale++;
-		}
-		layout.scrollPosY = (int) (scrollPosYScaled / layout.scrollPosYScale);
-		layout.scrollPosYScaled = scrollPosYScaled;
-
-		int displayLines = (int) ((inputLines + layout.scrollPosYScale - 1) / layout.scrollPosYScale);
-		ScrollBar verticalBar = getVerticalBar();
-		ScrollBar horizontalBar = getHorizontalBar();
+	private void updateScrollBars(Layout layout, long inputSize, long verticalSelection) {
+		long inputLines = ((inputSize + DATA_LINE_SIZE - 1) >> DATA_LINE_SHIFT);
 		int verticalDisplayUnits;
 		int horizontalDisplayUnits;
 		boolean reresized;
@@ -546,46 +439,40 @@ public class Hex extends Canvas implements DisposeListener, FocusListener, Trave
 
 			Rectangle clientArea = getClientArea();
 
-			horizontalDisplayUnits = Math.max((clientArea.width - layout.originX) / layout.scrollUnitX, 0);
+			horizontalDisplayUnits = Math.max((clientArea.width - layout.originX) / layout.scrollUnitX, 1);
 			if (inputSize == 0 || DISPLAY_LINE_LENGTH <= horizontalDisplayUnits) {
-				if (horizontalBar.isVisible()) {
-					horizontalBar.setVisible(false);
+				if (this.horizontal.isVisible()) {
+					this.horizontal.setVisible(false);
 					layout.resized = reresized = true;
 				}
-			} else if (!horizontalBar.isVisible()) {
-				horizontalBar.setVisible(true);
+			} else if (!this.horizontal.isVisible()) {
+				this.horizontal.setVisible(true);
 				layout.resized = reresized = true;
 			}
-			verticalDisplayUnits = Math.max((clientArea.height - layout.originY) / layout.scrollUnitY, 0);
-			if (inputSize == 0 || displayLines <= verticalDisplayUnits) {
-				if (verticalBar.isVisible()) {
-					verticalBar.setVisible(false);
+			verticalDisplayUnits = Math.max((clientArea.height - layout.originY) / layout.scrollUnitY, 1);
+			if (inputSize == 0 || inputLines <= verticalDisplayUnits) {
+				if (this.vertical.isVisible()) {
+					this.vertical.setVisible(false);
 					layout.resized = reresized = true;
 				}
-			} else if (!verticalBar.isVisible()) {
-				verticalBar.setVisible(true);
+			} else if (!this.vertical.isVisible()) {
+				this.vertical.setVisible(true);
 				layout.resized = reresized = true;
 			}
 		} while (reresized);
 		if (!layout.resized) {
 			if (inputSize > 0 && DISPLAY_LINE_LENGTH > horizontalDisplayUnits) {
-				layout.scrollPosX = Math.min(layout.scrollPosX, DISPLAY_LINE_LENGTH - 1 - horizontalDisplayUnits);
-
-				horizontalBar.setValues(layout.scrollPosX, 0, DISPLAY_LINE_LENGTH - 1, horizontalDisplayUnits, 1,
-						horizontalDisplayUnits);
+				this.horizontal.layout(DISPLAY_LINE_LENGTH, horizontalDisplayUnits);
 			} else {
-				layout.scrollPosX = 0;
-				horizontalBar.setValues(0, 0, 0, 1, 1, 1);
+				this.horizontal.layout(0, 1);
 			}
-			if (inputSize > 0 && displayLines > verticalDisplayUnits) {
-				layout.scrollPosY = Math.min(layout.scrollPosY, displayLines - 1 - verticalDisplayUnits);
-				layout.rescaleScrollPosY();
-				verticalBar.setValues(layout.scrollPosY, 0, displayLines - 1, verticalDisplayUnits, 1,
-						verticalDisplayUnits);
+			if (inputSize > 0 && inputLines > verticalDisplayUnits) {
+				this.vertical.layout(inputLines, verticalDisplayUnits);
+				if (verticalSelection >= 0) {
+					this.vertical.scrollTo(verticalSelection);
+				}
 			} else {
-				layout.scrollPosY = 0;
-				layout.rescaleScrollPosY();
-				verticalBar.setValues(0, 0, 0, 1, 1, 1);
+				this.vertical.layout(0, 1);
 			}
 		} else {
 			redraw();
@@ -596,13 +483,9 @@ public class Hex extends Canvas implements DisposeListener, FocusListener, Trave
 
 		final int originX;
 		final int originY;
-		public final int scrollUnitX;
-		public final int scrollUnitY;
+		final int scrollUnitX;
+		final int scrollUnitY;
 		boolean resized = true;
-		int scrollPosX = 0;
-		int scrollPosY = 0;
-		long scrollPosYScale = 1;
-		long scrollPosYScaled = 0;
 
 		Layout(GC gc, String template) {
 			this.originX = 3;
@@ -613,20 +496,6 @@ public class Hex extends Canvas implements DisposeListener, FocusListener, Trave
 
 			this.scrollUnitX = (extent.x + extentUnits - 1) / extentUnits;
 			this.scrollUnitY = extent.y;
-		}
-
-		boolean rescaleScrollPosY() {
-			long rescaledScrollPosY = this.scrollPosYScale * this.scrollPosY;
-			boolean rescaled = false;
-
-			if (this.scrollPosYScaled < rescaledScrollPosY) {
-				this.scrollPosYScaled = rescaledScrollPosY;
-				rescaled = true;
-			} else if (rescaledScrollPosY + this.scrollPosYScale - 1 < this.scrollPosYScaled) {
-				this.scrollPosYScaled = rescaledScrollPosY + this.scrollPosYScale - 1;
-				rescaled = true;
-			}
-			return rescaled;
 		}
 
 	}
