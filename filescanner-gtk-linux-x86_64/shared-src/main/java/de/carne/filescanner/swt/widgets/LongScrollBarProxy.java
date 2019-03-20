@@ -77,17 +77,12 @@ final class LongScrollBarProxy extends ScrollBarProxy {
 
 	@Override
 	protected void onSelectionChanged(int scrollBarSelection, int limit) {
-		long lowerSelection = scrollBarSelection * this.scale;
-		long upperSelection = lowerSelection + this.scale - 1;
-
 		if (scrollBarSelection == 0) {
 			scrollTo(0);
 		} else if (scrollBarSelection == limit) {
 			scrollTo(this.maximum);
-		} else if (this.selection < lowerSelection) {
-			scrollTo(lowerSelection);
-		} else if (this.selection > upperSelection) {
-			scrollTo(upperSelection);
+		} else {
+			scrollTo(scrollBarSelection * this.scale + (this.scale * scrollBarSelection) / limit);
 		}
 		super.onSelectionChanged(scrollBarSelection, limit);
 	}

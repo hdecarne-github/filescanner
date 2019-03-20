@@ -282,7 +282,8 @@ public class Hex extends Canvas
 					selectionEnd = 0;
 				}
 
-				Layout layout = calculationAndUpdateLayout(event.gc, inputSize, selectionStart);
+				GC gc = Objects.requireNonNull(event.gc);
+				Layout layout = calculationAndUpdateLayout(gc, inputSize, selectionStart);
 
 				if (!layout.resized) {
 					int skipLineCount = Math.max(((event.y - layout.originY) / layout.scrollUnitY), 0);
@@ -357,7 +358,7 @@ public class Hex extends Canvas
 				Exceptions.warn(e);
 			}
 		} else {
-			calculationAndUpdateLayout(event.gc, 0, 0);
+			calculationAndUpdateLayout(Objects.requireNonNull(event.gc), 0, 0);
 		}
 	}
 
