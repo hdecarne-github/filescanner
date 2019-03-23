@@ -147,19 +147,35 @@ public class Hex extends Canvas
 	public void keyPressed(KeyEvent event) {
 		switch (event.keyCode) {
 		case SWT.ARROW_LEFT:
-			this.horizontal.scrollLine(-1);
+			if ((event.stateMask & SWT.COMMAND) == SWT.COMMAND) {
+				this.horizontal.scrollTo(0);
+			} else {
+				this.horizontal.scrollLine(-1);
+			}
 			redraw();
 			break;
 		case SWT.ARROW_RIGHT:
-			this.horizontal.scrollLine(1);
+			if ((event.stateMask & SWT.COMMAND) == SWT.COMMAND) {
+				this.horizontal.scrollTo(Integer.MAX_VALUE);
+			} else {
+				this.horizontal.scrollLine(1);
+			}
 			redraw();
 			break;
 		case SWT.ARROW_UP:
-			this.vertical.scrollLine(-1);
+			if ((event.stateMask & SWT.COMMAND) == SWT.COMMAND) {
+				this.vertical.scrollTo(0);
+			} else {
+				this.vertical.scrollLine(-1);
+			}
 			redraw();
 			break;
 		case SWT.ARROW_DOWN:
-			this.vertical.scrollLine(1);
+			if ((event.stateMask & SWT.COMMAND) == SWT.COMMAND) {
+				this.vertical.scrollTo(Long.MAX_VALUE);
+			} else {
+				this.vertical.scrollLine(1);
+			}
 			redraw();
 			break;
 		case SWT.PAGE_UP:
