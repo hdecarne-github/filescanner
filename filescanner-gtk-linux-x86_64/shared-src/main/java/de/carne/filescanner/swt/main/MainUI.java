@@ -261,7 +261,7 @@ public class MainUI extends ShellUserInterface {
 	private void setRootResultTreeItem(FileScannerResult rootResult) {
 		TreeItem rootResultItem = new TreeItem(this.resultTreeHolder.get(), SWT.NONE);
 
-		decorateResultTreeItem(rootResultItem, rootResult);
+		decorateResultTreeItem(rootResultItem, rootResult, true);
 		rootResultItem.setItemCount(rootResult.childrenCount());
 		rootResultItem.setData(rootResult);
 		rootResult.setData(rootResultItem);
@@ -277,25 +277,25 @@ public class MainUI extends ShellUserInterface {
 			TreeItem resultItem = resultItemParent.getItem(resultIndex);
 			FileScannerResult result = results[resultIndex];
 
-			initializeResultTreeItem(resultItem, result);
+			initializeResultTreeItem(resultItem, result, false);
 		}
 	}
 
-	private void initializeResultTreeItem(TreeItem item, FileScannerResult result) {
-		decorateResultTreeItem(item, result);
+	private void initializeResultTreeItem(TreeItem item, FileScannerResult result, boolean root) {
+		decorateResultTreeItem(item, result, root);
 		item.setItemCount(result.childrenCount());
 		item.setData(result);
 		result.setData(item);
 	}
 
-	private void decorateResultTreeItem(TreeItem item, FileScannerResult result) {
-		String shortInputName;
+	private void decorateResultTreeItem(TreeItem item, FileScannerResult result, boolean root) {
+		String inputName;
 
 		switch (result.type()) {
 		case INPUT:
-			shortInputName = shortInputName(result.name());
-			item.setText(shortInputName);
-			item.setImage(inputImage(shortInputName));
+			inputName = root ? shortInputName(result.name()) : result.name();
+			item.setText(inputName);
+			item.setImage(inputImage(inputName));
 			break;
 		case FORMAT:
 			item.setText(result.name());
@@ -357,7 +357,7 @@ public class MainUI extends ShellUserInterface {
 
 				if (resultChildItem == null) {
 					resultChildItem = resultItem.getItem(resultChildrenIndex);
-					initializeResultTreeItem(resultChildItem, resultChild);
+					initializeResultTreeItem(resultChildItem, resultChild, false);
 				}
 			}
 			resultPathIndex++;
