@@ -84,7 +84,9 @@ public class Hex extends Canvas implements DisposeListener, FocusListener, Trave
 		addFocusListener(this);
 		addTraverseListener(this);
 		addKeyListener(this);
-		addMouseWheelListener(this);
+		if (!Platform.IS_MACOS) {
+			addMouseWheelListener(this);
+		}
 		addControlListener(this);
 		addPaintListener(this);
 	}
