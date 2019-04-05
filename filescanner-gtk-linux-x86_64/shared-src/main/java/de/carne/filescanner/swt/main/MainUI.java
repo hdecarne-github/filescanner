@@ -68,6 +68,7 @@ import de.carne.filescanner.swt.widgets.Hex;
 import de.carne.swt.dnd.DropTargetBuilder;
 import de.carne.swt.graphics.ResourceException;
 import de.carne.swt.graphics.ResourceTracker;
+import de.carne.swt.layout.FillLayoutBuilder;
 import de.carne.swt.layout.GridLayoutBuilder;
 import de.carne.swt.platform.PlatformIntegration;
 import de.carne.swt.util.Property;
@@ -732,7 +733,8 @@ public class MainUI extends ShellUserInterface {
 		ControlBuilder<Tree> resultTree = resultBuilder.addControlChild(Tree.class,
 				SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL);
 		CompositeBuilder<SashForm> resultViewBuilder = resultBuilder.addCompositeChild(SashForm.class, SWT.VERTICAL);
-		ControlBuilder<Browser> resultView = resultViewBuilder.addControlChild(Browser.class, SWT.BORDER);
+		CompositeBuilder<Composite> resultViewBorder = resultViewBuilder.addCompositeChild(SWT.BORDER);
+		ControlBuilder<Browser> resultView = resultViewBorder.addControlChild(Browser.class, SWT.NONE);
 		ControlBuilder<Hex> inputView = resultViewBuilder.addControlChild(Hex.class, SWT.BORDER);
 		CoolBarBuilder status = buildStatusBar(rootBuilder, controller);
 
@@ -744,6 +746,7 @@ public class MainUI extends ShellUserInterface {
 		resultTree.onSelected(this::onResultTreeItemSelected);
 		resultView.onEvent(SWT.MenuDetect, event -> event.doit = false);
 
+		FillLayoutBuilder.layout().apply(resultViewBorder);
 		GridLayoutBuilder.layout().apply(rootBuilder);
 		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(commands);
 		GridLayoutBuilder.data(GridData.FILL_BOTH).apply(resultBuilder);
