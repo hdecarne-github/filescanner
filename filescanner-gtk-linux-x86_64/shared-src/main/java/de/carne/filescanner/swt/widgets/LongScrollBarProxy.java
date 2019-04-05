@@ -57,22 +57,16 @@ final class LongScrollBarProxy extends ScrollBarProxy {
 		return this.selection;
 	}
 
-	public long scrollLine(int direction) {
-		return scrollRelative(direction, 1);
-	}
-
-	public long scrollPage(int direction) {
-		return scrollRelative(direction, this.thumb);
-	}
-
-	private long scrollRelative(int direction, long distance) {
-		if (direction > 0) {
-			this.selection = Math.max(Math.min(this.selection + distance, this.maximum - this.thumb), 0);
-		} else if (direction < 0) {
-			this.selection = Math.max(Math.min(this.selection - distance, this.maximum - this.thumb), 0);
+	public long scrollLines(long delta) {
+		if (delta != 0) {
+			this.selection = Math.max(Math.min(this.selection + delta, this.maximum - this.thumb), 0);
 		}
 		setSelection((int) (this.selection / this.scale));
 		return this.selection;
+	}
+
+	public long scrollPage(int direction) {
+		return scrollLines(Integer.signum(direction) * this.thumb);
 	}
 
 	@Override

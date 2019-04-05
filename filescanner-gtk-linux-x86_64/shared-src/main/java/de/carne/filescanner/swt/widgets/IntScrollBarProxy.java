@@ -37,21 +37,15 @@ final class IntScrollBarProxy extends ScrollBarProxy {
 		return getSelection();
 	}
 
-	public int scrollLine(int direction) {
-		return scrollRelative(direction, 1);
+	public int scrollLines(int delta) {
+		if (delta != 0) {
+			setSelection(getSelection() + delta);
+		}
+		return getSelection();
 	}
 
 	public int scrollPage(int direction) {
-		return scrollRelative(direction, getPageIncrement());
-	}
-
-	private int scrollRelative(int direction, int distance) {
-		if (direction > 0) {
-			setSelection(getSelection() + distance);
-		} else if (direction < 0) {
-			setSelection(getSelection() - distance);
-		}
-		return getSelection();
+		return scrollLines(Integer.signum(direction) * getPageIncrement());
 	}
 
 }

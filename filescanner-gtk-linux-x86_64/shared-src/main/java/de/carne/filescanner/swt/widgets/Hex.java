@@ -30,6 +30,8 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.TraverseEvent;
@@ -53,8 +55,8 @@ import de.carne.filescanner.engine.input.FileScannerInput;
  * Custom control for displaying raw hexadecimal data to the user.
  */
 @SuppressWarnings("squid:MaximumInheritanceDepth")
-public class Hex extends Canvas
-		implements DisposeListener, FocusListener, TraverseListener, KeyListener, ControlListener, PaintListener {
+public class Hex extends Canvas implements DisposeListener, FocusListener, TraverseListener, KeyListener,
+		MouseWheelListener, ControlListener, PaintListener {
 
 	private final IntScrollBarProxy horizontal;
 	private final LongScrollBarProxy vertical;
@@ -82,6 +84,7 @@ public class Hex extends Canvas
 		addFocusListener(this);
 		addTraverseListener(this);
 		addKeyListener(this);
+		addMouseWheelListener(this);
 		addControlListener(this);
 		addPaintListener(this);
 	}
@@ -150,7 +153,7 @@ public class Hex extends Canvas
 			if ((event.stateMask & SWT.COMMAND) == SWT.COMMAND) {
 				this.horizontal.scrollTo(0);
 			} else {
-				this.horizontal.scrollLine(-1);
+				this.horizontal.scrollLines(-1);
 			}
 			redraw();
 			break;
@@ -158,7 +161,7 @@ public class Hex extends Canvas
 			if ((event.stateMask & SWT.COMMAND) == SWT.COMMAND) {
 				this.horizontal.scrollTo(Integer.MAX_VALUE);
 			} else {
-				this.horizontal.scrollLine(1);
+				this.horizontal.scrollLines(1);
 			}
 			redraw();
 			break;
@@ -166,7 +169,7 @@ public class Hex extends Canvas
 			if ((event.stateMask & SWT.COMMAND) == SWT.COMMAND) {
 				this.vertical.scrollTo(0);
 			} else {
-				this.vertical.scrollLine(-1);
+				this.vertical.scrollLines(-1);
 			}
 			redraw();
 			break;
@@ -174,7 +177,7 @@ public class Hex extends Canvas
 			if ((event.stateMask & SWT.COMMAND) == SWT.COMMAND) {
 				this.vertical.scrollTo(Long.MAX_VALUE);
 			} else {
-				this.vertical.scrollLine(1);
+				this.vertical.scrollLines(1);
 			}
 			redraw();
 			break;
@@ -202,6 +205,11 @@ public class Hex extends Canvas
 	@Override
 	public void keyReleased(KeyEvent event) {
 		// Nothing to do here
+	}
+
+	@Override
+	public void mouseScrolled(MouseEvent event) {
+		this.vertical.scrollLines(event.count);
 	}
 
 	@Override
