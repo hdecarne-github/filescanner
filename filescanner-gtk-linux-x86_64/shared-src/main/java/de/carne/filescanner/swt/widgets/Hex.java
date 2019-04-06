@@ -211,7 +211,7 @@ public class Hex extends Canvas implements DisposeListener, FocusListener, Trave
 
 	@Override
 	public void mouseScrolled(MouseEvent event) {
-		this.vertical.scrollLines(event.count);
+		this.vertical.scrollLines(-event.count);
 	}
 
 	@Override
