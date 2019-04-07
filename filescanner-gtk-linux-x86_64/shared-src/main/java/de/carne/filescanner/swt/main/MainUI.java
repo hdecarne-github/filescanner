@@ -54,6 +54,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import de.carne.boot.Exceptions;
 import de.carne.boot.check.Check;
 import de.carne.boot.logging.Log;
+import de.carne.boot.logging.LogLevel;
 import de.carne.filescanner.ModuleManifestInfos;
 import de.carne.filescanner.engine.FileScannerProgress;
 import de.carne.filescanner.engine.FileScannerResult;
@@ -84,6 +85,7 @@ import de.carne.swt.widgets.ShellUserInterface;
 import de.carne.swt.widgets.ToolBarBuilder;
 import de.carne.swt.widgets.aboutinfo.AboutInfoDialog;
 import de.carne.swt.widgets.heapinfo.HeapInfo;
+import de.carne.swt.widgets.logview.LogViewDialog;
 import de.carne.swt.widgets.notification.Notification;
 import de.carne.text.MemoryUnitFormat;
 import de.carne.util.Debug;
@@ -577,6 +579,28 @@ public class MainUI extends ShellUserInterface {
 		}
 	}
 
+	private void onLogSelected() {
+		try {
+			LogViewDialog log = LogViewDialog.build(root(), Log.root());
+
+			log.withLogo(LogLevel.LEVEL_NOTICE,
+					Objects.requireNonNull(Images.class.getResource(Images.IMAGE_LOG_NOTICE16)));
+			log.withLogo(LogLevel.LEVEL_ERROR,
+					Objects.requireNonNull(Images.class.getResource(Images.IMAGE_LOG_ERROR16)));
+			log.withLogo(LogLevel.LEVEL_WARNING,
+					Objects.requireNonNull(Images.class.getResource(Images.IMAGE_LOG_WARNING16)));
+			log.withLogo(LogLevel.LEVEL_INFO,
+					Objects.requireNonNull(Images.class.getResource(Images.IMAGE_LOG_INFO16)));
+			log.withLogo(LogLevel.LEVEL_DEBUG,
+					Objects.requireNonNull(Images.class.getResource(Images.IMAGE_LOG_DEBUG16)));
+			log.withLogo(LogLevel.LEVEL_TRACE,
+					Objects.requireNonNull(Images.class.getResource(Images.IMAGE_LOG_TRACE16)));
+			log.open();
+		} catch (Exception e) {
+			unexpectedException(e);
+		}
+	}
+
 	private static final String[] RESOURCES_COPYRIGHT = { "Copyright1.txt", "Copyright2.txt" };
 
 	private void onAboutSelected() {
@@ -826,7 +850,8 @@ public class MainUI extends ShellUserInterface {
 		menu.endMenu();
 		menu.addItem(SWT.CASCADE).withText(MainI18N.i18nMenuHelp());
 		menu.beginMenu();
-		menu.addItem(SWT.PUSH).withText(MainI18N.i18nMenuHelpLogs());
+		menu.addItem(SWT.PUSH).withText(MainI18N.i18nMenuHelpLog());
+		menu.onSelected(this::onLogSelected);
 		if (PlatformIntegration.isCocoa()) {
 			PlatformIntegration.cocoaAddAboutSelectionAction(display, this::onAboutSelected);
 		} else {

@@ -342,22 +342,22 @@ public final class MainI18N {
 	}
 
 	/**
-	 * Resource key {@code I18N_MENU_HELP_LOGS}
+	 * Resource key {@code I18N_MENU_HELP_LOG}
 	 * <p>
-	 * &#38;Logs&#8230;
+	 * &#38;Log&#8230;
 	 */
-	public static final String I18N_MENU_HELP_LOGS = "I18N_MENU_HELP_LOGS";
+	public static final String I18N_MENU_HELP_LOG = "I18N_MENU_HELP_LOG";
 
 	/**
-	 * Resource string {@code I18N_MENU_HELP_LOGS}
+	 * Resource string {@code I18N_MENU_HELP_LOG}
 	 * <p>
-	 * &#38;Logs&#8230;
+	 * &#38;Log&#8230;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
 	 */
-	public static String i18nMenuHelpLogs(Object... arguments) {
-		return format(I18N_MENU_HELP_LOGS, arguments);
+	public static String i18nMenuHelpLog(Object... arguments) {
+		return format(I18N_MENU_HELP_LOG, arguments);
 	}
 
 	/**

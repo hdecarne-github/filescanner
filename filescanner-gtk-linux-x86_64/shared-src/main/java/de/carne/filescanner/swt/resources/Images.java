@@ -120,5 +120,29 @@ public final class Images {
 	 * copy_default16.png
 	 */
 	public static final String IMAGE_COPY_DEFAULT16 = "copy_default16.png";
+	/**
+	 * log_notice16.png
+	 */
+	public static final String IMAGE_LOG_NOTICE16 = "log_notice16.png";
+	/**
+	 * log_error16.png
+	 */
+	public static final String IMAGE_LOG_ERROR16 = "log_error16.png";
+	/**
+	 * log_warning16.png
+	 */
+	public static final String IMAGE_LOG_WARNING16 = "log_warning16.png";
+	/**
+	 * log_info16.png
+	 */
+	public static final String IMAGE_LOG_INFO16 = "log_info16.png";
+	/**
+	 * log_debug16.png
+	 */
+	public static final String IMAGE_LOG_DEBUG16 = "log_debug16.png";
+	/**
+	 * log_trace16.png
+	 */
+	public static final String IMAGE_LOG_TRACE16 = "log_trace16.png";
 
 }
