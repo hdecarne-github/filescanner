@@ -27,6 +27,8 @@ import java.util.Optional;
 import java.util.Properties;
 
 import org.eclipse.swt.widgets.ProgressBar;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -36,8 +38,10 @@ import de.carne.filescanner.FileScannerMain;
 import de.carne.swt.platform.PlatformIntegration;
 import de.carne.test.swt.DisableIfThreadNotSWTCapable;
 import de.carne.test.swt.tester.SWTTest;
+import de.carne.test.swt.tester.accessor.ButtonAccessor;
 import de.carne.test.swt.tester.accessor.ControlAccessor;
 import de.carne.test.swt.tester.accessor.ItemAccessor;
+import de.carne.test.swt.tester.accessor.ShellAccessor;
 
 /**
  * Test {@link FileScannerMain} class.
@@ -55,7 +59,9 @@ class FileScannerMainTest extends SWTTest {
 		Script script = script(Application::run).args("--debug");
 
 		script.add(this::doOpenFile);
-		script.add(this::waitScanFinished, this::doVerifyScanResult, 60 * 1000);
+		script.add(this::waitScanFinished, this::doVerifyScanResult, 60 * 1000l);
+		script.add(this::doOpenExport, true);
+		script.add(() -> accessShell("Export scan result"), this::doVerifyExport, 60 * 1000l);
 		script.add(this::doClose);
 		script.execute();
 	}
@@ -73,7 +79,7 @@ class FileScannerMainTest extends SWTTest {
 
 	private ControlAccessor<ProgressBar> waitScanFinished() {
 		ControlAccessor<ProgressBar> progressBarAccessor = accessShell().accessChild(ControlAccessor::wrapControl,
-				ProgressBar.class, (control) -> true);
+				ProgressBar.class, control -> true);
 		Optional<? extends ProgressBar> optionalProgressBar = progressBarAccessor.getOptional();
 
 		return (optionalProgressBar.isPresent() && isProgressBarMaxedOut(optionalProgressBar.get())
@@ -85,8 +91,32 @@ class FileScannerMainTest extends SWTTest {
 		return progressBar.getSelection() >= progressBar.getMaximum();
 	}
 
-	private void doVerifyScanResult(ControlAccessor<ProgressBar> progressBar) {
+	private static final String ZIP_ARCHIVE_RESULT_NAME = "ZIP archive";
 
+	private void doVerifyScanResult(ControlAccessor<ProgressBar> progressBar) {
+		Tree resultView = accessShell().accessChild(ControlAccessor::wrapControl, Tree.class, control -> true).get();
+
+		TreeItem rootItem = resultView.getItem(0);
+
+		Assertions.assertNotNull(rootItem);
+		Assertions.assertTrue(rootItem.getExpanded());
+		Assertions.assertTrue(rootItem.getItemCount() == 1);
+
+		TreeItem zipArchiveItem = rootItem.getItem(0);
+
+		Assertions.assertEquals(ZIP_ARCHIVE_RESULT_NAME, zipArchiveItem.getText());
+
+		resultView.setSelection(zipArchiveItem);
+	}
+
+	private void doOpenExport() {
+		traceAction();
+
+		accessShell().accessMenuBar().accessMenuItem(ItemAccessor.matchText("&Export\u2026")).select();
+	}
+
+	private void doVerifyExport(ShellAccessor exportDialog) {
+		exportDialog.accessButton(ButtonAccessor.matchText("Cancel")).select();
 	}
 
 	private void doClose() {
