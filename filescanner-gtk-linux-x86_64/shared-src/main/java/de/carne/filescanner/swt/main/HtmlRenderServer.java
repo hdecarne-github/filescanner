@@ -51,8 +51,7 @@ class HtmlRenderServer {
 	private static final String STYLESHEET_PATH = "/" + STYLESHEET_RESOURCE;
 
 	private final HttpServer httpServer;
-	@Nullable
-	private HttpHandler stylesheetHandler;
+	private @Nullable HttpHandler stylesheetHandler;
 	private final List<HttpHandler> persistentSessionHandlers = new ArrayList<>();
 	private final List<HttpHandler> transientSessionHandlers = new ArrayList<>();
 

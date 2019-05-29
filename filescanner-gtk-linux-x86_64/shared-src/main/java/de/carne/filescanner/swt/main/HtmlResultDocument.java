@@ -176,11 +176,23 @@ class HtmlResultDocument extends HttpHandler {
 
 			this.writer.write(counter.count("<span class=\""));
 			this.writer.write(counter.count(style.name().toLowerCase()));
-			this.writer.write(counter.count("\"><img src=\""));
-			this.writer.write(counter.count(mediaDataSourcePath));
-			this.writer.write(counter.count("\" alt=\""));
-			this.writer.write(counter.count(encodeText(source.name())));
-			this.writer.write(counter.count("\"></span>"));
+
+			String mimeType = source.transferType().mimeType();
+
+			if (mimeType.startsWith("image/")) {
+				this.writer.write(counter.count("\"><img src=\""));
+				this.writer.write(counter.count(mediaDataSourcePath));
+				this.writer.write(counter.count("\" alt=\""));
+				this.writer.write(counter.count(encodeText(source.name())));
+				this.writer.write(counter.count("\">"));
+			} else {
+				this.writer.write(counter.count("\"><a href=\""));
+				this.writer.write(counter.count(mediaDataSourcePath));
+				this.writer.write(counter.count("\">["));
+				this.writer.write(counter.count(encodeText(source.name())));
+				this.writer.write(counter.count("]</a>"));
+			}
+			this.writer.write(counter.count("</span>"));
 			if (lineBreak) {
 				this.writer.write(counter.count("<br>\n"));
 			}
