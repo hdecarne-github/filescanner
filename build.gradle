@@ -155,11 +155,11 @@ subprojects {
 		} else {
 			disableSigning = true
 		}
-		quiet = true		
+		quiet = true
 	}
 
 	jacoco {
-		toolVersion = "0.8.3"
+		toolVersion = "0.8.4"
 	}
 		
 	jacocoTestReport {
