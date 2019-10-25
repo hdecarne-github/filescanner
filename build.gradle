@@ -123,7 +123,7 @@ subprojects {
 	
 	tasks.withType(Tar){
 		compression = Compression.GZIP
-		extension = "tar.gz"
+		archiveExtension = "tar.gz"
 	}
 
 	install4j {
@@ -159,7 +159,7 @@ subprojects {
 	}
 
 	jacoco {
-		toolVersion = "0.8.4"
+		toolVersion = "0.8.5"
 	}
 		
 	jacocoTestReport {
