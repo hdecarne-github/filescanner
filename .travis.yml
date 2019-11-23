@@ -33,10 +33,8 @@ script: if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./gradlew -s build sonarqube
 
 notifications:
   email: false
-  slack:
-    rooms:
-      - secure: OEB3WuK3hVTKrBLHkWfr1YW/HdRDKJvz7g4UljKLtra8RKs2YAUiBcZ64GRJLHf/Qe2lSTqpQh3tIkz4gckCpWrt2UeKi167gX3Dgv4QdqeS8hus1AqdNlKzYrZ4HCOtF1zXREki4AlKjJcQS58r/McXNKNnFPuKrdg5GFv7XSLmzoe57ZxMRFChKGycmVcme5CBhHQQqXlw6/ojRC5owqdhDWBoYSg4H5r4Kbfi6pXy9Z8PNwIeKSRxrpyLyaoLLADazzk9zZ2hJrMhEbD5L3Wnaa53fILbpCQ/8gDU7md8r/obwyiXk6YxXvxJD0KKQli3n79XCKtPwPI03EIlF0bP7ij+vmHQIyRDWaLLsxfwm3u9MnsQt6WMf4oFIMYeeIx6rPvMXhRsKhLqHQyQ8Irw4rbhu/5L/arOgEtEr5melLzgiYeOGBmBerTzACquni9wMBHFQCouFRl8PJIFxfRGcT/VlaBD3uhkHSlqqBXHjEICfp05MJc2j5/BMhNejuLs8isZJ+wKEqp7kHDZ0EPaxf0M+9NLBT9lohlWkM8PoUbf3rj6WP/kkxJnMv0ALxeA8Qkq5u5mT3n3jqijeCOc+Bu8dBhs/OcrAzXegvgtsP7WryTFG1ruBQVO+q+cBOAuY7+mWr57rwZ3S1pVHQfNkMMTuKZDa/cLJ+1EEig=
-    on_success: change
+  webhooks: https://outlook.office.com/webhook/27c453a8-ba7e-434b-aa1c-3f3518bae970@204cfc34-134c-421b-9da1-8d11960a08c0/TravisCI/19103ea0fa0047e09b0b5f8e6dbca$
+  on_success: change
 
 # See https://docs.travis-ci.com/user/languages/java/#caching
 before_cache:
