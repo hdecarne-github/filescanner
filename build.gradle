@@ -164,10 +164,17 @@ subprojects {
 		
 	jacocoTestReport {
 		reports {
-			xml.enabled false
-			html.enabled true
-			html.destination file("${buildDir}/reports/jacoco")
+			xml.enabled true
+			xml.destination file("${buildDir}/reports/jacoco/coverage.xml")
+			html.enabled false
 			csv.enabled false
+		}
+	}
+	test.finalizedBy jacocoTestReport
+	
+	sonarqube {
+		properties {
+			property 'sonar.coverage.jacoco.xmlReportPaths', jacocoTestReport.reports.xml.destination
 		}
 	}
 
