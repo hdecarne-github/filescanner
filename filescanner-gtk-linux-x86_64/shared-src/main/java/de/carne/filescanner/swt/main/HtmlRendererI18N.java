@@ -97,14 +97,14 @@ public final class HtmlRendererI18N {
 	/**
 	 * Resource key {@code I18N_HREF_MEDIA_WITHOUT_BREAK}
 	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;&lt;a href=&quot;{1}&quot;&gt;{2}&lt;&frasl;a&gt;&lt;&frasl;span&gt;
+	 * &lt;span class=&quot;{0}&quot;&gt;[&lt;a href=&quot;{1}&quot;&gt;{2}&lt;&frasl;a&gt;]&lt;&frasl;span&gt;
 	 */
 	public static final String I18N_HREF_MEDIA_WITHOUT_BREAK = "I18N_HREF_MEDIA_WITHOUT_BREAK";
 
 	/**
 	 * Resource string {@code I18N_HREF_MEDIA_WITHOUT_BREAK}
 	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;&lt;a href=&quot;{1}&quot;&gt;{2}&lt;&frasl;a&gt;&lt;&frasl;span&gt;
+	 * &lt;span class=&quot;{0}&quot;&gt;[&lt;a href=&quot;{1}&quot;&gt;{2}&lt;&frasl;a&gt;]&lt;&frasl;span&gt;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -116,14 +116,14 @@ public final class HtmlRendererI18N {
 	/**
 	 * Resource key {@code I18N_HREF_MEDIA_WITH_BREAK}
 	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;&lt;a href=&quot;{1}&quot;&gt;{2}&lt;&frasl;a&gt;&lt;&frasl;span&gt;&lt;br&gt;
+	 * &lt;span class=&quot;{0}&quot;&gt;[&lt;a href=&quot;{1}&quot;&gt;{2}&lt;&frasl;a&gt;]&lt;&frasl;span&gt;&lt;br&gt;
 	 */
 	public static final String I18N_HREF_MEDIA_WITH_BREAK = "I18N_HREF_MEDIA_WITH_BREAK";
 
 	/**
 	 * Resource string {@code I18N_HREF_MEDIA_WITH_BREAK}
 	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;&lt;a href=&quot;{1}&quot;&gt;{2}&lt;&frasl;a&gt;&lt;&frasl;span&gt;&lt;br&gt;
+	 * &lt;span class=&quot;{0}&quot;&gt;[&lt;a href=&quot;{1}&quot;&gt;{2}&lt;&frasl;a&gt;]&lt;&frasl;span&gt;&lt;br&gt;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -287,14 +287,14 @@ public final class HtmlRendererI18N {
 	/**
 	 * Resource key {@code I18N_SIMPLE_MEDIA_WITHOUT_BREAK}
 	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;&lt;a href=&quot;{1}&quot;&gt;{2}&lt;&frasl;a&gt;&lt;&frasl;span&gt;
+	 * &lt;span class=&quot;{0}&quot;&gt;[&lt;a href=&quot;{1}&quot;&gt;{2}&lt;&frasl;a&gt;]&lt;&frasl;span&gt;
 	 */
 	public static final String I18N_SIMPLE_MEDIA_WITHOUT_BREAK = "I18N_SIMPLE_MEDIA_WITHOUT_BREAK";
 
 	/**
 	 * Resource string {@code I18N_SIMPLE_MEDIA_WITHOUT_BREAK}
 	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;&lt;a href=&quot;{1}&quot;&gt;{2}&lt;&frasl;a&gt;&lt;&frasl;span&gt;
+	 * &lt;span class=&quot;{0}&quot;&gt;[&lt;a href=&quot;{1}&quot;&gt;{2}&lt;&frasl;a&gt;]&lt;&frasl;span&gt;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -306,14 +306,14 @@ public final class HtmlRendererI18N {
 	/**
 	 * Resource key {@code I18N_SIMPLE_MEDIA_WITH_BREAK}
 	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;&lt;a href=&quot;{1}&quot;&gt;{2}&lt;&frasl;a&gt;&lt;&frasl;span&gt;&lt;br&gt;
+	 * &lt;span class=&quot;{0}&quot;&gt;[&lt;a href=&quot;{1}&quot;&gt;{2}&lt;&frasl;a&gt;]&lt;&frasl;span&gt;&lt;br&gt;
 	 */
 	public static final String I18N_SIMPLE_MEDIA_WITH_BREAK = "I18N_SIMPLE_MEDIA_WITH_BREAK";
 
 	/**
 	 * Resource string {@code I18N_SIMPLE_MEDIA_WITH_BREAK}
 	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;&lt;a href=&quot;{1}&quot;&gt;{2}&lt;&frasl;a&gt;&lt;&frasl;span&gt;&lt;br&gt;
+	 * &lt;span class=&quot;{0}&quot;&gt;[&lt;a href=&quot;{1}&quot;&gt;{2}&lt;&frasl;a&gt;]&lt;&frasl;span&gt;&lt;br&gt;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
