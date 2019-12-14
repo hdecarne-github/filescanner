@@ -16,6 +16,7 @@
  */
 package de.carne.filescanner.swt.export;
 
+import java.io.IOException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -206,17 +207,17 @@ class ExportUI extends ShellUserInterface {
 			FileScannerResultExportHandler exportHandler = this.result.exportHandlers()[exportTypeIndex];
 
 			this.exportTypeHolder.get().select(exportTypeIndex);
-			this.exportPathTextHolder.get().setText(buildExportPath(exportHandler.defaultFileName(this.result)));
+			this.exportPathTextHolder.get().setText(buildExportPath(exportHandler));
 		}
 	}
 
-	private String buildExportPath(String defaultFileName) {
+	private String buildExportPath(FileScannerResultExportHandler exportHandler) {
 		Path baseDir = PREF_EXPORT_DIR.get(this.preferences);
 		Path exportPath = null;
 
 		try {
-			exportPath = baseDir.resolve(defaultFileName).normalize();
-		} catch (InvalidPathException e) {
+			exportPath = baseDir.resolve(exportHandler.defaultFileName(this.result)).normalize();
+		} catch (IOException | InvalidPathException e) {
 			Exceptions.ignore(e);
 		}
 		return (exportPath != null ? exportPath.toString() : "");

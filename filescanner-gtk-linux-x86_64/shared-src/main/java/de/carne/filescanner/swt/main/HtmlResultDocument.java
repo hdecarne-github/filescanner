@@ -41,6 +41,7 @@ import de.carne.filescanner.engine.transfer.SimpleTextRenderer;
 import de.carne.filescanner.engine.transfer.TransferSource;
 import de.carne.filescanner.engine.util.CombinedRenderer;
 import de.carne.filescanner.engine.util.EmitCounter;
+import de.carne.util.Strings;
 
 class HtmlResultDocument extends HttpHandler {
 
@@ -125,6 +126,7 @@ class HtmlResultDocument extends HttpHandler {
 	private class HtmlRenderer implements Renderer {
 
 		private final Writer writer;
+		private int lastIndent;
 
 		public HtmlRenderer(Writer writer) {
 			this.writer = writer;
@@ -149,13 +151,15 @@ class HtmlResultDocument extends HttpHandler {
 		}
 
 		@Override
-		public int emitText(RenderStyle style, String text, boolean lineBreak) throws IOException {
+		public int emitText(int indent, RenderStyle style, String text, boolean lineBreak) throws IOException {
+			applyIndent(indent);
+
 			EmitCounter counter = new EmitCounter();
 
 			this.writer.write(counter.count("<span class=\""));
 			this.writer.write(counter.count(style.name().toLowerCase()));
 			this.writer.write(counter.count("\">"));
-			this.writer.write(counter.count(encodeText(text)));
+			this.writer.write(counter.count(Strings.encodeHtml(text)));
 			this.writer.write(counter.count("</span>"));
 			if (lineBreak) {
 				this.writer.write(counter.count("<br>\n"));
@@ -164,13 +168,17 @@ class HtmlResultDocument extends HttpHandler {
 		}
 
 		@Override
-		public int emitText(RenderStyle style, String text, long href, boolean lineBreak) throws IOException {
+		public int emitText(int indent, RenderStyle style, String text, long href, boolean lineBreak)
+				throws IOException {
 			// TODO Auto-generated method stub
-			return Renderer.super.emitText(style, text, href, lineBreak);
+			return emitText(indent, style, text, href, lineBreak);
 		}
 
 		@Override
-		public int emitMediaData(RenderStyle style, TransferSource source, boolean lineBreak) throws IOException {
+		public int emitMediaData(int indent, RenderStyle style, TransferSource source, boolean lineBreak)
+				throws IOException {
+			applyIndent(indent);
+
 			String mediaDataSourcePath = createMediaDataPath(source);
 			EmitCounter counter = new EmitCounter();
 
@@ -183,13 +191,13 @@ class HtmlResultDocument extends HttpHandler {
 				this.writer.write(counter.count("\"><img src=\""));
 				this.writer.write(counter.count(mediaDataSourcePath));
 				this.writer.write(counter.count("\" alt=\""));
-				this.writer.write(counter.count(encodeText(source.name())));
+				this.writer.write(counter.count(Strings.encodeHtml(source.name())));
 				this.writer.write(counter.count("\">"));
 			} else {
 				this.writer.write(counter.count("\"><a href=\""));
 				this.writer.write(counter.count(mediaDataSourcePath));
 				this.writer.write(counter.count("\">["));
-				this.writer.write(counter.count(encodeText(source.name())));
+				this.writer.write(counter.count(Strings.encodeHtml(source.name())));
 				this.writer.write(counter.count("]</a>"));
 			}
 			this.writer.write(counter.count("</span>"));
@@ -200,45 +208,34 @@ class HtmlResultDocument extends HttpHandler {
 		}
 
 		@Override
-		public int emitMediaData(RenderStyle style, TransferSource source, long href, boolean lineBreak)
+		public int emitMediaData(int indent, RenderStyle style, TransferSource source, long href, boolean lineBreak)
 				throws IOException {
 			// TODO Auto-generated method stub
-			return Renderer.super.emitMediaData(style, source, href, lineBreak);
+			return emitMediaData(indent, style, source, href, lineBreak);
 		}
 
 		@Override
 		public void emitEpilouge() throws IOException {
+			applyIndent(0);
 			this.writer.write("</body>\n</html>");
+		}
+
+		private void applyIndent(int indent) throws IOException {
+			if (indent >= 0) {
+				while (this.lastIndent < indent) {
+					this.writer.write("<div class=\"indent\">\n");
+					this.lastIndent++;
+				}
+				while (this.lastIndent > indent) {
+					this.writer.write("</div>\n");
+					this.lastIndent--;
+				}
+			}
 		}
 
 		@Override
 		public String toString() {
 			return Objects.toString(this.writer);
-		}
-
-		private String encodeText(String text) {
-			StringBuilder encoded = new StringBuilder();
-
-			text.chars().forEach(c -> {
-
-				switch (c) {
-				case '<':
-					encoded.append("&lt;");
-					break;
-				case '>':
-					encoded.append("&gt;");
-					break;
-				case '&':
-					encoded.append("&amp;");
-					break;
-				case '"':
-					encoded.append("&quot;");
-					break;
-				default:
-					encoded.append((char) c);
-				}
-			});
-			return encoded.toString();
 		}
 
 	}

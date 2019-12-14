@@ -34,12 +34,14 @@ class HtmlResultStylesheetResource extends HttpHandler {
 	public HtmlResultStylesheetResource(Config config, String transparentBackgroundPath) {
 		StringBuilder header = new StringBuilder();
 
-		header.append("body { ");
+		header.append("body { white-space: nowrap; ");
 		cssFont(header, config.getResultViewFont());
 		header.append(" }");
+		header.append(" .indent { padding-left: 2em; }");
 		header.append(" .transparent { background-image: url(\"").append(transparentBackgroundPath).append("\"); }");
 		for (RenderStyle style : RenderStyle.values()) {
-			header.append(" .").append(style.name().toLowerCase()).append(" {");
+			header.append(" .").append(style.name().toLowerCase()).append(" { ");
+			header.append("white-space: pre; ");
 			cssColor(header, config.getResultViewColor(style));
 			header.append("}");
 		}
@@ -60,7 +62,7 @@ class HtmlResultStylesheetResource extends HttpHandler {
 		} else {
 			css.append("normal;");
 		}
-		css.append("font-size:").append(font.getHeight()).append("pt;");
+		css.append("font-size:").append(font.getHeight() * 3 / 4).append("pt;");
 	}
 
 	private static void cssColor(StringBuilder css, RGB rgb) {
