@@ -140,15 +140,17 @@ class MainController implements FileScannerStatus {
 	@Override
 	public void scanProgress(FileScanner scanner, FileScannerProgress progress) {
 		if (scanner.equals(this.fileScanner)) {
-			Application.getMain(FileScannerMain.class).runWait(() -> this.ui.sessionProgress(progress));
+			long indexSize = Objects.requireNonNull(this.searchIndex).getIndexSize();
+
+			Application.getMain(FileScannerMain.class).runWait(() -> this.ui.sessionProgress(progress, indexSize));
 		}
 	}
 
 	@Override
 	public void scanResult(FileScanner scanner, FileScannerResult result) {
 		if (scanner.equals(this.fileScanner)) {
-			Application.getMain(FileScannerMain.class).runWait(() -> this.ui.sessionResult(result));
 			Objects.requireNonNull(this.searchIndex).addResult(result);
+			Application.getMain(FileScannerMain.class).runWait(() -> this.ui.sessionResult(result));
 		}
 	}
 

@@ -20,6 +20,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 
 import org.apache.lucene.analysis.Analyzer;
@@ -51,6 +52,7 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.BytesRef;
 import org.eclipse.jdt.annotation.Nullable;
 
+import de.carne.boot.Exceptions;
 import de.carne.boot.logging.Log;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.transfer.RenderOutput;
@@ -89,7 +91,7 @@ final class SearchIndex implements AutoCloseable {
 		this.indexDirectory = FSDirectory.open(this.indexPath);
 		this.analyzer = new ResultAnalyzer();
 
-		LOG.info("Created search index ''{0}''", this.indexPath);
+		LOG.info("Created search index {0}:''{1}''", this.indexDirectory.getClass().getSimpleName(), this.indexPath);
 	}
 
 	public void addResult(FileScannerResult result) {
@@ -139,7 +141,7 @@ final class SearchIndex implements AutoCloseable {
 		@SuppressWarnings("resource") SimpleTextRenderer resultContent = new SimpleTextRenderer(new StringWriter());
 
 		try {
-			resultContent.emitText(RenderStyle.NORMAL, result.name(), true);
+			resultContent.emitText(0, RenderStyle.NORMAL, result.name(), true);
 			RenderOutput.render(result, resultContent, MAX_INDEX_LENGTH);
 		} finally {
 			resultContent.close();
@@ -161,6 +163,32 @@ final class SearchIndex implements AutoCloseable {
 
 	public byte @Nullable [] searchBackward(@Nullable FileScannerResult start, String query) throws IOException {
 		return getSearcher().search(null, (start != null ? new BytesRef(start.key()) : null), query, SORT_BACKWARD);
+	}
+
+	public long getIndexSize() {
+		long indexSize = 0;
+
+		try {
+			for (String indexFile : this.indexDirectory.listAll()) {
+				indexSize += getIndexFileSize(indexFile);
+			}
+		} catch (IOException e) {
+			indexSize = -1;
+
+			LOG.error(e, "Failed to determine index files");
+		}
+		return indexSize;
+	}
+
+	private long getIndexFileSize(String indexFile) throws IOException {
+		long indexFileSize = 0;
+
+		try {
+			indexFileSize = this.indexDirectory.fileLength(indexFile);
+		} catch (NoSuchFileException e) {
+			Exceptions.ignore(e);
+		}
+		return indexFileSize;
 	}
 
 	@Override
@@ -283,7 +311,8 @@ final class SearchIndex implements AutoCloseable {
 			queryBuilder.add(query, Occur.MUST);
 
 			IndexSearcher indexSearcher = getIndexSearcher();
-			TopDocs searchResult = indexSearcher.search(queryBuilder.build(), 1, sort);
+			BooleanQuery searchQuery = queryBuilder.build();
+			TopDocs searchResult = indexSearcher.search(searchQuery, 1, sort);
 			byte[] resultKey = null;
 
 			if (searchResult.totalHits.value != 0) {
