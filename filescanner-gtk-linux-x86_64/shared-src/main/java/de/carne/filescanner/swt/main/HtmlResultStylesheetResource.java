@@ -34,14 +34,15 @@ class HtmlResultStylesheetResource extends HttpHandler {
 	public HtmlResultStylesheetResource(Config config, String transparentBackgroundPath) {
 		StringBuilder header = new StringBuilder();
 
-		header.append("body { white-space: nowrap; ");
+		header.append("body { white-space: pre; ");
 		cssFont(header, config.getResultViewFont());
 		header.append(" }");
 		header.append(" .indent { padding-left: 2em; }");
 		header.append(" .transparent { background-image: url(\"").append(transparentBackgroundPath).append("\"); }");
+		header.append(" .wrap { white-space: normal; }");
 		for (RenderStyle style : RenderStyle.values()) {
 			header.append(" .").append(style.name().toLowerCase()).append(" { ");
-			header.append("white-space: pre; ");
+			header.append("white-space: inherit; ");
 			cssColor(header, config.getResultViewColor(style));
 			header.append("}");
 		}

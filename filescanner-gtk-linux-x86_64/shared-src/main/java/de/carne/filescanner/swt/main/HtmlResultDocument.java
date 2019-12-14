@@ -40,21 +40,28 @@ import de.carne.filescanner.engine.transfer.Renderer;
 import de.carne.filescanner.engine.transfer.SimpleTextRenderer;
 import de.carne.filescanner.engine.transfer.TransferSource;
 import de.carne.filescanner.engine.util.CombinedRenderer;
-import de.carne.filescanner.engine.util.EmitCounter;
 import de.carne.util.Strings;
 
 class HtmlResultDocument extends HttpHandler {
 
+	static final HtmlNavigation NO_NAVIGATION = (result, position) -> {
+		throw new IOException();
+	};
+
 	private final URI serverUri;
 	private final String documentPath;
 	private final String stylesheetPath;
+	private final HtmlNavigation navigation;
 	private final FileScannerResult result;
 	private final Map<String, TransferSource> mediaDataSources = new HashMap<>();
+	private final Map<String, Long> hrefPositions = new HashMap<>();
 
-	public HtmlResultDocument(URI serverUri, String documentPath, String stylesheetPath, FileScannerResult result) {
+	public HtmlResultDocument(URI serverUri, String documentPath, String stylesheetPath, HtmlNavigation navigation,
+			FileScannerResult result) {
 		this.serverUri = serverUri;
 		this.documentPath = documentPath;
 		this.stylesheetPath = stylesheetPath;
+		this.navigation = navigation;
 		this.result = result;
 	}
 
@@ -81,21 +88,27 @@ class HtmlResultDocument extends HttpHandler {
 	}
 
 	private static final String REQUEST_PARAMETER_MEDIA_SOURCE_ID = "msid";
+	private static final String REQUEST_PARAMETER_HREF_ID = "hrefid";
 
 	@Override
 	public void service(@Nullable Request request, @Nullable Response response) throws Exception {
 		if (request != null && response != null) {
 			String mediaSourceId = request.getParameter(REQUEST_PARAMETER_MEDIA_SOURCE_ID);
 			TransferSource mediaSource;
+			String hrefId = request.getParameter(REQUEST_PARAMETER_HREF_ID);
+			Long hrefPosition;
 
-			if (mediaSourceId == null) {
-				response.setContentType(HtmlResourceType.TEXT_HTML.contentType());
-				writeTo(response.getWriter());
-			} else if ((mediaSource = this.mediaDataSources.get(mediaSourceId)) != null) {
+			if ((mediaSource = this.mediaDataSources.get(mediaSourceId)) != null) {
 				response.setContentType(ContentType.newContentType(mediaSource.transferType().mimeType(), null));
 				try (WritableByteChannel outputChannel = Channels.newChannel(response.getOutputStream())) {
 					mediaSource.transfer(outputChannel);
 				}
+			} else if (!NO_NAVIGATION.equals(this.navigation)
+					&& (hrefPosition = this.hrefPositions.get(hrefId)) != null) {
+				this.navigation.navigateToPosition(this.result, hrefPosition);
+			} else if (mediaSourceId == null && hrefId == null) {
+				response.setContentType(HtmlResourceType.TEXT_HTML.contentType());
+				writeTo(response.getWriter());
 			} else {
 				response.sendError(404);
 			}
@@ -123,6 +136,14 @@ class HtmlResultDocument extends HttpHandler {
 		return this.documentPath + "/?" + REQUEST_PARAMETER_MEDIA_SOURCE_ID + "=" + mediaDataSourceId;
 	}
 
+	String createHrefPath(long position) {
+		String hrefId = Integer.toHexString(this.hrefPositions.size() + 1);
+
+		this.hrefPositions.put(hrefId, position);
+
+		return this.documentPath + "/?" + REQUEST_PARAMETER_HREF_ID + "=" + hrefId;
+	}
+
 	private class HtmlRenderer implements Renderer {
 
 		private final Writer writer;
@@ -139,95 +160,119 @@ class HtmlResultDocument extends HttpHandler {
 
 		@Override
 		public void emitPrologue(Set<RenderOption> options) throws IOException {
-			this.writer.write("<!DOCTYPE HTML>\n<html>\n<head>\n<meta charset=\"utf-8\">\n<base href=\"");
-			this.writer.write(serverUri());
-			this.writer.write("\">\n<link rel=\"stylesheet\" type=\"text/css\" href=\"");
-			this.writer.write(stylesheetPath());
-			if (options.contains(RenderOption.TRANSPARENCY)) {
-				this.writer.write("\">\n</head>\n<body class=\"transparent\">\n");
+			StringBuilder styles = new StringBuilder();
+
+			addPrologueStyle(styles, options, RenderOption.TRANSPARENCY, "transparent");
+			addPrologueStyle(styles, options, RenderOption.WRAP, "wrap");
+			if (styles.length() > 0) {
+				this.writer.write(HtmlRendererI18N.i18nPrologueExtended(serverUri(), stylesheetPath(), styles));
 			} else {
-				this.writer.write("\">\n</head>\n<body>\n");
+				this.writer.write(HtmlRendererI18N.i18nPrologueDefault(serverUri(), stylesheetPath()));
+			}
+		}
+
+		private void addPrologueStyle(StringBuilder styles, Set<RenderOption> options, RenderOption option,
+				String style) {
+			if (options.contains(option)) {
+				if (styles.length() > 0) {
+					styles.append(",");
+				}
+				styles.append(style);
 			}
 		}
 
 		@Override
-		public int emitText(int indent, RenderStyle style, String text, boolean lineBreak) throws IOException {
+		public void emitText(int indent, RenderStyle style, String text, boolean lineBreak) throws IOException {
 			applyIndent(indent);
-
-			EmitCounter counter = new EmitCounter();
-
-			this.writer.write(counter.count("<span class=\""));
-			this.writer.write(counter.count(style.name().toLowerCase()));
-			this.writer.write(counter.count("\">"));
-			this.writer.write(counter.count(Strings.encodeHtml(text)));
-			this.writer.write(counter.count("</span>"));
 			if (lineBreak) {
-				this.writer.write(counter.count("<br>\n"));
+				this.writer.write(
+						HtmlRendererI18N.i18nSimpleTextWithBreak(style.name().toLowerCase(), Strings.encodeHtml(text)));
+			} else {
+				this.writer.write(HtmlRendererI18N.i18nSimpleTextWithoutBreak(style.name().toLowerCase(),
+						Strings.encodeHtml(text)));
 			}
-			return counter.value();
 		}
 
 		@Override
-		public int emitText(int indent, RenderStyle style, String text, long href, boolean lineBreak)
+		public void emitText(int indent, RenderStyle style, String text, long href, boolean lineBreak)
 				throws IOException {
-			// TODO Auto-generated method stub
-			return emitText(indent, style, text, href, lineBreak);
-		}
+			String hrefPath = createHrefPath(href);
 
-		@Override
-		public int emitMediaData(int indent, RenderStyle style, TransferSource source, boolean lineBreak)
-				throws IOException {
 			applyIndent(indent);
+			if (lineBreak) {
+				this.writer.write(HtmlRendererI18N.i18nHrefTextWithBreak(style.name().toLowerCase(),
+						Strings.encodeHtml(text), hrefPath));
+			} else {
+				this.writer.write(HtmlRendererI18N.i18nHrefTextWithoutBreak(style.name().toLowerCase(),
+						Strings.encodeHtml(text), hrefPath));
+			}
+		}
 
+		@Override
+		public void emitMediaData(int indent, RenderStyle style, TransferSource source, boolean lineBreak)
+				throws IOException {
 			String mediaDataSourcePath = createMediaDataPath(source);
-			EmitCounter counter = new EmitCounter();
 
-			this.writer.write(counter.count("<span class=\""));
-			this.writer.write(counter.count(style.name().toLowerCase()));
-
-			String mimeType = source.transferType().mimeType();
-
-			if (mimeType.startsWith("image/")) {
-				this.writer.write(counter.count("\"><img src=\""));
-				this.writer.write(counter.count(mediaDataSourcePath));
-				this.writer.write(counter.count("\" alt=\""));
-				this.writer.write(counter.count(Strings.encodeHtml(source.name())));
-				this.writer.write(counter.count("\">"));
+			applyIndent(indent);
+			if (source.transferType().isImage()) {
+				if (lineBreak) {
+					this.writer.write(HtmlRendererI18N.i18nSimpleImageWithoutBreak(style.name().toLowerCase(),
+							mediaDataSourcePath, Strings.encodeHtml(source.name())));
+				} else {
+					this.writer.write(HtmlRendererI18N.i18nSimpleImageWithBreak(style.name().toLowerCase(),
+							mediaDataSourcePath, Strings.encodeHtml(source.name())));
+				}
 			} else {
-				this.writer.write(counter.count("\"><a href=\""));
-				this.writer.write(counter.count(mediaDataSourcePath));
-				this.writer.write(counter.count("\">["));
-				this.writer.write(counter.count(Strings.encodeHtml(source.name())));
-				this.writer.write(counter.count("]</a>"));
+				if (lineBreak) {
+					this.writer.write(HtmlRendererI18N.i18nSimpleMediaWithoutBreak(style.name().toLowerCase(),
+							mediaDataSourcePath, Strings.encodeHtml(source.name())));
+				} else {
+					this.writer.write(HtmlRendererI18N.i18nSimpleMediaWithBreak(style.name().toLowerCase(),
+							mediaDataSourcePath, Strings.encodeHtml(source.name())));
+				}
 			}
-			this.writer.write(counter.count("</span>"));
-			if (lineBreak) {
-				this.writer.write(counter.count("<br>\n"));
-			}
-			return counter.value();
 		}
 
 		@Override
-		public int emitMediaData(int indent, RenderStyle style, TransferSource source, long href, boolean lineBreak)
+		public void emitMediaData(int indent, RenderStyle style, TransferSource source, long href, boolean lineBreak)
 				throws IOException {
-			// TODO Auto-generated method stub
-			return emitMediaData(indent, style, source, href, lineBreak);
+			String mediaDataSourcePath = createMediaDataPath(source);
+			String hrefPath = createHrefPath(href);
+
+			applyIndent(indent);
+			if (source.transferType().isImage()) {
+				if (lineBreak) {
+					this.writer.write(HtmlRendererI18N.i18nHrefImageWithoutBreak(style.name().toLowerCase(),
+							mediaDataSourcePath, Strings.encodeHtml(source.name()), hrefPath));
+				} else {
+					this.writer.write(HtmlRendererI18N.i18nHrefImageWithBreak(style.name().toLowerCase(),
+							mediaDataSourcePath, Strings.encodeHtml(source.name()), hrefPath));
+				}
+			} else {
+				if (lineBreak) {
+					this.writer.write(HtmlRendererI18N.i18nHrefMediaWithoutBreak(style.name().toLowerCase(),
+							mediaDataSourcePath, Strings.encodeHtml(source.name()), hrefPath));
+				} else {
+					this.writer.write(HtmlRendererI18N.i18nHrefMediaWithBreak(style.name().toLowerCase(),
+							mediaDataSourcePath, Strings.encodeHtml(source.name()), hrefPath));
+				}
+			}
 		}
 
 		@Override
-		public void emitEpilouge() throws IOException {
+		public void emitEpilogue() throws IOException {
 			applyIndent(0);
-			this.writer.write("</body>\n</html>");
+			this.writer.write(HtmlRendererI18N.i18nEpilogue());
 		}
 
 		private void applyIndent(int indent) throws IOException {
 			if (indent >= 0) {
 				while (this.lastIndent < indent) {
-					this.writer.write("<div class=\"indent\">\n");
+					this.writer.write(HtmlRendererI18N.i18nIndentIn());
 					this.lastIndent++;
 				}
 				while (this.lastIndent > indent) {
-					this.writer.write("</div>\n");
+					this.writer.write(HtmlRendererI18N.i18nIndentOut());
 					this.lastIndent--;
 				}
 			}

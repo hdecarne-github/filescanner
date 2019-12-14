@@ -255,7 +255,7 @@ class ExportUI extends ShellUserInterface {
 	private void validationMessageBox(ValidationException validationException) {
 		try {
 			MessageBox messageBox = MessageBoxBuilder.error(root()).withText(root().getText())
-					.withMessage(validationException.getLocalizedMessage()).get();
+					.withMessage(Exceptions.getMessage(validationException)).get();
 
 			messageBox.open();
 		} catch (Exception e) {

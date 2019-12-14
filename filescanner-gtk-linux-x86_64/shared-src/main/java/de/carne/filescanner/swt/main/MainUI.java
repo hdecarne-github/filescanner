@@ -16,6 +16,7 @@
  */
 package de.carne.filescanner.swt.main;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
 import java.util.concurrent.CancellationException;
@@ -260,6 +261,10 @@ public class MainUI extends ShellUserInterface {
 	void sessionException(Throwable exception) {
 		Notification.error(root()).withText(MainI18N.i18nTextScanException())
 				.withMessage(MainI18N.i18nMessageScanException(Exceptions.toString(exception))).open();
+	}
+
+	private void navigateToPosition(FileScannerResult result, long position) throws IOException {
+
 	}
 
 	private void setRootResultTreeItem(FileScannerResult rootResult) {
@@ -629,8 +634,8 @@ public class MainUI extends ShellUserInterface {
 			this.resultTreeHolder.get().showItem(resultItem);
 			this.inputViewHolder.get().setResult(newResult);
 
-			HtmlResultDocument resultDocument = this.resultRenderServerHolder.get().createResultDocument(newResult,
-					false);
+			HtmlResultDocument resultDocument = this.resultRenderServerHolder.get()
+					.createResultDocument(this::navigateToPosition, newResult, false);
 
 			this.resultViewHolder.get().setUrl(resultDocument.documentUrl());
 			this.resultSelectionCommands.setEnabled(true);
@@ -646,7 +651,7 @@ public class MainUI extends ShellUserInterface {
 	private String getDefaultResultView() {
 		de.carne.filescanner.engine.ModuleManifestInfos engineInfos = new de.carne.filescanner.engine.ModuleManifestInfos();
 
-		return MainI18N.i18nTextDefaultResultViewHtml(Strings.encodeHtml(engineInfos.name()),
+		return HtmlRendererI18N.i18nTextDefaultResultViewHtml(Strings.encodeHtml(engineInfos.name()),
 				Strings.encodeHtml(engineInfos.version()), Strings.encodeHtml(engineInfos.build()));
 	}
 
@@ -729,7 +734,8 @@ public class MainUI extends ShellUserInterface {
 
 			this.inputViewHolder.get().setResult(result);
 
-			HtmlResultDocument resultDocument = this.resultRenderServerHolder.get().createResultDocument(result, false);
+			HtmlResultDocument resultDocument = this.resultRenderServerHolder.get()
+					.createResultDocument(this::navigateToPosition, result, false);
 
 			this.resultViewHolder.get().setUrl(resultDocument.documentUrl());
 		}

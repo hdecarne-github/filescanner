@@ -61,13 +61,10 @@ import de.carne.filescanner.engine.transfer.SimpleTextRenderer;
 import de.carne.io.Closeables;
 import de.carne.nio.file.FileUtil;
 import de.carne.nio.file.attribute.FileAttributes;
-import de.carne.util.SystemProperties;
 
 final class SearchIndex implements AutoCloseable {
 
 	private static final Log LOG = new Log();
-
-	private static final int MAX_INDEX_LENGTH = SystemProperties.intValue(SearchIndex.class, ".maxIndexLength", 4096);
 
 	private static final String FIELD_ID = "id";
 	private static final String FIELD_KEY_STORED = "key";
@@ -142,7 +139,7 @@ final class SearchIndex implements AutoCloseable {
 
 		try {
 			resultContent.emitText(0, RenderStyle.NORMAL, result.name(), true);
-			RenderOutput.render(result, resultContent, MAX_INDEX_LENGTH);
+			RenderOutput.render(result, resultContent);
 		} finally {
 			resultContent.close();
 		}

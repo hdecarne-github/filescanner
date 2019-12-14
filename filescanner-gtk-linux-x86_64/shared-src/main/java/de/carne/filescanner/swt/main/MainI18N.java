@@ -437,35 +437,16 @@ public final class MainI18N {
 	}
 
 	/**
-	 * Resource key {@code I18N_TEXT_DEFAULT_RESULT_VIEW_HTML}
-	 * <p>
-	 * &lt;!DOCTYPE HTML&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;&frasl;head&gt;&lt;body&gt;&lt;code style=&quot;color:silver;&quot;&gt;{0} {1} (build: {2})&lt;&frasl;code&gt;&lt;&frasl;body&gt;&lt;&frasl;html&gt;
-	 */
-	public static final String I18N_TEXT_DEFAULT_RESULT_VIEW_HTML = "I18N_TEXT_DEFAULT_RESULT_VIEW_HTML";
-
-	/**
-	 * Resource string {@code I18N_TEXT_DEFAULT_RESULT_VIEW_HTML}
-	 * <p>
-	 * &lt;!DOCTYPE HTML&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;&frasl;head&gt;&lt;body&gt;&lt;code style=&quot;color:silver;&quot;&gt;{0} {1} (build: {2})&lt;&frasl;code&gt;&lt;&frasl;body&gt;&lt;&frasl;html&gt;
-	 *
-	 * @param arguments Format arguments.
-	 * @return The formatted string.
-	 */
-	public static String i18nTextDefaultResultViewHtml(Object... arguments) {
-		return format(I18N_TEXT_DEFAULT_RESULT_VIEW_HTML, arguments);
-	}
-
-	/**
 	 * Resource key {@code I18N_TEXT_FILE_OPEN_FILTER}
 	 * <p>
-	 * &ast;|All files
+	 * &#42;|All files
 	 */
 	public static final String I18N_TEXT_FILE_OPEN_FILTER = "I18N_TEXT_FILE_OPEN_FILTER";
 
 	/**
 	 * Resource string {@code I18N_TEXT_FILE_OPEN_FILTER}
 	 * <p>
-	 * &ast;|All files
+	 * &#42;|All files
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -724,14 +705,14 @@ public final class MainI18N {
 	/**
 	 * Resource key {@code I18N_TOOLTIP_QUERY_INPUT}
 	 * <p>
-	 * Enter search pattern (&ast; is assumed if empty)
+	 * Enter search pattern (&#42; is assumed if empty)
 	 */
 	public static final String I18N_TOOLTIP_QUERY_INPUT = "I18N_TOOLTIP_QUERY_INPUT";
 
 	/**
 	 * Resource string {@code I18N_TOOLTIP_QUERY_INPUT}
 	 * <p>
-	 * Enter search pattern (&ast; is assumed if empty)
+	 * Enter search pattern (&#42; is assumed if empty)
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
