@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="8.0.1" transformSequenceNumber="8">
+<install4j version="8.0.2" transformSequenceNumber="8">
   <directoryPresets config="${compiler:i4jProjectBuildDir}/libs/${compiler:sys.shortName}-boot-${compiler:sys.version}.jar" />
-  <application name="${compiler:i4jProjectFullName}" applicationId="${compiler:i4jProjectApplicationID}" mediaDir="${compiler:i4jProjectBuildDir}/distributions" shortName="${compiler:i4jProjectName}" publisherWeb="${compiler:i4jProjectUrl}" version="${compiler:i4jProjectVersion}" allPathsRelative="true" macVolumeId="8caddfd136c560fa" javaMinVersion="1.8">
+  <application name="${compiler:i4jProjectFullName}" applicationId="${compiler:i4jProjectApplicationID}" mediaDir="${compiler:i4jProjectBuildDir}/distributions" shortName="${compiler:i4jProjectName}" publisherWeb="${compiler:i4jProjectUrl}" version="${compiler:i4jProjectVersion}" allPathsRelative="true" macVolumeId="8caddfd136c560fa" javaMinVersion="1.8" jdkMode="jdk" jdkName="JDK 1.8">
     <languages>
       <additionalLanguages>
         <language id="de" />
@@ -9,7 +9,7 @@
     </languages>
     <variables>
       <variable name="i4jProjectName" value="filescanner-cocoa-macosx-x86_64" />
-      <variable name="i4jProjectVersion" value="2.0.0-alpha2-SNAPSHOT" />
+      <variable name="i4jProjectVersion" value="2.0.0-alpha4-SNAPSHOT" />
       <variable name="i4jProjectBuildDir" value="${compiler:i4jProjectBaseDir}/build" />
       <variable name="i4jProjectBaseDir" value="../../../${compiler:i4jProjectName}" />
       <variable name="i4lProjectCopyright" value="Copyright © 2007-2019 Holger de Carne and contributors, All Rights Reserved." />
@@ -33,7 +33,7 @@
   </files>
   <launchers>
     <launcher name="${compiler:sys.fullName}" id="60" icnsFile="./launcherIcon.icns" swtApp="true">
-      <executable name="${compiler:i4jProjectBaseName}" iconSet="true" iconFile="./launcherIcon.ico" executableMode="gui" checkConsoleParameter="true">
+      <executable name="${compiler:i4jProjectBaseName}" iconSet="true" iconFile="./launcherIcon.ico" executableMode="gui" checkConsoleParameter="true" dpiAware="true">
         <versionInfo include="true" fileVersion="${compiler:sys.version}" fileDescription="${compiler:i4jProjectDescription}" legalCopyright="${compiler:i4lProjectCopyright}" internalName="${compiler:sys.shortName}" productName="${compiler:sys.fullName}" />
       </executable>
       <java mainClass="de.carne.boot.Application" vmParameters="-Dde.carne.boot.prefs.FilePreferences=.de.carne.filescanner">
@@ -1006,6 +1006,14 @@ return true;</property>
   </installerGui>
   <mediaSets>
     <windows name="Windows (x64)" id="66" />
-    <macosFolder name="macOS Folder" id="900" signLaunchers="true" />
+    <macosArchive name="macOS Single Bundle Archive" id="905" launcherId="60">
+      <topLevelFiles>
+        <symlink name="&quot; &quot;" target="/Applications" />
+        <file name="LICENSE" file="${compiler:i4jProjectBaseDir}/src/main/dist/LICENSE" />
+        <file name=".DS_Store" file="${compiler:i4jProjectBaseDir}/src/main/media/DS_Store" />
+        <file name=".background/background.png" file="${compiler:i4jProjectBaseDir}/src/main/media/background/background.png" />
+      </topLevelFiles>
+    </macosArchive>
   </mediaSets>
+  <buildOptions disableSigning="true" />
 </install4j>
