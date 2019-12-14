@@ -515,14 +515,14 @@ public final class PreferencesI18N {
 	/**
 	 * Resource key {@code I18N_TAB_FORMATS}
 	 * <p>
-	 * Formats
+	 * Decoders
 	 */
 	public static final String I18N_TAB_FORMATS = "I18N_TAB_FORMATS";
 
 	/**
 	 * Resource string {@code I18N_TAB_FORMATS}
 	 * <p>
-	 * Formats
+	 * Decoders
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
