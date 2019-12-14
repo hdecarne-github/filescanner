@@ -59,14 +59,14 @@ public final class PreferencesI18N {
 	/**
 	 * Resource key {@code I18N_BUTTON_APPLY_AND_CLOSE}
 	 * <p>
-	 * Apply&#32;and&#32;close
+	 * Apply and close
 	 */
 	public static final String I18N_BUTTON_APPLY_AND_CLOSE = "I18N_BUTTON_APPLY_AND_CLOSE";
 
 	/**
 	 * Resource string {@code I18N_BUTTON_APPLY_AND_CLOSE}
 	 * <p>
-	 * Apply&#32;and&#32;close
+	 * Apply and close
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -97,14 +97,14 @@ public final class PreferencesI18N {
 	/**
 	 * Resource key {@code I18N_BUTTON_INPUT_VIEW_FONT}
 	 * <p>
-	 * 0000000000000000h&#32;00&#32;00&#32;00&#32;00&#8230;
+	 * 0000000000000000h 00 00 00 00&#8230;
 	 */
 	public static final String I18N_BUTTON_INPUT_VIEW_FONT = "I18N_BUTTON_INPUT_VIEW_FONT";
 
 	/**
 	 * Resource string {@code I18N_BUTTON_INPUT_VIEW_FONT}
 	 * <p>
-	 * 0000000000000000h&#32;00&#32;00&#32;00&#32;00&#8230;
+	 * 0000000000000000h 00 00 00 00&#8230;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -249,14 +249,14 @@ public final class PreferencesI18N {
 	/**
 	 * Resource key {@code I18N_BUTTON_RESULT_VIEW_FONT}
 	 * <p>
-	 * start&#32;&#61;&#32;0000000000000000h
+	 * start = 0000000000000000h
 	 */
 	public static final String I18N_BUTTON_RESULT_VIEW_FONT = "I18N_BUTTON_RESULT_VIEW_FONT";
 
 	/**
 	 * Resource string {@code I18N_BUTTON_RESULT_VIEW_FONT}
 	 * <p>
-	 * start&#32;&#61;&#32;0000000000000000h
+	 * start = 0000000000000000h
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -268,14 +268,14 @@ public final class PreferencesI18N {
 	/**
 	 * Resource key {@code I18N_LABEL_ENABLED_FORMATS}
 	 * <p>
-	 * Enabled&#32;format&#32;decoders
+	 * Enabled format decoders
 	 */
 	public static final String I18N_LABEL_ENABLED_FORMATS = "I18N_LABEL_ENABLED_FORMATS";
 
 	/**
 	 * Resource string {@code I18N_LABEL_ENABLED_FORMATS}
 	 * <p>
-	 * Enabled&#32;format&#32;decoders
+	 * Enabled format decoders
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -287,14 +287,14 @@ public final class PreferencesI18N {
 	/**
 	 * Resource key {@code I18N_LABEL_INPUT_VIEW}
 	 * <p>
-	 * Hex&#32;view
+	 * Hex view
 	 */
 	public static final String I18N_LABEL_INPUT_VIEW = "I18N_LABEL_INPUT_VIEW";
 
 	/**
 	 * Resource string {@code I18N_LABEL_INPUT_VIEW}
 	 * <p>
-	 * Hex&#32;view
+	 * Hex view
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -306,14 +306,14 @@ public final class PreferencesI18N {
 	/**
 	 * Resource key {@code I18N_LABEL_INPUT_VIEW_FONT}
 	 * <p>
-	 * Font&#58;
+	 * Font:
 	 */
 	public static final String I18N_LABEL_INPUT_VIEW_FONT = "I18N_LABEL_INPUT_VIEW_FONT";
 
 	/**
 	 * Resource string {@code I18N_LABEL_INPUT_VIEW_FONT}
 	 * <p>
-	 * Font&#58;
+	 * Font:
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -325,14 +325,14 @@ public final class PreferencesI18N {
 	/**
 	 * Resource key {@code I18N_LABEL_RESULT_VIEW}
 	 * <p>
-	 * Result&#32;view
+	 * Result view
 	 */
 	public static final String I18N_LABEL_RESULT_VIEW = "I18N_LABEL_RESULT_VIEW";
 
 	/**
 	 * Resource string {@code I18N_LABEL_RESULT_VIEW}
 	 * <p>
-	 * Result&#32;view
+	 * Result view
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -344,14 +344,14 @@ public final class PreferencesI18N {
 	/**
 	 * Resource key {@code I18N_LABEL_RESULT_VIEW_COLOR_COMMENT}
 	 * <p>
-	 * Comment&#58;
+	 * Comment:
 	 */
 	public static final String I18N_LABEL_RESULT_VIEW_COLOR_COMMENT = "I18N_LABEL_RESULT_VIEW_COLOR_COMMENT";
 
 	/**
 	 * Resource string {@code I18N_LABEL_RESULT_VIEW_COLOR_COMMENT}
 	 * <p>
-	 * Comment&#58;
+	 * Comment:
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -363,14 +363,14 @@ public final class PreferencesI18N {
 	/**
 	 * Resource key {@code I18N_LABEL_RESULT_VIEW_COLOR_ERROR}
 	 * <p>
-	 * Error&#58;
+	 * Error:
 	 */
 	public static final String I18N_LABEL_RESULT_VIEW_COLOR_ERROR = "I18N_LABEL_RESULT_VIEW_COLOR_ERROR";
 
 	/**
 	 * Resource string {@code I18N_LABEL_RESULT_VIEW_COLOR_ERROR}
 	 * <p>
-	 * Error&#58;
+	 * Error:
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -382,14 +382,14 @@ public final class PreferencesI18N {
 	/**
 	 * Resource key {@code I18N_LABEL_RESULT_VIEW_COLOR_KEYWORD}
 	 * <p>
-	 * Keyword&#58;
+	 * Keyword:
 	 */
 	public static final String I18N_LABEL_RESULT_VIEW_COLOR_KEYWORD = "I18N_LABEL_RESULT_VIEW_COLOR_KEYWORD";
 
 	/**
 	 * Resource string {@code I18N_LABEL_RESULT_VIEW_COLOR_KEYWORD}
 	 * <p>
-	 * Keyword&#58;
+	 * Keyword:
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -401,14 +401,14 @@ public final class PreferencesI18N {
 	/**
 	 * Resource key {@code I18N_LABEL_RESULT_VIEW_COLOR_LABEL}
 	 * <p>
-	 * Label&#58;
+	 * Label:
 	 */
 	public static final String I18N_LABEL_RESULT_VIEW_COLOR_LABEL = "I18N_LABEL_RESULT_VIEW_COLOR_LABEL";
 
 	/**
 	 * Resource string {@code I18N_LABEL_RESULT_VIEW_COLOR_LABEL}
 	 * <p>
-	 * Label&#58;
+	 * Label:
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -420,14 +420,14 @@ public final class PreferencesI18N {
 	/**
 	 * Resource key {@code I18N_LABEL_RESULT_VIEW_COLOR_NORMAL}
 	 * <p>
-	 * Normal&#58;
+	 * Normal:
 	 */
 	public static final String I18N_LABEL_RESULT_VIEW_COLOR_NORMAL = "I18N_LABEL_RESULT_VIEW_COLOR_NORMAL";
 
 	/**
 	 * Resource string {@code I18N_LABEL_RESULT_VIEW_COLOR_NORMAL}
 	 * <p>
-	 * Normal&#58;
+	 * Normal:
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -439,14 +439,14 @@ public final class PreferencesI18N {
 	/**
 	 * Resource key {@code I18N_LABEL_RESULT_VIEW_COLOR_OPERATOR}
 	 * <p>
-	 * Operator&#58;
+	 * Operator:
 	 */
 	public static final String I18N_LABEL_RESULT_VIEW_COLOR_OPERATOR = "I18N_LABEL_RESULT_VIEW_COLOR_OPERATOR";
 
 	/**
 	 * Resource string {@code I18N_LABEL_RESULT_VIEW_COLOR_OPERATOR}
 	 * <p>
-	 * Operator&#58;
+	 * Operator:
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -458,14 +458,14 @@ public final class PreferencesI18N {
 	/**
 	 * Resource key {@code I18N_LABEL_RESULT_VIEW_COLOR_VALUE}
 	 * <p>
-	 * Value&#58;
+	 * Value:
 	 */
 	public static final String I18N_LABEL_RESULT_VIEW_COLOR_VALUE = "I18N_LABEL_RESULT_VIEW_COLOR_VALUE";
 
 	/**
 	 * Resource string {@code I18N_LABEL_RESULT_VIEW_COLOR_VALUE}
 	 * <p>
-	 * Value&#58;
+	 * Value:
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -477,14 +477,14 @@ public final class PreferencesI18N {
 	/**
 	 * Resource key {@code I18N_LABEL_RESULT_VIEW_FONT}
 	 * <p>
-	 * Font&#58;
+	 * Font:
 	 */
 	public static final String I18N_LABEL_RESULT_VIEW_FONT = "I18N_LABEL_RESULT_VIEW_FONT";
 
 	/**
 	 * Resource string {@code I18N_LABEL_RESULT_VIEW_FONT}
 	 * <p>
-	 * Font&#58;
+	 * Font:
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
