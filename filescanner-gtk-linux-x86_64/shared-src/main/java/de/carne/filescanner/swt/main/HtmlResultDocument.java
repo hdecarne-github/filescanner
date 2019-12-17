@@ -33,11 +33,11 @@ import org.glassfish.grizzly.http.server.Response;
 import org.glassfish.grizzly.http.util.ContentType;
 
 import de.carne.filescanner.engine.FileScannerResult;
+import de.carne.filescanner.engine.transfer.PlainTextRenderer;
 import de.carne.filescanner.engine.transfer.RenderOption;
 import de.carne.filescanner.engine.transfer.RenderOutput;
 import de.carne.filescanner.engine.transfer.RenderStyle;
 import de.carne.filescanner.engine.transfer.Renderer;
-import de.carne.filescanner.engine.transfer.SimpleTextRenderer;
 import de.carne.filescanner.engine.transfer.TransferSource;
 import de.carne.filescanner.engine.util.CombinedRenderer;
 import de.carne.util.Strings;
@@ -81,8 +81,8 @@ class HtmlResultDocument extends HttpHandler {
 
 	public void writeTo(Writer htmlWriter, Writer plainWriter) throws IOException {
 		try (HtmlRenderer htmlRenderer = new HtmlRenderer(htmlWriter);
-				SimpleTextRenderer textRenderer = new SimpleTextRenderer(plainWriter);
-				CombinedRenderer renderer = new CombinedRenderer(htmlRenderer, textRenderer)) {
+				PlainTextRenderer plainRenderer = new PlainTextRenderer(plainWriter);
+				CombinedRenderer renderer = new CombinedRenderer(htmlRenderer, plainRenderer)) {
 			RenderOutput.render(this.result, renderer);
 		}
 	}

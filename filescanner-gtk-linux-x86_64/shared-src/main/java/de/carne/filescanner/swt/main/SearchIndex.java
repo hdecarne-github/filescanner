@@ -55,9 +55,9 @@ import org.eclipse.jdt.annotation.Nullable;
 import de.carne.boot.Exceptions;
 import de.carne.boot.logging.Log;
 import de.carne.filescanner.engine.FileScannerResult;
+import de.carne.filescanner.engine.transfer.PlainTextRenderer;
 import de.carne.filescanner.engine.transfer.RenderOutput;
 import de.carne.filescanner.engine.transfer.RenderStyle;
-import de.carne.filescanner.engine.transfer.SimpleTextRenderer;
 import de.carne.io.Closeables;
 import de.carne.nio.file.FileUtil;
 import de.carne.nio.file.attribute.FileAttributes;
@@ -135,7 +135,7 @@ final class SearchIndex implements AutoCloseable {
 	}
 
 	private String getResultContent(FileScannerResult result) throws IOException {
-		@SuppressWarnings("resource") SimpleTextRenderer resultContent = new SimpleTextRenderer(new StringWriter());
+		@SuppressWarnings("resource") PlainTextRenderer resultContent = new PlainTextRenderer(new StringWriter());
 
 		try {
 			resultContent.emitText(0, RenderStyle.NORMAL, result.name(), true);
