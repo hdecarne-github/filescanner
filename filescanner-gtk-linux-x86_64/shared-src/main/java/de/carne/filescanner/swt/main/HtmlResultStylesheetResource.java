@@ -25,6 +25,7 @@ import org.glassfish.grizzly.http.server.Request;
 import org.glassfish.grizzly.http.server.Response;
 
 import de.carne.filescanner.engine.transfer.RenderStyle;
+import de.carne.filescanner.platform.FileScannerPlatform;
 import de.carne.filescanner.swt.preferences.Config;
 
 class HtmlResultStylesheetResource extends HttpHandler {
@@ -63,7 +64,7 @@ class HtmlResultStylesheetResource extends HttpHandler {
 		} else {
 			css.append("normal;");
 		}
-		css.append("font-size:").append(font.getHeight() * 3 / 4).append("pt;");
+		css.append("font-size:").append(FileScannerPlatform.cssFontSize(font.getHeight())).append("pt;");
 	}
 
 	private static void cssColor(StringBuilder css, RGB rgb) {
