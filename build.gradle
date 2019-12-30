@@ -72,7 +72,12 @@ subprojects {
 		}
 		testImplementation(group: "de.carne.common", name: "java-test-swt${platformSuffix}", version: project.javaSwtVersion)
 	}
-	
+
+	tasks.withType(JavaCompile) {
+		// Do not generate debug infos
+		options.compilerArgs += ["-g:none"]
+	}
+
 	test {
 		useJUnitPlatform()
 		// SWT display can only be created once per VM
