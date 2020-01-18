@@ -116,7 +116,7 @@ public class MainUI extends ShellUserInterface {
 	private final Consumer<Config> configConsumer = this::applyConfig;
 	private final UICommandSet sessionCommands = new UICommandSet();
 	private final UICommandSet resultSelectionCommands = new UICommandSet();
-	private final Property<FileScannerResult> resultSelection = new Property<>();
+	private final Property<@Nullable FileScannerResult> resultSelection = new Property<>();
 	private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
 	private enum SearchState {
@@ -442,7 +442,7 @@ public class MainUI extends ShellUserInterface {
 		} catch (CancellationException e) {
 			Exceptions.ignore(e);
 		} catch (ExecutionException e) {
-			unexpectedException(e.getCause());
+			unexpectedException(Objects.requireNonNull(e.getCause()));
 		} catch (Exception e) {
 			unexpectedException(e);
 		}
@@ -611,11 +611,11 @@ public class MainUI extends ShellUserInterface {
 
 	private void onAboutSelected() {
 		try {
-			URL logoUrl = Images.class.getResource(Images.IMAGE_FSLOGO48);
+			URL logoUrl = Objects.requireNonNull(Images.class.getResource(Images.IMAGE_FSLOGO48));
 			AboutInfoDialog aboutInfo = AboutInfoDialog.build(root(), new ModuleManifestInfos()).withLogo(logoUrl);
 
 			for (String copyrightResource : RESOURCES_COPYRIGHT) {
-				URL copyrightUrl = MainUI.class.getResource(copyrightResource);
+				URL copyrightUrl = Objects.requireNonNull(MainUI.class.getResource(copyrightResource));
 
 				aboutInfo.withCopyright(copyrightUrl);
 			}
