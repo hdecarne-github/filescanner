@@ -42,7 +42,7 @@ class HtmlResultStylesheetResource extends HttpHandler {
 		header.append(" .transparent { background-image: url(\"").append(transparentBackgroundPath).append("\"); }");
 		header.append(" .wrap { white-space: normal; }");
 		for (RenderStyle style : RenderStyle.values()) {
-			header.append(" .").append(style.name().toLowerCase()).append(" { ");
+			header.append(" .").append(style.shortName()).append(" { ");
 			header.append("white-space: inherit; ");
 			cssColor(header, config.getResultViewColor(style));
 			header.append("}");

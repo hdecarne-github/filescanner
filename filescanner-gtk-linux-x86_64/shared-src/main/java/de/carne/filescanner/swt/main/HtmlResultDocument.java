@@ -185,11 +185,11 @@ class HtmlResultDocument extends HttpHandler {
 		public void emitText(int indent, RenderStyle style, String text, boolean lineBreak) throws IOException {
 			applyIndent(indent);
 			if (lineBreak) {
-				this.writer.write(
-						HtmlRendererI18N.i18nSimpleTextWithBreak(style.name().toLowerCase(), Strings.encodeHtml(text)));
+				this.writer
+						.write(HtmlRendererI18N.i18nSimpleTextWithBreak(style.shortName(), Strings.encodeHtml(text)));
 			} else {
-				this.writer.write(HtmlRendererI18N.i18nSimpleTextWithoutBreak(style.name().toLowerCase(),
-						Strings.encodeHtml(text)));
+				this.writer.write(
+						HtmlRendererI18N.i18nSimpleTextWithoutBreak(style.shortName(), Strings.encodeHtml(text)));
 			}
 		}
 
@@ -200,11 +200,11 @@ class HtmlResultDocument extends HttpHandler {
 
 			applyIndent(indent);
 			if (lineBreak) {
-				this.writer.write(HtmlRendererI18N.i18nHrefTextWithBreak(style.name().toLowerCase(),
-						Strings.encodeHtml(text), hrefPath));
+				this.writer.write(
+						HtmlRendererI18N.i18nHrefTextWithBreak(style.shortName(), Strings.encodeHtml(text), hrefPath));
 			} else {
-				this.writer.write(HtmlRendererI18N.i18nHrefTextWithoutBreak(style.name().toLowerCase(),
-						Strings.encodeHtml(text), hrefPath));
+				this.writer.write(HtmlRendererI18N.i18nHrefTextWithoutBreak(style.shortName(), Strings.encodeHtml(text),
+						hrefPath));
 			}
 		}
 
@@ -216,19 +216,19 @@ class HtmlResultDocument extends HttpHandler {
 			applyIndent(indent);
 			if (source.transferType().isImage()) {
 				if (lineBreak) {
-					this.writer.write(HtmlRendererI18N.i18nSimpleImageWithoutBreak(style.name().toLowerCase(),
+					this.writer.write(HtmlRendererI18N.i18nSimpleImageWithoutBreak(style.shortName(),
 							mediaDataSourcePath, Strings.encodeHtml(source.name())));
 				} else {
-					this.writer.write(HtmlRendererI18N.i18nSimpleImageWithBreak(style.name().toLowerCase(),
-							mediaDataSourcePath, Strings.encodeHtml(source.name())));
+					this.writer.write(HtmlRendererI18N.i18nSimpleImageWithBreak(style.shortName(), mediaDataSourcePath,
+							Strings.encodeHtml(source.name())));
 				}
 			} else {
 				if (lineBreak) {
-					this.writer.write(HtmlRendererI18N.i18nSimpleMediaWithoutBreak(style.name().toLowerCase(),
+					this.writer.write(HtmlRendererI18N.i18nSimpleMediaWithoutBreak(style.shortName(),
 							mediaDataSourcePath, Strings.encodeHtml(source.name())));
 				} else {
-					this.writer.write(HtmlRendererI18N.i18nSimpleMediaWithBreak(style.name().toLowerCase(),
-							mediaDataSourcePath, Strings.encodeHtml(source.name())));
+					this.writer.write(HtmlRendererI18N.i18nSimpleMediaWithBreak(style.shortName(), mediaDataSourcePath,
+							Strings.encodeHtml(source.name())));
 				}
 			}
 		}
@@ -242,19 +242,19 @@ class HtmlResultDocument extends HttpHandler {
 			applyIndent(indent);
 			if (source.transferType().isImage()) {
 				if (lineBreak) {
-					this.writer.write(HtmlRendererI18N.i18nHrefImageWithoutBreak(style.name().toLowerCase(),
-							mediaDataSourcePath, Strings.encodeHtml(source.name()), hrefPath));
+					this.writer.write(HtmlRendererI18N.i18nHrefImageWithoutBreak(style.shortName(), mediaDataSourcePath,
+							Strings.encodeHtml(source.name()), hrefPath));
 				} else {
-					this.writer.write(HtmlRendererI18N.i18nHrefImageWithBreak(style.name().toLowerCase(),
-							mediaDataSourcePath, Strings.encodeHtml(source.name()), hrefPath));
+					this.writer.write(HtmlRendererI18N.i18nHrefImageWithBreak(style.shortName(), mediaDataSourcePath,
+							Strings.encodeHtml(source.name()), hrefPath));
 				}
 			} else {
 				if (lineBreak) {
-					this.writer.write(HtmlRendererI18N.i18nHrefMediaWithoutBreak(style.name().toLowerCase(),
-							mediaDataSourcePath, Strings.encodeHtml(source.name()), hrefPath));
+					this.writer.write(HtmlRendererI18N.i18nHrefMediaWithoutBreak(style.shortName(), mediaDataSourcePath,
+							Strings.encodeHtml(source.name()), hrefPath));
 				} else {
-					this.writer.write(HtmlRendererI18N.i18nHrefMediaWithBreak(style.name().toLowerCase(),
-							mediaDataSourcePath, Strings.encodeHtml(source.name()), hrefPath));
+					this.writer.write(HtmlRendererI18N.i18nHrefMediaWithBreak(style.shortName(), mediaDataSourcePath,
+							Strings.encodeHtml(source.name()), hrefPath));
 				}
 			}
 		}
