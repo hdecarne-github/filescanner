@@ -82,7 +82,7 @@ public class FileScannerMain extends UserApplication implements ApplicationMain 
 
 	@Override
 	protected Display setupDisplay() throws ResourceException {
-		ManifestInfos fileScannerInfos = new ManifestInfos("FileScanner");
+		ManifestInfos fileScannerInfos = new ModuleManifestInfos();
 		Display.setAppName(fileScannerInfos.name());
 		Display.setAppVersion(fileScannerInfos.version());
 

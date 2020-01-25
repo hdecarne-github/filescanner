@@ -88,13 +88,19 @@ subprojects {
 	project.tasks["sonarqube"].enabled = test.enabled
 
 	jar {
-		def buildTimestamp = new java.text.SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-
 		manifest {
 			attributes(
-				"X-Module-Name": "FileScanner",
-				"X-Module-Version": project.version,
-				"X-Module-Build": buildTimestamp
+				'Automatic-Module-Name': automaticModuleName,
+				'Created-By': "Gradle ${gradle.gradleVersion} (${System.properties['os.name']}:${System.properties['os.arch']}:${System.properties['os.version']})",
+				'Build-Jdk' : System.properties['java.version'],
+				'Build-Timestamp': new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ").format(new Date()),
+				'X-Compile-Target-JDK': targetCompatibility,
+				'X-Compile-Source-JDK': sourceCompatibility,
+				'X-Module-Id': project.name,
+				'X-Module-Name': "FileScanner",
+				'X-Module-Version': project.version,
+				'X-Module-DocURL': projectUrl,
+				'X-Module-License': projectLicenseUrl
 			)
 		}
 	}
@@ -108,7 +114,7 @@ subprojects {
 		}
 		manifest {
 			attributes(
-				"Main-Class": "de.carne.boot.Application",
+				'Main-Class': "de.carne.boot.Application"
 			)
 		}
 	}

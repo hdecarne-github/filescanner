@@ -16,6 +16,7 @@
  */
 package de.carne.filescanner;
 
+import de.carne.swt.platform.PlatformIntegration;
 import de.carne.util.ManifestInfos;
 
 /**
@@ -27,7 +28,7 @@ public class ModuleManifestInfos extends ManifestInfos {
 	 * Constructs a new {@linkplain ModuleManifestInfos} instance.
 	 */
 	public ModuleManifestInfos() {
-		super("FileScanner");
+		super("filescanner-" + PlatformIntegration.toolkitName());
 	}
 
 }
