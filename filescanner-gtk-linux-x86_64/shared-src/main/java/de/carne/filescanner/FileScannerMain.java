@@ -17,6 +17,7 @@
 package de.carne.filescanner;
 
 import java.io.IOException;
+import java.util.SortedMap;
 
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.swt.widgets.Display;
@@ -66,6 +67,8 @@ public class FileScannerMain extends UserApplication implements ApplicationMain 
 
 			LOG.notice("Running command ''{0}''...", logConfigCmdLine);
 
+			logRuntimeInfo();
+
 			Thread.currentThread().setPriority(Thread.NORM_PRIORITY + 1);
 
 			CmdLineProcessor applicationCmdLine = buildApplicationCmdLine(args);
@@ -92,6 +95,15 @@ public class FileScannerMain extends UserApplication implements ApplicationMain 
 	@Override
 	protected ShellUserInterface setupUserInterface(Display display) throws ResourceException {
 		return this.mainInterfaceHolder.set(new MainUI(new Shell(display)));
+	}
+
+	private void logRuntimeInfo() {
+		SortedMap<String, ManifestInfos> runtimeInfos = ManifestInfos.getRuntimeInfos();
+
+		LOG.info("Runtime infos:");
+		for (ManifestInfos manifestInfos : runtimeInfos.values()) {
+			LOG.info(" {0}", manifestInfos);
+		}
 	}
 
 	private CmdLineProcessor buildLogConfigCmdLine(@Nullable String[] args) {
