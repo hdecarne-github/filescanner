@@ -87,8 +87,8 @@ class HtmlRenderServer {
 		this.persistentSessionHandlers.clear();
 	}
 
-	public synchronized HtmlResultDocument createResultDocument(HtmlNavigation navigation, FileScannerResult result,
-			boolean persistent) {
+	public synchronized HtmlResultDocument createResultDocument(FileScannerResult result,
+			@Nullable HtmlNavigation navigation, boolean persistent) {
 		ServerConfiguration configuration = this.httpServer.getServerConfiguration();
 
 		for (HttpHandler sessionHandler : this.transientSessionHandlers) {
@@ -98,7 +98,7 @@ class HtmlRenderServer {
 		URI serverUri = getHttpServerUri(this.httpServer);
 		@SuppressWarnings("squid:S1075") String resultDocumentPath = "/" + UUID.randomUUID().toString();
 		HtmlResultDocument resultDocument = new HtmlResultDocument(serverUri, resultDocumentPath, STYLESHEET_PATH,
-				navigation, result);
+				result, navigation);
 
 		configuration.addHttpHandler(resultDocument, resultDocumentPath);
 		if (persistent) {

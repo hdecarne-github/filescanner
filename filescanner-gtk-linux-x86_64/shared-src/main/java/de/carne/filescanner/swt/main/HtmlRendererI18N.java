@@ -38,6 +38,25 @@ public final class HtmlRendererI18N {
 	}
 
 	/**
+	 * Resource key {@code I18N_BREAK}
+	 * <p>
+	 * &lt;br&gt;
+	 */
+	public static final String I18N_BREAK = "I18N_BREAK";
+
+	/**
+	 * Resource string {@code I18N_BREAK}
+	 * <p>
+	 * &lt;br&gt;
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nBreak(Object... arguments) {
+		return format(I18N_BREAK, arguments);
+	}
+
+	/**
 	 * Resource key {@code I18N_EPILOGUE}
 	 * <p>
 	 * &lt;&frasl;body&gt;&lt;&frasl;html&gt;
@@ -57,117 +76,79 @@ public final class HtmlRendererI18N {
 	}
 
 	/**
-	 * Resource key {@code I18N_HREF_IMAGE_WITHOUT_BREAK}
+	 * Resource key {@code I18N_HREF}
 	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;&lt;a href=&quot;{3}&quot;&gt;&lt;img src=&quot;{1}&quot; alt=&quot;{2}&quot;&gt;&lt;&frasl;a&gt;&lt;&frasl;span&gt;
+	 * &lt;a href=&quot;{0}&quot;&gt;{1}&lt;&frasl;a&gt;
 	 */
-	public static final String I18N_HREF_IMAGE_WITHOUT_BREAK = "I18N_HREF_IMAGE_WITHOUT_BREAK";
+	public static final String I18N_HREF = "I18N_HREF";
 
 	/**
-	 * Resource string {@code I18N_HREF_IMAGE_WITHOUT_BREAK}
+	 * Resource string {@code I18N_HREF}
 	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;&lt;a href=&quot;{3}&quot;&gt;&lt;img src=&quot;{1}&quot; alt=&quot;{2}&quot;&gt;&lt;&frasl;a&gt;&lt;&frasl;span&gt;
+	 * &lt;a href=&quot;{0}&quot;&gt;{1}&lt;&frasl;a&gt;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
 	 */
-	public static String i18nHrefImageWithoutBreak(Object... arguments) {
-		return format(I18N_HREF_IMAGE_WITHOUT_BREAK, arguments);
+	public static String i18nHref(Object... arguments) {
+		return format(I18N_HREF, arguments);
 	}
 
 	/**
-	 * Resource key {@code I18N_HREF_IMAGE_WITH_BREAK}
+	 * Resource key {@code I18N_HREF_IMG}
 	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;&lt;a href=&quot;{3}&quot;&gt;&lt;img src=&quot;{1}&quot; alt=&quot;{2}&quot;&gt;&lt;&frasl;a&gt;&lt;&frasl;span&gt;&lt;br&gt;
+	 * &lt;a href=&quot;{0}&quot;&gt;&lt;img src=&quot;{1}&quot; alt=&quot;{2}&quot;&gt;&lt;&frasl;a&gt;
 	 */
-	public static final String I18N_HREF_IMAGE_WITH_BREAK = "I18N_HREF_IMAGE_WITH_BREAK";
+	public static final String I18N_HREF_IMG = "I18N_HREF_IMG";
 
 	/**
-	 * Resource string {@code I18N_HREF_IMAGE_WITH_BREAK}
+	 * Resource string {@code I18N_HREF_IMG}
 	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;&lt;a href=&quot;{3}&quot;&gt;&lt;img src=&quot;{1}&quot; alt=&quot;{2}&quot;&gt;&lt;&frasl;a&gt;&lt;&frasl;span&gt;&lt;br&gt;
+	 * &lt;a href=&quot;{0}&quot;&gt;&lt;img src=&quot;{1}&quot; alt=&quot;{2}&quot;&gt;&lt;&frasl;a&gt;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
 	 */
-	public static String i18nHrefImageWithBreak(Object... arguments) {
-		return format(I18N_HREF_IMAGE_WITH_BREAK, arguments);
+	public static String i18nHrefImg(Object... arguments) {
+		return format(I18N_HREF_IMG, arguments);
 	}
 
 	/**
-	 * Resource key {@code I18N_HREF_MEDIA_WITHOUT_BREAK}
+	 * Resource key {@code I18N_HREF_MEDIA}
 	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;[&lt;a href=&quot;{1}&quot;&gt;{2}&lt;&frasl;a&gt;]&lt;&frasl;span&gt;
+	 * [&lt;a href=&quot;{1}&quot;&gt;{2}&lt;&frasl;a&gt;&lt;a href=&quot;{0}&quot;&gt;&amp;#21e8&lt;&frasl;a&gt;]
 	 */
-	public static final String I18N_HREF_MEDIA_WITHOUT_BREAK = "I18N_HREF_MEDIA_WITHOUT_BREAK";
+	public static final String I18N_HREF_MEDIA = "I18N_HREF_MEDIA";
 
 	/**
-	 * Resource string {@code I18N_HREF_MEDIA_WITHOUT_BREAK}
+	 * Resource string {@code I18N_HREF_MEDIA}
 	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;[&lt;a href=&quot;{1}&quot;&gt;{2}&lt;&frasl;a&gt;]&lt;&frasl;span&gt;
+	 * [&lt;a href=&quot;{1}&quot;&gt;{2}&lt;&frasl;a&gt;&lt;a href=&quot;{0}&quot;&gt;&amp;#21e8&lt;&frasl;a&gt;]
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
 	 */
-	public static String i18nHrefMediaWithoutBreak(Object... arguments) {
-		return format(I18N_HREF_MEDIA_WITHOUT_BREAK, arguments);
+	public static String i18nHrefMedia(Object... arguments) {
+		return format(I18N_HREF_MEDIA, arguments);
 	}
 
 	/**
-	 * Resource key {@code I18N_HREF_MEDIA_WITH_BREAK}
+	 * Resource key {@code I18N_IMG}
 	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;[&lt;a href=&quot;{1}&quot;&gt;{2}&lt;&frasl;a&gt;]&lt;&frasl;span&gt;&lt;br&gt;
+	 * &lt;img src=&quot;{0}&quot; alt=&quot;{1}&quot;&gt;
 	 */
-	public static final String I18N_HREF_MEDIA_WITH_BREAK = "I18N_HREF_MEDIA_WITH_BREAK";
+	public static final String I18N_IMG = "I18N_IMG";
 
 	/**
-	 * Resource string {@code I18N_HREF_MEDIA_WITH_BREAK}
+	 * Resource string {@code I18N_IMG}
 	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;[&lt;a href=&quot;{1}&quot;&gt;{2}&lt;&frasl;a&gt;]&lt;&frasl;span&gt;&lt;br&gt;
+	 * &lt;img src=&quot;{0}&quot; alt=&quot;{1}&quot;&gt;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
 	 */
-	public static String i18nHrefMediaWithBreak(Object... arguments) {
-		return format(I18N_HREF_MEDIA_WITH_BREAK, arguments);
-	}
-
-	/**
-	 * Resource key {@code I18N_HREF_TEXT_WITHOUT_BREAK}
-	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;&lt;a href=&quot;{2}&quot;&gt;{1}&lt;&frasl;a&gt;&lt;&frasl;span&gt;
-	 */
-	public static final String I18N_HREF_TEXT_WITHOUT_BREAK = "I18N_HREF_TEXT_WITHOUT_BREAK";
-
-	/**
-	 * Resource string {@code I18N_HREF_TEXT_WITHOUT_BREAK}
-	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;&lt;a href=&quot;{2}&quot;&gt;{1}&lt;&frasl;a&gt;&lt;&frasl;span&gt;
-	 *
-	 * @param arguments Format arguments.
-	 * @return The formatted string.
-	 */
-	public static String i18nHrefTextWithoutBreak(Object... arguments) {
-		return format(I18N_HREF_TEXT_WITHOUT_BREAK, arguments);
-	}
-
-	/**
-	 * Resource key {@code I18N_HREF_TEXT_WITH_BREAK}
-	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;&lt;a href=&quot;{2}&quot;&gt;{1}&lt;&frasl;a&gt;&lt;&frasl;span&gt;&lt;br&gt;
-	 */
-	public static final String I18N_HREF_TEXT_WITH_BREAK = "I18N_HREF_TEXT_WITH_BREAK";
-
-	/**
-	 * Resource string {@code I18N_HREF_TEXT_WITH_BREAK}
-	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;&lt;a href=&quot;{2}&quot;&gt;{1}&lt;&frasl;a&gt;&lt;&frasl;span&gt;&lt;br&gt;
-	 *
-	 * @param arguments Format arguments.
-	 * @return The formatted string.
-	 */
-	public static String i18nHrefTextWithBreak(Object... arguments) {
-		return format(I18N_HREF_TEXT_WITH_BREAK, arguments);
+	public static String i18nImg(Object... arguments) {
+		return format(I18N_IMG, arguments);
 	}
 
 	/**
@@ -209,6 +190,25 @@ public final class HtmlRendererI18N {
 	}
 
 	/**
+	 * Resource key {@code I18N_MEDIA}
+	 * <p>
+	 * [&lt;a href=&quot;{0}&quot;&gt;{1}&lt;&frasl;a&gt;]
+	 */
+	public static final String I18N_MEDIA = "I18N_MEDIA";
+
+	/**
+	 * Resource string {@code I18N_MEDIA}
+	 * <p>
+	 * [&lt;a href=&quot;{0}&quot;&gt;{1}&lt;&frasl;a&gt;]
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nMedia(Object... arguments) {
+		return format(I18N_MEDIA, arguments);
+	}
+
+	/**
 	 * Resource key {@code I18N_PROLOGUE_DEFAULT}
 	 * <p>
 	 * &lt;!DOCTYPE HTML&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;base href=&quot;{0}&quot;&gt;&lt;link rel=&quot;stylesheet&quot; type=&quot;text&frasl;css&quot; href=&quot;{1}&quot;&gt;&lt;&frasl;head&gt;&lt;body&gt;
@@ -247,117 +247,41 @@ public final class HtmlRendererI18N {
 	}
 
 	/**
-	 * Resource key {@code I18N_SIMPLE_IMAGE_WITHOUT_BREAK}
+	 * Resource key {@code I18N_STYLE_END}
 	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;&lt;img src=&quot;{1}&quot; alt=&quot;{2}&quot;&gt;&lt;&frasl;span&gt;
+	 * &lt;&frasl;span&gt;
 	 */
-	public static final String I18N_SIMPLE_IMAGE_WITHOUT_BREAK = "I18N_SIMPLE_IMAGE_WITHOUT_BREAK";
+	public static final String I18N_STYLE_END = "I18N_STYLE_END";
 
 	/**
-	 * Resource string {@code I18N_SIMPLE_IMAGE_WITHOUT_BREAK}
+	 * Resource string {@code I18N_STYLE_END}
 	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;&lt;img src=&quot;{1}&quot; alt=&quot;{2}&quot;&gt;&lt;&frasl;span&gt;
+	 * &lt;&frasl;span&gt;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
 	 */
-	public static String i18nSimpleImageWithoutBreak(Object... arguments) {
-		return format(I18N_SIMPLE_IMAGE_WITHOUT_BREAK, arguments);
+	public static String i18nStyleEnd(Object... arguments) {
+		return format(I18N_STYLE_END, arguments);
 	}
 
 	/**
-	 * Resource key {@code I18N_SIMPLE_IMAGE_WITH_BREAK}
+	 * Resource key {@code I18N_STYLE_START}
 	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;&lt;img src=&quot;{1}&quot; alt=&quot;{2}&quot;&gt;&lt;&frasl;span&gt;&lt;br&gt;
+	 * &lt;span class=&quot;{0}&quot;&gt;
 	 */
-	public static final String I18N_SIMPLE_IMAGE_WITH_BREAK = "I18N_SIMPLE_IMAGE_WITH_BREAK";
+	public static final String I18N_STYLE_START = "I18N_STYLE_START";
 
 	/**
-	 * Resource string {@code I18N_SIMPLE_IMAGE_WITH_BREAK}
+	 * Resource string {@code I18N_STYLE_START}
 	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;&lt;img src=&quot;{1}&quot; alt=&quot;{2}&quot;&gt;&lt;&frasl;span&gt;&lt;br&gt;
+	 * &lt;span class=&quot;{0}&quot;&gt;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
 	 */
-	public static String i18nSimpleImageWithBreak(Object... arguments) {
-		return format(I18N_SIMPLE_IMAGE_WITH_BREAK, arguments);
-	}
-
-	/**
-	 * Resource key {@code I18N_SIMPLE_MEDIA_WITHOUT_BREAK}
-	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;[&lt;a href=&quot;{1}&quot;&gt;{2}&lt;&frasl;a&gt;]&lt;&frasl;span&gt;
-	 */
-	public static final String I18N_SIMPLE_MEDIA_WITHOUT_BREAK = "I18N_SIMPLE_MEDIA_WITHOUT_BREAK";
-
-	/**
-	 * Resource string {@code I18N_SIMPLE_MEDIA_WITHOUT_BREAK}
-	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;[&lt;a href=&quot;{1}&quot;&gt;{2}&lt;&frasl;a&gt;]&lt;&frasl;span&gt;
-	 *
-	 * @param arguments Format arguments.
-	 * @return The formatted string.
-	 */
-	public static String i18nSimpleMediaWithoutBreak(Object... arguments) {
-		return format(I18N_SIMPLE_MEDIA_WITHOUT_BREAK, arguments);
-	}
-
-	/**
-	 * Resource key {@code I18N_SIMPLE_MEDIA_WITH_BREAK}
-	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;[&lt;a href=&quot;{1}&quot;&gt;{2}&lt;&frasl;a&gt;]&lt;&frasl;span&gt;&lt;br&gt;
-	 */
-	public static final String I18N_SIMPLE_MEDIA_WITH_BREAK = "I18N_SIMPLE_MEDIA_WITH_BREAK";
-
-	/**
-	 * Resource string {@code I18N_SIMPLE_MEDIA_WITH_BREAK}
-	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;[&lt;a href=&quot;{1}&quot;&gt;{2}&lt;&frasl;a&gt;]&lt;&frasl;span&gt;&lt;br&gt;
-	 *
-	 * @param arguments Format arguments.
-	 * @return The formatted string.
-	 */
-	public static String i18nSimpleMediaWithBreak(Object... arguments) {
-		return format(I18N_SIMPLE_MEDIA_WITH_BREAK, arguments);
-	}
-
-	/**
-	 * Resource key {@code I18N_SIMPLE_TEXT_WITHOUT_BREAK}
-	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;{1}&lt;&frasl;span&gt;
-	 */
-	public static final String I18N_SIMPLE_TEXT_WITHOUT_BREAK = "I18N_SIMPLE_TEXT_WITHOUT_BREAK";
-
-	/**
-	 * Resource string {@code I18N_SIMPLE_TEXT_WITHOUT_BREAK}
-	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;{1}&lt;&frasl;span&gt;
-	 *
-	 * @param arguments Format arguments.
-	 * @return The formatted string.
-	 */
-	public static String i18nSimpleTextWithoutBreak(Object... arguments) {
-		return format(I18N_SIMPLE_TEXT_WITHOUT_BREAK, arguments);
-	}
-
-	/**
-	 * Resource key {@code I18N_SIMPLE_TEXT_WITH_BREAK}
-	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;{1}&lt;&frasl;span&gt;&lt;br&gt;
-	 */
-	public static final String I18N_SIMPLE_TEXT_WITH_BREAK = "I18N_SIMPLE_TEXT_WITH_BREAK";
-
-	/**
-	 * Resource string {@code I18N_SIMPLE_TEXT_WITH_BREAK}
-	 * <p>
-	 * &lt;span class=&quot;{0}&quot;&gt;{1}&lt;&frasl;span&gt;&lt;br&gt;
-	 *
-	 * @param arguments Format arguments.
-	 * @return The formatted string.
-	 */
-	public static String i18nSimpleTextWithBreak(Object... arguments) {
-		return format(I18N_SIMPLE_TEXT_WITH_BREAK, arguments);
+	public static String i18nStyleStart(Object... arguments) {
+		return format(I18N_STYLE_START, arguments);
 	}
 
 	/**

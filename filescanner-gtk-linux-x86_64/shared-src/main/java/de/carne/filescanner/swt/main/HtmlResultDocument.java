@@ -21,7 +21,9 @@ import java.io.Writer;
 import java.net.URI;
 import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -32,6 +34,7 @@ import org.glassfish.grizzly.http.server.Request;
 import org.glassfish.grizzly.http.server.Response;
 import org.glassfish.grizzly.http.util.ContentType;
 
+import de.carne.boot.Exceptions;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.transfer.PlainTextRenderer;
 import de.carne.filescanner.engine.transfer.RenderOption;
@@ -39,30 +42,30 @@ import de.carne.filescanner.engine.transfer.RenderOutput;
 import de.carne.filescanner.engine.transfer.RenderStyle;
 import de.carne.filescanner.engine.transfer.Renderer;
 import de.carne.filescanner.engine.transfer.TransferSource;
+import de.carne.filescanner.engine.transfer.TransferType;
 import de.carne.filescanner.engine.util.CombinedRenderer;
 import de.carne.util.Strings;
 
 class HtmlResultDocument extends HttpHandler {
 
-	static final HtmlNavigation NO_NAVIGATION = (result, position) -> {
-		throw new IOException();
-	};
-
 	private final URI serverUri;
 	private final String documentPath;
 	private final String stylesheetPath;
-	private final HtmlNavigation navigation;
 	private final FileScannerResult result;
+	private final @Nullable HtmlNavigation navigation;
 	private final Map<String, TransferSource> mediaDataSources = new HashMap<>();
 	private final Map<String, Long> hrefPositions = new HashMap<>();
+	private final List<Long> pageOffsets = new ArrayList<>();
+	private long currentPageOffset = 0l;
 
-	public HtmlResultDocument(URI serverUri, String documentPath, String stylesheetPath, HtmlNavigation navigation,
-			FileScannerResult result) {
+	HtmlResultDocument(URI serverUri, String documentPath, String stylesheetPath, FileScannerResult result,
+			@Nullable HtmlNavigation navigation) {
 		this.serverUri = serverUri;
 		this.documentPath = documentPath;
 		this.stylesheetPath = stylesheetPath;
-		this.navigation = navigation;
 		this.result = result;
+		this.navigation = navigation;
+		this.pageOffsets.add(this.currentPageOffset);
 	}
 
 	public FileScannerResult result() {
@@ -73,55 +76,87 @@ class HtmlResultDocument extends HttpHandler {
 		return this.serverUri.resolve(this.documentPath).toASCIIString();
 	}
 
-	public void writeTo(Writer htmlWriter) throws IOException {
-		try (HtmlRenderer renderer = new HtmlRenderer(htmlWriter)) {
-			RenderOutput.render(this.result, renderer);
-		}
-	}
-
-	public void writeTo(Writer htmlWriter, Writer plainWriter) throws IOException {
+	public synchronized void writeTo(Writer htmlWriter, Writer plainWriter) throws IOException {
 		try (HtmlRenderer htmlRenderer = new HtmlRenderer(htmlWriter);
 				PlainTextRenderer plainRenderer = new PlainTextRenderer(plainWriter);
 				CombinedRenderer renderer = new CombinedRenderer(htmlRenderer, plainRenderer)) {
+			this.mediaDataSources.clear();
+			this.hrefPositions.clear();
 			RenderOutput.render(this.result, renderer);
 		}
 	}
 
 	private static final String REQUEST_PARAMETER_MEDIA_SOURCE_ID = "msid";
 	private static final String REQUEST_PARAMETER_HREF_ID = "hrefid";
+	private static final String REQUEST_PARAMETER_PAGE_ID = "pageid";
 
 	@Override
 	public void service(@Nullable Request request, @Nullable Response response) throws Exception {
 		if (request != null && response != null) {
 			String mediaSourceId = request.getParameter(REQUEST_PARAMETER_MEDIA_SOURCE_ID);
-			TransferSource mediaSource;
 			String hrefId = request.getParameter(REQUEST_PARAMETER_HREF_ID);
-			Long hrefPosition;
+			String pageId = request.getParameter(REQUEST_PARAMETER_PAGE_ID);
 
-			if ((mediaSource = this.mediaDataSources.get(mediaSourceId)) != null) {
-				response.setContentType(ContentType.newContentType(mediaSource.transferType().mimeType(), null));
-				try (WritableByteChannel outputChannel = Channels.newChannel(response.getOutputStream())) {
-					mediaSource.transfer(outputChannel);
-				}
-			} else if (!NO_NAVIGATION.equals(this.navigation)
-					&& (hrefPosition = this.hrefPositions.get(hrefId)) != null) {
-				this.navigation.navigateToPosition(this.result, hrefPosition);
-			} else if (mediaSourceId == null && hrefId == null) {
-				response.setContentType(HtmlResourceType.TEXT_HTML.contentType());
-				writeTo(response.getWriter());
+			if (mediaSourceId != null) {
+				serviceMediaSource(mediaSourceId, response);
+			} else if (hrefId != null) {
+				serviceNavigation(hrefId, response);
 			} else {
-				response.sendError(404);
+				serviceHtml(pageId, response);
 			}
+		}
+	}
+
+	private synchronized void serviceMediaSource(String mediaSourceId, Response response) throws IOException {
+		TransferSource mediaSource = this.mediaDataSources.get(mediaSourceId);
+
+		if (mediaSource != null) {
+			response.setContentType(ContentType.newContentType(mediaSource.transferType().mimeType(), null));
+			try (WritableByteChannel outputChannel = Channels.newChannel(response.getOutputStream())) {
+				mediaSource.transfer(outputChannel);
+			}
+		} else {
+			response.sendError(404);
+		}
+	}
+
+	private synchronized void serviceNavigation(String hrefId, Response response) throws IOException {
+		Long hrefPosition = this.hrefPositions.get(hrefId);
+
+		if (hrefPosition != null && this.navigation != null) {
+			this.navigation.navigateToPosition(this.result, hrefPosition);
+		} else {
+			response.sendError(404);
+		}
+	}
+
+	private synchronized void serviceHtml(@Nullable String pageId, Response response) throws IOException {
+		int pageIndex = 0;
+
+		if (pageId != null) {
+			try {
+				pageIndex = Integer.parseInt(pageId);
+			} catch (NumberFormatException e) {
+				Exceptions.ignore(e);
+			}
+			pageIndex = Math.min(Math.max(pageIndex, 1), this.pageOffsets.size()) - 1;
+		}
+		this.currentPageOffset = this.pageOffsets.get(pageIndex);
+		response.setContentType(HtmlResourceType.TEXT_HTML.contentType());
+		try (HtmlRenderer renderer = new HtmlRenderer(response.getWriter())) {
+			this.mediaDataSources.clear();
+			this.hrefPositions.clear();
+			RenderOutput.render(this.result, renderer);
 		}
 	}
 
 	@Override
 	public String toString() {
-		return this.serverUri.resolve(this.documentPath).toASCIIString();
+		return documentUri();
 	}
 
-	String serverUri() {
-		return this.serverUri.toASCIIString();
+	String documentUri() {
+		return this.serverUri.resolve(this.documentPath).toASCIIString();
 	}
 
 	String stylesheetPath() {
@@ -129,27 +164,32 @@ class HtmlResultDocument extends HttpHandler {
 	}
 
 	String createMediaDataPath(TransferSource source) {
-		String mediaDataSourceId = Integer.toHexString(this.mediaDataSources.size() + 1);
+		String mediaDataSourceId = Integer.toString(this.mediaDataSources.size() + 1);
 
 		this.mediaDataSources.put(mediaDataSourceId, source);
-
-		return this.documentPath + "/?" + REQUEST_PARAMETER_MEDIA_SOURCE_ID + "=" + mediaDataSourceId;
+		return "?" + REQUEST_PARAMETER_MEDIA_SOURCE_ID + "=" + mediaDataSourceId;
 	}
 
 	String createHrefPath(long position) {
-		String hrefId = Integer.toHexString(this.hrefPositions.size() + 1);
+		String hrefId = Integer.toString(this.hrefPositions.size() + 1);
 
 		this.hrefPositions.put(hrefId, position);
+		return "?" + REQUEST_PARAMETER_HREF_ID + "=" + hrefId;
+	}
 
-		return this.documentPath + "/?" + REQUEST_PARAMETER_HREF_ID + "=" + hrefId;
+	String getPagePath(int pageIndex) {
+		String pageId = Integer.toString(pageIndex + 1);
+
+		return "?" + REQUEST_PARAMETER_PAGE_ID + "=" + pageId;
 	}
 
 	private class HtmlRenderer implements Renderer {
 
 		private final Writer writer;
-		private int lastIndent;
+		private int currentIndent;
+		private @Nullable RenderStyle currentStyle = null;
 
-		public HtmlRenderer(Writer writer) {
+		HtmlRenderer(Writer writer) {
 			this.writer = writer;
 		}
 
@@ -165,9 +205,9 @@ class HtmlResultDocument extends HttpHandler {
 			addPrologueStyle(styles, options, RenderOption.TRANSPARENCY, "transparent");
 			addPrologueStyle(styles, options, RenderOption.WRAP, "wrap");
 			if (styles.length() > 0) {
-				this.writer.write(HtmlRendererI18N.i18nPrologueExtended(serverUri(), stylesheetPath(), styles));
+				this.writer.write(HtmlRendererI18N.i18nPrologueExtended(documentUri(), stylesheetPath(), styles));
 			} else {
-				this.writer.write(HtmlRendererI18N.i18nPrologueDefault(serverUri(), stylesheetPath()));
+				this.writer.write(HtmlRendererI18N.i18nPrologueDefault(documentUri(), stylesheetPath()));
 			}
 		}
 
@@ -183,13 +223,10 @@ class HtmlResultDocument extends HttpHandler {
 
 		@Override
 		public void emitText(int indent, RenderStyle style, String text, boolean lineBreak) throws IOException {
-			applyIndent(indent);
+			applyIndentAndStyle(indent, style);
+			this.writer.write(Strings.encodeHtml(text));
 			if (lineBreak) {
-				this.writer
-						.write(HtmlRendererI18N.i18nSimpleTextWithBreak(style.shortName(), Strings.encodeHtml(text)));
-			} else {
-				this.writer.write(
-						HtmlRendererI18N.i18nSimpleTextWithoutBreak(style.shortName(), Strings.encodeHtml(text)));
+				emitBreak();
 			}
 		}
 
@@ -198,13 +235,10 @@ class HtmlResultDocument extends HttpHandler {
 				throws IOException {
 			String hrefPath = createHrefPath(href);
 
-			applyIndent(indent);
+			applyIndentAndStyle(indent, style);
+			this.writer.write(HtmlRendererI18N.i18nHref(hrefPath, Strings.encodeHtml(text)));
 			if (lineBreak) {
-				this.writer.write(
-						HtmlRendererI18N.i18nHrefTextWithBreak(style.shortName(), Strings.encodeHtml(text), hrefPath));
-			} else {
-				this.writer.write(HtmlRendererI18N.i18nHrefTextWithoutBreak(style.shortName(), Strings.encodeHtml(text),
-						hrefPath));
+				emitBreak();
 			}
 		}
 
@@ -213,23 +247,19 @@ class HtmlResultDocument extends HttpHandler {
 				throws IOException {
 			String mediaDataSourcePath = createMediaDataPath(source);
 
-			applyIndent(indent);
-			if (source.transferType().isImage()) {
-				if (lineBreak) {
-					this.writer.write(HtmlRendererI18N.i18nSimpleImageWithoutBreak(style.shortName(),
-							mediaDataSourcePath, Strings.encodeHtml(source.name())));
-				} else {
-					this.writer.write(HtmlRendererI18N.i18nSimpleImageWithBreak(style.shortName(), mediaDataSourcePath,
-							Strings.encodeHtml(source.name())));
-				}
+			applyIndentAndStyle(indent, style);
+
+			TransferType transferType = source.transferType();
+
+			if (transferType.isImage()) {
+				this.writer.write(
+						HtmlRendererI18N.i18nImg(mediaDataSourcePath, Strings.encodeHtml(transferType.mimeType())));
 			} else {
-				if (lineBreak) {
-					this.writer.write(HtmlRendererI18N.i18nSimpleMediaWithoutBreak(style.shortName(),
-							mediaDataSourcePath, Strings.encodeHtml(source.name())));
-				} else {
-					this.writer.write(HtmlRendererI18N.i18nSimpleMediaWithBreak(style.shortName(), mediaDataSourcePath,
-							Strings.encodeHtml(source.name())));
-				}
+				this.writer.write(
+						HtmlRendererI18N.i18nMedia(mediaDataSourcePath, Strings.encodeHtml(transferType.mimeType())));
+			}
+			if (lineBreak) {
+				emitBreak();
 			}
 		}
 
@@ -239,43 +269,61 @@ class HtmlResultDocument extends HttpHandler {
 			String mediaDataSourcePath = createMediaDataPath(source);
 			String hrefPath = createHrefPath(href);
 
-			applyIndent(indent);
-			if (source.transferType().isImage()) {
-				if (lineBreak) {
-					this.writer.write(HtmlRendererI18N.i18nHrefImageWithoutBreak(style.shortName(), mediaDataSourcePath,
-							Strings.encodeHtml(source.name()), hrefPath));
-				} else {
-					this.writer.write(HtmlRendererI18N.i18nHrefImageWithBreak(style.shortName(), mediaDataSourcePath,
-							Strings.encodeHtml(source.name()), hrefPath));
-				}
+			applyIndentAndStyle(indent, style);
+
+			TransferType transferType = source.transferType();
+
+			if (transferType.isImage()) {
+				this.writer.write(HtmlRendererI18N.i18nHrefImg(hrefPath, mediaDataSourcePath,
+						Strings.encodeHtml(transferType.mimeType())));
 			} else {
-				if (lineBreak) {
-					this.writer.write(HtmlRendererI18N.i18nHrefMediaWithoutBreak(style.shortName(), mediaDataSourcePath,
-							Strings.encodeHtml(source.name()), hrefPath));
-				} else {
-					this.writer.write(HtmlRendererI18N.i18nHrefMediaWithBreak(style.shortName(), mediaDataSourcePath,
-							Strings.encodeHtml(source.name()), hrefPath));
-				}
+				this.writer.write(HtmlRendererI18N.i18nHrefMedia(hrefPath, mediaDataSourcePath,
+						Strings.encodeHtml(transferType.mimeType())));
+			}
+			if (lineBreak) {
+				emitBreak();
 			}
 		}
 
 		@Override
 		public void emitEpilogue() throws IOException {
-			applyIndent(0);
+			applyIndentAndStyle(0, null);
 			this.writer.write(HtmlRendererI18N.i18nEpilogue());
 		}
 
-		private void applyIndent(int indent) throws IOException {
-			if (indent >= 0) {
-				while (this.lastIndent < indent) {
-					this.writer.write(HtmlRendererI18N.i18nIndentIn());
-					this.lastIndent++;
+		private void applyIndentAndStyle(int indent, @Nullable RenderStyle style) throws IOException {
+			if (indent >= 0 && this.currentIndent != indent) {
+				if (this.currentStyle != null) {
+					this.writer.write(HtmlRendererI18N.i18nStyleEnd());
 				}
-				while (this.lastIndent > indent) {
+				while (this.currentIndent < indent) {
+					this.writer.write(HtmlRendererI18N.i18nIndentIn());
+					this.currentIndent++;
+				}
+				while (this.currentIndent > indent) {
 					this.writer.write(HtmlRendererI18N.i18nIndentOut());
-					this.lastIndent--;
+					this.currentIndent--;
+				}
+				if (style != null) {
+					this.writer.write(HtmlRendererI18N.i18nStyleStart(style.shortName()));
+				}
+			} else if (this.currentStyle != style) {
+				if (this.currentStyle != null) {
+					this.writer.write(HtmlRendererI18N.i18nStyleEnd());
+				}
+				if (style != null) {
+					this.writer.write(HtmlRendererI18N.i18nStyleStart(style.shortName()));
 				}
 			}
+			this.currentStyle = style;
+		}
+
+		private void emitBreak() throws IOException {
+			if (this.currentStyle != null) {
+				this.writer.write(HtmlRendererI18N.i18nStyleEnd());
+				this.currentStyle = null;
+			}
+			this.writer.write(HtmlRendererI18N.i18nBreak());
 		}
 
 		@Override

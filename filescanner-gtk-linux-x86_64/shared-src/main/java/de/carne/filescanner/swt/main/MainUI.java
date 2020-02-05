@@ -18,6 +18,8 @@ package de.carne.filescanner.swt.main;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -43,6 +45,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ProgressBar;
@@ -70,7 +73,6 @@ import de.carne.filescanner.swt.widgets.Hex;
 import de.carne.swt.dnd.DropTargetBuilder;
 import de.carne.swt.graphics.ResourceException;
 import de.carne.swt.graphics.ResourceTracker;
-import de.carne.swt.layout.FillLayoutBuilder;
 import de.carne.swt.layout.GridLayoutBuilder;
 import de.carne.swt.platform.PlatformIntegration;
 import de.carne.swt.util.Property;
@@ -105,7 +107,8 @@ public class MainUI extends ShellUserInterface {
 	private final Late<MainController> controllerHolder = new Late<>();
 	private final Late<Text> searchQueryHolder = new Late<>();
 	private final Late<Tree> resultTreeHolder = new Late<>();
-	private final Late<Browser> resultViewHolder = new Late<>();
+	private final Late<Browser> resultViewBrowserHolder = new Late<>();
+	private final Late<Link> resultViewPaginationHolder = new Late<>();
 	private final Late<Hex> inputViewHolder = new Late<>();
 	private final Late<ProgressBar> sessionProgressHolder = new Late<>();
 	private final Late<Label> sessionStatusHolder = new Late<>();
@@ -197,7 +200,8 @@ public class MainUI extends ShellUserInterface {
 	void resetSession(boolean session) {
 		this.resultRenderServerHolder.get().clearSession();
 		this.resultTreeHolder.get().removeAll();
-		this.resultViewHolder.get().setText(getDefaultResultView());
+		this.resultViewBrowserHolder.get().setText(getDefaultResultView());
+		resetResultViewPagination();
 		this.sessionProgressHolder.get().setSelection(0);
 		this.sessionStatusHolder.get().setText("");
 		this.sessionCommands.setEnabled(session);
@@ -421,7 +425,7 @@ public class MainUI extends ShellUserInterface {
 	}
 
 	private void onPrintObjectSelected() {
-		this.resultViewHolder.get().execute("javascript:window.print();");
+		this.resultViewBrowserHolder.get().execute("javascript:window.print();");
 	}
 
 	private void onExportObjectSelected() {
@@ -634,14 +638,15 @@ public class MainUI extends ShellUserInterface {
 			this.resultTreeHolder.get().showItem(resultItem);
 			this.inputViewHolder.get().setResult(newResult);
 
-			HtmlResultDocument resultDocument = this.resultRenderServerHolder.get()
-					.createResultDocument(this::navigateToPosition, newResult, false);
+			HtmlResultDocument resultDocument = this.resultRenderServerHolder.get().createResultDocument(newResult,
+					this::navigateToPosition, false);
 
-			this.resultViewHolder.get().setUrl(resultDocument.documentUrl());
+			resetResultViewPagination();
+			this.resultViewBrowserHolder.get().setUrl(resultDocument.documentUrl());
 			this.resultSelectionCommands.setEnabled(true);
 			resetCopyObjectMenus(newResult);
 		} else {
-			this.resultViewHolder.get().setText(getDefaultResultView());
+			this.resultViewBrowserHolder.get().setText(getDefaultResultView());
 			this.resultSelectionCommands.setEnabled(false);
 			clearCopyObjectMenus();
 		}
@@ -653,6 +658,24 @@ public class MainUI extends ShellUserInterface {
 
 		return HtmlRendererI18N.i18nTextDefaultResultViewHtml(Strings.encodeHtml(engineInfos.name()),
 				Strings.encodeHtml(engineInfos.version()), Strings.encodeHtml(engineInfos.build()));
+	}
+
+	private void resetResultViewPagination() {
+		resetResultViewPagination(Collections.emptyList(), -1);
+	}
+
+	private void resetResultViewPagination(List<Long> positions, int page) {
+		Link resultViewPagination = this.resultViewPaginationHolder.get();
+		int positionsCount = positions.size();
+
+		if (positionsCount <= 1) {
+			resultViewPagination.setVisible(true);
+			((GridData) resultViewPagination.getLayoutData()).exclude = false;
+		} else {
+			resultViewPagination.setVisible(false);
+			((GridData) resultViewPagination.getLayoutData()).exclude = true;
+		}
+		resultViewPagination.getParent().layout();
 	}
 
 	private void clearCopyObjectMenus() {
@@ -734,10 +757,10 @@ public class MainUI extends ShellUserInterface {
 
 			this.inputViewHolder.get().setResult(result);
 
-			HtmlResultDocument resultDocument = this.resultRenderServerHolder.get()
-					.createResultDocument(this::navigateToPosition, result, false);
+			HtmlResultDocument resultDocument = this.resultRenderServerHolder.get().createResultDocument(result,
+					this::navigateToPosition, false);
 
-			this.resultViewHolder.get().setUrl(resultDocument.documentUrl());
+			this.resultViewBrowserHolder.get().setUrl(resultDocument.documentUrl());
 		}
 	}
 
@@ -764,8 +787,9 @@ public class MainUI extends ShellUserInterface {
 		ControlBuilder<Tree> resultTree = resultBuilder.addControlChild(Tree.class,
 				SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL);
 		CompositeBuilder<SashForm> resultViewBuilder = resultBuilder.addCompositeChild(SashForm.class, SWT.VERTICAL);
-		CompositeBuilder<Composite> resultViewBorder = resultViewBuilder.addCompositeChild(SWT.BORDER);
-		ControlBuilder<Browser> resultView = resultViewBorder.addControlChild(Browser.class, SWT.NONE);
+		CompositeBuilder<Composite> resultView = resultViewBuilder.addCompositeChild(SWT.BORDER);
+		ControlBuilder<Browser> resultViewBrowser = resultView.addControlChild(Browser.class, SWT.NONE);
+		ControlBuilder<Link> resultViewPagination = resultView.addControlChild(Link.class, SWT.NONE);
 		ControlBuilder<Hex> inputView = resultViewBuilder.addControlChild(Hex.class, SWT.BORDER);
 		CoolBarBuilder status = buildStatusBar(rootBuilder, controller);
 
@@ -775,9 +799,11 @@ public class MainUI extends ShellUserInterface {
 		buildContextMenu(resultTree.get());
 		resultTree.onEvent(SWT.SetData, this::onSetResultTreeItemData);
 		resultTree.onSelected(this::onResultTreeItemSelected);
-		resultView.onEvent(SWT.MenuDetect, event -> event.doit = false);
+		resultViewBrowser.onEvent(SWT.MenuDetect, event -> event.doit = false);
 
-		FillLayoutBuilder.layout().apply(resultViewBorder);
+		GridLayoutBuilder.layout().margin(0, 0).apply(resultView);
+		GridLayoutBuilder.data(GridData.FILL_BOTH).apply(resultViewBrowser);
+		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(resultViewPagination);
 		GridLayoutBuilder.layout().apply(rootBuilder);
 		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(commands);
 		GridLayoutBuilder.data(GridData.FILL_BOTH).apply(resultBuilder);
@@ -785,7 +811,8 @@ public class MainUI extends ShellUserInterface {
 
 		resultBuilder.get().setWeights(new int[] { 40, 60 });
 		this.resultTreeHolder.set(resultTree.get());
-		this.resultViewHolder.set(resultView.get());
+		this.resultViewBrowserHolder.set(resultViewBrowser.get());
+		this.resultViewPaginationHolder.set(resultViewPagination.get());
 		this.inputViewHolder.set(inputView.get());
 
 		DropTargetBuilder.fileTransfer(rootBuilder.get(), DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK)

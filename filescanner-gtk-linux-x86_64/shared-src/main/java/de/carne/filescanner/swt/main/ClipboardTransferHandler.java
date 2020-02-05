@@ -64,8 +64,7 @@ abstract class ClipboardTransferHandler {
 
 			@Override
 			public void prepareTransfer(FileScannerResult result) throws IOException {
-				HtmlResultDocument resultDocument = renderServer.createResultDocument(HtmlResultDocument.NO_NAVIGATION,
-						result, true);
+				HtmlResultDocument resultDocument = renderServer.createResultDocument(result, null, true);
 
 				resultDocument.writeTo(this.htmlText, this.plainText);
 			}
