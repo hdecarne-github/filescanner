@@ -14,11 +14,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.carne.filescanner.swt.main;
+package de.carne.filescanner.swt.widgets;
 
-@FunctionalInterface
-interface ClipboardTransfer {
+import java.io.IOException;
 
-	ClipboardTransferHandler getInstance(ProgressCallback progress);
+import de.carne.filescanner.engine.FileScannerResult;
+
+/**
+ * Callback interface used by {@linkplain ResultView} widget to support navigation between result objects.
+ */
+public interface ResultNavigator {
+
+	/**
+	 * Navigates to the given position relative to the given result object.
+	 *
+	 * @param result the {@linkplain FileScannerResult} to navigate from.
+	 * @param position the position to navigate to.
+	 * @throws IOException if an I/O error occurs during navigation.
+	 */
+	void navigateTo(FileScannerResult result, long position) throws IOException;
 
 }

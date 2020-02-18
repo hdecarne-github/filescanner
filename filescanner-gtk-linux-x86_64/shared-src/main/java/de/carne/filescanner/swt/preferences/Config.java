@@ -17,13 +17,14 @@
 package de.carne.filescanner.swt.preferences;
 
 import java.util.Collections;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 
-import de.carne.boot.check.Check;
 import de.carne.filescanner.engine.transfer.RenderStyle;
 import de.carne.swt.platform.PlatformIntegration;
 
@@ -71,6 +72,13 @@ public abstract class Config {
 	public abstract RGB getResultViewColor(RenderStyle style);
 
 	/**
+	 * Gets the configured style colors for result data display.
+	 *
+	 * @return the configured style colors for result data display.
+	 */
+	public abstract Map<RenderStyle, RGB> getResultViewColors();
+
+	/**
 	 * Gets the set of disabled formats.
 	 *
 	 * @return the set of disabled formats.
@@ -94,6 +102,19 @@ public abstract class Config {
 
 	private static class GenericDefaults extends Config {
 
+		private static final RGB DEFAULT_COLOR = new RGB(0x00, 0x00, 0x00);
+		private static final Map<RenderStyle, RGB> DEFAULT_COLORS = new EnumMap<>(RenderStyle.class);
+
+		static {
+			DEFAULT_COLORS.put(RenderStyle.NORMAL, DEFAULT_COLOR);
+			DEFAULT_COLORS.put(RenderStyle.VALUE, new RGB(0x33, 0x4d, 0xb3));
+			DEFAULT_COLORS.put(RenderStyle.COMMENT, new RGB(0x66, 0x99, 0x66));
+			DEFAULT_COLORS.put(RenderStyle.KEYWORD, new RGB(0x66, 0x00, 0x66));
+			DEFAULT_COLORS.put(RenderStyle.OPERATOR, DEFAULT_COLOR);
+			DEFAULT_COLORS.put(RenderStyle.LABEL, new RGB(0xc0, 0xc0, 0xc0));
+			DEFAULT_COLORS.put(RenderStyle.ERROR, new RGB(0xff, 0x00, 0x00));
+		}
+
 		GenericDefaults() {
 			// Nothing to do here
 		}
@@ -110,34 +131,12 @@ public abstract class Config {
 
 		@Override
 		public RGB getResultViewColor(RenderStyle style) {
-			RGB color;
+			return DEFAULT_COLORS.getOrDefault(style, DEFAULT_COLOR);
+		}
 
-			switch (style) {
-			case NORMAL:
-				color = new RGB(0x00, 0x00, 0x00);
-				break;
-			case VALUE:
-				color = new RGB(0x33, 0x4d, 0xb3);
-				break;
-			case COMMENT:
-				color = new RGB(0x66, 0x99, 0x66);
-				break;
-			case KEYWORD:
-				color = new RGB(0x66, 0x00, 0x66);
-				break;
-			case OPERATOR:
-				color = new RGB(0x00, 0x00, 0x00);
-				break;
-			case LABEL:
-				color = new RGB(0xc0, 0xc0, 0xc0);
-				break;
-			case ERROR:
-				color = new RGB(0xff, 0x00, 0x00);
-				break;
-			default:
-				throw Check.unexpected(style);
-			}
-			return color;
+		@Override
+		public Map<RenderStyle, RGB> getResultViewColors() {
+			return Collections.unmodifiableMap(DEFAULT_COLORS);
 		}
 
 		@Override

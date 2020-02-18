@@ -16,28 +16,28 @@
  */
 package de.carne.filescanner.swt.main;
 
-import org.glassfish.grizzly.http.util.ContentType;
+import java.io.IOException;
+import java.util.concurrent.Callable;
 
-enum HtmlResourceType {
+final class ClipboardPrepareTransferTask implements Callable<Void> {
 
-	TEXT_HTML("text/html", "utf-8"),
+	private final ProgressCallback progress;
+	private final ClipboardTransferHandler handler;
 
-	TEXT_CSS("text/css", "utf-8"),
-
-	IMAGE_PNG("image/png");
-
-	private final ContentType contentType;
-
-	private HtmlResourceType(String mimeType) {
-		this.contentType = ContentType.newContentType(mimeType, null);
+	protected ClipboardPrepareTransferTask(ProgressCallback progress, ClipboardTransferHandler handler) {
+		this.progress = progress;
+		this.handler = handler;
 	}
 
-	private HtmlResourceType(String mimeType, String characterEncoding) {
-		this.contentType = ContentType.newContentType(mimeType, characterEncoding);
-	}
-
-	public ContentType contentType() {
-		return this.contentType;
+	@SuppressWarnings({ "null", "squid:S2637" })
+	@Override
+	public Void call() throws IOException {
+		try {
+			this.handler.prepareTransfer(this.progress);
+		} finally {
+			this.progress.done();
+		}
+		return null;
 	}
 
 }

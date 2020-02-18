@@ -16,7 +16,9 @@
  */
 package de.carne.filescanner.swt.resources;
 
+import java.net.URL;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Image resources.
@@ -144,5 +146,19 @@ public final class Images {
 	 * log_trace16.png
 	 */
 	public static final String IMAGE_LOG_TRACE16 = "log_trace16.png";
+	/**
+	 * transparent_background.png
+	 */
+	public static final String IMAGE_TRANSPARENT_BACKGROUND = "transparent_background.png";
+
+	/**
+	 * Gets the image resource {@linkplain URL}.
+	 * 
+	 * @param image the image to access.
+	 * @return the image resource {@linkplain URL}.
+	 */
+	public static URL get(String image) {
+		return Objects.requireNonNull(Images.class.getResource(image));
+	}
 
 }

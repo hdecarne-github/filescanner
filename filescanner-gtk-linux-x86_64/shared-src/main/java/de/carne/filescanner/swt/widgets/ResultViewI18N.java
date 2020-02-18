@@ -1,27 +1,27 @@
 /*
  * I18N resource strings (automatically generated - do not edit)
  */
-package de.carne.filescanner.swt.main;
+package de.carne.filescanner.swt.widgets;
 
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 /**
- * Resource bundle: de/carne/filescanner/swt/main/HtmlRendererI18N.properties
+ * Resource bundle: de/carne/filescanner/swt/widgets/ResultViewI18N.properties
  */
-public final class HtmlRendererI18N {
+public final class ResultViewI18N {
 
 	/**
 	 * The name of the {@linkplain ResourceBundle} wrapped by this class.
 	 */
-	public static final String BUNDLE_NAME = HtmlRendererI18N.class.getName();
+	public static final String BUNDLE_NAME = ResultViewI18N.class.getName();
 
 	/**
 	 * The {@linkplain ResourceBundle} wrapped by this class.
 	 */
 	public static final ResourceBundle BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
-	private HtmlRendererI18N() {
+	private ResultViewI18N() {
 		// Prevent instantiation
 	}
 
@@ -92,44 +92,6 @@ public final class HtmlRendererI18N {
 	 */
 	public static String i18nHref(Object... arguments) {
 		return format(I18N_HREF, arguments);
-	}
-
-	/**
-	 * Resource key {@code I18N_HREF_IMG}
-	 * <p>
-	 * &lt;a href=&quot;{0}&quot;&gt;&lt;img src=&quot;{1}&quot; alt=&quot;{2}&quot;&gt;&lt;&frasl;a&gt;
-	 */
-	public static final String I18N_HREF_IMG = "I18N_HREF_IMG";
-
-	/**
-	 * Resource string {@code I18N_HREF_IMG}
-	 * <p>
-	 * &lt;a href=&quot;{0}&quot;&gt;&lt;img src=&quot;{1}&quot; alt=&quot;{2}&quot;&gt;&lt;&frasl;a&gt;
-	 *
-	 * @param arguments Format arguments.
-	 * @return The formatted string.
-	 */
-	public static String i18nHrefImg(Object... arguments) {
-		return format(I18N_HREF_IMG, arguments);
-	}
-
-	/**
-	 * Resource key {@code I18N_HREF_MEDIA}
-	 * <p>
-	 * [&lt;a href=&quot;{1}&quot;&gt;{2}&lt;&frasl;a&gt;&lt;a href=&quot;{0}&quot;&gt;&amp;#21e8&lt;&frasl;a&gt;]
-	 */
-	public static final String I18N_HREF_MEDIA = "I18N_HREF_MEDIA";
-
-	/**
-	 * Resource string {@code I18N_HREF_MEDIA}
-	 * <p>
-	 * [&lt;a href=&quot;{1}&quot;&gt;{2}&lt;&frasl;a&gt;&lt;a href=&quot;{0}&quot;&gt;&amp;#21e8&lt;&frasl;a&gt;]
-	 *
-	 * @param arguments Format arguments.
-	 * @return The formatted string.
-	 */
-	public static String i18nHrefMedia(Object... arguments) {
-		return format(I18N_HREF_MEDIA, arguments);
 	}
 
 	/**

@@ -17,7 +17,6 @@
 package de.carne.filescanner.swt.main;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.OpenOption;
@@ -27,43 +26,42 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import org.eclipse.jdt.annotation.Nullable;
-
 import de.carne.boot.logging.Log;
 import de.carne.filescanner.engine.FileScannerResult;
-import de.carne.filescanner.engine.transfer.ExportTarget;
-import de.carne.filescanner.engine.transfer.FileScannerResultExporter;
+import de.carne.filescanner.engine.transfer.FileScannerResultExportHandler;
+import de.carne.filescanner.engine.transfer.TransferSource;
 import de.carne.filescanner.swt.export.ExportOptions;
 
-class ExportTask implements Callable<@Nullable Void>, ExportTarget {
+class ExportTask implements Callable<Void> {
 
 	private static final Log LOG = new Log();
 
 	private final ProgressCallback progress;
-	private final FileScannerResult result;
-	private final FileScannerResultExporter exportHandler;
+	private final FileScannerResultExportHandler exportHandler;
 	private final Path path;
 	private final boolean overwrite;
-	@Nullable
-	private WritableByteChannel channel = null;
+	private final FileScannerResult result;
 
-	public ExportTask(ProgressCallback progress, FileScannerResult result, ExportOptions options) {
+	public ExportTask(ProgressCallback progress, ExportOptions options, FileScannerResult result) {
 		this.progress = progress;
-		this.result = result;
 		this.exportHandler = options.exportHandler();
 		this.path = options.path();
 		this.overwrite = options.overwrite();
+		this.result = result;
 	}
 
+	@SuppressWarnings({ "null", "squid:S2637" })
 	@Override
-	public @Nullable Void call() throws Exception {
+	public Void call() throws IOException {
 		LOG.info("Exporting result ''{0}'' to path ''{1}''...", this.result.name(), this.path);
 
-		try {
-			this.result.export(this, this.exportHandler);
+		try (WritableByteChannel exportTarget = createExportTarget()) {
+			TransferSource export = this.result.export(this.exportHandler);
+
+			this.progress.setTotal(export.size());
+			export.transfer(exportTarget);
 		} finally {
 			this.progress.done();
-			close();
 		}
 
 		LOG.info("Exporting to path ''{0}'' finished", this.path);
@@ -71,54 +69,19 @@ class ExportTask implements Callable<@Nullable Void>, ExportTarget {
 		return null;
 	}
 
-	@SuppressWarnings("resource")
-	@Override
-	public int write(@Nullable ByteBuffer src) throws IOException {
-		int written = 0;
+	private WritableByteChannel createExportTarget() throws IOException {
+		LOG.info("Creating export target ''{0}''...", this.path);
 
-		if (src != null) {
-			WritableByteChannel checkedChannel = this.channel;
+		Set<OpenOption> openOptions = new HashSet<>();
 
-			if (checkedChannel == null) {
-				LOG.info("Creating export target ''{0}''...", this.path);
-
-				Set<OpenOption> openOptions = new HashSet<>();
-
-				openOptions.add(StandardOpenOption.WRITE);
-				if (this.overwrite) {
-					openOptions.add(StandardOpenOption.CREATE);
-					openOptions.add(StandardOpenOption.TRUNCATE_EXISTING);
-				} else {
-					openOptions.add(StandardOpenOption.CREATE_NEW);
-				}
-				checkedChannel = this.channel = FileChannel.open(this.path, openOptions);
-			}
-			written = checkedChannel.write(src);
-			this.progress.addProgress(written);
+		openOptions.add(StandardOpenOption.WRITE);
+		if (this.overwrite) {
+			openOptions.add(StandardOpenOption.CREATE);
+			openOptions.add(StandardOpenOption.TRUNCATE_EXISTING);
+		} else {
+			openOptions.add(StandardOpenOption.CREATE_NEW);
 		}
-		return written;
-	}
-
-	@Override
-	public synchronized boolean isOpen() {
-		return this.channel != null;
-	}
-
-	@Override
-	public synchronized void close() throws IOException {
-		LOG.info("Closing export target ''{0}''...", this.path);
-
-		WritableByteChannel checkedChannel = this.channel;
-
-		if (checkedChannel != null) {
-			this.channel = null;
-			checkedChannel.close();
-		}
-	}
-
-	@Override
-	public void setSize(long size) throws IOException {
-		this.progress.setTotal(size);
+		return FileChannel.open(this.path, openOptions);
 	}
 
 }

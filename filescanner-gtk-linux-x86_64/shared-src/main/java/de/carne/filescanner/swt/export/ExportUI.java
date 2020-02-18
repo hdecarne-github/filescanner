@@ -67,7 +67,7 @@ class ExportUI extends ShellUserInterface {
 	private final ResourceTracker resources;
 	private final Late<Combo> exportTypeHolder = new Late<>();
 	private final Late<Text> exportPathTextHolder = new Late<>();
-	private final Property<Integer> exportTypeSelection = new Property<>(Integer.valueOf(0));
+	private final Property<@Nullable Integer> exportTypeSelection = new Property<>(Integer.valueOf(0));
 	@Nullable
 	private ExportOptions exportOptions = null;
 

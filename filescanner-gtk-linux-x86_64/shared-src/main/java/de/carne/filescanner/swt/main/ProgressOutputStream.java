@@ -16,33 +16,43 @@
  */
 package de.carne.filescanner.swt.main;
 
-import java.util.concurrent.Callable;
+import java.io.FilterOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 import org.eclipse.jdt.annotation.Nullable;
 
-import de.carne.filescanner.engine.FileScannerResult;
-
-final class ClipboardTransferTask implements Callable<@Nullable Void> {
+class ProgressOutputStream extends FilterOutputStream {
 
 	private final ProgressCallback progress;
-	private final FileScannerResult result;
-	private final ClipboardTransferHandler handler;
 
-	protected ClipboardTransferTask(ProgressCallback progress, FileScannerResult result,
-			ClipboardTransferHandler handler) {
+	ProgressOutputStream(ProgressCallback progress, OutputStream out) {
+		super(out);
 		this.progress = progress;
-		this.result = result;
-		this.handler = handler;
 	}
 
 	@Override
-	public @Nullable Void call() throws Exception {
-		try {
-			this.handler.prepareTransfer(this.result);
-		} finally {
-			this.progress.done();
-		}
-		return null;
+	public void write(int b) throws IOException {
+		this.out.write(b);
+		this.progress.addProgress(1);
+	}
+
+	@SuppressWarnings("null")
+	@Override
+	public void write(byte @Nullable [] b) throws IOException {
+		this.out.write(b);
+		this.progress.addProgress(b.length);
+	}
+
+	@Override
+	public void write(byte @Nullable [] b, int off, int len) throws IOException {
+		this.out.write(b, off, len);
+		this.progress.addProgress(len);
+	}
+
+	@Override
+	public String toString() {
+		return this.out.toString();
 	}
 
 }

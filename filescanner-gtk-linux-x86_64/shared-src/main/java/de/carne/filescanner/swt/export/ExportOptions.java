@@ -19,7 +19,6 @@ package de.carne.filescanner.swt.export;
 import java.nio.file.Path;
 
 import de.carne.filescanner.engine.transfer.FileScannerResultExportHandler;
-import de.carne.filescanner.engine.transfer.FileScannerResultExporter;
 
 /**
  * This class holds the export options selected during an {@linkplain ExportDialog} invocation.
@@ -41,7 +40,7 @@ public final class ExportOptions {
 	 *
 	 * @return the selected {@linkplain FileScannerResultExportHandler}.
 	 */
-	public FileScannerResultExporter exportHandler() {
+	public FileScannerResultExportHandler exportHandler() {
 		return this.exportHandler;
 	}
 

@@ -17,112 +17,98 @@
 package de.carne.filescanner.swt.main;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.HTMLTransfer;
-import org.eclipse.swt.dnd.ImageTransfer;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.graphics.ImageData;
 
-import de.carne.boot.check.Check;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.transfer.FileScannerResultExportHandler;
-import de.carne.filescanner.engine.transfer.FileScannerResultExporter;
+import de.carne.filescanner.engine.transfer.TransferSource;
 import de.carne.filescanner.engine.transfer.TransferType;
 import de.carne.util.Late;
-import de.carne.util.Strings;
 
 abstract class ClipboardTransferHandler {
 
 	private static final Set<TransferType> TRANSFERABLE_TYPES = new HashSet<>();
 
 	static {
+		TRANSFERABLE_TYPES.add(TransferType.TEXT_PLAIN);
+		TRANSFERABLE_TYPES.add(TransferType.TEXT_HTML);
 		TRANSFERABLE_TYPES.add(TransferType.IMAGE_BMP);
 		TRANSFERABLE_TYPES.add(TransferType.IMAGE_GIF);
 		TRANSFERABLE_TYPES.add(TransferType.IMAGE_JPEG);
 		TRANSFERABLE_TYPES.add(TransferType.IMAGE_PNG);
 		TRANSFERABLE_TYPES.add(TransferType.IMAGE_TIFF);
+		TRANSFERABLE_TYPES.add(TransferType.APPLICATION_PDF);
+	}
+
+	private final Late<ClipboardContent> contentHolder = new Late<>();
+	private final boolean detachable;
+
+	protected ClipboardTransferHandler(boolean detachable) {
+		this.detachable = detachable;
 	}
 
 	public static boolean isTransferable(TransferType transferType) {
 		return TRANSFERABLE_TYPES.contains(transferType);
 	}
 
-	public abstract void prepareTransfer(FileScannerResult result) throws IOException;
+	public void prepareTransfer(ProgressCallback progress) throws IOException {
+		TransferSource transferSource = getTransferSource();
 
-	public abstract void transfer(Clipboard clipboard);
+		progress.setTotal(transferSource.size());
 
-	public static ClipboardTransfer defaultHandler(HtmlRenderServer renderServer) {
-		return progress -> new ClipboardTransferHandler() {
+		TransferType transferType = transferSource.transferType();
+		ClipboardContent content;
 
-			private final StringWriter htmlText = new StringWriter();
-			private final StringWriter plainText = new StringWriter();
+		switch (transferType) {
+		case TEXT_PLAIN:
+			content = this.contentHolder.set(ClipboardContent.textContent());
+			break;
+		case TEXT_HTML:
+			content = this.contentHolder.set(ClipboardContent.htmlContent(this.detachable));
+			break;
+		case IMAGE_BMP:
+		case IMAGE_GIF:
+		case IMAGE_JPEG:
+		case IMAGE_PNG:
+		case IMAGE_TIFF:
+			content = this.contentHolder.set(ClipboardContent.imageContent());
+			break;
+		case APPLICATION_PDF:
+			content = this.contentHolder.set(ClipboardContent.fileContent(".pdf"));
+			break;
+		default:
+			throw new IOException("Cannot copy transfer type: " + transferType);
+		}
+		content.prepareTransfer(progress, transferSource);
+	}
+
+	public ClipboardContentHolder transfer(Clipboard clipboard) {
+		return this.contentHolder.get().transfer(clipboard);
+	}
+
+	protected abstract TransferSource getTransferSource() throws IOException;
+
+	public static ClipboardTransferHandler defaultHandler(TransferSource transferSource) {
+		return new ClipboardTransferHandler(false) {
 
 			@Override
-			public void prepareTransfer(FileScannerResult result) throws IOException {
-				HtmlResultDocument resultDocument = renderServer.createResultDocument(result, null, true);
-
-				resultDocument.writeTo(this.htmlText, this.plainText);
-			}
-
-			@Override
-			public void transfer(Clipboard clipboard) {
-				String htmlString = this.htmlText.toString();
-				String plainString = this.plainText.toString();
-
-				if (Strings.notEmpty(plainString)) {
-					clipboard.setContents(new Object[] { htmlString, plainString },
-							new Transfer[] { HTMLTransfer.getInstance(), TextTransfer.getInstance() });
-				} else {
-					clipboard.setContents(new Object[] { htmlString }, new Transfer[] { HTMLTransfer.getInstance() });
-				}
+			protected TransferSource getTransferSource() throws IOException {
+				return transferSource;
 			}
 
 		};
 	}
 
-	public static ClipboardTransfer exportHandler(FileScannerResultExportHandler exportHandler) {
-		return progress -> {
-			ClipboardTransferHandler transferHandler;
-
-			switch (exportHandler.transferType()) {
-			case IMAGE_BMP:
-			case IMAGE_GIF:
-			case IMAGE_JPEG:
-			case IMAGE_PNG:
-			case IMAGE_TIFF:
-				transferHandler = imageDataHandler(progress, exportHandler);
-				break;
-			case APPLICATION_OCTET_STREAM:
-			default:
-				throw Check.fail("Unexpected exporter type: %1$s", exportHandler.transferType());
-			}
-			return transferHandler;
-		};
-	}
-
-	private static ClipboardTransferHandler imageDataHandler(ProgressCallback progress,
-			FileScannerResultExporter exporter) {
-		return new ClipboardTransferHandler() {
-
-			private final Late<ImageData> imageDataHolder = new Late<>();
+	public static ClipboardTransferHandler exportHandler(FileScannerResultExportHandler exportHandler,
+			FileScannerResult result) {
+		return new ClipboardTransferHandler(true) {
 
 			@Override
-			public void prepareTransfer(FileScannerResult result) throws IOException {
-				try (PipedExporterInputStream pipe = new PipedExporterInputStream(progress, exporter)) {
-					pipe.startExport(result);
-					this.imageDataHolder.set(new ImageData(pipe));
-				}
-			}
-
-			@Override
-			public void transfer(Clipboard clipboard) {
-				clipboard.setContents(new Object[] { this.imageDataHolder.get() },
-						new Transfer[] { ImageTransfer.getInstance() });
+			protected TransferSource getTransferSource() throws IOException {
+				return result.export(exportHandler);
 			}
 
 		};

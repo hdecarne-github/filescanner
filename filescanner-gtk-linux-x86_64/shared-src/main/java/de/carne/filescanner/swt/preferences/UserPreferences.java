@@ -17,8 +17,10 @@
 package de.carne.filescanner.swt.preferences;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.function.Consumer;
@@ -89,7 +91,7 @@ public class UserPreferences extends Config {
 
 	/**
 	 * Stores the current user preferences and triggers any registered {@linkplain Consumer} instance.
-	 * 
+	 *
 	 * @throws BackingStoreException if an error occurs while storing the preferences.
 	 */
 	public void store() throws BackingStoreException {
@@ -128,6 +130,16 @@ public class UserPreferences extends Config {
 	@Override
 	public RGB getResultViewColor(RenderStyle style) {
 		return getRgbPreference(style2ColorKey(style), this.defaults.getResultViewColor(style));
+	}
+
+	@Override
+	public Map<RenderStyle, RGB> getResultViewColors() {
+		EnumMap<RenderStyle, RGB> colors = new EnumMap<>(RenderStyle.class);
+
+		for (RenderStyle style : RenderStyle.values()) {
+			colors.put(style, getResultViewColor(style));
+		}
+		return colors;
 	}
 
 	/**

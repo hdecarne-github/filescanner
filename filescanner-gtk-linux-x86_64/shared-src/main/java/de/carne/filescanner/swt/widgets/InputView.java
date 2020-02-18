@@ -52,10 +52,10 @@ import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.input.FileScannerInput;
 
 /**
- * Custom control for displaying raw hexadecimal data to the user.
+ * Custom control for displaying raw input data.
  */
 @SuppressWarnings("squid:MaximumInheritanceDepth")
-public class Hex extends Canvas implements DisposeListener, FocusListener, TraverseListener, KeyListener,
+public class InputView extends Canvas implements DisposeListener, FocusListener, TraverseListener, KeyListener,
 		MouseWheelListener, ControlListener, PaintListener {
 
 	private final IntScrollBarProxy horizontal;
@@ -65,12 +65,12 @@ public class Hex extends Canvas implements DisposeListener, FocusListener, Trave
 	private @Nullable Layout cachedLayout = null;
 
 	/**
-	 * Constructs a new {@linkplain Hex} instance.
+	 * Constructs a new {@linkplain InputView} instance.
 	 *
 	 * @param parent the widget's owner.
 	 * @param style the widget's style.
 	 */
-	public Hex(Composite parent, int style) {
+	public InputView(Composite parent, int style) {
 		super(parent, style | SWT.H_SCROLL | SWT.V_SCROLL);
 		this.horizontal = new IntScrollBarProxy(Objects.requireNonNull(getHorizontalBar()));
 		this.vertical = new LongScrollBarProxy(Objects.requireNonNull(getVerticalBar()));

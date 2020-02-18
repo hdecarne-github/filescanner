@@ -18,8 +18,6 @@ package de.carne.filescanner.swt.main;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -27,9 +25,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
@@ -45,7 +43,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ProgressBar;
@@ -69,7 +66,8 @@ import de.carne.filescanner.swt.preferences.Config;
 import de.carne.filescanner.swt.preferences.PreferencesDialog;
 import de.carne.filescanner.swt.preferences.UserPreferences;
 import de.carne.filescanner.swt.resources.Images;
-import de.carne.filescanner.swt.widgets.Hex;
+import de.carne.filescanner.swt.widgets.InputView;
+import de.carne.filescanner.swt.widgets.ResultView;
 import de.carne.swt.dnd.DropTargetBuilder;
 import de.carne.swt.graphics.ResourceException;
 import de.carne.swt.graphics.ResourceTracker;
@@ -102,26 +100,6 @@ public class MainUI extends ShellUserInterface {
 
 	private static final Log LOG = new Log();
 
-	private final ResourceTracker resources;
-	private final Late<HtmlRenderServer> resultRenderServerHolder = new Late<>();
-	private final Late<MainController> controllerHolder = new Late<>();
-	private final Late<Text> searchQueryHolder = new Late<>();
-	private final Late<Tree> resultTreeHolder = new Late<>();
-	private final Late<Browser> resultViewBrowserHolder = new Late<>();
-	private final Late<Link> resultViewPaginationHolder = new Late<>();
-	private final Late<Hex> inputViewHolder = new Late<>();
-	private final Late<ProgressBar> sessionProgressHolder = new Late<>();
-	private final Late<Label> sessionStatusHolder = new Late<>();
-	private final Late<HeapInfo> runtimeHeapHolder = new Late<>();
-	private final Late<Menu> copyObjectMenuHolder = new Late<>();
-	private final Late<Menu> copyObjectToolHolder = new Late<>();
-	private final Late<Menu> contextMenuCopyObjectMenuHolder = new Late<>();
-	private final Consumer<Config> configConsumer = this::applyConfig;
-	private final UICommandSet sessionCommands = new UICommandSet();
-	private final UICommandSet resultSelectionCommands = new UICommandSet();
-	private final Property<@Nullable FileScannerResult> resultSelection = new Property<>();
-	private final ExecutorService executor = Executors.newSingleThreadExecutor();
-
 	private enum SearchState {
 
 		DEFAULT,
@@ -132,7 +110,26 @@ public class MainUI extends ShellUserInterface {
 
 	}
 
+	private final ResourceTracker resources;
+	private final Clipboard clipboard;
+	private ClipboardContentHolder clipboardContentHolder = ClipboardContentHolder.KEEP;
 	private SearchState searchState = SearchState.DEFAULT;
+	private final ExecutorService executor = Executors.newSingleThreadExecutor();
+	private final Late<MainController> controllerHolder = new Late<>();
+	private final Late<Text> searchQueryHolder = new Late<>();
+	private final Late<Tree> resultTreeHolder = new Late<>();
+	private final Late<ResultView> resultViewHolder = new Late<>();
+	private final Late<InputView> inputViewHolder = new Late<>();
+	private final Late<ProgressBar> sessionProgressHolder = new Late<>();
+	private final Late<Label> sessionStatusHolder = new Late<>();
+	private final Late<HeapInfo> runtimeHeapHolder = new Late<>();
+	private final Late<Menu> copyObjectMenuHolder = new Late<>();
+	private final Late<Menu> copyObjectToolHolder = new Late<>();
+	private final Late<Menu> contextMenuCopyObjectMenuHolder = new Late<>();
+	private final Consumer<Config> configConsumer = this::applyConfig;
+	private final UICommandSet sessionCommands = new UICommandSet();
+	private final UICommandSet resultSelectionCommands = new UICommandSet();
+	private final Property<@Nullable FileScannerResult> resultSelection = new Property<>(null);
 
 	/**
 	 * Constructs a new {@linkplain MainUI} instance.
@@ -141,7 +138,11 @@ public class MainUI extends ShellUserInterface {
 	 */
 	public MainUI(Shell shell) {
 		super(shell);
-		this.resources = ResourceTracker.forDevice(shell.getDisplay());
+
+		Display display = shell.getDisplay();
+
+		this.resources = ResourceTracker.forDevice(display);
+		this.clipboard = new Clipboard(display);
 	}
 
 	/**
@@ -164,7 +165,7 @@ public class MainUI extends ShellUserInterface {
 	 * @param file the file to scan.
 	 */
 	public void openDroppedFile(String[] file) {
-		openFile(file[0]);
+		openFile(Objects.requireNonNull(file[0]));
 		if (file.length > 1) {
 			Notification.information(root()).withText(MainI18N.i18nTextIgnoringExtraFile())
 					.withMessage(MainI18N.i18nMessageIgnoringDroppedFile()).open();
@@ -198,10 +199,7 @@ public class MainUI extends ShellUserInterface {
 	}
 
 	void resetSession(boolean session) {
-		this.resultRenderServerHolder.get().clearSession();
 		this.resultTreeHolder.get().removeAll();
-		this.resultViewBrowserHolder.get().setText(getDefaultResultView());
-		resetResultViewPagination();
 		this.sessionProgressHolder.get().setSelection(0);
 		this.sessionStatusHolder.get().setText("");
 		this.sessionCommands.setEnabled(session);
@@ -283,7 +281,7 @@ public class MainUI extends ShellUserInterface {
 	private void onSetResultTreeItemData(Event event) {
 		TreeItem resultItemParent = Check.isInstanceOf(event.item, TreeItem.class).getParentItem();
 		FileScannerResult resultParent = Check.isInstanceOf(resultItemParent.getData(), FileScannerResult.class);
-		FileScannerResult[] results = resultParent.children();
+		@NonNull FileScannerResult[] results = resultParent.children();
 		int resultItemCount = Math.min(results.length, resultItemParent.getItemCount());
 
 		for (int resultIndex = event.index; resultIndex < resultItemCount; resultIndex++) {
@@ -396,10 +394,12 @@ public class MainUI extends ShellUserInterface {
 	private void onDisposed() {
 		LOG.info("Disposing Main UI...");
 
+		this.resultSelection.set(null);
 		this.executor.shutdownNow();
 		UserPreferences.get().removeConsumer(this.configConsumer);
 		this.controllerHolder.get().close();
-		this.resultRenderServerHolder.get().stop();
+		this.clipboardContentHolder.dispose(this.clipboard);
+		this.clipboard.dispose();
 		this.resources.disposeAll();
 
 		LOG.info("Main UI disposed");
@@ -425,12 +425,12 @@ public class MainUI extends ShellUserInterface {
 	}
 
 	private void onPrintObjectSelected() {
-		this.resultViewBrowserHolder.get().execute("javascript:window.print();");
+		this.resultViewHolder.get().print();
 	}
 
 	private void onExportObjectSelected() {
 		try {
-			FileScannerResult result = this.resultSelection.get();
+			FileScannerResult result = this.resultViewHolder.get().getResult();
 
 			if (result != null) {
 				ExportDialog exportDialog = new ExportDialog(get());
@@ -440,7 +440,7 @@ public class MainUI extends ShellUserInterface {
 					ProgressUI progress = new ProgressUI(new Shell(root(), ProgressUI.STYLE));
 
 					progress.open();
-					progress.run(this.executor.submit(new ExportTask(progress, result, exportOptions))).get();
+					progress.run(this.executor.submit(new ExportTask(progress, exportOptions, result))).get();
 				}
 			}
 		} catch (CancellationException e) {
@@ -463,7 +463,7 @@ public class MainUI extends ShellUserInterface {
 			menu.setLocation(menuLocation);
 			menu.setVisible(true);
 		} else {
-			copyObject(ClipboardTransferHandler.defaultHandler(this.resultRenderServerHolder.get()));
+			copyObject(ClipboardTransferHandler.defaultHandler(this.resultViewHolder.get().getContent()));
 		}
 	}
 
@@ -474,38 +474,30 @@ public class MainUI extends ShellUserInterface {
 		if (menuItemData != null) {
 			FileScannerResultExportHandler exportHandler = Check.isInstanceOf(menuItemData,
 					FileScannerResultExportHandler.class);
+			FileScannerResult result = this.resultViewHolder.get().getResult();
 
-			copyObject(ClipboardTransferHandler.exportHandler(exportHandler));
+			if (result != null) {
+				copyObject(ClipboardTransferHandler.exportHandler(exportHandler, result));
+			}
 		} else {
-			copyObject(ClipboardTransferHandler.defaultHandler(this.resultRenderServerHolder.get()));
+			copyObject(ClipboardTransferHandler.defaultHandler(this.resultViewHolder.get().getContent()));
 		}
 	}
 
-	private void copyObject(ClipboardTransfer transfer) {
-		Clipboard clipboard = null;
-
+	private void copyObject(ClipboardTransferHandler handler) {
 		try {
-			FileScannerResult result = this.resultSelection.get();
+			ProgressUI progress = new ProgressUI(new Shell(root(), ProgressUI.STYLE));
 
-			if (result != null) {
-				ProgressUI progress = new ProgressUI(new Shell(root(), ProgressUI.STYLE));
-				ClipboardTransferHandler handler = transfer.getInstance(progress);
-
-				progress.open();
-				progress.run(this.executor.submit(new ClipboardTransferTask(progress, result, handler))).get();
-				clipboard = new Clipboard(root().getDisplay());
-				handler.transfer(clipboard);
-			}
+			progress.open();
+			progress.run(this.executor.submit(new ClipboardPrepareTransferTask(progress, handler))).get();
+			this.clipboardContentHolder.dispose(this.clipboard);
+			this.clipboardContentHolder = handler.transfer(this.clipboard);
 		} catch (CancellationException e) {
 			Exceptions.ignore(e);
 		} catch (ExecutionException e) {
-			unexpectedException(e.getCause());
+			unexpectedException(Exceptions.getCause(e));
 		} catch (Exception e) {
 			unexpectedException(e);
-		} finally {
-			if (clipboard != null) {
-				clipboard.dispose();
-			}
 		}
 	}
 
@@ -565,7 +557,7 @@ public class MainUI extends ShellUserInterface {
 
 	private void onGotoEndSelected() {
 		try {
-			Hex inputView = this.inputViewHolder.get();
+			InputView inputView = this.inputViewHolder.get();
 			FileScannerResult result = this.resultSelection.get();
 
 			if (result != null) {
@@ -578,7 +570,7 @@ public class MainUI extends ShellUserInterface {
 
 	private void onGotoStartSelected() {
 		try {
-			Hex inputView = this.inputViewHolder.get();
+			InputView inputView = this.inputViewHolder.get();
 			FileScannerResult result = this.resultSelection.get();
 
 			if (result != null) {
@@ -636,46 +628,18 @@ public class MainUI extends ShellUserInterface {
 
 			this.resultTreeHolder.get().select(resultItem);
 			this.resultTreeHolder.get().showItem(resultItem);
+			this.resultViewHolder.get().setResult(newResult);
 			this.inputViewHolder.get().setResult(newResult);
-
-			HtmlResultDocument resultDocument = this.resultRenderServerHolder.get().createResultDocument(newResult,
-					this::navigateToPosition, false);
-
-			resetResultViewPagination();
-			this.resultViewBrowserHolder.get().setUrl(resultDocument.documentUrl());
 			this.resultSelectionCommands.setEnabled(true);
 			resetCopyObjectMenus(newResult);
 		} else {
-			this.resultViewBrowserHolder.get().setText(getDefaultResultView());
+			this.resultViewHolder.get().setResult(null);
+			this.inputViewHolder.get().setResult(null);
 			this.resultSelectionCommands.setEnabled(false);
 			clearCopyObjectMenus();
 		}
+		this.clipboardContentHolder = this.clipboardContentHolder.detach(this.clipboard);
 		this.searchState = SearchState.DEFAULT;
-	}
-
-	private String getDefaultResultView() {
-		de.carne.filescanner.engine.ModuleManifestInfos engineInfos = new de.carne.filescanner.engine.ModuleManifestInfos();
-
-		return HtmlRendererI18N.i18nTextDefaultResultViewHtml(Strings.encodeHtml(engineInfos.name()),
-				Strings.encodeHtml(engineInfos.version()), Strings.encodeHtml(engineInfos.build()));
-	}
-
-	private void resetResultViewPagination() {
-		resetResultViewPagination(Collections.emptyList(), -1);
-	}
-
-	private void resetResultViewPagination(List<Long> positions, int page) {
-		Link resultViewPagination = this.resultViewPaginationHolder.get();
-		int positionsCount = positions.size();
-
-		if (positionsCount <= 1) {
-			resultViewPagination.setVisible(true);
-			((GridData) resultViewPagination.getLayoutData()).exclude = false;
-		} else {
-			resultViewPagination.setVisible(false);
-			((GridData) resultViewPagination.getLayoutData()).exclude = true;
-		}
-		resultViewPagination.getParent().layout();
 	}
 
 	private void clearCopyObjectMenus() {
@@ -729,8 +693,6 @@ public class MainUI extends ShellUserInterface {
 	public void open() throws ResourceException {
 		LOG.info("Opening Main UI...");
 
-		this.resultRenderServerHolder.set(new HtmlRenderServer(UserPreferences.get()));
-
 		MainController controller = this.controllerHolder.set(new MainController(this));
 		Shell root = buildRoot(controller);
 
@@ -747,20 +709,16 @@ public class MainUI extends ShellUserInterface {
 	private void applyConfig(Config config) {
 		Font inputViewFont = this.resources.getFont(config.getInputViewFont());
 
+		this.resultViewHolder.get().setRenderStyle(config.getResultViewFont(), config.getResultViewColors());
 		this.inputViewHolder.get().setFont(inputViewFont);
-		this.resultRenderServerHolder.get().applyConfig(config);
 
 		TreeItem[] resultTreeSelection = this.resultTreeHolder.get().getSelection();
 
 		if (resultTreeSelection.length > 0) {
 			FileScannerResult result = Check.isInstanceOf(resultTreeSelection[0].getData(), FileScannerResult.class);
 
+			this.resultViewHolder.get().setResult(result);
 			this.inputViewHolder.get().setResult(result);
-
-			HtmlResultDocument resultDocument = this.resultRenderServerHolder.get().createResultDocument(result,
-					this::navigateToPosition, false);
-
-			this.resultViewBrowserHolder.get().setUrl(resultDocument.documentUrl());
 		}
 	}
 
@@ -787,10 +745,8 @@ public class MainUI extends ShellUserInterface {
 		ControlBuilder<Tree> resultTree = resultBuilder.addControlChild(Tree.class,
 				SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL);
 		CompositeBuilder<SashForm> resultViewBuilder = resultBuilder.addCompositeChild(SashForm.class, SWT.VERTICAL);
-		CompositeBuilder<Composite> resultView = resultViewBuilder.addCompositeChild(SWT.BORDER);
-		ControlBuilder<Browser> resultViewBrowser = resultView.addControlChild(Browser.class, SWT.NONE);
-		ControlBuilder<Link> resultViewPagination = resultView.addControlChild(Link.class, SWT.NONE);
-		ControlBuilder<Hex> inputView = resultViewBuilder.addControlChild(Hex.class, SWT.BORDER);
+		ControlBuilder<ResultView> resultView = resultViewBuilder.addControlChild(ResultView.class, SWT.BORDER);
+		ControlBuilder<InputView> inputView = resultViewBuilder.addControlChild(InputView.class, SWT.BORDER);
 		CoolBarBuilder status = buildStatusBar(rootBuilder, controller);
 
 		rootBuilder.withText(MainI18N.i18nTitle())
@@ -799,11 +755,7 @@ public class MainUI extends ShellUserInterface {
 		buildContextMenu(resultTree.get());
 		resultTree.onEvent(SWT.SetData, this::onSetResultTreeItemData);
 		resultTree.onSelected(this::onResultTreeItemSelected);
-		resultViewBrowser.onEvent(SWT.MenuDetect, event -> event.doit = false);
 
-		GridLayoutBuilder.layout().margin(0, 0).apply(resultView);
-		GridLayoutBuilder.data(GridData.FILL_BOTH).apply(resultViewBrowser);
-		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(resultViewPagination);
 		GridLayoutBuilder.layout().apply(rootBuilder);
 		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(commands);
 		GridLayoutBuilder.data(GridData.FILL_BOTH).apply(resultBuilder);
@@ -811,8 +763,7 @@ public class MainUI extends ShellUserInterface {
 
 		resultBuilder.get().setWeights(new int[] { 40, 60 });
 		this.resultTreeHolder.set(resultTree.get());
-		this.resultViewBrowserHolder.set(resultViewBrowser.get());
-		this.resultViewPaginationHolder.set(resultViewPagination.get());
+		this.resultViewHolder.set(resultView.get());
 		this.inputViewHolder.set(inputView.get());
 
 		DropTargetBuilder.fileTransfer(rootBuilder.get(), DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK)
