@@ -16,12 +16,11 @@
  */
 package de.carne.filescanner.swt.main;
 
-interface ProgressCallback {
+import java.io.IOException;
 
-	void setTotal(long total);
+class StoppedException extends IOException {
 
-	boolean addProgress(long progressDelta);
-
-	void done();
+	// Serialization support
+	private static final long serialVersionUID = 6583171281443529746L;
 
 }

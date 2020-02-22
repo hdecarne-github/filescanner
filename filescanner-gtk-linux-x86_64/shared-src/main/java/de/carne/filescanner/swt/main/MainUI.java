@@ -446,7 +446,11 @@ public class MainUI extends ShellUserInterface {
 		} catch (CancellationException e) {
 			Exceptions.ignore(e);
 		} catch (ExecutionException e) {
-			unexpectedException(Objects.requireNonNull(e.getCause()));
+			Throwable cause = Exceptions.getCause(e);
+
+			if (!(cause instanceof StoppedException)) {
+				unexpectedException(cause);
+			}
 		} catch (Exception e) {
 			unexpectedException(e);
 		}
@@ -495,7 +499,11 @@ public class MainUI extends ShellUserInterface {
 		} catch (CancellationException e) {
 			Exceptions.ignore(e);
 		} catch (ExecutionException e) {
-			unexpectedException(Exceptions.getCause(e));
+			Throwable cause = Exceptions.getCause(e);
+
+			if (!(cause instanceof StoppedException)) {
+				unexpectedException(cause);
+			}
 		} catch (Exception e) {
 			unexpectedException(e);
 		}

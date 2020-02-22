@@ -46,6 +46,7 @@ class ProgressUI extends ShellUserInterface implements ProgressCallback {
 	private long total = -1;
 	private long progress = 0;
 	private long lastUpdateNanos = System.nanoTime();
+	private boolean stopped = false;
 	private Late<ToolItem> stopCommandHolder = new Late<>();
 	private Late<ProgressBar> determinateProgressHolder = new Late<>();
 	private Late<ProgressBar> indeterminateProgressHolder = new Late<>();
@@ -80,20 +81,23 @@ class ProgressUI extends ShellUserInterface implements ProgressCallback {
 	}
 
 	@Override
-	public synchronized void addProgress(long progressDelta) {
+	public synchronized boolean addProgress(long progressDelta) {
 		this.progress += progressDelta;
 
-		long updateNanos = System.nanoTime();
+		if (this.total > 0) {
+			long updateNanos = System.nanoTime();
 
-		if (this.total > 0
-				&& (this.progress == progressDelta || (updateNanos - this.lastUpdateNanos) >= UPDATE_FREQUENCY)) {
-			this.lastUpdateNanos = updateNanos;
-			Application.getMain(FileScannerMain.class).runNoWait(this::updateProgressUI);
+			if ((updateNanos - this.lastUpdateNanos) >= UPDATE_FREQUENCY) {
+				this.lastUpdateNanos = updateNanos;
+				Application.getMain(FileScannerMain.class).runNoWait(this::updateProgressUI);
+			}
 		}
+		return !this.stopped;
 	}
 
 	private synchronized void updateProgressUI() {
-		if (!root().isDisposed()) {
+		this.stopped = root().isDisposed();
+		if (!this.stopped) {
 			ProgressBar determinateProgress = this.determinateProgressHolder.get();
 
 			if (!determinateProgress.isVisible()) {

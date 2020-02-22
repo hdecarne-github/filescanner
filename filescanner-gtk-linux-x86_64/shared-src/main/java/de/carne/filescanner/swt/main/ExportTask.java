@@ -17,8 +17,8 @@
 package de.carne.filescanner.swt.main;
 
 import java.io.IOException;
-import java.nio.channels.FileChannel;
-import java.nio.channels.WritableByteChannel;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -55,11 +55,13 @@ class ExportTask implements Callable<Void> {
 	public Void call() throws IOException {
 		LOG.info("Exporting result ''{0}'' to path ''{1}''...", this.result.name(), this.path);
 
-		try (WritableByteChannel exportTarget = createExportTarget()) {
-			TransferSource export = this.result.export(this.exportHandler);
+		try (OutputStream exportStream = new ProgressOutputStream(this.progress,
+				Files.newOutputStream(this.path, getOpenOptions()))) {
+			TransferSource transferSource = this.result.export(this.exportHandler);
 
-			this.progress.setTotal(export.size());
-			export.transfer(exportTarget);
+			this.progress.setTotal(transferSource.size());
+
+			transferSource.transfer(exportStream);
 		} finally {
 			this.progress.done();
 		}
@@ -69,9 +71,7 @@ class ExportTask implements Callable<Void> {
 		return null;
 	}
 
-	private WritableByteChannel createExportTarget() throws IOException {
-		LOG.info("Creating export target ''{0}''...", this.path);
-
+	private OpenOption[] getOpenOptions() {
 		Set<OpenOption> openOptions = new HashSet<>();
 
 		openOptions.add(StandardOpenOption.WRITE);
@@ -81,7 +81,7 @@ class ExportTask implements Callable<Void> {
 		} else {
 			openOptions.add(StandardOpenOption.CREATE_NEW);
 		}
-		return FileChannel.open(this.path, openOptions);
+		return openOptions.toArray(new OpenOption[openOptions.size()]);
 	}
 
 }
