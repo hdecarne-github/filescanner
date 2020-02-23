@@ -23,6 +23,7 @@ import java.io.PipedOutputStream;
 
 import org.eclipse.jdt.annotation.Nullable;
 
+import de.carne.boot.Exceptions;
 import de.carne.filescanner.engine.transfer.TransferSource;
 
 class PipedTransferSource extends PipedInputStream {
@@ -38,10 +39,29 @@ class PipedTransferSource extends PipedInputStream {
 		Thread transferThread = new Thread(this::transfer);
 
 		transferThread.start();
+		waitForTransferReady();
+	}
+
+	private void waitForTransferReady() {
+		synchronized (this.transferSource) {
+			try {
+				this.transferSource.wait(1000);
+			} catch (InterruptedException e) {
+				Exceptions.ignore(e);
+				Thread.currentThread().interrupt();
+			}
+		}
+	}
+
+	private void signalTransferReady() {
+		synchronized (this.transferSource) {
+			this.transferSource.notifyAll();
+		}
 	}
 
 	private void transfer() {
 		try (OutputStream target = new ProgressOutputStream(this.progress, new PipedOutputStream(this))) {
+			signalTransferReady();
 			this.transferSource.transfer(target);
 		} catch (IOException e) {
 			this.exception = e;
