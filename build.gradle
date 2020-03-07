@@ -1,12 +1,30 @@
 // Plugins
 plugins {
-	id "de.carne.java-tools" version "0.7.5" apply false
+	id "de.carne.java-tools" version "0.8.2" apply false
 	id "org.sonarqube" version "2.8" apply false
 	id "com.install4j.gradle" version "8.0.4" apply false
 }
 
 // Build helpers
 def snapshotBuild = project.version.endsWith("-SNAPSHOT")
+
+apply plugin: "de.carne.java-tools"
+
+javatools {
+	githubRelease {
+		enabled = true
+		releaseAssets = fileTree(".") {
+			include("**/filescanner-cocoa-macosx-x86_64_macos_*.dmg")
+			include("**/filescanner-gtk-linux-x86_64-*.tar.gz")
+			include("**/filescanner-win32-win32-x86_64_windows-x64_*.exe")
+		}
+		overwrite = true
+		githubToken = project.findProperty('githubToken')
+		ignoreDirty = true
+	}
+}
+
+subprojects.each { draftGitHubRelease.dependsOn("${it.name}:assembleMedia") }
 
 // Projects
 subprojects {
