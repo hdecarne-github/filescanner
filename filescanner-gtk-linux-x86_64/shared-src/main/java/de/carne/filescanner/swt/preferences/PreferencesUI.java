@@ -452,10 +452,10 @@ class PreferencesUI extends ShellUserInterface implements UpdaterListener {
 			Combo updatesScheduleSelection = this.updatesScheduleSelectionHolder.get();
 
 			updatesScheduleSelection.add(PreferencesI18N.i18nLabelUpdatesScheduleNever());
-			updatesScheduleSelection.add(PreferencesI18N.i18nLabelUpdatesScheduleAlways());
 			updatesScheduleSelection.add(PreferencesI18N.i18nLabelUpdatesScheduleDaily());
 			updatesScheduleSelection.add(PreferencesI18N.i18nLabelUpdatesScheduleWeekly());
 			updatesScheduleSelection.add(PreferencesI18N.i18nLabelUpdatesScheduleMonthly());
+			updatesScheduleSelection.add(PreferencesI18N.i18nLabelUpdatesScheduleAlways());
 			updatesScheduleSelection.select(updater.getSchedule().ordinal());
 			refreshUpdatesStatus(updater);
 		}
