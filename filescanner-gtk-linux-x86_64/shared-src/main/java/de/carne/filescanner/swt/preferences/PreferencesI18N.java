@@ -534,14 +534,14 @@ public final class PreferencesI18N {
 	/**
 	 * Resource key {@code I18N_LABEL_UPDATES_SCHEDULE}
 	 * <p>
-	 * Check for updates
+	 * Check for updates:
 	 */
 	public static final String I18N_LABEL_UPDATES_SCHEDULE = "I18N_LABEL_UPDATES_SCHEDULE";
 
 	/**
 	 * Resource string {@code I18N_LABEL_UPDATES_SCHEDULE}
 	 * <p>
-	 * Check for updates
+	 * Check for updates:
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -648,14 +648,14 @@ public final class PreferencesI18N {
 	/**
 	 * Resource key {@code I18N_LABEL_UPDATES_STATUS}
 	 * <p>
-	 * (Last check: {0})
+	 * (Last update check: {0})
 	 */
 	public static final String I18N_LABEL_UPDATES_STATUS = "I18N_LABEL_UPDATES_STATUS";
 
 	/**
 	 * Resource string {@code I18N_LABEL_UPDATES_STATUS}
 	 * <p>
-	 * (Last check: {0})
+	 * (Last update check: {0})
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.

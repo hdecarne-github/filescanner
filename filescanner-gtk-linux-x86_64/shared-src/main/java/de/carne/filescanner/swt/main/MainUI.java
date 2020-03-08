@@ -208,22 +208,26 @@ public class MainUI extends ShellUserInterface {
 	}
 
 	void sessionRunning(boolean running) {
-		this.sessionCommands.setEnabled(running);
-		this.sessionProgressHolder.get().setEnabled(running);
+		if (!root().isDisposed()) {
+			this.sessionCommands.setEnabled(running);
+			this.sessionProgressHolder.get().setEnabled(running);
+		}
 	}
 
 	void sessionProgress(FileScannerProgress progress, long indexSize) {
-		this.sessionProgressHolder.get().setSelection(progress.scanProgress());
+		if (!root().isDisposed()) {
+			this.sessionProgressHolder.get().setSelection(progress.scanProgress());
 
-		MemoryUnitFormat memoryUnitFormat = MemoryUnitFormat.getMemoryUnitInstance();
-		String statusScanned = memoryUnitFormat.format(progress.scannedBytes());
-		long scanRate = progress.scanRate();
-		String statusRate = (scanRate >= 0 ? memoryUnitFormat.format(progress.scanRate()) : "\u221e");
-		int[] elapsedValues = elapsedValues(progress.scanTimeNanos());
-		String statusIndexSize = (indexSize >= 0 ? memoryUnitFormat.format(indexSize) : "\u221e");
+			MemoryUnitFormat memoryUnitFormat = MemoryUnitFormat.getMemoryUnitInstance();
+			String statusScanned = memoryUnitFormat.format(progress.scannedBytes());
+			long scanRate = progress.scanRate();
+			String statusRate = (scanRate >= 0 ? memoryUnitFormat.format(progress.scanRate()) : "\u221e");
+			int[] elapsedValues = elapsedValues(progress.scanTimeNanos());
+			String statusIndexSize = (indexSize >= 0 ? memoryUnitFormat.format(indexSize) : "\u221e");
 
-		this.sessionStatusHolder.get().setText(MainI18N.i18nTextSessionStatus(statusScanned, statusRate,
-				elapsedValues[0], elapsedValues[1], elapsedValues[2], elapsedValues[3], statusIndexSize));
+			this.sessionStatusHolder.get().setText(MainI18N.i18nTextSessionStatus(statusScanned, statusRate,
+					elapsedValues[0], elapsedValues[1], elapsedValues[2], elapsedValues[3], statusIndexSize));
+		}
 	}
 
 	private int[] elapsedValues(long nanos) {
