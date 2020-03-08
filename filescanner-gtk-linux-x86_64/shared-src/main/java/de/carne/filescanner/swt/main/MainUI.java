@@ -195,6 +195,7 @@ public class MainUI extends ShellUserInterface {
 	 * Sends close request to the UI.
 	 */
 	public void close() {
+		this.controllerHolder.get().stopScan(true);
 		root().close();
 	}
 
@@ -959,7 +960,7 @@ public class MainUI extends ShellUserInterface {
 		sessionTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_STOP16))
 				.withDisabledImage(this.resources.getImage(Images.class, Images.IMAGE_STOP_DISABLED16))
 				.withToolTipText(MainI18N.i18nTooltipStopScan());
-		sessionTools.onSelected(controller::stopScan);
+		sessionTools.onSelected(() -> controller.stopScan(false));
 
 		runtimeHeap.get().setTimer(500);
 

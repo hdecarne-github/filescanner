@@ -266,6 +266,25 @@ public final class PreferencesI18N {
 	}
 
 	/**
+	 * Resource key {@code I18N_BUTTON_UPDATES_CHECK_NOW}
+	 * <p>
+	 * Check now
+	 */
+	public static final String I18N_BUTTON_UPDATES_CHECK_NOW = "I18N_BUTTON_UPDATES_CHECK_NOW";
+
+	/**
+	 * Resource string {@code I18N_BUTTON_UPDATES_CHECK_NOW}
+	 * <p>
+	 * Check now
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nButtonUpdatesCheckNow(Object... arguments) {
+		return format(I18N_BUTTON_UPDATES_CHECK_NOW, arguments);
+	}
+
+	/**
 	 * Resource key {@code I18N_LABEL_ENABLED_FORMATS}
 	 * <p>
 	 * Enabled format decoders
@@ -494,6 +513,158 @@ public final class PreferencesI18N {
 	}
 
 	/**
+	 * Resource key {@code I18N_LABEL_UPDATES}
+	 * <p>
+	 * Update schedule
+	 */
+	public static final String I18N_LABEL_UPDATES = "I18N_LABEL_UPDATES";
+
+	/**
+	 * Resource string {@code I18N_LABEL_UPDATES}
+	 * <p>
+	 * Update schedule
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nLabelUpdates(Object... arguments) {
+		return format(I18N_LABEL_UPDATES, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_LABEL_UPDATES_SCHEDULE}
+	 * <p>
+	 * Check for updates
+	 */
+	public static final String I18N_LABEL_UPDATES_SCHEDULE = "I18N_LABEL_UPDATES_SCHEDULE";
+
+	/**
+	 * Resource string {@code I18N_LABEL_UPDATES_SCHEDULE}
+	 * <p>
+	 * Check for updates
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nLabelUpdatesSchedule(Object... arguments) {
+		return format(I18N_LABEL_UPDATES_SCHEDULE, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_LABEL_UPDATES_SCHEDULE_ALWAYS}
+	 * <p>
+	 * On every start
+	 */
+	public static final String I18N_LABEL_UPDATES_SCHEDULE_ALWAYS = "I18N_LABEL_UPDATES_SCHEDULE_ALWAYS";
+
+	/**
+	 * Resource string {@code I18N_LABEL_UPDATES_SCHEDULE_ALWAYS}
+	 * <p>
+	 * On every start
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nLabelUpdatesScheduleAlways(Object... arguments) {
+		return format(I18N_LABEL_UPDATES_SCHEDULE_ALWAYS, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_LABEL_UPDATES_SCHEDULE_DAILY}
+	 * <p>
+	 * Daily
+	 */
+	public static final String I18N_LABEL_UPDATES_SCHEDULE_DAILY = "I18N_LABEL_UPDATES_SCHEDULE_DAILY";
+
+	/**
+	 * Resource string {@code I18N_LABEL_UPDATES_SCHEDULE_DAILY}
+	 * <p>
+	 * Daily
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nLabelUpdatesScheduleDaily(Object... arguments) {
+		return format(I18N_LABEL_UPDATES_SCHEDULE_DAILY, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_LABEL_UPDATES_SCHEDULE_MONTHLY}
+	 * <p>
+	 * Monthly
+	 */
+	public static final String I18N_LABEL_UPDATES_SCHEDULE_MONTHLY = "I18N_LABEL_UPDATES_SCHEDULE_MONTHLY";
+
+	/**
+	 * Resource string {@code I18N_LABEL_UPDATES_SCHEDULE_MONTHLY}
+	 * <p>
+	 * Monthly
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nLabelUpdatesScheduleMonthly(Object... arguments) {
+		return format(I18N_LABEL_UPDATES_SCHEDULE_MONTHLY, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_LABEL_UPDATES_SCHEDULE_NEVER}
+	 * <p>
+	 * Never
+	 */
+	public static final String I18N_LABEL_UPDATES_SCHEDULE_NEVER = "I18N_LABEL_UPDATES_SCHEDULE_NEVER";
+
+	/**
+	 * Resource string {@code I18N_LABEL_UPDATES_SCHEDULE_NEVER}
+	 * <p>
+	 * Never
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nLabelUpdatesScheduleNever(Object... arguments) {
+		return format(I18N_LABEL_UPDATES_SCHEDULE_NEVER, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_LABEL_UPDATES_SCHEDULE_WEEKLY}
+	 * <p>
+	 * Weekly
+	 */
+	public static final String I18N_LABEL_UPDATES_SCHEDULE_WEEKLY = "I18N_LABEL_UPDATES_SCHEDULE_WEEKLY";
+
+	/**
+	 * Resource string {@code I18N_LABEL_UPDATES_SCHEDULE_WEEKLY}
+	 * <p>
+	 * Weekly
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nLabelUpdatesScheduleWeekly(Object... arguments) {
+		return format(I18N_LABEL_UPDATES_SCHEDULE_WEEKLY, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_LABEL_UPDATES_STATUS}
+	 * <p>
+	 * (Last check: {0})
+	 */
+	public static final String I18N_LABEL_UPDATES_STATUS = "I18N_LABEL_UPDATES_STATUS";
+
+	/**
+	 * Resource string {@code I18N_LABEL_UPDATES_STATUS}
+	 * <p>
+	 * (Last check: {0})
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nLabelUpdatesStatus(Object... arguments) {
+		return format(I18N_LABEL_UPDATES_STATUS, arguments);
+	}
+
+	/**
 	 * Resource key {@code I18N_TAB_APPEARANCE}
 	 * <p>
 	 * Appearance
@@ -529,6 +700,25 @@ public final class PreferencesI18N {
 	 */
 	public static String i18nTabFormats(Object... arguments) {
 		return format(I18N_TAB_FORMATS, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_TAB_UPDATES}
+	 * <p>
+	 * Updates
+	 */
+	public static final String I18N_TAB_UPDATES = "I18N_TAB_UPDATES";
+
+	/**
+	 * Resource string {@code I18N_TAB_UPDATES}
+	 * <p>
+	 * Updates
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nTabUpdates(Object... arguments) {
+		return format(I18N_TAB_UPDATES, arguments);
 	}
 
 	/**

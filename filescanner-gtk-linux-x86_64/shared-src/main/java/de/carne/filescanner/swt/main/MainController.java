@@ -83,11 +83,11 @@ class MainController implements FileScannerStatus {
 		}
 	}
 
-	void stopScan() {
+	void stopScan(boolean wait) {
 		FileScanner checkedFileScanner = this.fileScanner;
 
 		if (checkedFileScanner != null) {
-			checkedFileScanner.stop(false, false);
+			checkedFileScanner.stop(false, wait);
 		}
 		this.ui.sessionRunning(false);
 	}

@@ -16,6 +16,8 @@
  */
 package de.carne.filescanner.swt.preferences;
 
+import java.io.IOException;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
@@ -30,6 +32,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.ColorDialog;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FontDialog;
 import org.eclipse.swt.widgets.Label;
@@ -39,6 +42,8 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
+import de.carne.boot.Application;
+import de.carne.filescanner.FileScannerMain;
 import de.carne.filescanner.engine.spi.Format;
 import de.carne.filescanner.engine.transfer.RenderStyle;
 import de.carne.swt.graphics.ResourceException;
@@ -56,7 +61,7 @@ import de.carne.swt.widgets.ShellBuilder;
 import de.carne.swt.widgets.ShellUserInterface;
 import de.carne.util.Late;
 
-class PreferencesUI extends ShellUserInterface {
+class PreferencesUI extends ShellUserInterface implements UpdaterListener {
 
 	private final ResourceTracker resources;
 	private Late<Button> inputViewFontButtonHolder = new Late<>();
@@ -69,6 +74,8 @@ class PreferencesUI extends ShellUserInterface {
 	private Late<Button> resultViewColorLabelButtonHolder = new Late<>();
 	private Late<Button> resultViewColorErrorButtonHolder = new Late<>();
 	private Late<Table> formatsTableHolder = new Late<>();
+	private Late<Combo> updatesScheduleSelectionHolder = new Late<>();
+	private Late<Label> updatesStatusHolder = new Late<>();
 
 	PreferencesUI(Shell root) {
 		super(root);
@@ -80,6 +87,8 @@ class PreferencesUI extends ShellUserInterface {
 		ShellBuilder rootBuilder = buildRoot();
 
 		loadPreferences(UserPreferences.get());
+		loadUpdaterSchedule();
+
 		rootBuilder.pack();
 		rootBuilder.position(SWT.DEFAULT, SWT.DEFAULT);
 
@@ -115,6 +124,15 @@ class PreferencesUI extends ShellUserInterface {
 		buildAppearancePrefTab(prefTabs, appearanceTab);
 		formatsTab.setText(PreferencesI18N.i18nTabFormats());
 		buildFormatsPrefTab(prefTabs, formatsTab);
+
+		Updater updater = Updater.getInstance();
+
+		if (updater != null) {
+			TabItem updatesTab = new TabItem(prefTabsFolder, SWT.NONE);
+
+			updatesTab.setText(PreferencesI18N.i18nTabUpdates());
+			buildUpdatesPrefTab(prefTabs, updatesTab);
+		}
 	}
 
 	private void buildAppearancePrefTab(CompositeBuilder<TabFolder> prefTabs, TabItem prefTab) {
@@ -224,6 +242,31 @@ class PreferencesUI extends ShellUserInterface {
 		this.formatsTableHolder.set(formatsTable.get());
 	}
 
+	private void buildUpdatesPrefTab(CompositeBuilder<TabFolder> prefTabs, TabItem prefTab) {
+		CompositeBuilder<Composite> updates = prefTabs.addCompositeChild(SWT.NO_BACKGROUND);
+		LabelBuilder updatesLabel = updates.addLabelChild(SWT.NONE);
+		LabelBuilder updatesScheduleLabel = updates.addLabelChild(SWT.NONE);
+		ControlBuilder<Combo> updatesScheduleSelection = updates.addControlChild(Combo.class, SWT.READ_ONLY);
+		ButtonBuilder updatesCheckNowButton = updates.addButtonChild(SWT.PUSH);
+		LabelBuilder updatesStatus = updates.addLabelChild(SWT.NONE);
+
+		updatesLabel.withText(PreferencesI18N.i18nLabelUpdates());
+		styleGroupLabel(updatesLabel.get());
+		updatesScheduleLabel.withText(PreferencesI18N.i18nLabelUpdatesSchedule());
+		updatesCheckNowButton.withText(PreferencesI18N.i18nButtonUpdatesCheckNow());
+		updatesCheckNowButton.onSelected(this::onUpdatesCheckNowSelected);
+		GridLayoutBuilder.layout(3).spacing(5, 0).apply(updates);
+		GridLayoutBuilder.data().span(3, 1).apply(updatesLabel);
+		GridLayoutBuilder.data().indent(5, 0).apply(updatesScheduleLabel);
+		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(updatesScheduleSelection);
+		GridLayoutBuilder.data().apply(updatesCheckNowButton);
+		GridLayoutBuilder.data().indent(5, 0).span(3, 1).apply(updatesStatus);
+		prefTab.setControl(updates.get());
+
+		this.updatesScheduleSelectionHolder.set(updatesScheduleSelection.get());
+		this.updatesStatusHolder.set(updatesStatus.get());
+	}
+
 	private void buildButtons(CompositeBuilder<Composite> buttons) {
 		ButtonBuilder cancelButton = buttons.addButtonChild(SWT.PUSH);
 		ButtonBuilder applyButton = buttons.addButtonChild(SWT.PUSH);
@@ -298,6 +341,18 @@ class PreferencesUI extends ShellUserInterface {
 		}
 	}
 
+	private void onUpdatesCheckNowSelected() {
+		Updater updater = Updater.getInstance();
+
+		if (updater != null) {
+			try {
+				updater.checkNow(this);
+			} catch (IOException e) {
+				unexpectedException(e);
+			}
+		}
+	}
+
 	private void onCancelSelected() {
 		root().close();
 	}
@@ -305,6 +360,7 @@ class PreferencesUI extends ShellUserInterface {
 	private void onApplySelected() {
 		try {
 			storePreferences(UserPreferences.get());
+			storeUpdaterSchedule();
 		} catch (BackingStoreException e) {
 			unexpectedException(e);
 		}
@@ -313,6 +369,7 @@ class PreferencesUI extends ShellUserInterface {
 	private void onApplyAndCloseSelected() {
 		try {
 			storePreferences(UserPreferences.get());
+			storeUpdaterSchedule();
 			root().close();
 		} catch (BackingStoreException e) {
 			unexpectedException(e);
@@ -386,6 +443,75 @@ class PreferencesUI extends ShellUserInterface {
 		}
 		preferences.setDisabledFormats(disabledFormats);
 		preferences.store();
+	}
+
+	private void loadUpdaterSchedule() {
+		Updater updater = Updater.getInstance();
+
+		if (updater != null) {
+			Combo updatesScheduleSelection = this.updatesScheduleSelectionHolder.get();
+
+			updatesScheduleSelection.add(PreferencesI18N.i18nLabelUpdatesScheduleNever());
+			updatesScheduleSelection.add(PreferencesI18N.i18nLabelUpdatesScheduleAlways());
+			updatesScheduleSelection.add(PreferencesI18N.i18nLabelUpdatesScheduleDaily());
+			updatesScheduleSelection.add(PreferencesI18N.i18nLabelUpdatesScheduleWeekly());
+			updatesScheduleSelection.add(PreferencesI18N.i18nLabelUpdatesScheduleMonthly());
+			updatesScheduleSelection.select(updater.getSchedule().ordinal());
+			refreshUpdatesStatus(updater);
+		}
+	}
+
+	private void storeUpdaterSchedule() {
+		Updater updater = Updater.getInstance();
+
+		if (updater != null) {
+			int selection = this.updatesScheduleSelectionHolder.get().getSelectionIndex();
+
+			if (selection >= 0) {
+				updater.setSchedule(Updater.Schedule.values()[selection]);
+			}
+		}
+	}
+
+	private void refreshUpdatesStatus(Updater updater) {
+		Date lastCheckDate = updater.getLastCheckDate();
+
+		this.updatesStatusHolder.get()
+				.setText(PreferencesI18N.i18nLabelUpdatesStatus(lastCheckDate != null ? lastCheckDate : "n/a"));
+	}
+
+	@Override
+	public void onUpdaterStarted() {
+		Application.getMain(FileScannerMain.class).runWait(this::onUpdaterStarted0);
+	}
+
+	public void onUpdaterStarted0() {
+		get().setEnabled(false);
+	}
+
+	@Override
+	public void onPrepareShutdown() {
+		Application.getMain(FileScannerMain.class).runWait(this::onPrepareShutdown0);
+	}
+
+	private void onPrepareShutdown0() {
+		get().close();
+		Application.getMain(FileScannerMain.class).requestShutdown();
+	}
+
+	@Override
+	public void onUpdaterFinished(int status) {
+		Application.getMain(FileScannerMain.class).runWait(this::onUpdaterFinished0);
+	}
+
+	private void onUpdaterFinished0() {
+		get().setEnabled(true);
+
+		Updater updater = Updater.getInstance();
+
+		if (updater != null) {
+			refreshUpdatesStatus(updater);
+		}
 	}
 
 }

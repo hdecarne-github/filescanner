@@ -47,6 +47,7 @@ subprojects {
 		}
 		jcenter()
 		maven { url "https://oss.jfrog.org/libs-release/" }
+		maven { url "https://maven.ej-technologies.com/repository/" }
 	}
 
 	def sharedSrcDir = "../filescanner-gtk-linux-x86_64/shared-src"
@@ -88,6 +89,8 @@ subprojects {
 		implementation(group: "org.apache.lucene", name: "lucene-queryparser", version: project.luceneVersion) {
 			exclude(group: "org.apache.lucene", module: "lucene-sandbox")
 		}
+		compileOnly(group: "com.install4j", name: "install4j-runtime", version: project.i4jVersion)
+		testImplementation(group: "com.install4j", name: "install4j-runtime", version: project.i4jVersion)
 		testImplementation(group: "de.carne.common", name: "java-test-swt${platformSuffix}", version: project.javaSwtVersion)
 	}
 

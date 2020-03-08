@@ -83,6 +83,13 @@ public class FileScannerMain extends UserApplication implements ApplicationMain 
 		return status;
 	}
 
+	/**
+	 * Requests the application to shutdown.
+	 */
+	public void requestShutdown() {
+		this.mainInterfaceHolder.get().close();
+	}
+
 	@Override
 	protected Display setupDisplay() throws ResourceException {
 		ManifestInfos fileScannerInfos = new ModuleManifestInfos();
