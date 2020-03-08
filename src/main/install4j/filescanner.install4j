@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="8.0.2" transformSequenceNumber="8">
+<install4j version="8.0.4" transformSequenceNumber="8">
   <directoryPresets config="${compiler:i4jProjectBuildDir}/libs/${compiler:sys.shortName}-boot-${compiler:sys.version}.jar" />
   <application name="${compiler:i4jProjectFullName}" applicationId="${compiler:i4jProjectApplicationID}" mediaDir="${compiler:i4jProjectBuildDir}/distributions" shortName="${compiler:i4jProjectName}" publisherWeb="${compiler:i4jProjectUrl}" version="${compiler:i4jProjectVersion}" allPathsRelative="true" macVolumeId="8caddfd136c560fa" javaMinVersion="1.8" jdkMode="jdk" jdkName="JDK 1.8">
     <languages>
@@ -19,8 +19,9 @@
       <variable name="i4jProjectBaseName" value="filescanner" />
       <variable name="i4jProjectApplicationID" value="7478-5469-8818-1476" />
       <variable name="i4jProjectSigningDir" value="." />
+      <variable name="i4jProjectAppleNotarizationId" />
     </variables>
-    <codeSigning macEnabled="true" macPkcs12File="${compiler:i4jProjectSigningDir}/Developer_ID_Application.pkcs12" />
+    <codeSigning macEnabled="true" macPkcs12File="${compiler:i4jProjectSigningDir}/Developer_ID_Application.pkcs12" appleId="${compiler:i4jProjectAppleNotarizationId}" />
   </application>
   <files>
     <mountPoints>
@@ -272,7 +273,7 @@ return console.askYesNo(message, true);
           </screen>
         </screens>
       </application>
-      <application name="Update downloader with silent version check" id="440" beanClass="com.install4j.runtime.beans.applications.CustomApplication" automaticLauncherIntegration="true" launchMode="startupSync">
+      <application name="Update downloader with silent version check" id="440" customizedId="updater" beanClass="com.install4j.runtime.beans.applications.CustomApplication" automaticLauncherIntegration="true" launchMode="startupSync">
         <serializedBean>
           <property name="customIconImageFiles">
             <add>
