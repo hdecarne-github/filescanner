@@ -186,7 +186,7 @@ public class UserPreferences extends Config {
 		return (fontData != null ? fontData : defaultFontData);
 	}
 
-	private static final Pattern RGB_PATTERN = Pattern.compile("RGB \\{ (.*), (.*), (.*)\\}");
+	private static final Pattern RGB_PATTERN = Pattern.compile("RGB \\{(\\d*), (\\d*), (\\d*)\\}");
 
 	private RGB getRgbPreference(String key, RGB defaultRgb) {
 		String rgbString = this.preferences.get(key, defaultRgb.toString());
