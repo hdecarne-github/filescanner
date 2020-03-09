@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.com/hdecarne/filescanner.svg?branch=master)](https://travis-ci.com/hdecarne/filescanner)
-[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=de.carne%3Afilescanner%3Afilescanner-gtk-linux-x86_64&metric=alert_status)](https://sonarcloud.io/dashboard/index/de.carne:filescanner:filescanner-gtk-linux-x86_64)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=de.carne%3Afilescanner%3Afilescanner-gtk-linux-x86_64&metric=coverage)](https://sonarcloud.io/dashboard/index/de.carne:filescanner:filescanner-gtk-linux-x86_64)
 [![Downloads](https://img.shields.io/github/downloads/hdecarne/filescanner/total.svg)](https://github.com/hdecarne/filescanner/releases)
 
 ### About FileScanner
