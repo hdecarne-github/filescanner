@@ -61,26 +61,31 @@ abstract class Updater {
 
 	}
 
+	@Nullable
+	private static Updater updaterInstance = null;
+	private static boolean sealed = false;
+
 	/**
 	 * Gets the default {@linkplain Updater} instance for the current platform.
 	 *
 	 * @return the default {@linkplain Updater} instance for the current platform or {@code null} if none is available.
 	 */
 	@Nullable
-	public static Updater getInstance() {
-		Updater updater = null;
-
-		for (Type type : Type.values()) {
-			updater = getInstance(type);
-			if (updater != null) {
-				break;
+	public static synchronized Updater getInstance() {
+		if (!sealed) {
+			for (Type type : Type.values()) {
+				updaterInstance = getInstance(type);
+				if (updaterInstance != null) {
+					break;
+				}
 			}
+			sealed = true;
 		}
-		return updater;
+		return updaterInstance;
 	}
 
 	@Nullable
-	public static Updater getInstance(Type type) {
+	private static Updater getInstance(Type type) {
 		LOG.info("Considering updater {0}...", type);
 
 		Updater updater = null;
@@ -95,7 +100,7 @@ abstract class Updater {
 			} else {
 				LOG.info("Ignoring unavailable updater {0}", type);
 			}
-		} catch (ReflectiveOperationException e) {
+		} catch (ReflectiveOperationException | LinkageError e) {
 			LOG.info(e, "Ignoring unloadable updater {0}", type);
 		}
 		return updater;
