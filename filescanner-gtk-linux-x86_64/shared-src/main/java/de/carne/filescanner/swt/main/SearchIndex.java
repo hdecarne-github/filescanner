@@ -18,7 +18,7 @@ package de.carne.filescanner.swt.main;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.StringWriter;
+import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -29,7 +29,6 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.util.CharTokenizer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.SortedDocValuesField;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.TextField;
@@ -55,9 +54,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import de.carne.boot.Exceptions;
 import de.carne.boot.logging.Log;
 import de.carne.filescanner.engine.FileScannerResult;
-import de.carne.filescanner.engine.transfer.PlainTextRenderer;
-import de.carne.filescanner.engine.transfer.RenderOutput;
-import de.carne.filescanner.engine.transfer.RenderStyle;
 import de.carne.io.Closeables;
 import de.carne.nio.file.FileUtil;
 import de.carne.nio.file.attribute.FileAttributes;
@@ -112,13 +108,17 @@ final class SearchIndex implements AutoCloseable {
 		if (currentDocument == null) {
 			LOG.debug("Adding result ''{0}'' to search index", result);
 
-			updater.addDocument(buildDocument(resultKey, resultEnd, getResultContent(result)));
+			try (PipedResultContent resultContent = new PipedResultContent(result)) {
+				updater.addDocument(buildDocument(resultKey, resultEnd, resultContent));
+			}
 			processResultChildren = true;
 			checkChildrenForUpdate = false;
 		} else if (currentDocument.getField(FIELD_END_STORED).numericValue().longValue() != resultEnd) {
 			LOG.debug("Updating result ''{0}'' in search index", result);
 
-			updater.updateDocument(resultKey, buildDocument(resultKey, resultEnd, getResultContent(result)));
+			try (PipedResultContent resultContent = new PipedResultContent(result)) {
+				updater.updateDocument(resultKey, buildDocument(resultKey, resultEnd, resultContent));
+			}
 			processResultChildren = true;
 			checkChildrenForUpdate = true;
 		} else {
@@ -132,18 +132,6 @@ final class SearchIndex implements AutoCloseable {
 				addResultHelper(updater, resultChild, checkChildrenForUpdate);
 			}
 		}
-	}
-
-	private String getResultContent(FileScannerResult result) throws IOException {
-		@SuppressWarnings("resource") PlainTextRenderer resultContent = new PlainTextRenderer(new StringWriter());
-
-		try {
-			resultContent.emitText(0, RenderStyle.NORMAL, result.name(), true);
-			RenderOutput.render(result, resultContent);
-		} finally {
-			resultContent.close();
-		}
-		return resultContent.toString();
 	}
 
 	public void seal() {
@@ -200,13 +188,13 @@ final class SearchIndex implements AutoCloseable {
 		}
 	}
 
-	private Document buildDocument(BytesRef resultKey, long resultEnd, String resultContent) {
+	private Document buildDocument(BytesRef resultKey, long resultEnd, Reader resultContent) {
 		Document document = new Document();
 
 		document.add(new SortedDocValuesField(FIELD_ID, resultKey));
 		document.add(new StoredField(FIELD_KEY_STORED, resultKey));
 		document.add(new StoredField(FIELD_END_STORED, resultEnd));
-		document.add(new TextField(FIELD_CONTENT, resultContent, Store.NO));
+		document.add(new TextField(FIELD_CONTENT, resultContent));
 		return document;
 	}
 

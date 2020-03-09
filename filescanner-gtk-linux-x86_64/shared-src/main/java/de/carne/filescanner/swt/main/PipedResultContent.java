@@ -17,36 +17,36 @@
 package de.carne.filescanner.swt.main;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
+import java.io.PipedReader;
+import java.io.PipedWriter;
 
 import org.eclipse.jdt.annotation.Nullable;
 
 import de.carne.boot.Exceptions;
-import de.carne.filescanner.engine.transfer.TransferSource;
+import de.carne.filescanner.engine.FileScannerResult;
+import de.carne.filescanner.engine.transfer.PlainTextRenderer;
+import de.carne.filescanner.engine.transfer.RenderOutput;
+import de.carne.filescanner.engine.transfer.RenderStyle;
 
-class PipedTransferSource extends PipedInputStream {
+class PipedResultContent extends PipedReader {
 
-	private final ProgressCallback progress;
-	private final TransferSource transferSource;
+	private final FileScannerResult result;
 	private volatile boolean pipeReady = false;
 	@Nullable
 	private IOException exception = null;
 
-	PipedTransferSource(ProgressCallback progress, TransferSource transferSource) {
-		this.progress = progress;
-		this.transferSource = transferSource;
+	PipedResultContent(FileScannerResult result) {
+		this.result = result;
 
 		new Thread(this::runPipe).start();
 		waitForPipeReady();
 	}
 
 	private void waitForPipeReady() {
-		synchronized (this.transferSource) {
+		synchronized (this.result) {
 			try {
 				do {
-					this.transferSource.wait(1000);
+					this.result.wait(1000);
 				} while (!this.pipeReady);
 			} catch (InterruptedException e) {
 				Exceptions.ignore(e);
@@ -56,16 +56,17 @@ class PipedTransferSource extends PipedInputStream {
 	}
 
 	private void signalPipeReady() {
-		synchronized (this.transferSource) {
+		synchronized (this.result) {
 			this.pipeReady = true;
-			this.transferSource.notifyAll();
+			this.result.notifyAll();
 		}
 	}
 
 	private void runPipe() {
-		try (OutputStream target = new ProgressOutputStream(this.progress, new PipedOutputStream(this))) {
+		try (PlainTextRenderer renderer = new PlainTextRenderer(new PipedWriter(this))) {
 			signalPipeReady();
-			this.transferSource.transfer(target);
+			renderer.emitText(0, RenderStyle.NORMAL, this.result.name(), true);
+			RenderOutput.render(this.result, renderer);
 		} catch (IOException e) {
 			this.exception = e;
 		}
