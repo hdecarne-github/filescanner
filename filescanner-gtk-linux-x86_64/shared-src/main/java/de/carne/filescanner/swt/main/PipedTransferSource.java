@@ -30,6 +30,7 @@ class PipedTransferSource extends PipedInputStream {
 
 	private final ProgressCallback progress;
 	private final TransferSource transferSource;
+	private volatile boolean transferReady = false;
 	@Nullable
 	private IOException exception = null;
 
@@ -45,7 +46,9 @@ class PipedTransferSource extends PipedInputStream {
 	private void waitForTransferReady() {
 		synchronized (this.transferSource) {
 			try {
-				this.transferSource.wait(1000);
+				do {
+					this.transferSource.wait(1000);
+				} while (!this.transferReady);
 			} catch (InterruptedException e) {
 				Exceptions.ignore(e);
 				Thread.currentThread().interrupt();
@@ -55,6 +58,7 @@ class PipedTransferSource extends PipedInputStream {
 
 	private void signalTransferReady() {
 		synchronized (this.transferSource) {
+			this.transferReady = true;
 			this.transferSource.notifyAll();
 		}
 	}
