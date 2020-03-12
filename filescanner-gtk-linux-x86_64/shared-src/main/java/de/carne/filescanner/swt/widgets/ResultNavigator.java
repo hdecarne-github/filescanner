@@ -16,22 +16,21 @@
  */
 package de.carne.filescanner.swt.widgets;
 
-import java.io.IOException;
-
 import de.carne.filescanner.engine.FileScannerResult;
 
 /**
  * Callback interface used by {@linkplain ResultView} widget to support navigation between result objects.
  */
+@FunctionalInterface
 public interface ResultNavigator {
 
 	/**
 	 * Navigates to the given position relative to the given result object.
 	 *
-	 * @param result the {@linkplain FileScannerResult} to navigate from.
+	 * @param from the {@linkplain FileScannerResult} to navigate from.
 	 * @param position the position to navigate to.
-	 * @throws IOException if an I/O error occurs during navigation.
+	 * @return the {@linkplain FileScannerResult} matching the submitted position.
 	 */
-	void navigateTo(FileScannerResult result, long position) throws IOException;
+	FileScannerResult navigateTo(FileScannerResult from, long position);
 
 }

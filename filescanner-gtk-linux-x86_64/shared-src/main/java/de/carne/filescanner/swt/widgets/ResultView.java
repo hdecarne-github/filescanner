@@ -17,9 +17,11 @@
 package de.carne.filescanner.swt.widgets;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
@@ -40,11 +42,15 @@ import de.carne.swt.layout.GridLayoutBuilder;
 /**
  * Custom control for rendering and displaying file scanner results.
  */
-public class ResultView extends Composite implements LocationListener, ResultNavigator {
+public class ResultView extends Composite implements LocationListener {
+
+	private static final String ABOUT_BLANK_URL = "about:blank";
 
 	private final Browser browser;
 	private final Link pagination;
 	private @Nullable ResultViewContentHandler contentHandler = null;
+	private List<ResultNavigator> resultNavigators = new ArrayList<>(1);
+	private boolean inNavigation = false;
 
 	/**
 	 * Constructs a new {@linkplain ResultView} instance.
@@ -61,13 +67,15 @@ public class ResultView extends Composite implements LocationListener, ResultNav
 		GridLayoutBuilder.layout().margin(0, 0).apply(this);
 		GridLayoutBuilder.data(GridData.FILL_BOTH).apply(this.browser);
 		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(this.pagination);
-		try {
-			ResultViewServer server = ResultViewServer.getInstance(this);
 
-			this.browser.setUrl(server.getDefaultUri().toASCIIString());
+		String defaultUrl = ABOUT_BLANK_URL;
+
+		try {
+			defaultUrl = ResultViewServer.getInstance(this).getDefaultUri().toASCIIString();
 		} catch (IOException e) {
 			Exceptions.warn(e);
 		}
+		this.browser.setUrl(defaultUrl);
 	}
 
 	/**
@@ -121,24 +129,8 @@ public class ResultView extends Composite implements LocationListener, ResultNav
 	 * @param result the {@linkplain FileScannerResult} to display (may be {@code null}).
 	 */
 	public void setResult(@Nullable FileScannerResult result) {
-		if ((this.contentHandler == null && result != null)
-				|| (this.contentHandler != null && !this.contentHandler.result().equals(result))) {
-			try {
-				ResultViewServer server = ResultViewServer.getInstance(this);
-
-				if (this.contentHandler != null) {
-					server.removeResult(this.contentHandler);
-				}
-				if (result != null) {
-					this.contentHandler = server.addResult(this, result);
-					this.browser.setUrl(this.contentHandler.documentUri().toASCIIString());
-				} else {
-					this.contentHandler = null;
-					this.browser.setUrl(server.getDefaultUri().toASCIIString());
-				}
-			} catch (IOException e) {
-				Exceptions.warn(e);
-			}
+		if (!this.inNavigation && !Objects.equals(result, getResult())) {
+			this.browser.setUrl(setupContentHandler(result));
 		}
 	}
 
@@ -152,9 +144,23 @@ public class ResultView extends Composite implements LocationListener, ResultNav
 		return (this.contentHandler != null ? this.contentHandler.result() : null);
 	}
 
-	@Override
-	public void navigateTo(@NonNull FileScannerResult result, long position) throws IOException {
-		// TODO Auto-generated method stub
+	/**
+	 * Adds a {@linkplain ResultNavigator} callback to this result view instance.
+	 *
+	 * @param resultNavigator the {@linkplain ResultNavigator} callback to add.
+	 */
+	public void addResultNavigator(ResultNavigator resultNavigator) {
+		this.resultNavigators.add(resultNavigator);
+	}
+
+	/**
+	 * Removes a previously added {@linkplain ResultNavigator} callback from this result view instance.
+	 *
+	 * @param resultNavigator the {@linkplain ResultNavigator} callback to remove.
+	 * @see #addResultNavigator(ResultNavigator)
+	 */
+	public void removeResultNavigator(ResultNavigator resultNavigator) {
+		this.resultNavigators.remove(resultNavigator);
 	}
 
 	@Override
@@ -170,6 +176,42 @@ public class ResultView extends Composite implements LocationListener, ResultNav
 	public void changed(LocationEvent event) {
 		// TODO Auto-generated method stub
 
+	}
+
+	String navigateTo(FileScannerResult from, long position) {
+		FileScannerResult to = from;
+
+		try {
+			this.inNavigation = true;
+			for (ResultNavigator resultNavigator : this.resultNavigators) {
+				to = resultNavigator.navigateTo(from, position);
+			}
+		} finally {
+			this.inNavigation = false;
+		}
+		return setupContentHandler(to);
+	}
+
+	private String setupContentHandler(@Nullable FileScannerResult result) {
+		String resultUrl = ABOUT_BLANK_URL;
+
+		try {
+			ResultViewServer server = ResultViewServer.getInstance(this);
+
+			if (this.contentHandler != null) {
+				server.removeResult(this.contentHandler);
+			}
+			if (result != null) {
+				this.contentHandler = server.addResult(this, result);
+				resultUrl = this.contentHandler.documentUri().toASCIIString();
+			} else {
+				this.contentHandler = null;
+				resultUrl = server.getDefaultUri().toASCIIString();
+			}
+		} catch (IOException e) {
+			Exceptions.warn(e);
+		}
+		return resultUrl;
 	}
 
 }

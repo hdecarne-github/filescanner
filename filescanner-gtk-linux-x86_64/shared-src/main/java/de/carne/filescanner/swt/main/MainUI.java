@@ -16,7 +16,6 @@
  */
 package de.carne.filescanner.swt.main;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
 import java.util.concurrent.CancellationException;
@@ -270,8 +269,11 @@ public class MainUI extends ShellUserInterface {
 				.withMessage(MainI18N.i18nMessageScanException(Exceptions.toString(exception))).open();
 	}
 
-	private void navigateToPosition(FileScannerResult result, long position) throws IOException {
+	private FileScannerResult navigateToPosition(FileScannerResult from, long position) {
+		@NonNull FileScannerResult[] toPath = this.controllerHolder.get().navigateTo(from, position);
 
+		expandAndSelectResultPath(toPath);
+		return toPath[toPath.length - 1];
 	}
 
 	private void setRootResultTreeItem(FileScannerResult rootResult) {
@@ -768,6 +770,7 @@ public class MainUI extends ShellUserInterface {
 		buildContextMenu(resultTree.get());
 		resultTree.onEvent(SWT.SetData, this::onSetResultTreeItemData);
 		resultTree.onSelected(this::onResultTreeItemSelected);
+		resultView.get().addResultNavigator(this::navigateToPosition);
 
 		GridLayoutBuilder.layout().apply(rootBuilder);
 		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(commands);

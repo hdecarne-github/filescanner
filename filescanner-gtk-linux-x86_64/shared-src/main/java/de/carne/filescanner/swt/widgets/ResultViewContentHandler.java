@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.jdt.annotation.Nullable;
 import org.glassfish.grizzly.http.server.HttpHandler;
@@ -182,7 +183,11 @@ class ResultViewContentHandler extends HttpHandler {
 		Long hrefPosition = this.hrefPositions.get(hrefId);
 
 		if (hrefPosition != null) {
-			this.resultView.navigateTo(this.result, hrefPosition);
+			AtomicReference<String> toUrl = new AtomicReference<>();
+
+			this.resultView.getDisplay()
+					.syncExec(() -> toUrl.set(this.resultView.navigateTo(this.result, hrefPosition)));
+			response.sendRedirect(toUrl.get());
 		} else {
 			response.sendError(404);
 		}

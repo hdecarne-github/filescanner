@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import de.carne.boot.Application;
@@ -92,10 +93,11 @@ class MainController implements FileScannerStatus {
 		this.ui.sessionRunning(false);
 	}
 
+	@NonNull
 	FileScannerResult @Nullable [] searchNext(@Nullable FileScannerResult from, String query) throws IOException {
 		SearchIndex checkedSearchIndex = this.searchIndex;
 		FileScanner checkedFileScanner = this.fileScanner;
-		FileScannerResult[] searchResult = null;
+		@NonNull FileScannerResult[] searchResult = null;
 
 		if (checkedSearchIndex != null && checkedFileScanner != null) {
 			byte[] resultKey = checkedSearchIndex.searchFoward(from, query);
@@ -107,10 +109,11 @@ class MainController implements FileScannerStatus {
 		return searchResult;
 	}
 
+	@NonNull
 	FileScannerResult @Nullable [] searchPrevious(@Nullable FileScannerResult from, String query) throws IOException {
 		SearchIndex checkedSearchIndex = this.searchIndex;
 		FileScanner checkedFileScanner = this.fileScanner;
-		FileScannerResult[] searchResult = null;
+		@NonNull FileScannerResult[] searchResult = null;
 
 		if (checkedSearchIndex != null && checkedFileScanner != null) {
 			byte[] resultKey = checkedSearchIndex.searchBackward(from, query);
@@ -120,6 +123,48 @@ class MainController implements FileScannerStatus {
 			}
 		}
 		return searchResult;
+	}
+
+	@NonNull
+	FileScannerResult[] navigateTo(FileScannerResult from, long position) {
+		FileScanner checkedFileScanner = this.fileScanner;
+		@NonNull FileScannerResult[] toPath = null;
+
+		if (checkedFileScanner != null) {
+			FileScannerResult to = from.inputResult();
+			@NonNull FileScannerResult[] toChildren = to.children();
+			int first = 0;
+			int last = toChildren.length - 1;
+			int median = (last - first) / 2;
+
+			while (true) {
+				if (first > last) {
+					break;
+				}
+
+				FileScannerResult toChild = toChildren[median];
+
+				if (position < toChild.end()) {
+					if (toChild.start() <= position) {
+						to = toChild;
+						toChildren = to.children();
+						first = 0;
+						last = toChildren.length - 1;
+						median = (last - first) / 2;
+					} else {
+						last = median - 1;
+						median = first + (last - first) / 2;
+					}
+				} else {
+					first = median + 1;
+					median = first + (last - first) / 2;
+				}
+			}
+			toPath = checkedFileScanner.getResultPath(to.key());
+		} else {
+			toPath = new @NonNull FileScannerResult[] { from };
+		}
+		return toPath;
 	}
 
 	@Override
