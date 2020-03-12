@@ -135,13 +135,9 @@ class MainController implements FileScannerStatus {
 			@NonNull FileScannerResult[] toChildren = to.children();
 			int first = 0;
 			int last = toChildren.length - 1;
-			int median = (last - first) / 2;
 
-			while (true) {
-				if (first > last) {
-					break;
-				}
-
+			while (first <= last) {
+				int median = first + (last - first) / 2;
 				FileScannerResult toChild = toChildren[median];
 
 				if (position < toChild.end()) {
@@ -150,14 +146,11 @@ class MainController implements FileScannerStatus {
 						toChildren = to.children();
 						first = 0;
 						last = toChildren.length - 1;
-						median = (last - first) / 2;
 					} else {
 						last = median - 1;
-						median = first + (last - first) / 2;
 					}
 				} else {
 					first = median + 1;
-					median = first + (last - first) / 2;
 				}
 			}
 			toPath = checkedFileScanner.getResultPath(to.key());
