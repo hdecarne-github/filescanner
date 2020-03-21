@@ -12,3 +12,9 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 ![Install4J](http://certmgr.carne.de/install4j_small.png) The provided installer/launcher packages have been created using the multi-platform installer builder [Install4J](https://www.ej-technologies.com/products/install4j/overview.html).
+
+### v2.0.0-beta2 (2020-03-xx)
+* Add supported for paged rendering of large scan results
+* New or updated decoders: Mach-O and ELF image format
+
+See full [changelog](https://github.com/hdecarne/filescanner/blob/master/CHANGELOG.md).
