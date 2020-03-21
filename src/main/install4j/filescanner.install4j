@@ -1006,8 +1006,8 @@ return true;</property>
     </styles>
   </installerGui>
   <mediaSets>
-    <windows name="Windows (x64)" id="66" />
-    <macosArchive name="macOS Single Bundle Archive" id="905" launcherId="60">
+    <windows name="Windows (x64)" id="66" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}" />
+    <macosArchive name="macOS Single Bundle Archive" id="905" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}" launcherId="60">
       <topLevelFiles>
         <symlink name="&quot; &quot;" target="/Applications" />
         <file name="LICENSE" file="${compiler:i4jProjectBaseDir}/src/main/dist/LICENSE" />
