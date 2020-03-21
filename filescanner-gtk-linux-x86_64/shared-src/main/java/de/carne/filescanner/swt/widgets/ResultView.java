@@ -25,12 +25,11 @@ import java.util.Objects;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.browser.LocationEvent;
-import org.eclipse.swt.browser.LocationListener;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Link;
 
 import de.carne.boot.Exceptions;
@@ -38,11 +37,12 @@ import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.transfer.RenderStyle;
 import de.carne.filescanner.engine.transfer.TransferSource;
 import de.carne.swt.layout.GridLayoutBuilder;
+import de.carne.util.Strings;
 
 /**
  * Custom control for rendering and displaying file scanner results.
  */
-public class ResultView extends Composite implements LocationListener {
+public class ResultView extends Composite {
 
 	private static final String ABOUT_BLANK_URL = "about:blank";
 
@@ -63,7 +63,7 @@ public class ResultView extends Composite implements LocationListener {
 		this.browser = new Browser(this, SWT.NONE);
 		this.pagination = new Link(this, SWT.NONE);
 		this.browser.addListener(SWT.MenuDetect, event -> event.doit = false);
-		this.browser.addLocationListener(this);
+		this.pagination.addListener(SWT.Selection, this::onPageSelection);
 		GridLayoutBuilder.layout().margin(0, 0).apply(this);
 		GridLayoutBuilder.data(GridData.FILL_BOTH).apply(this.browser);
 		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(this.pagination);
@@ -163,19 +163,27 @@ public class ResultView extends Composite implements LocationListener {
 		this.resultNavigators.remove(resultNavigator);
 	}
 
-	@Override
-	public void changing(LocationEvent event) {
+	void updatePagination(String pageLinks) {
 		GridData paginationLayoutData = (GridData) this.pagination.getLayoutData();
+		boolean layoutRequired = false;
 
-		paginationLayoutData.exclude = true;
-		this.browser.requestLayout();
-		this.pagination.requestLayout();
+		if (Strings.notEmpty(pageLinks)) {
+			layoutRequired = true;
+			paginationLayoutData.exclude = false;
+		} else {
+			layoutRequired = !paginationLayoutData.exclude;
+			paginationLayoutData.exclude = true;
+		}
+		this.pagination.setText(pageLinks);
+		if (layoutRequired) {
+			this.browser.requestLayout();
+			this.pagination.requestLayout();
+		}
 	}
 
-	@Override
-	public void changed(LocationEvent event) {
-		// TODO Auto-generated method stub
-
+	@SuppressWarnings("null")
+	private void onPageSelection(Event event) {
+		this.browser.setUrl(this.contentHandler.documentPageUri(event.text).toASCIIString());
 	}
 
 	String navigateTo(FileScannerResult from, long position) {

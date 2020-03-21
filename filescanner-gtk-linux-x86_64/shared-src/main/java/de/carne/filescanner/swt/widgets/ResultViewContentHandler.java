@@ -117,6 +117,7 @@ class ResultViewContentHandler extends HttpHandler {
 	private final Map<String, TransferSource> mediaDataSources = new HashMap<>();
 	private final Map<String, Long> hrefPositions = new HashMap<>();
 	private final List<Long> renderOffsets = new ArrayList<>();
+	private boolean renderOffsetsComplete = false;
 	private long currentRenderOffset = 0l;
 	private TransferSource contentSource = NO_CONTENT;
 
@@ -125,10 +126,15 @@ class ResultViewContentHandler extends HttpHandler {
 		this.resultView = resultView;
 		this.result = result;
 		this.renderOffsets.add(this.currentRenderOffset);
+		this.resultView.updatePagination(buildPageLinks());
 	}
 
 	public URI documentUri() {
 		return this.documentUri;
+	}
+
+	public URI documentPageUri(String page) {
+		return this.documentUri.resolve(this.documentUri.getPath() + "/?" + REQUEST_PARAMETER_PAGE_ID + "=" + page);
 	}
 
 	public ResultView resultView() {
@@ -171,6 +177,7 @@ class ResultViewContentHandler extends HttpHandler {
 			}
 			response.setContentType(ContentType.newContentType(mediaSource.transferType().mimeType(), null));
 			mediaSource.transfer(response.getOutputStream());
+			this.resultView.getDisplay().syncExec(() -> this.resultView.updatePagination(buildPageLinks()));
 		} else {
 			this.contentSource = NO_CONTENT;
 			response.sendError(404);
@@ -211,8 +218,19 @@ class ResultViewContentHandler extends HttpHandler {
 		try (HtmlRenderer renderer = new HtmlRenderer(response.getWriter(), true)) {
 			this.mediaDataSources.clear();
 			this.hrefPositions.clear();
-			RenderOutput.render(this.result, renderer);
+
+			long decoded = RenderOutput.render(this.result, renderer, this.currentRenderOffset);
+			long nextRenderOffset = this.currentRenderOffset + decoded;
+
+			if ((pageIndex + 1) == this.renderOffsets.size()) {
+				if (nextRenderOffset < this.result.size()) {
+					this.renderOffsets.add(nextRenderOffset);
+				} else {
+					this.renderOffsetsComplete = true;
+				}
+			}
 		}
+		this.resultView.getDisplay().syncExec(() -> this.resultView.updatePagination(buildPageLinks()));
 	}
 
 	@Override
@@ -222,7 +240,7 @@ class ResultViewContentHandler extends HttpHandler {
 
 	synchronized void renderDefault(Writer writer) throws IOException {
 		try (HtmlRenderer renderer = new HtmlRenderer(writer, false)) {
-			RenderOutput.render(this.result, renderer);
+			RenderOutput.render(this.result, renderer, 0);
 		}
 	}
 
@@ -260,6 +278,28 @@ class ResultViewContentHandler extends HttpHandler {
 		String pageId = Integer.toString(pageIndex + 1);
 
 		return "?" + REQUEST_PARAMETER_PAGE_ID + "=" + pageId;
+	}
+
+	private String buildPageLinks() {
+		StringBuilder pageLinks = new StringBuilder();
+		int renderOffsetsCount = this.renderOffsets.size();
+
+		if (renderOffsetsCount > 1) {
+			int pageLink = 1;
+
+			for (Long renderOffset : this.renderOffsets) {
+				if (renderOffset.longValue() != this.currentRenderOffset) {
+					pageLinks.append(" <a>" + pageLink + "</a>");
+				} else {
+					pageLinks.append(" " + pageLink + "");
+				}
+				pageLink++;
+			}
+			if (!this.renderOffsetsComplete) {
+				pageLinks.append(" \u2026");
+			}
+		}
+		return pageLinks.toString();
 	}
 
 	private class HtmlRenderer implements Renderer {

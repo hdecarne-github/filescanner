@@ -66,7 +66,7 @@ class PipedResultContent extends PipedReader {
 		try (PlainTextRenderer renderer = new PlainTextRenderer(new PipedWriter(this))) {
 			signalPipeReady();
 			renderer.emitText(0, RenderStyle.NORMAL, this.result.name(), true);
-			RenderOutput.render(this.result, renderer);
+			RenderOutput.render(this.result, renderer, 0);
 		} catch (IOException e) {
 			this.exception = e;
 		}
