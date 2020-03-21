@@ -66,7 +66,7 @@ public class ResultView extends Composite {
 		this.pagination.addListener(SWT.Selection, this::onPageSelection);
 		GridLayoutBuilder.layout().margin(0, 0).apply(this);
 		GridLayoutBuilder.data(GridData.FILL_BOTH).apply(this.browser);
-		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(this.pagination);
+		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).exclude(false).apply(this.pagination);
 
 		String defaultUrl = ABOUT_BLANK_URL;
 
