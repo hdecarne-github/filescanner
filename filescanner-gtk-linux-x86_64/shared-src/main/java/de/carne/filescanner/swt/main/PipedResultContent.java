@@ -22,7 +22,9 @@ import java.io.PipedWriter;
 
 import org.eclipse.jdt.annotation.Nullable;
 
+import de.carne.boot.Application;
 import de.carne.boot.Exceptions;
+import de.carne.filescanner.FileScannerMain;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.transfer.PlainTextRenderer;
 import de.carne.filescanner.engine.transfer.RenderOutput;
@@ -37,8 +39,7 @@ class PipedResultContent extends PipedReader {
 
 	PipedResultContent(FileScannerResult result) {
 		this.result = result;
-
-		new Thread(this::runPipe).start();
+		Application.getMain(FileScannerMain.class).cachedThreadPool().execute(this::runPipe);
 		waitForPipeReady();
 	}
 

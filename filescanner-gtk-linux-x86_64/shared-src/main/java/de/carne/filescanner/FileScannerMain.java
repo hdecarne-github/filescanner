@@ -18,6 +18,9 @@ package de.carne.filescanner;
 
 import java.io.IOException;
 import java.util.SortedMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.swt.widgets.Display;
@@ -50,6 +53,7 @@ public class FileScannerMain extends UserApplication implements ApplicationMain 
 	private static final String NAME = "filescanner";
 
 	private final Late<MainUI> mainInterfaceHolder = new Late<>();
+	private final ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
 
 	@Override
 	public String name() {
@@ -74,6 +78,17 @@ public class FileScannerMain extends UserApplication implements ApplicationMain 
 			CmdLineProcessor applicationCmdLine = buildApplicationCmdLine(args);
 
 			status = run(applicationCmdLine);
+			this.cachedThreadPool.shutdown();
+
+			boolean terminated = this.cachedThreadPool.awaitTermination(1000, TimeUnit.MILLISECONDS);
+
+			if (!terminated) {
+				LOG.warning("Failed to terminate cached thread pool");
+			}
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			Exceptions.warn(e);
+			status = -1;
 		} catch (CmdLineException | ResourceException e) {
 			Exceptions.warn(e);
 			status = -1;
@@ -81,6 +96,15 @@ public class FileScannerMain extends UserApplication implements ApplicationMain 
 			Logs.flush();
 		}
 		return status;
+	}
+
+	/**
+	 * Gets this application's cached thread pool.
+	 *
+	 * @return this application's cached thread pool.
+	 */
+	public ExecutorService cachedThreadPool() {
+		return this.cachedThreadPool;
 	}
 
 	/**
