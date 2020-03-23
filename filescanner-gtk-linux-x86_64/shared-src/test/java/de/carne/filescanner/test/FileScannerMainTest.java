@@ -49,6 +49,9 @@ import de.carne.test.swt.tester.accessor.ShellAccessor;
 @DisableIfThreadNotSWTCapable
 class FileScannerMainTest extends SWTTest {
 
+	private static final long DEFAULT_TIMEOUT = 180 * 1000l;
+	private static final long LONG_TIMEOUT = 300 * 1000l;
+
 	@BeforeAll
 	static void setLocale() {
 		Locale.setDefault(Locale.US);
@@ -59,9 +62,9 @@ class FileScannerMainTest extends SWTTest {
 		Script script = script(Application::run).args("--debug");
 
 		script.add(this::doOpenFile);
-		script.add(this::waitScanFinished, this::doVerifyScanResult, 60 * 1000l);
+		script.add(this::waitScanFinished, this::doVerifyScanResult, LONG_TIMEOUT);
 		script.add(this::doOpenExport, true);
-		script.add(() -> accessShell("Export scan result"), this::doVerifyExport, 60 * 1000l);
+		script.add(() -> accessShell("Export scan result"), this::doVerifyExport, DEFAULT_TIMEOUT);
 		script.add(this::doClose);
 		script.execute();
 	}
