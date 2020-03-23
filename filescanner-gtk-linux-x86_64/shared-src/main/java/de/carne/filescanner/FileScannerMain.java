@@ -17,6 +17,7 @@
 package de.carne.filescanner;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.SortedMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -35,6 +36,7 @@ import de.carne.swt.UserApplication;
 import de.carne.swt.graphics.ResourceException;
 import de.carne.swt.widgets.ShellUserInterface;
 import de.carne.util.Late;
+import de.carne.util.Lazy;
 import de.carne.util.ManifestInfos;
 import de.carne.util.cmdline.CmdLineException;
 import de.carne.util.cmdline.CmdLineProcessor;
@@ -53,7 +55,7 @@ public class FileScannerMain extends UserApplication implements ApplicationMain 
 	private static final String NAME = "filescanner";
 
 	private final Late<MainUI> mainInterfaceHolder = new Late<>();
-	private final ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
+	private final Lazy<ExecutorService> cachedThreadPoolHolder = new Lazy<>(Executors::newCachedThreadPool);
 
 	@Override
 	public String name() {
@@ -78,13 +80,7 @@ public class FileScannerMain extends UserApplication implements ApplicationMain 
 			CmdLineProcessor applicationCmdLine = buildApplicationCmdLine(args);
 
 			status = run(applicationCmdLine);
-			this.cachedThreadPool.shutdown();
-
-			boolean terminated = this.cachedThreadPool.awaitTermination(1000, TimeUnit.MILLISECONDS);
-
-			if (!terminated) {
-				LOG.warning("Failed to terminate cached thread pool");
-			}
+			shutdownCachedThreaddPool();
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			Exceptions.warn(e);
@@ -104,7 +100,7 @@ public class FileScannerMain extends UserApplication implements ApplicationMain 
 	 * @return this application's cached thread pool.
 	 */
 	public ExecutorService cachedThreadPool() {
-		return this.cachedThreadPool;
+		return this.cachedThreadPoolHolder.get();
 	}
 
 	/**
@@ -170,6 +166,22 @@ public class FileScannerMain extends UserApplication implements ApplicationMain 
 			Logs.readConfig(config);
 		} catch (IOException e) {
 			Exceptions.warn(e);
+		}
+	}
+
+	private void shutdownCachedThreaddPool() throws InterruptedException {
+		Optional<ExecutorService> optionalCachedThreadPool = this.cachedThreadPoolHolder.getOptional();
+
+		if (optionalCachedThreadPool.isPresent()) {
+			ExecutorService cachedThreadPool = optionalCachedThreadPool.get();
+
+			cachedThreadPool.shutdown();
+
+			boolean terminated = cachedThreadPool.awaitTermination(1000, TimeUnit.MILLISECONDS);
+
+			if (!terminated) {
+				LOG.warning("Failed to terminate cached thread pool");
+			}
 		}
 	}
 
