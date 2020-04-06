@@ -110,6 +110,7 @@ class ExportUI extends ShellUserInterface {
 		rootBuilder.withText(ExportI18N.i18nTitle()).withDefaultImages();
 		title.withText(ExportI18N.i18nLabelExportResult(this.result.name()));
 		exportTypeLabel.withText(ExportI18N.i18nLabelExportType());
+		exportType.onSelected(this::onExportTypeSelected);
 		exportPathLabel.withText(ExportI18N.i18nLabelExportPath());
 		exportPathButton.withImage(this.resources.getImage(Images.class, Images.IMAGE_OPEN_FILE16));
 		exportPathButton.onSelected(this::onExportPathSelected);
@@ -159,6 +160,10 @@ class ExportUI extends ShellUserInterface {
 		RowLayoutBuilder.layout().fill(true).margin(0, 0, 0, 0).apply(buttons);
 		RowLayoutBuilder.data().apply(cancelButton);
 		RowLayoutBuilder.data().apply(exportButton);
+	}
+
+	private void onExportTypeSelected() {
+		this.exportTypeSelection.set(this.exportTypeHolder.get().getSelectionIndex());
 	}
 
 	private void onExportPathSelected() {
@@ -212,10 +217,11 @@ class ExportUI extends ShellUserInterface {
 	}
 
 	private String buildExportPath(FileScannerResultExportHandler exportHandler) {
-		Path baseDir = PREF_EXPORT_DIR.get(this.preferences);
 		Path exportPath = null;
 
 		try {
+			Path baseDir = PREF_EXPORT_DIR.get(this.preferences);
+
 			exportPath = baseDir.resolve(exportHandler.defaultFileName(this.result)).normalize();
 		} catch (IOException | InvalidPathException e) {
 			Exceptions.ignore(e);
