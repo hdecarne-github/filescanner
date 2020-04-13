@@ -19,10 +19,11 @@ env:
 
 addons:
   sonarcloud:
-    organization: "hdecarne-github"  apt:
-  packages:
-    - fluxbox
-    - libwebkit2gtk-4.0-37
+    organization: "hdecarne-github"
+  apt:
+    packages:
+      - fluxbox
+      - libwebkit2gtk-4.0-37
 
 git:
   depth: false  
