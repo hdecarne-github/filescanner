@@ -16,6 +16,7 @@ GNU General Public License for more details.
 ### v2.0.0-beta2 (2020-03-xx)
 * Add supported for paged rendering of large scan results
 * New or updated decoders: Mach-O and ELF image format
+* Various fixes and enhancements
 
 ### v2.0.0-beta1 (2020-03-08)
 * Integrate update check for Install4j based packages
