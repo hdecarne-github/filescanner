@@ -31,6 +31,7 @@ import de.carne.boot.ApplicationMain;
 import de.carne.boot.Exceptions;
 import de.carne.boot.logging.Log;
 import de.carne.boot.logging.Logs;
+import de.carne.filescanner.platform.FileScannerPlatform;
 import de.carne.filescanner.swt.main.MainUI;
 import de.carne.swt.UserApplication;
 import de.carne.swt.graphics.ResourceException;
@@ -67,6 +68,8 @@ public class FileScannerMain extends UserApplication implements ApplicationMain 
 		int status;
 
 		try {
+			FileScannerPlatform.setupPlatform();
+
 			CmdLineProcessor logConfigCmdLine = buildLogConfigCmdLine(args);
 
 			logConfigCmdLine.process();

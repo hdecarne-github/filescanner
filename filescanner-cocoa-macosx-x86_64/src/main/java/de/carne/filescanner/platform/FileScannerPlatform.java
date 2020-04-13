@@ -16,13 +16,52 @@
  */
 package de.carne.filescanner.platform;
 
+import org.eclipse.swt.internal.cocoa.NSBundle;
+import org.eclipse.swt.internal.cocoa.NSDictionary;
+import org.eclipse.swt.internal.cocoa.NSMutableDictionary;
+import org.eclipse.swt.internal.cocoa.NSNumber;
+import org.eclipse.swt.internal.cocoa.NSString;
+import org.eclipse.swt.internal.cocoa.OS;
+
+import de.carne.boot.logging.Log;
+
 /**
  * Utility class providing platform dependent functions.
  */
 public final class FileScannerPlatform {
 
+	private static final Log LOG = new Log();
+
 	FileScannerPlatform() {
 		// Prevent instantiation
+	}
+
+	/**
+	 * Performs platform specific setup tasks.
+	 */
+	public static void setupPlatform() {
+		NSBundle mainBundle = NSBundle.mainBundle();
+		boolean atsDefined = false;
+
+		if (mainBundle != null) {
+			NSDictionary dictionary = mainBundle.infoDictionary();
+
+			if (dictionary != null
+					&& dictionary.isKindOfClass(OS.objc_lookUpClass(NSMutableDictionary.class.getSimpleName()))) {
+				NSMutableDictionary mutableDictionary = new NSMutableDictionary(dictionary);
+				NSMutableDictionary ats = NSMutableDictionary.dictionaryWithCapacity(3);
+				NSNumber trueValue = NSNumber.numberWithBool(true);
+
+				ats.setValue(trueValue, NSString.stringWith("NSAllowsArbitraryLoads"));
+				ats.setValue(trueValue, NSString.stringWith("NSAllowsArbitraryLoadsForMedia"));
+				ats.setValue(trueValue, NSString.stringWith("NSAllowsArbitraryLoadsInWebContent"));
+				mutableDictionary.setObject(ats, NSString.stringWith("NSAppTransportSecurity"));
+				atsDefined = true;
+			}
+		}
+		if (!atsDefined) {
+			LOG.warning("Failed to setup App Transport Security policy");
+		}
 	}
 
 	/**

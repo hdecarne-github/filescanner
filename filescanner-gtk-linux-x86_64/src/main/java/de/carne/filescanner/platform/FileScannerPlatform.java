@@ -26,6 +26,13 @@ public final class FileScannerPlatform {
 	}
 
 	/**
+	 * Performs platform specific setup tasks.
+	 */
+	public static void setupPlatform() {
+		// Nothing to do here
+	}
+
+	/**
 	 * Gets the CSS font size based upon the platform specific font height.
 	 *
 	 * @param height the font height to get the CSS font size for.
