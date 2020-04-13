@@ -18,13 +18,11 @@ env:
   DBUS_SESSION_BUS_ADDRESS="/dev/null"
 
 addons:
-  apt:
-    packages:
-      - fluxbox
-      - libwebkit2gtk-4.0-37
-      - libwebkit2gtk-4.0-37-gtk2
-      - libwebkitgtk-3.0-0
-      - libswt-webkit-gtk-3-jni
+  sonarcloud:
+    organization: "hdecarne-github"  apt:
+  packages:
+    - fluxbox
+    - libwebkit2gtk-4.0-37
 
 git:
   depth: false  
