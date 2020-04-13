@@ -10,18 +10,18 @@ os:
 dist: bionic
 osx_image: xcode11.3
 
+services:
+  - xvfb
+
 env:
   JAVA_OPTS="-Xmx2g -Dfile.encoding=UTF-8"
-  DISPLAY=":99.0"
   DBUS_SESSION_BUS_ADDRESS="/dev/null"
 
 addons:
   apt:
     packages:
       - fluxbox
-      - libwebkitgtk-3.0-0
-  sonarcloud:
-    organization: "hdecarne-github"
+#      - libwebkitgtk-3.0-0
 
 git:
   depth: false  
