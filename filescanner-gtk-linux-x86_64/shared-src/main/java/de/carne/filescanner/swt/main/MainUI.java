@@ -249,24 +249,28 @@ public class MainUI extends ShellUserInterface {
 	}
 
 	void sessionResult(FileScannerResult result) {
-		TreeItem resultItem = result.getData(TreeItem.class);
+		if (!root().isDisposed()) {
+			TreeItem resultItem = result.getData(TreeItem.class);
 
-		if (resultItem != null) {
-			if (resultItem.getParentItem() == null && resultItem.getItemCount() == 0) {
-				resultItem.setItemCount(result.childrenCount());
-				resultItem.setExpanded(true);
-			} else {
-				resultItem.setItemCount(result.childrenCount());
-			}
-			for (FileScannerResult resultChild : result.children()) {
-				sessionResult(resultChild);
+			if (resultItem != null) {
+				if (resultItem.getParentItem() == null && resultItem.getItemCount() == 0) {
+					resultItem.setItemCount(result.childrenCount());
+					resultItem.setExpanded(true);
+				} else {
+					resultItem.setItemCount(result.childrenCount());
+				}
+				for (FileScannerResult resultChild : result.children()) {
+					sessionResult(resultChild);
+				}
 			}
 		}
 	}
 
 	void sessionException(Throwable exception) {
-		Notification.error(root()).withText(MainI18N.i18nTextScanException())
-				.withMessage(MainI18N.i18nMessageScanException(Exceptions.toString(exception))).open();
+		if (!root().isDisposed()) {
+			Notification.error(root()).withText(MainI18N.i18nTextScanException())
+					.withMessage(MainI18N.i18nMessageScanException(Exceptions.toString(exception))).open();
+		}
 	}
 
 	private FileScannerResult navigateToPosition(FileScannerResult from, long position) {
