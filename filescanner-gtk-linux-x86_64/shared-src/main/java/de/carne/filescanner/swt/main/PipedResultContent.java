@@ -46,9 +46,9 @@ class PipedResultContent extends PipedReader {
 	private void waitForPipeReady() {
 		synchronized (this.result) {
 			try {
-				do {
+				while (!this.pipeReady) {
 					this.result.wait(1000);
-				} while (!this.pipeReady);
+				}
 			} catch (InterruptedException e) {
 				Exceptions.ignore(e);
 				Thread.currentThread().interrupt();

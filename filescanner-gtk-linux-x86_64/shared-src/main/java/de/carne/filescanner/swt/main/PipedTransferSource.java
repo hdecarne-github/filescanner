@@ -46,9 +46,9 @@ class PipedTransferSource extends PipedInputStream {
 	private void waitForPipeReady() {
 		synchronized (this.transferSource) {
 			try {
-				do {
+				while (!this.pipeReady) {
 					this.transferSource.wait(1000);
-				} while (!this.pipeReady);
+				}
 			} catch (InterruptedException e) {
 				Exceptions.ignore(e);
 				Thread.currentThread().interrupt();
