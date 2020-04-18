@@ -13,7 +13,12 @@ GNU General Public License for more details.
 
 ![Install4J](http://certmgr.carne.de/install4j_small.png) The provided installer/launcher packages have been created using the multi-platform installer builder [Install4J](https://www.ej-technologies.com/products/install4j/overview.html).
 
-### v2.0.0-beta2 (2020-03-xx)
+### v2.0.0-beta3 (2020-mm-dd)
+* Switch to Java11
+* Add dark mode suppor
+* Various fixes and enhancements
+
+### v2.0.0-beta2 (2020-04-13)
 * Add supported for paged rendering of large scan results
 * New or updated decoders: Mach-O and ELF image format
 * Various fixes and enhancements
