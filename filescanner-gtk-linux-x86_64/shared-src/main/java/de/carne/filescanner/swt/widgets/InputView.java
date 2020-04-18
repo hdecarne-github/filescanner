@@ -283,16 +283,10 @@ public class InputView extends Canvas implements DisposeListener, FocusListener,
 			Display display = getDisplay();
 			Color background = getBackground();
 			Color foreground = getForeground();
-			Color backgroundSelected;
-			Color foregroundSelected;
-
-			if (isFocusControl()) {
-				backgroundSelected = display.getSystemColor(SWT.COLOR_LIST_SELECTION);
-				foregroundSelected = display.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT);
-			} else {
-				backgroundSelected = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-				foregroundSelected = display.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND);
-			}
+			Color backgroundSelected = display.getSystemColor(SWT.COLOR_LIST_SELECTION);
+			Color foregroundSelected = display.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT);
+			boolean useAlpha = background.getAlpha() < 255 || foreground.getAlpha() < 255
+					|| backgroundSelected.getAlpha() < 255 || foregroundSelected.getAlpha() < 255;
 
 			try {
 				FileScannerInput input = checkedResult.input();
@@ -328,7 +322,16 @@ public class InputView extends Canvas implements DisposeListener, FocusListener,
 							formatBuffer.setLength(0);
 							formatDisplayLine(formatBuffer, dataPosition, dataBuffer);
 							if (selectionEnd <= dataPosition || dataPosition + DATA_LINE_SIZE <= selectionStart) {
-								event.gc.drawString(formatBuffer.toString(), drawX, drawY, false);
+								String formatString = formatBuffer.toString();
+
+								if (useAlpha) {
+									gc.setAlpha(background.getAlpha());
+									gc.drawString(formatString, drawX, drawY, false);
+									gc.setAlpha(foreground.getAlpha());
+									gc.drawString(formatString, drawX, drawY, true);
+								} else {
+									gc.drawString(formatBuffer.toString(), drawX, drawY, false);
+								}
 							} else {
 								int offset1 = DISPLAY_LINE_LENGTH1_BASE;
 								int offset3 = DISPLAY_LINE_LENGTH3_BASE;
@@ -357,27 +360,67 @@ public class InputView extends Canvas implements DisposeListener, FocusListener,
 								String formatString5 = formatBuffer.substring(offset4);
 								int nextDrawX = drawX;
 
-								event.gc.drawString(formatString1, nextDrawX, drawY, false);
-								nextDrawX += event.gc.textExtent(formatString1, SWT.NONE).x;
-								event.gc.setBackground(backgroundSelected);
-								event.gc.setForeground(foregroundSelected);
-								event.gc.drawString(formatString2, nextDrawX, drawY, false);
-								nextDrawX += event.gc.textExtent(formatString2, SWT.NONE).x;
-								event.gc.setBackground(background);
-								event.gc.setForeground(foreground);
-								event.gc.drawString(formatString3, nextDrawX, drawY, false);
-								nextDrawX += event.gc.textExtent(formatString3, SWT.NONE).x;
-								event.gc.setBackground(backgroundSelected);
-								event.gc.setForeground(foregroundSelected);
-								event.gc.drawString(formatString4, nextDrawX, drawY, false);
-								nextDrawX += event.gc.textExtent(formatString4, SWT.NONE).x;
-								event.gc.setBackground(background);
-								event.gc.setForeground(foreground);
-								event.gc.drawString(formatString5, nextDrawX, drawY, false);
+								if (useAlpha) {
+									gc.setAlpha(background.getAlpha());
+									gc.drawString(formatString1, nextDrawX, drawY, false);
+									gc.setAlpha(foreground.getAlpha());
+									gc.drawString(formatString1, nextDrawX, drawY, true);
+									nextDrawX += gc.textExtent(formatString1, SWT.NONE).x;
+									gc.setBackground(backgroundSelected);
+									gc.setForeground(foregroundSelected);
+									gc.setAlpha(backgroundSelected.getAlpha());
+									gc.drawString(formatString2, nextDrawX, drawY, false);
+									gc.setAlpha(foregroundSelected.getAlpha());
+									gc.drawString(formatString2, nextDrawX, drawY, true);
+									nextDrawX += gc.textExtent(formatString2, SWT.NONE).x;
+									gc.setBackground(background);
+									gc.setForeground(foreground);
+									gc.setAlpha(background.getAlpha());
+									gc.drawString(formatString3, nextDrawX, drawY, false);
+									gc.setAlpha(foreground.getAlpha());
+									gc.drawString(formatString3, nextDrawX, drawY, true);
+									nextDrawX += gc.textExtent(formatString3, SWT.NONE).x;
+									gc.setBackground(backgroundSelected);
+									gc.setForeground(foregroundSelected);
+									gc.setAlpha(backgroundSelected.getAlpha());
+									gc.drawString(formatString4, nextDrawX, drawY, false);
+									gc.setAlpha(foregroundSelected.getAlpha());
+									gc.drawString(formatString4, nextDrawX, drawY, true);
+									nextDrawX += gc.textExtent(formatString4, SWT.NONE).x;
+									gc.setBackground(background);
+									gc.setForeground(foreground);
+									gc.setAlpha(background.getAlpha());
+									gc.drawString(formatString5, nextDrawX, drawY, false);
+									gc.setAlpha(foreground.getAlpha());
+									gc.drawString(formatString5, nextDrawX, drawY, false);
+								} else {
+									gc.drawString(formatString1, nextDrawX, drawY, false);
+									nextDrawX += gc.textExtent(formatString1, SWT.NONE).x;
+									gc.setBackground(backgroundSelected);
+									gc.setForeground(foregroundSelected);
+									gc.drawString(formatString2, nextDrawX, drawY, false);
+									nextDrawX += gc.textExtent(formatString2, SWT.NONE).x;
+									gc.setBackground(background);
+									gc.setForeground(foreground);
+									gc.drawString(formatString3, nextDrawX, drawY, false);
+									nextDrawX += gc.textExtent(formatString3, SWT.NONE).x;
+									gc.setBackground(backgroundSelected);
+									gc.setForeground(foregroundSelected);
+									gc.drawString(formatString4, nextDrawX, drawY, false);
+									nextDrawX += gc.textExtent(formatString4, SWT.NONE).x;
+									gc.setBackground(background);
+									gc.setForeground(foreground);
+									gc.drawString(formatString5, nextDrawX, drawY, false);
+								}
 							}
 						}
 						drawY += layout.scrollUnitY;
 						dataPosition += DATA_LINE_SIZE;
+					}
+					if (isFocusControl()) {
+						Point size = getSize();
+
+						gc.drawFocus(0, 0, size.x, size.y);
 					}
 				}
 			} catch (IOException e) {

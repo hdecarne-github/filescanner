@@ -29,6 +29,7 @@ import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 
@@ -45,6 +46,7 @@ public class UserPreferences extends Config {
 
 	private static final String KEY_INPUT_VIEW_FONT = "inputViewFont";
 	private static final String KEY_RESULT_VIEW_FONT = "resultViewFont";
+	private static final String KEY_RESULT_VIEW_BACKGROUND = "resultViewBackground";
 	private static final String KEY_RESULT_VIEW_COLOR_NORMAL = "resultViewColorNormal";
 	private static final String KEY_RESULT_VIEW_COLOR_VALUE = "resultViewColorValue";
 	private static final String KEY_RESULT_VIEW_COLOR_COMMENT = "resultViewColorComment";
@@ -78,6 +80,7 @@ public class UserPreferences extends Config {
 	 */
 	public void addConsumer(Consumer<Config> consumer) {
 		this.consumers.add(consumer);
+		consumer.accept(this);
 	}
 
 	/**
@@ -125,6 +128,20 @@ public class UserPreferences extends Config {
 	 */
 	public void setResultViewFont(FontData fontData) {
 		this.preferences.put(KEY_RESULT_VIEW_FONT, fontData.toString());
+	}
+
+	@Override
+	public @NonNull RGB getResultViewBackground() {
+		return getRgbPreference(KEY_RESULT_VIEW_BACKGROUND, this.defaults.getResultViewBackground());
+	}
+
+	/**
+	 * Sets the background color for result data display.
+	 *
+	 * @param rgb the {@linkplain RGB} instance describing the color.
+	 */
+	public void setResultViewBackground(RGB rgb) {
+		this.preferences.put(KEY_RESULT_VIEW_BACKGROUND, rgb.toString());
 	}
 
 	@Override

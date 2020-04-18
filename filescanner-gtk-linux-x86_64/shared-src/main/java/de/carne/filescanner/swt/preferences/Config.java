@@ -21,6 +21,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
@@ -64,6 +65,13 @@ public abstract class Config {
 	public abstract FontData getResultViewFont();
 
 	/**
+	 * Gets the configured background color for result data display.
+	 *
+	 * @return the configured background color for result data display.
+	 */
+	public abstract RGB getResultViewBackground();
+
+	/**
 	 * Gets the configured style color for result data display.
 	 *
 	 * @param style the style to get the color for.
@@ -92,6 +100,7 @@ public abstract class Config {
 		buffer.append("config:").append(System.lineSeparator());
 		buffer.append(" inputViewFont: ").append(getInputViewFont()).append(System.lineSeparator());
 		buffer.append(" resultViewFont: ").append(getResultViewFont()).append(System.lineSeparator());
+		buffer.append(" resultViewBackground: ").append(getResultViewBackground()).append(System.lineSeparator());
 		for (RenderStyle renderStyle : RenderStyle.values()) {
 			buffer.append(" resultViewColor (").append(renderStyle).append("): ")
 					.append(getResultViewColor(renderStyle)).append(System.lineSeparator());
@@ -127,6 +136,11 @@ public abstract class Config {
 		@Override
 		public FontData getResultViewFont() {
 			return new FontData();
+		}
+
+		@Override
+		public @NonNull RGB getResultViewBackground() {
+			return new RGB(0xfc, 0xfc, 0xfc);
 		}
 
 		@Override

@@ -66,6 +66,7 @@ class PreferencesUI extends ShellUserInterface implements UpdaterListener {
 	private final ResourceTracker resources;
 	private Late<Button> inputViewFontButtonHolder = new Late<>();
 	private Late<Button> resultViewFontButtonHolder = new Late<>();
+	private Late<Button> resultViewBackgroundButtonHolder = new Late<>();
 	private Late<Button> resultViewColorNormalButtonHolder = new Late<>();
 	private Late<Button> resultViewColorValueButtonHolder = new Late<>();
 	private Late<Button> resultViewColorCommentButtonHolder = new Late<>();
@@ -143,6 +144,8 @@ class PreferencesUI extends ShellUserInterface implements UpdaterListener {
 		LabelBuilder resultViewLabel = appearance.addLabelChild(SWT.NONE);
 		LabelBuilder resultViewFontLabel = appearance.addLabelChild(SWT.NONE);
 		ButtonBuilder resultViewFontButton = appearance.addButtonChild(SWT.PUSH);
+		LabelBuilder resultViewBackgroundLabel = appearance.addLabelChild(SWT.NONE);
+		ButtonBuilder resultViewBackgroundButton = appearance.addButtonChild(SWT.PUSH);
 		LabelBuilder resultViewColorNormalLabel = appearance.addLabelChild(SWT.NONE);
 		ButtonBuilder resultViewColorNormalButton = appearance.addButtonChild(SWT.PUSH);
 		LabelBuilder resultViewColorValueLabel = appearance.addLabelChild(SWT.NONE);
@@ -168,6 +171,9 @@ class PreferencesUI extends ShellUserInterface implements UpdaterListener {
 		resultViewFontLabel.withText(PreferencesI18N.i18nLabelResultViewFont());
 		resultViewFontButton.withText(PreferencesI18N.i18nButtonResultViewFont());
 		resultViewFontButton.onSelected(this::onChooseResultViewFont);
+		resultViewBackgroundLabel.withText(PreferencesI18N.i18nLabelResultViewBackground());
+		resultViewBackgroundButton.withText(PreferencesI18N.i18nButtonResultViewBackground());
+		resultViewBackgroundButton.onSelected(() -> onChooseResultViewColor(this.resultViewBackgroundButtonHolder));
 		resultViewColorNormalLabel.withText(PreferencesI18N.i18nLabelResultViewColorNormal());
 		resultViewColorNormalButton.withText(PreferencesI18N.i18nButtonResultViewColorNormal());
 		resultViewColorNormalButton.onSelected(() -> onChooseResultViewColor(this.resultViewColorNormalButtonHolder));
@@ -198,6 +204,8 @@ class PreferencesUI extends ShellUserInterface implements UpdaterListener {
 		GridLayoutBuilder.data().span(2, 1).indent(0, 5).apply(resultViewLabel);
 		GridLayoutBuilder.data().indent(5, 0).apply(resultViewFontLabel);
 		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(resultViewFontButton);
+		GridLayoutBuilder.data().indent(5, 0).apply(resultViewBackgroundLabel);
+		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(resultViewBackgroundButton);
 		GridLayoutBuilder.data().indent(5, 0).apply(resultViewColorNormalLabel);
 		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).apply(resultViewColorNormalButton);
 		GridLayoutBuilder.data().indent(5, 0).apply(resultViewColorValueLabel);
@@ -216,6 +224,7 @@ class PreferencesUI extends ShellUserInterface implements UpdaterListener {
 
 		this.inputViewFontButtonHolder.set(inputViewFontButton.get());
 		this.resultViewFontButtonHolder.set(resultViewFontButton.get());
+		this.resultViewBackgroundButtonHolder.set(resultViewBackgroundButton.get());
 		this.resultViewColorNormalButtonHolder.set(resultViewColorNormalButton.get());
 		this.resultViewColorValueButtonHolder.set(resultViewColorValueButton.get());
 		this.resultViewColorCommentButtonHolder.set(resultViewColorCommentButton.get());
@@ -379,6 +388,7 @@ class PreferencesUI extends ShellUserInterface implements UpdaterListener {
 	private void loadPreferences(UserPreferences preferences) {
 		Font inputViewFont = this.resources.getFont(preferences.getInputViewFont());
 		Font resultViewFont = this.resources.getFont(preferences.getResultViewFont());
+		Color background = this.resources.getColor(preferences.getResultViewBackground());
 		Color normalColor = this.resources.getColor(preferences.getResultViewColor(RenderStyle.NORMAL));
 		Color valueColor = this.resources.getColor(preferences.getResultViewColor(RenderStyle.VALUE));
 		Color commentColor = this.resources.getColor(preferences.getResultViewColor(RenderStyle.COMMENT));
@@ -389,6 +399,8 @@ class PreferencesUI extends ShellUserInterface implements UpdaterListener {
 
 		this.inputViewFontButtonHolder.get().setFont(inputViewFont);
 		this.resultViewFontButtonHolder.get().setFont(resultViewFont);
+		this.resultViewBackgroundButtonHolder.get().setFont(resultViewFont);
+		this.resultViewBackgroundButtonHolder.get().setForeground(background);
 		this.resultViewColorNormalButtonHolder.get().setFont(resultViewFont);
 		this.resultViewColorNormalButtonHolder.get().setForeground(normalColor);
 		this.resultViewColorValueButtonHolder.get().setFont(resultViewFont);
@@ -419,6 +431,7 @@ class PreferencesUI extends ShellUserInterface implements UpdaterListener {
 	private void storePreferences(UserPreferences preferences) throws BackingStoreException {
 		preferences.setInputViewFont(this.inputViewFontButtonHolder.get().getFont().getFontData()[0]);
 		preferences.setResultViewFont(this.resultViewFontButtonHolder.get().getFont().getFontData()[0]);
+		preferences.setResultViewBackground(this.resultViewBackgroundButtonHolder.get().getForeground().getRGB());
 		preferences.setResultViewColor(RenderStyle.NORMAL,
 				this.resultViewColorNormalButtonHolder.get().getForeground().getRGB());
 		preferences.setResultViewColor(RenderStyle.VALUE,

@@ -29,6 +29,7 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Link;
 
@@ -63,10 +64,16 @@ public class ResultView extends Composite {
 		this.browser = new Browser(this, SWT.NONE);
 		this.pagination = new Link(this, SWT.NONE);
 		this.browser.addListener(SWT.MenuDetect, event -> event.doit = false);
+		this.browser.addTraverseListener(event -> event.doit = true);
 		this.pagination.addListener(SWT.Selection, this::onPageSelection);
 		GridLayoutBuilder.layout().margin(0, 0).apply(this);
 		GridLayoutBuilder.data(GridData.FILL_BOTH).apply(this.browser);
 		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).exclude(true).apply(this.pagination);
+
+		Display display = getDisplay();
+
+		setBackground(display.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+		setForeground(display.getSystemColor(SWT.COLOR_LIST_FOREGROUND));
 
 		String defaultUrl = ABOUT_BLANK_URL;
 
@@ -85,13 +92,14 @@ public class ResultView extends Composite {
 	 * </p>
 	 *
 	 * @param font the font to use for result rendering.
+	 * @param background the background color to use for result rendering.
 	 * @param styleColors the style colors to use for result rendering.
 	 */
-	public void setRenderStyle(FontData font, Map<RenderStyle, RGB> styleColors) {
+	public void setRenderStyle(FontData font, RGB background, Map<RenderStyle, RGB> styleColors) {
 		try {
 			ResultViewServer server = ResultViewServer.getInstance(this);
 
-			server.setStyle(font, styleColors);
+			server.setStyle(font, background, styleColors);
 		} catch (IOException e) {
 			Exceptions.warn(e);
 		}

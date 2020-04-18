@@ -71,21 +71,20 @@ class ResultViewServer {
 	private static ResultViewServer instance = null;
 
 	private final HttpServer server;
-	private String stylesheet;
+	private String cachedStylesheet;
 	private final Set<ResultView> resultViews = new HashSet<>();
 
-	private ResultViewServer(HttpServer server) {
+	private ResultViewServer(HttpServer server, String defaultDocument) {
 		this.server = server;
-		this.stylesheet = buildStyleSheet(null, Collections.emptyMap());
+		this.cachedStylesheet = buildStyleSheet(null, null, Collections.emptyMap());
 
 		ServerConfiguration configuration = this.server.getServerConfiguration();
-		String defaultDocument = buildDefaultDocument();
 
 		configuration.addHttpHandler(textHandler(CONTENT_TYPE_TEXT_HTML, () -> defaultDocument));
 		configuration.addHttpHandler(
 				resourceHandler(CONTENT_TYPE_IMAGE_PNG, Images.get(Images.IMAGE_TRANSPARENT_BACKGROUND)),
 				PATH_TRANSPARENT_BACKGROUND);
-		configuration.addHttpHandler(textHandler(CONTENT_TYPE_TEXT_CSS, () -> this.stylesheet), PATH_STYLESHEET);
+		configuration.addHttpHandler(textHandler(CONTENT_TYPE_TEXT_CSS, () -> this.cachedStylesheet), PATH_STYLESHEET);
 	}
 
 	public static synchronized ResultViewServer getInstance(ResultView resultView) throws IOException {
@@ -98,7 +97,7 @@ class ResultViewServer {
 
 			server.start();
 
-			instance = checkedInstance = new ResultViewServer(server);
+			instance = checkedInstance = new ResultViewServer(server, buildDefaultDocument(resultView));
 
 			LOG.info("Server started at {0}", instance);
 		}
@@ -134,8 +133,8 @@ class ResultViewServer {
 		}
 	}
 
-	public void setStyle(FontData font, Map<RenderStyle, RGB> styleColors) {
-		this.stylesheet = buildStyleSheet(font, styleColors);
+	public void setStyle(FontData font, RGB background, Map<RenderStyle, RGB> styleColors) {
+		this.cachedStylesheet = buildStyleSheet(font, background, styleColors);
 		for (ResultView resultView : this.resultViews) {
 			resultView.refresh();
 		}
@@ -196,17 +195,20 @@ class ResultViewServer {
 		};
 	}
 
-	private static String buildDefaultDocument() {
+	private static String buildDefaultDocument(ResultView resultView) {
+		String background = rgbString(new StringBuilder(), resultView.getBackground().getRGB()).toString();
+		String foreground = rgbString(new StringBuilder(), resultView.getForeground().getRGB()).toString();
 		ModuleManifestInfos infos = new ModuleManifestInfos();
 
-		return ResultViewI18N.i18nTextDefaultResultViewHtml(Strings.encodeHtml(infos.name()),
+		return ResultViewI18N.i18nTextDefaultResultViewHtml(background, foreground, Strings.encodeHtml(infos.name()),
 				Strings.encodeHtml(infos.version()), Strings.encodeHtml(infos.build()));
 	}
 
-	private static String buildStyleSheet(@Nullable FontData font, Map<RenderStyle, RGB> styleColors) {
+	private static String buildStyleSheet(@Nullable FontData font, @Nullable RGB background,
+			Map<RenderStyle, RGB> styleColors) {
 		StringBuilder stylesheet = new StringBuilder();
 
-		stylesheet.append("body { white-space: pre;");
+		stylesheet.append("body { white-space: pre; ");
 		if (font != null) {
 			stylesheet.append(" font-family:\"").append(font.getName()).append("\";");
 			stylesheet.append(" font-style:");
@@ -223,6 +225,10 @@ class ResultViewServer {
 			}
 			stylesheet.append(" font-size:").append(FileScannerPlatform.cssFontSize(font.getHeight())).append("pt;");
 		}
+		if (background != null) {
+			stylesheet.append(" background-color: ");
+			rgbString(stylesheet, background).append(";");
+		}
 		stylesheet.append(" }");
 		stylesheet.append(" .indent { padding-left: 2em; }");
 		stylesheet.append(" .transparent { background-image: url(\"").append(PATH_TRANSPARENT_BACKGROUND)
@@ -234,12 +240,17 @@ class ResultViewServer {
 			if (styleColor != null) {
 				stylesheet.append(" .").append(style.shortName()).append(" { ");
 				stylesheet.append("white-space: inherit; ");
-				stylesheet.append("color:rgb(").append(styleColor.red).append(",").append(styleColor.green).append(",")
-						.append(styleColor.blue).append(");");
+				stylesheet.append("color: ");
+				rgbString(stylesheet, styleColor).append(";");
 				stylesheet.append("}");
 			}
 		}
 		return stylesheet.toString();
+	}
+
+	private static StringBuilder rgbString(StringBuilder buffer, RGB rgb) {
+		buffer.append("rgb(").append(rgb.red).append(",").append(rgb.green).append(",").append(rgb.blue).append(")");
+		return buffer;
 	}
 
 	private static URI getServerUri(HttpServer server) {

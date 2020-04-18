@@ -84,9 +84,9 @@ import de.carne.swt.widgets.ShellBuilder;
 import de.carne.swt.widgets.ShellUserInterface;
 import de.carne.swt.widgets.ToolBarBuilder;
 import de.carne.swt.widgets.aboutinfo.AboutInfoDialog;
-import de.carne.swt.widgets.heapinfo.HeapInfo;
 import de.carne.swt.widgets.logview.LogViewDialog;
 import de.carne.swt.widgets.notification.Notification;
+import de.carne.swt.widgets.runtimeinfo.RuntimeInfo;
 import de.carne.text.MemoryUnitFormat;
 import de.carne.util.Debug;
 import de.carne.util.Late;
@@ -121,7 +121,7 @@ public class MainUI extends ShellUserInterface {
 	private final Late<InputView> inputViewHolder = new Late<>();
 	private final Late<ProgressBar> sessionProgressHolder = new Late<>();
 	private final Late<Label> sessionStatusHolder = new Late<>();
-	private final Late<HeapInfo> runtimeHeapHolder = new Late<>();
+	private final Late<RuntimeInfo> runtimeInfoHolder = new Late<>();
 	private final Late<Menu> copyObjectMenuHolder = new Late<>();
 	private final Late<Menu> copyObjectToolHolder = new Late<>();
 	private final Late<Menu> contextMenuCopyObjectMenuHolder = new Late<>();
@@ -712,14 +712,9 @@ public class MainUI extends ShellUserInterface {
 	public void open() throws ResourceException {
 		LOG.info("Opening Main UI...");
 
-		MainController controller = this.controllerHolder.set(new MainController(this));
-		Shell root = buildRoot(controller);
+		Shell root = buildRoot(this.controllerHolder.set(new MainController(this)));
 
-		UserPreferences preferences = UserPreferences.get();
-
-		preferences.addConsumer(this.configConsumer);
-		this.configConsumer.accept(preferences);
-		this.resultTreeHolder.get().setFocus();
+		UserPreferences.get().addConsumer(this.configConsumer);
 		root.layout(true);
 		resetSession(false);
 		root.open();
@@ -728,7 +723,8 @@ public class MainUI extends ShellUserInterface {
 	private void applyConfig(Config config) {
 		Font inputViewFont = this.resources.getFont(config.getInputViewFont());
 
-		this.resultViewHolder.get().setRenderStyle(config.getResultViewFont(), config.getResultViewColors());
+		this.resultViewHolder.get().setRenderStyle(config.getResultViewFont(), config.getResultViewBackground(),
+				config.getResultViewColors());
 		this.inputViewHolder.get().setFont(inputViewFont);
 
 		TreeItem[] resultTreeSelection = this.resultTreeHolder.get().getSelection();
@@ -754,7 +750,7 @@ public class MainUI extends ShellUserInterface {
 		} else {
 			Runtime.getRuntime().gc();
 		}
-		this.runtimeHeapHolder.get().redraw();
+		this.runtimeInfoHolder.get().redraw();
 	}
 
 	private Shell buildRoot(MainController controller) {
@@ -964,7 +960,7 @@ public class MainUI extends ShellUserInterface {
 				SWT.HORIZONTAL | SWT.SMOOTH);
 		LabelBuilder sessionStatus = session.addLabelChild(SWT.HORIZONTAL);
 		CompositeBuilder<Composite> runtime = status.addCompositeChild(SWT.NONE);
-		ControlBuilder<HeapInfo> runtimeHeap = runtime.addControlChild(HeapInfo.class, SWT.BORDER);
+		ControlBuilder<RuntimeInfo> runtimeHeap = runtime.addControlChild(RuntimeInfo.class, SWT.BORDER);
 		ToolBarBuilder runtimeTools = ToolBarBuilder.horizontal(runtime, SWT.FLAT);
 
 		sessionTools.addItem(SWT.PUSH);
@@ -1000,7 +996,7 @@ public class MainUI extends ShellUserInterface {
 		this.sessionProgressHolder.set(sessionProgress.get());
 		this.sessionCommands.add(sessionTools.currentItem());
 		this.sessionStatusHolder.set(sessionStatus.get());
-		this.runtimeHeapHolder.set(runtimeHeap.get());
+		this.runtimeInfoHolder.set(runtimeHeap.get());
 
 		status.lock(true).pack();
 		return status;

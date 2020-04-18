@@ -114,6 +114,25 @@ public final class PreferencesI18N {
 	}
 
 	/**
+	 * Resource key {@code I18N_BUTTON_RESULT_VIEW_BACKGROUND}
+	 * <p>
+	 * Background
+	 */
+	public static final String I18N_BUTTON_RESULT_VIEW_BACKGROUND = "I18N_BUTTON_RESULT_VIEW_BACKGROUND";
+
+	/**
+	 * Resource string {@code I18N_BUTTON_RESULT_VIEW_BACKGROUND}
+	 * <p>
+	 * Background
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nButtonResultViewBackground(Object... arguments) {
+		return format(I18N_BUTTON_RESULT_VIEW_BACKGROUND, arguments);
+	}
+
+	/**
 	 * Resource key {@code I18N_BUTTON_RESULT_VIEW_COLOR_COMMENT}
 	 * <p>
 	 * Comment
@@ -358,6 +377,25 @@ public final class PreferencesI18N {
 	 */
 	public static String i18nLabelResultView(Object... arguments) {
 		return format(I18N_LABEL_RESULT_VIEW, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_LABEL_RESULT_VIEW_BACKGROUND}
+	 * <p>
+	 * Background:
+	 */
+	public static final String I18N_LABEL_RESULT_VIEW_BACKGROUND = "I18N_LABEL_RESULT_VIEW_BACKGROUND";
+
+	/**
+	 * Resource string {@code I18N_LABEL_RESULT_VIEW_BACKGROUND}
+	 * <p>
+	 * Background:
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nLabelResultViewBackground(Object... arguments) {
+		return format(I18N_LABEL_RESULT_VIEW_BACKGROUND, arguments);
 	}
 
 	/**
