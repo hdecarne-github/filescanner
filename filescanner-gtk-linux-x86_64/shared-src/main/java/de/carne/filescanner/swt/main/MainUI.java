@@ -866,6 +866,12 @@ public class MainUI extends ShellUserInterface {
 	private void buildContextMenu(Tree resultTree) {
 		MenuBuilder menu = MenuBuilder.popupMenu(resultTree);
 
+		menu.addItem(SWT.CASCADE).withText(MainI18N.i18nMenuEditCopy());
+		menu.withImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_OBJECT16));
+		this.resultSelectionCommands.add(menu.currentItem());
+		menu.beginMenu();
+		this.contextMenuCopyObjectMenuHolder.set(menu.get());
+		menu.endMenu();
 		menu.addItem(SWT.PUSH).withText(MainI18N.i18nMenuFilePrint());
 		menu.withImage(this.resources.getImage(Images.class, Images.IMAGE_PRINT_OBJECT16));
 		menu.onSelected(this::onPrintObjectSelected);
@@ -874,12 +880,6 @@ public class MainUI extends ShellUserInterface {
 		menu.withImage(this.resources.getImage(Images.class, Images.IMAGE_EXPORT_OBJECT16));
 		menu.onSelected(this::onExportObjectSelected);
 		this.resultSelectionCommands.add(menu.currentItem());
-		menu.addItem(SWT.CASCADE).withText(MainI18N.i18nMenuEditCopy());
-		menu.withImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_OBJECT16));
-		this.resultSelectionCommands.add(menu.currentItem());
-		menu.beginMenu();
-		this.contextMenuCopyObjectMenuHolder.set(menu.get());
-		menu.endMenu();
 		resultTree.setMenu(menu.get());
 	}
 
