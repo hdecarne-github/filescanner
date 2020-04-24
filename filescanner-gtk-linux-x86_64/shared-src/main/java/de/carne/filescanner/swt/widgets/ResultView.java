@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.swt.SWT;
@@ -35,6 +34,7 @@ import org.eclipse.swt.widgets.Link;
 
 import de.carne.boot.Exceptions;
 import de.carne.filescanner.engine.FileScannerResult;
+import de.carne.filescanner.engine.transfer.FileScannerResultRenderHandler;
 import de.carne.filescanner.engine.transfer.RenderStyle;
 import de.carne.filescanner.engine.transfer.TransferSource;
 import de.carne.swt.layout.GridLayoutBuilder;
@@ -135,10 +135,12 @@ public class ResultView extends Composite {
 	 * </p>
 	 *
 	 * @param result the {@linkplain FileScannerResult} to display (may be {@code null}).
+	 * @param renderHandler the {@linkplain FileScannerResultRenderHandler} to use for rendering. May {@code null} to
+	 * use the default handler.
 	 */
-	public void setResult(@Nullable FileScannerResult result) {
-		if (!this.inNavigation && !Objects.equals(result, getResult())) {
-			this.browser.setUrl(setupContentHandler(result));
+	public void setResult(@Nullable FileScannerResult result, @Nullable FileScannerResultRenderHandler renderHandler) {
+		if (!this.inNavigation) {
+			this.browser.setUrl(setupContentHandler(result, renderHandler));
 		}
 	}
 
@@ -205,10 +207,11 @@ public class ResultView extends Composite {
 		} finally {
 			this.inNavigation = false;
 		}
-		return setupContentHandler(to);
+		return setupContentHandler(to, null);
 	}
 
-	private String setupContentHandler(@Nullable FileScannerResult result) {
+	private String setupContentHandler(@Nullable FileScannerResult result,
+			@Nullable FileScannerResultRenderHandler renderHandler) {
 		String resultUrl = ABOUT_BLANK_URL;
 
 		try {
@@ -218,7 +221,7 @@ public class ResultView extends Composite {
 				server.removeResult(this.contentHandler);
 			}
 			if (result != null) {
-				this.contentHandler = server.addResult(this, result);
+				this.contentHandler = server.addResult(this, result, renderHandler);
 				resultUrl = this.contentHandler.documentUri().toASCIIString();
 			} else {
 				this.contentHandler = null;

@@ -17,12 +17,15 @@
 package de.carne.filescanner.swt.main;
 
 import java.net.URL;
+import java.util.Map;
 import java.util.Objects;
+import java.util.SortedMap;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -58,7 +61,11 @@ import de.carne.boot.logging.LogLevel;
 import de.carne.filescanner.ModuleManifestInfos;
 import de.carne.filescanner.engine.FileScannerProgress;
 import de.carne.filescanner.engine.FileScannerResult;
+import de.carne.filescanner.engine.spi.FileScannerResultRenderHandlerFactory;
+import de.carne.filescanner.engine.spi.FileScannerResultRenderHandlerFactory.HandlerGroup;
+import de.carne.filescanner.engine.spi.FileScannerResultRenderHandlerFactory.HandlerId;
 import de.carne.filescanner.engine.transfer.FileScannerResultExportHandler;
+import de.carne.filescanner.engine.transfer.FileScannerResultRenderHandler;
 import de.carne.filescanner.swt.export.ExportDialog;
 import de.carne.filescanner.swt.export.ExportOptions;
 import de.carne.filescanner.swt.preferences.Config;
@@ -124,6 +131,7 @@ public class MainUI extends ShellUserInterface {
 	private final Late<RuntimeInfo> runtimeInfoHolder = new Late<>();
 	private final Late<Menu> copyObjectMenuHolder = new Late<>();
 	private final Late<Menu> copyObjectToolHolder = new Late<>();
+	private final Late<Menu> viewObjectAsToolHolder = new Late<>();
 	private final Late<Menu> contextMenuCopyObjectMenuHolder = new Late<>();
 	private final Consumer<Config> configConsumer = this::applyConfig;
 	private final UICommandSet sessionCommands = new UICommandSet();
@@ -482,6 +490,23 @@ public class MainUI extends ShellUserInterface {
 		}
 	}
 
+	private void onViewObjectAsToolSelected(SelectionEvent event) {
+		if (event.detail == SWT.ARROW) {
+			ToolItem toolItem = Check.isInstanceOf(event.widget, ToolItem.class);
+			Rectangle toolItemBounds = toolItem.getBounds();
+			Menu menu = this.viewObjectAsToolHolder.get();
+			Point menuLocation = toolItem.getParent().toDisplay(toolItemBounds.x,
+					toolItemBounds.y + toolItemBounds.height);
+
+			menu.setLocation(menuLocation);
+			menu.setVisible(true);
+		} else {
+			ResultView resultView = this.resultViewHolder.get();
+
+			resultView.setResult(resultView.getResult(), null);
+		}
+	}
+
 	private void onCopyObjectSelected(SelectionEvent event) {
 		MenuItem menuItem = Check.isInstanceOf(event.widget, MenuItem.class);
 		Object menuItemData = menuItem.getData();
@@ -497,6 +522,20 @@ public class MainUI extends ShellUserInterface {
 		} else {
 			copyObject(ClipboardTransferHandler.defaultHandler(this.resultViewHolder.get().getContent()));
 		}
+	}
+
+	private void onViewObjectAsSelected(SelectionEvent event) {
+		MenuItem menuItem = Check.isInstanceOf(event.widget, MenuItem.class);
+		Object menuItemData = menuItem.getData();
+		FileScannerResultRenderHandler renderHandler = null;
+
+		if (menuItemData != null) {
+			renderHandler = Check.isInstanceOf(menuItemData, FileScannerResultRenderHandler.class);
+		}
+
+		ResultView resultView = this.resultViewHolder.get();
+
+		resultView.setResult(resultView.getResult(), renderHandler);
 	}
 
 	private void copyObject(ClipboardTransferHandler handler) {
@@ -647,12 +686,12 @@ public class MainUI extends ShellUserInterface {
 
 			this.resultTreeHolder.get().select(resultItem);
 			this.resultTreeHolder.get().showItem(resultItem);
-			this.resultViewHolder.get().setResult(newResult);
+			this.resultViewHolder.get().setResult(newResult, null);
 			this.inputViewHolder.get().setResult(newResult);
 			this.resultSelectionCommands.setEnabled(true);
 			resetCopyObjectMenus(newResult);
 		} else {
-			this.resultViewHolder.get().setResult(null);
+			this.resultViewHolder.get().setResult(null, null);
 			this.inputViewHolder.get().setResult(null);
 			this.resultSelectionCommands.setEnabled(false);
 			clearCopyObjectMenus();
@@ -726,15 +765,6 @@ public class MainUI extends ShellUserInterface {
 		this.resultViewHolder.get().setRenderStyle(config.getResultViewFont(), config.getResultViewBackground(),
 				config.getResultViewColors());
 		this.inputViewHolder.get().setFont(inputViewFont);
-
-		TreeItem[] resultTreeSelection = this.resultTreeHolder.get().getSelection();
-
-		if (resultTreeSelection.length > 0) {
-			FileScannerResult result = Check.isInstanceOf(resultTreeSelection[0].getData(), FileScannerResult.class);
-
-			this.resultViewHolder.get().setResult(result);
-			this.inputViewHolder.get().setResult(result);
-		}
 	}
 
 	@SuppressWarnings("squid:S1215")
@@ -829,6 +859,15 @@ public class MainUI extends ShellUserInterface {
 		this.copyObjectMenuHolder.set(menu.get());
 		menu.endMenu();
 		menu.endMenu();
+		menu.addItem(SWT.CASCADE).withText(MainI18N.i18nMenuView());
+		menu.beginMenu();
+		menu.addItem(SWT.CASCADE).withText(MainI18N.i18nMenuViewViewas());
+		menu.withImage(this.resources.getImage(Images.class, Images.IMAGE_VIEW_OBJECT16));
+		this.resultSelectionCommands.add(menu.currentItem());
+		menu.beginMenu();
+		buildViewObjectAsMenu(menu);
+		menu.endMenu();
+		menu.endMenu();
 		menu.addItem(SWT.CASCADE).withText(MainI18N.i18nMenuGoto());
 		menu.beginMenu();
 		menu.addItem(SWT.PUSH).withText(MainI18N.i18nMenuGotoNext());
@@ -866,6 +905,12 @@ public class MainUI extends ShellUserInterface {
 	private void buildContextMenu(Tree resultTree) {
 		MenuBuilder menu = MenuBuilder.popupMenu(resultTree);
 
+		menu.addItem(SWT.CASCADE).withText(MainI18N.i18nMenuViewViewas());
+		menu.withImage(this.resources.getImage(Images.class, Images.IMAGE_VIEW_OBJECT16));
+		this.resultSelectionCommands.add(menu.currentItem());
+		menu.beginMenu();
+		buildViewObjectAsMenu(menu);
+		menu.endMenu();
 		menu.addItem(SWT.CASCADE).withText(MainI18N.i18nMenuEditCopy());
 		menu.withImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_OBJECT16));
 		this.resultSelectionCommands.add(menu.currentItem());
@@ -883,40 +928,90 @@ public class MainUI extends ShellUserInterface {
 		resultTree.setMenu(menu.get());
 	}
 
+	private void buildViewObjectAsMenu(Supplier<Menu> menuHolder) {
+		MenuBuilder viewObjectAs = new MenuBuilder(menuHolder);
+
+		viewObjectAs.addItem(SWT.PUSH);
+		viewObjectAs.withText(MainI18N.i18nMenuViewViewasDefault());
+		viewObjectAs.withImage(this.resources.getImage(Images.class, Images.IMAGE_VIEW_DEFAULT16));
+		viewObjectAs.onSelected(this::onViewObjectAsSelected);
+
+		SortedMap<HandlerId, FileScannerResultRenderHandler> handlers = FileScannerResultRenderHandlerFactory
+				.getHandlers();
+
+		if (!handlers.isEmpty()) {
+			viewObjectAs.addItem(SWT.SEPARATOR);
+
+			int groupOrdinal = -1;
+
+			for (Map.Entry<HandlerId, FileScannerResultRenderHandler> entry : handlers.entrySet()) {
+				HandlerId handlerId = entry.getKey();
+				HandlerGroup handlerGroup = handlerId.group();
+				FileScannerResultRenderHandler handler = entry.getValue();
+
+				if (groupOrdinal != handlerGroup.ordinal()) {
+					groupOrdinal = handlerGroup.ordinal();
+					if (groupOrdinal > 0) {
+						viewObjectAs.endMenu();
+					}
+					viewObjectAs.addItem(SWT.CASCADE);
+					viewObjectAs.withText(handlerGroup.displayName());
+					viewObjectAs.beginMenu();
+				}
+				viewObjectAs.addItem(SWT.PUSH);
+				viewObjectAs.withText(handlerId.name());
+				viewObjectAs.currentItem().setData(handler);
+				viewObjectAs.onSelected(this::onViewObjectAsSelected);
+			}
+			if (groupOrdinal > 0) {
+				viewObjectAs.endMenu();
+			}
+		}
+	}
+
 	private CoolBarBuilder buildCommandBar(ShellBuilder rootBuilder) {
 		CoolBarBuilder commands = CoolBarBuilder.horizontal(rootBuilder, SWT.FLAT);
-		ToolBarBuilder fileAndEditTools = ToolBarBuilder.horizontal(commands, SWT.FLAT);
+		ToolBarBuilder fileEditViewTools = ToolBarBuilder.horizontal(commands, SWT.FLAT);
 		CompositeBuilder<Composite> queryInput = commands.addCompositeChild(SWT.NONE);
 		ControlBuilder<Text> queryText = queryInput.addControlChild(Text.class, SWT.SEARCH | SWT.ICON_SEARCH);
 		ToolBarBuilder gotoTools = ToolBarBuilder.horizontal(queryInput, SWT.FLAT);
 
-		// File & edit tools
-		fileAndEditTools.addItem(SWT.PUSH);
-		fileAndEditTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_OPEN_FILE16))
+		// File & edit & view tools
+		fileEditViewTools.addItem(SWT.PUSH);
+		fileEditViewTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_OPEN_FILE16))
 				.withToolTipText(MainI18N.i18nTooltipFileOpen());
-		fileAndEditTools.onSelected(this::onOpenSelected);
-		fileAndEditTools.addItem(SWT.SEPARATOR);
-		fileAndEditTools.addItem(SWT.PUSH);
-		fileAndEditTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_PRINT_OBJECT16))
+		fileEditViewTools.onSelected(this::onOpenSelected);
+		fileEditViewTools.addItem(SWT.SEPARATOR);
+		fileEditViewTools.addItem(SWT.PUSH);
+		fileEditViewTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_PRINT_OBJECT16))
 				.withDisabledImage(this.resources.getImage(Images.class, Images.IMAGE_PRINT_OBJECT_DISABLED16))
 				.withToolTipText(MainI18N.i18nTooltipFilePrint());
-		fileAndEditTools.onSelected(this::onPrintObjectSelected);
-		this.resultSelectionCommands.add(fileAndEditTools.currentItem());
-		fileAndEditTools.addItem(SWT.PUSH);
-		fileAndEditTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_EXPORT_OBJECT16))
+		fileEditViewTools.onSelected(this::onPrintObjectSelected);
+		this.resultSelectionCommands.add(fileEditViewTools.currentItem());
+		fileEditViewTools.addItem(SWT.PUSH);
+		fileEditViewTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_EXPORT_OBJECT16))
 				.withDisabledImage(this.resources.getImage(Images.class, Images.IMAGE_EXPORT_OBJECT_DISABLED16))
 				.withToolTipText(MainI18N.i18nTooltipFileExport());
-		fileAndEditTools.onSelected(this::onExportObjectSelected);
-		this.resultSelectionCommands.add(fileAndEditTools.currentItem());
-		fileAndEditTools.addItem(SWT.SEPARATOR);
-		fileAndEditTools.addItem(SWT.DROP_DOWN);
-		fileAndEditTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_OBJECT16))
+		fileEditViewTools.onSelected(this::onExportObjectSelected);
+		this.resultSelectionCommands.add(fileEditViewTools.currentItem());
+		fileEditViewTools.addItem(SWT.SEPARATOR);
+		fileEditViewTools.addItem(SWT.DROP_DOWN);
+		fileEditViewTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_OBJECT16))
 				.withDisabledImage(this.resources.getImage(Images.class, Images.IMAGE_COPY_OBJECT_DISABLED16))
 				.withToolTipText(MainI18N.i18nTooltipEditCopy());
-		fileAndEditTools.onSelected(this::onCopyObjectToolSelected);
-		this.copyObjectToolHolder.set(new Menu(fileAndEditTools.get()));
-		this.resultSelectionCommands.add(fileAndEditTools.currentItem());
-		commands.addItem(SWT.NONE).withControl(fileAndEditTools);
+		fileEditViewTools.onSelected(this::onCopyObjectToolSelected);
+		this.copyObjectToolHolder.set(new Menu(fileEditViewTools.get()));
+		this.resultSelectionCommands.add(fileEditViewTools.currentItem());
+		fileEditViewTools.addItem(SWT.SEPARATOR);
+		fileEditViewTools.addItem(SWT.DROP_DOWN);
+		fileEditViewTools.withImage(this.resources.getImage(Images.class, Images.IMAGE_VIEW_OBJECT16))
+				.withDisabledImage(this.resources.getImage(Images.class, Images.IMAGE_VIEW_OBJECT_DISABLED16))
+				.withToolTipText(MainI18N.i18nTooltipViewViewas());
+		fileEditViewTools.onSelected(this::onViewObjectAsToolSelected);
+		this.viewObjectAsToolHolder.set(new Menu(fileEditViewTools.get()));
+		buildViewObjectAsMenu(this.viewObjectAsToolHolder);
+		this.resultSelectionCommands.add(fileEditViewTools.currentItem());
+		commands.addItem(SWT.NONE).withControl(fileEditViewTools);
 		// Search tools
 		queryText.get().setToolTipText(MainI18N.i18nTooltipQueryInput());
 		queryText.onSelected(this::onGotoNextSelected);

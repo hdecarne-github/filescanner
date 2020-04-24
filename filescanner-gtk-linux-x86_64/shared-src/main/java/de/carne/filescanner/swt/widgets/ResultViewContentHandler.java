@@ -39,6 +39,7 @@ import org.glassfish.grizzly.http.util.ContentType;
 
 import de.carne.boot.Exceptions;
 import de.carne.filescanner.engine.FileScannerResult;
+import de.carne.filescanner.engine.transfer.FileScannerResultRenderHandler;
 import de.carne.filescanner.engine.transfer.RenderOption;
 import de.carne.filescanner.engine.transfer.RenderOutput;
 import de.carne.filescanner.engine.transfer.RenderStyle;
@@ -114,6 +115,7 @@ class ResultViewContentHandler extends HttpHandler {
 	private final URI documentUri;
 	private final ResultView resultView;
 	private final FileScannerResult result;
+	private final @Nullable FileScannerResultRenderHandler renderHandler;
 	private final Map<String, TransferSource> mediaDataSources = new HashMap<>();
 	private final Map<String, Long> hrefPositions = new HashMap<>();
 	private final List<Long> renderOffsets = new ArrayList<>();
@@ -121,10 +123,12 @@ class ResultViewContentHandler extends HttpHandler {
 	private long currentRenderOffset = 0l;
 	private TransferSource contentSource = NO_CONTENT;
 
-	ResultViewContentHandler(URI documentUri, ResultView resultView, FileScannerResult result) {
+	ResultViewContentHandler(URI documentUri, ResultView resultView, FileScannerResult result,
+			@Nullable FileScannerResultRenderHandler renderHandler) {
 		this.documentUri = documentUri;
 		this.resultView = resultView;
 		this.result = result;
+		this.renderHandler = renderHandler;
 		this.renderOffsets.add(this.currentRenderOffset);
 		this.resultView.updatePagination(buildPageLinks());
 	}
@@ -219,7 +223,7 @@ class ResultViewContentHandler extends HttpHandler {
 			this.mediaDataSources.clear();
 			this.hrefPositions.clear();
 
-			long decoded = RenderOutput.render(this.result, renderer, this.currentRenderOffset);
+			long decoded = RenderOutput.render(this.result, renderer, this.renderHandler, this.currentRenderOffset);
 			long nextRenderOffset = this.currentRenderOffset + decoded;
 
 			if ((pageIndex + 1) == this.renderOffsets.size()) {
@@ -240,7 +244,7 @@ class ResultViewContentHandler extends HttpHandler {
 
 	synchronized void renderDefault(Writer writer) throws IOException {
 		try (HtmlRenderer renderer = new HtmlRenderer(writer, false)) {
-			RenderOutput.render(this.result, renderer, 0);
+			RenderOutput.render(this.result, renderer, this.renderHandler, 0);
 		}
 	}
 

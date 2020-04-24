@@ -79,6 +79,22 @@ public final class Images {
 	 */
 	public static final String IMAGE_COPY_OBJECT_DISABLED16 = "copy_object_disabled16.png";
 	/**
+	 * copy_default16.png
+	 */
+	public static final String IMAGE_COPY_DEFAULT16 = "copy_default16.png";
+	/**
+	 * view_object16.png
+	 */
+	public static final String IMAGE_VIEW_OBJECT16 = "view_object16.png";
+	/**
+	 * view_object_disabled16.png
+	 */
+	public static final String IMAGE_VIEW_OBJECT_DISABLED16 = "view_object_disabled16.png";
+	/**
+	 * view_default16.png
+	 */
+	public static final String IMAGE_VIEW_DEFAULT16 = "view_default16.png";
+	/**
 	 * goto_next16.png
 	 */
 	public static final String IMAGE_GOTO_NEXT16 = "goto_next16.png";
@@ -119,10 +135,6 @@ public final class Images {
 	 */
 	public static final String IMAGE_TRASH16 = "trash16.png";
 	/**
-	 * copy_default16.png
-	 */
-	public static final String IMAGE_COPY_DEFAULT16 = "copy_default16.png";
-	/**
 	 * log_notice16.png
 	 */
 	public static final String IMAGE_LOG_NOTICE16 = "log_notice16.png";
@@ -153,7 +165,7 @@ public final class Images {
 
 	/**
 	 * Gets the image resource {@linkplain URL}.
-	 * 
+	 *
 	 * @param image the image to access.
 	 * @return the image resource {@linkplain URL}.
 	 */

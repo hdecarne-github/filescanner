@@ -26,9 +26,9 @@ import de.carne.boot.Application;
 import de.carne.boot.Exceptions;
 import de.carne.filescanner.FileScannerMain;
 import de.carne.filescanner.engine.FileScannerResult;
-import de.carne.filescanner.engine.transfer.PlainTextRenderer;
 import de.carne.filescanner.engine.transfer.RenderOutput;
 import de.carne.filescanner.engine.transfer.RenderStyle;
+import de.carne.filescanner.engine.transfer.renderer.PlainTextRenderer;
 
 class PipedResultContent extends PipedReader {
 
@@ -67,7 +67,7 @@ class PipedResultContent extends PipedReader {
 		try (PlainTextRenderer renderer = new PlainTextRenderer(new PipedWriter(this))) {
 			signalPipeReady();
 			renderer.emitText(0, RenderStyle.NORMAL, this.result.name(), true);
-			RenderOutput.render(this.result, renderer, 0);
+			RenderOutput.render(this.result, renderer, null, 0);
 		} catch (IOException e) {
 			this.exception = e;
 		}

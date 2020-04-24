@@ -44,6 +44,7 @@ import org.glassfish.grizzly.http.util.ContentType;
 import de.carne.boot.logging.Log;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.ModuleManifestInfos;
+import de.carne.filescanner.engine.transfer.FileScannerResultRenderHandler;
 import de.carne.filescanner.engine.transfer.RenderStyle;
 import de.carne.filescanner.platform.FileScannerPlatform;
 import de.carne.filescanner.swt.resources.Images;
@@ -140,12 +141,14 @@ class ResultViewServer {
 		}
 	}
 
-	public ResultViewContentHandler addResult(ResultView resultView, FileScannerResult result) {
+	public ResultViewContentHandler addResult(ResultView resultView, FileScannerResult result,
+			@Nullable FileScannerResultRenderHandler renderHandler) {
 		URI documentUri = getServerUri(this.server).resolve("/").resolve(UUID.randomUUID().toString());
 
 		LOG.info("Adding document handler {0}...", documentUri);
 
-		ResultViewContentHandler document = new ResultViewContentHandler(documentUri, resultView, result);
+		ResultViewContentHandler document = new ResultViewContentHandler(documentUri, resultView, result,
+				renderHandler);
 		ServerConfiguration configuration = this.server.getServerConfiguration();
 
 		configuration.addHttpHandler(document, documentUri.getPath());

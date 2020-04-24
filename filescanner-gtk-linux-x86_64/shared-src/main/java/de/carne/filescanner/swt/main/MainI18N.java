@@ -361,6 +361,63 @@ public final class MainI18N {
 	}
 
 	/**
+	 * Resource key {@code I18N_MENU_VIEW}
+	 * <p>
+	 * &amp;View
+	 */
+	public static final String I18N_MENU_VIEW = "I18N_MENU_VIEW";
+
+	/**
+	 * Resource string {@code I18N_MENU_VIEW}
+	 * <p>
+	 * &amp;View
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nMenuView(Object... arguments) {
+		return format(I18N_MENU_VIEW, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_MENU_VIEW_VIEWAS}
+	 * <p>
+	 * View &amp;as
+	 */
+	public static final String I18N_MENU_VIEW_VIEWAS = "I18N_MENU_VIEW_VIEWAS";
+
+	/**
+	 * Resource string {@code I18N_MENU_VIEW_VIEWAS}
+	 * <p>
+	 * View &amp;as
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nMenuViewViewas(Object... arguments) {
+		return format(I18N_MENU_VIEW_VIEWAS, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_MENU_VIEW_VIEWAS_DEFAULT}
+	 * <p>
+	 * &amp;Default
+	 */
+	public static final String I18N_MENU_VIEW_VIEWAS_DEFAULT = "I18N_MENU_VIEW_VIEWAS_DEFAULT";
+
+	/**
+	 * Resource string {@code I18N_MENU_VIEW_VIEWAS_DEFAULT}
+	 * <p>
+	 * &amp;Default
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nMenuViewViewasDefault(Object... arguments) {
+		return format(I18N_MENU_VIEW_VIEWAS_DEFAULT, arguments);
+	}
+
+	/**
 	 * Resource key {@code I18N_MESSAGE_IGNORING_COMMAND_LINE_FILE}
 	 * <p>
 	 * Ignoring extra file(s) submitted via command line.
@@ -757,6 +814,25 @@ public final class MainI18N {
 	 */
 	public static String i18nTooltipStopScan(Object... arguments) {
 		return format(I18N_TOOLTIP_STOP_SCAN, arguments);
+	}
+
+	/**
+	 * Resource key {@code I18N_TOOLTIP_VIEW_VIEWAS}
+	 * <p>
+	 * Chose the view for the selected scan result 
+	 */
+	public static final String I18N_TOOLTIP_VIEW_VIEWAS = "I18N_TOOLTIP_VIEW_VIEWAS";
+
+	/**
+	 * Resource string {@code I18N_TOOLTIP_VIEW_VIEWAS}
+	 * <p>
+	 * Chose the view for the selected scan result 
+	 *
+	 * @param arguments Format arguments.
+	 * @return The formatted string.
+	 */
+	public static String i18nTooltipViewViewas(Object... arguments) {
+		return format(I18N_TOOLTIP_VIEW_VIEWAS, arguments);
 	}
 
 }
