@@ -227,7 +227,7 @@ class ResultViewContentHandler extends HttpHandler {
 			long nextRenderOffset = this.currentRenderOffset + decoded;
 
 			if ((pageIndex + 1) == this.renderOffsets.size()) {
-				if (nextRenderOffset < this.result.size()) {
+				if (this.currentRenderOffset < nextRenderOffset && nextRenderOffset < this.result.size()) {
 					this.renderOffsets.add(nextRenderOffset);
 				} else {
 					this.renderOffsetsComplete = true;
