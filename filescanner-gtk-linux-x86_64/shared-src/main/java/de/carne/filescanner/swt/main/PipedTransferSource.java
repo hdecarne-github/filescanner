@@ -34,7 +34,7 @@ class PipedTransferSource extends PipedInputStream {
 	private final TransferSource transferSource;
 	private volatile boolean pipeReady = false;
 	@Nullable
-	private IOException exception = null;
+	private Exception exception = null;
 
 	PipedTransferSource(ProgressCallback progress, TransferSource transferSource) {
 		this.progress = progress;
@@ -67,14 +67,14 @@ class PipedTransferSource extends PipedInputStream {
 		try (OutputStream target = new ProgressOutputStream(this.progress, new PipedOutputStream(this))) {
 			signalPipeReady();
 			this.transferSource.transfer(target);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			this.exception = e;
 		}
 	}
 
 	@Override
 	public void close() throws IOException {
-		IOException checkedException = this.exception;
+		Exception checkedException = this.exception;
 
 		if (checkedException != null) {
 			try {
@@ -82,7 +82,10 @@ class PipedTransferSource extends PipedInputStream {
 			} catch (IOException e) {
 				checkedException.addSuppressed(e);
 			}
-			throw checkedException;
+			if (checkedException instanceof IOException) {
+				throw (IOException) checkedException;
+			}
+			throw new IOException(checkedException);
 		}
 		super.close();
 	}

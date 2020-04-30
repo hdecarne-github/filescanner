@@ -35,7 +35,7 @@ class PipedResultContent extends PipedReader {
 	private final FileScannerResult result;
 	private volatile boolean pipeReady = false;
 	@Nullable
-	private IOException exception = null;
+	private Exception exception = null;
 
 	PipedResultContent(FileScannerResult result) {
 		this.result = result;
@@ -68,14 +68,14 @@ class PipedResultContent extends PipedReader {
 			signalPipeReady();
 			renderer.emitText(0, RenderStyle.NORMAL, this.result.name(), true);
 			RenderOutput.render(this.result, renderer, null, 0);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			this.exception = e;
 		}
 	}
 
 	@Override
 	public void close() throws IOException {
-		IOException checkedException = this.exception;
+		Exception checkedException = this.exception;
 
 		if (checkedException != null) {
 			try {
@@ -83,7 +83,10 @@ class PipedResultContent extends PipedReader {
 			} catch (IOException e) {
 				checkedException.addSuppressed(e);
 			}
-			throw checkedException;
+			if (checkedException instanceof IOException) {
+				throw (IOException) checkedException;
+			}
+			throw new IOException(checkedException);
 		}
 		super.close();
 	}
