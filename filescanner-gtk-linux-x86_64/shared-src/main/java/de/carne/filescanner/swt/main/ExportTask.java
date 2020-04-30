@@ -26,11 +26,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import de.carne.boot.logging.Log;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.transfer.FileScannerResultExportHandler;
 import de.carne.filescanner.engine.transfer.TransferSource;
 import de.carne.filescanner.swt.export.ExportOptions;
+import de.carne.util.logging.Log;
 
 class ExportTask implements Callable<Void> {
 

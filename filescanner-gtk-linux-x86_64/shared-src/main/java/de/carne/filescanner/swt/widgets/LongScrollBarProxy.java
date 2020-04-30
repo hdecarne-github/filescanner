@@ -18,7 +18,7 @@ package de.carne.filescanner.swt.widgets;
 
 import org.eclipse.swt.widgets.ScrollBar;
 
-import de.carne.boot.platform.Platform;
+import de.carne.util.Platform;
 
 final class LongScrollBarProxy extends ScrollBarProxy {
 

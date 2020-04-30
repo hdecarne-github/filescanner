@@ -32,7 +32,6 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import de.carne.boot.Exceptions;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.transfer.FileScannerResultExportHandler;
 import de.carne.filescanner.swt.resources.Images;
@@ -51,6 +50,7 @@ import de.carne.swt.widgets.LabelBuilder;
 import de.carne.swt.widgets.MessageBoxBuilder;
 import de.carne.swt.widgets.ShellBuilder;
 import de.carne.swt.widgets.ShellUserInterface;
+import de.carne.util.Exceptions;
 import de.carne.util.Late;
 import de.carne.util.prefs.PathPreference;
 import de.carne.util.validation.InputValidator;

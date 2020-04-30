@@ -22,7 +22,7 @@ import java.nio.file.Path;
 
 import org.eclipse.swt.dnd.Clipboard;
 
-import de.carne.boot.Exceptions;
+import de.carne.util.Exceptions;
 
 abstract class ClipboardContentHolder {
 

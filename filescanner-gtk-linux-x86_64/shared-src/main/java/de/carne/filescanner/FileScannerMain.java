@@ -28,19 +28,19 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import de.carne.boot.ApplicationMain;
-import de.carne.boot.Exceptions;
-import de.carne.boot.logging.Log;
-import de.carne.boot.logging.Logs;
 import de.carne.filescanner.platform.FileScannerPlatform;
 import de.carne.filescanner.swt.main.MainUI;
 import de.carne.swt.UserApplication;
 import de.carne.swt.graphics.ResourceException;
 import de.carne.swt.widgets.ShellUserInterface;
+import de.carne.util.Exceptions;
 import de.carne.util.Late;
 import de.carne.util.Lazy;
 import de.carne.util.ManifestInfos;
 import de.carne.util.cmdline.CmdLineException;
 import de.carne.util.cmdline.CmdLineProcessor;
+import de.carne.util.logging.Log;
+import de.carne.util.logging.Logs;
 
 /**
  * Application main class.

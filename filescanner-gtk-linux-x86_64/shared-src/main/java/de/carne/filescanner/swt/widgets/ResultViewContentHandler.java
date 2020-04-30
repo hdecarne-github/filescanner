@@ -37,7 +37,6 @@ import org.glassfish.grizzly.http.server.Request;
 import org.glassfish.grizzly.http.server.Response;
 import org.glassfish.grizzly.http.util.ContentType;
 
-import de.carne.boot.Exceptions;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.transfer.FileScannerResultRenderHandler;
 import de.carne.filescanner.engine.transfer.RenderOption;
@@ -46,6 +45,7 @@ import de.carne.filescanner.engine.transfer.RenderStyle;
 import de.carne.filescanner.engine.transfer.Renderer;
 import de.carne.filescanner.engine.transfer.TransferSource;
 import de.carne.filescanner.engine.transfer.TransferType;
+import de.carne.util.Exceptions;
 import de.carne.util.Strings;
 
 class ResultViewContentHandler extends HttpHandler {

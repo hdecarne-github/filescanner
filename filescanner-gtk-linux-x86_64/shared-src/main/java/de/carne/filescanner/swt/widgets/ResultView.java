@@ -32,12 +32,12 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Link;
 
-import de.carne.boot.Exceptions;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.transfer.FileScannerResultRenderHandler;
 import de.carne.filescanner.engine.transfer.RenderStyle;
 import de.carne.filescanner.engine.transfer.TransferSource;
 import de.carne.swt.layout.GridLayoutBuilder;
+import de.carne.util.Exceptions;
 import de.carne.util.Strings;
 
 /**

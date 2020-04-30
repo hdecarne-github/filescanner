@@ -54,10 +54,6 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
-import de.carne.boot.Exceptions;
-import de.carne.boot.check.Check;
-import de.carne.boot.logging.Log;
-import de.carne.boot.logging.LogLevel;
 import de.carne.filescanner.ModuleManifestInfos;
 import de.carne.filescanner.engine.FileScannerProgress;
 import de.carne.filescanner.engine.FileScannerResult;
@@ -95,9 +91,13 @@ import de.carne.swt.widgets.logview.LogViewDialog;
 import de.carne.swt.widgets.notification.Notification;
 import de.carne.swt.widgets.runtimeinfo.RuntimeInfo;
 import de.carne.text.MemoryUnitFormat;
+import de.carne.util.Check;
 import de.carne.util.Debug;
+import de.carne.util.Exceptions;
 import de.carne.util.Late;
 import de.carne.util.Strings;
+import de.carne.util.logging.Log;
+import de.carne.util.logging.LogLevel;
 
 /**
  * Main window UI.

@@ -33,9 +33,9 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 
-import de.carne.boot.Exceptions;
-import de.carne.boot.check.Check;
 import de.carne.filescanner.engine.transfer.RenderStyle;
+import de.carne.util.Check;
+import de.carne.util.Exceptions;
 
 /**
  * This class provides access to the current user's preferences.

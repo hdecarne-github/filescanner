@@ -46,10 +46,10 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
-import de.carne.boot.Exceptions;
-import de.carne.boot.platform.Platform;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.input.FileScannerInput;
+import de.carne.util.Exceptions;
+import de.carne.util.Platform;
 
 /**
  * Custom control for displaying raw input data.

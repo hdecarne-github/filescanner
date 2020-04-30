@@ -25,7 +25,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import de.carne.boot.Application;
-import de.carne.boot.Exceptions;
 import de.carne.filescanner.FileScannerMain;
 import de.carne.filescanner.engine.FileScanner;
 import de.carne.filescanner.engine.FileScannerProgress;
@@ -33,6 +32,7 @@ import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.FileScannerStatus;
 import de.carne.filescanner.engine.Formats;
 import de.carne.filescanner.swt.preferences.UserPreferences;
+import de.carne.util.Exceptions;
 
 /**
  * Main window controller.

@@ -23,7 +23,7 @@ import org.eclipse.swt.internal.cocoa.NSNumber;
 import org.eclipse.swt.internal.cocoa.NSString;
 import org.eclipse.swt.internal.cocoa.OS;
 
-import de.carne.boot.logging.Log;
+import de.carne.util.logging.Log;
 
 /**
  * Utility class providing platform dependent functions.

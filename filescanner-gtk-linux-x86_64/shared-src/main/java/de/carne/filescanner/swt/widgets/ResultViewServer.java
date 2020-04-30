@@ -41,7 +41,6 @@ import org.glassfish.grizzly.http.server.Response;
 import org.glassfish.grizzly.http.server.ServerConfiguration;
 import org.glassfish.grizzly.http.util.ContentType;
 
-import de.carne.boot.logging.Log;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.ModuleManifestInfos;
 import de.carne.filescanner.engine.transfer.FileScannerResultRenderHandler;
@@ -51,6 +50,7 @@ import de.carne.filescanner.swt.resources.Images;
 import de.carne.io.IOUtil;
 import de.carne.util.Strings;
 import de.carne.util.SystemProperties;
+import de.carne.util.logging.Log;
 
 class ResultViewServer {
 

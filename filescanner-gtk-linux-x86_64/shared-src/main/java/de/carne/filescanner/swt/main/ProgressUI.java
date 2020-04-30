@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolItem;
 
 import de.carne.boot.Application;
-import de.carne.boot.check.Check;
 import de.carne.filescanner.FileScannerMain;
 import de.carne.filescanner.swt.resources.Images;
 import de.carne.swt.graphics.ResourceTracker;
@@ -34,6 +33,7 @@ import de.carne.swt.widgets.ControlBuilder;
 import de.carne.swt.widgets.ShellBuilder;
 import de.carne.swt.widgets.ShellUserInterface;
 import de.carne.swt.widgets.ToolBarBuilder;
+import de.carne.util.Check;
 import de.carne.util.Late;
 
 class ProgressUI extends ShellUserInterface implements ProgressCallback {

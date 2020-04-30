@@ -21,7 +21,7 @@ import java.util.Date;
 
 import org.eclipse.jdt.annotation.Nullable;
 
-import de.carne.boot.logging.Log;
+import de.carne.util.logging.Log;
 
 abstract class Updater {
 

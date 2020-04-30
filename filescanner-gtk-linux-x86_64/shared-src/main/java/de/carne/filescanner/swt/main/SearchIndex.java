@@ -51,12 +51,12 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.BytesRef;
 import org.eclipse.jdt.annotation.Nullable;
 
-import de.carne.boot.Exceptions;
-import de.carne.boot.logging.Log;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.io.Closeables;
 import de.carne.nio.file.FileUtil;
 import de.carne.nio.file.attribute.FileAttributes;
+import de.carne.util.Exceptions;
+import de.carne.util.logging.Log;
 
 final class SearchIndex implements AutoCloseable {
 

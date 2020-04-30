@@ -28,10 +28,10 @@ addons:
 git:
   depth: false  
 
-install: ./gradlew -s --refresh-dependencies clean assemble testClasses
+install: ./gradlew -s --no-daemon --refresh-dependencies clean assemble testClasses
 
 before_script: if [[ -e "./.travis/$TRAVIS_OS_NAME/before_script.sh" ]]; then bash -x ./.travis/$TRAVIS_OS_NAME/before_script.sh; fi
-script: if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./gradlew -s build sonarqube checkDependencyVersions; else ./gradlew -s build; fi
+script: if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./gradlew -s --no-daemon build sonarqube checkDependencyVersions; else ./gradlew -s --no-daemon build; fi
 
 notifications:
   email: false

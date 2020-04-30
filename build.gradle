@@ -80,8 +80,8 @@ subprojects {
 	def platformSuffix = project.name.substring(rootProject.name.length())
 
 	dependencies {
-		compileOnly(group: "org.eclipse.jdt", name: "org.eclipse.jdt.annotation", version: project.annotationVersion)
-		testCompileOnly(group: "org.eclipse.jdt", name: "org.eclipse.jdt.annotation", version: project.annotationVersion)
+		implementation(group: "org.eclipse.jdt", name: "org.eclipse.jdt.annotation", version: project.annotationVersion)
+		implementation(group: "de.carne.common", name: "java-default", version: project.javaDefaultVersion)
 		implementation(group: "de.carne.common", name: "java-swt${platformSuffix}", version: project.javaSwtVersion)
 		implementation(group: "de.carne.common", name: "filescanner-engine", version: project.filescannerEngineVersion)
 		implementation(group: "org.glassfish.grizzly", name: "grizzly-http-server", version: project.glassfishGrizzlyVersion)
@@ -131,7 +131,7 @@ subprojects {
 		entryCompression = ZipEntryCompression.STORED
 		from jar
 		from configurations.runtimeClasspath.collect {
-			it.name.matches("java-boot-.*.jar") ? zipTree(it) : it
+			it.name.matches("java-default-.*.jar") ? zipTree(it) : it
 		}
 		manifest {
 			attributes(
