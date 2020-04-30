@@ -258,7 +258,7 @@ public class MainUI extends ShellUserInterface {
 
 	void sessionResult(FileScannerResult result) {
 		if (!root().isDisposed()) {
-			TreeItem resultItem = result.getData(TreeItem.class);
+			TreeItem resultItem = result.getData(this, TreeItem.class);
 
 			if (resultItem != null) {
 				if (resultItem.getParentItem() == null && resultItem.getItemCount() == 0) {
@@ -294,7 +294,7 @@ public class MainUI extends ShellUserInterface {
 		decorateResultTreeItem(rootResultItem, rootResult, true);
 		rootResultItem.setItemCount(rootResult.childrenCount());
 		rootResultItem.setData(rootResult);
-		rootResult.setData(rootResultItem);
+		rootResult.setData(this, rootResultItem);
 	}
 
 	private void onSetResultTreeItemData(Event event) {
@@ -315,7 +315,7 @@ public class MainUI extends ShellUserInterface {
 		decorateResultTreeItem(item, result, root);
 		item.setItemCount(result.childrenCount());
 		item.setData(result);
-		result.setData(item);
+		result.setData(this, item);
 	}
 
 	private void decorateResultTreeItem(TreeItem item, FileScannerResult result, boolean root) {
@@ -375,7 +375,7 @@ public class MainUI extends ShellUserInterface {
 
 		while (resultPathIndex < resultPathTailIndex) {
 			FileScannerResult result = resultPath[resultPathIndex];
-			TreeItem resultItem = Objects.requireNonNull(result.getData(TreeItem.class));
+			TreeItem resultItem = Objects.requireNonNull(result.getData(this, TreeItem.class));
 
 			resultItem.setExpanded(true);
 
@@ -383,7 +383,7 @@ public class MainUI extends ShellUserInterface {
 
 			for (int resultChildrenIndex = 0; resultChildrenIndex < resultChildren.length; resultChildrenIndex++) {
 				FileScannerResult resultChild = resultChildren[resultChildrenIndex];
-				TreeItem resultChildItem = resultChild.getData(TreeItem.class);
+				TreeItem resultChildItem = resultChild.getData(this, TreeItem.class);
 
 				if (resultChildItem == null) {
 					resultChildItem = resultItem.getItem(resultChildrenIndex);
@@ -682,7 +682,7 @@ public class MainUI extends ShellUserInterface {
 	private void onResultSelectionChanged(@Nullable FileScannerResult newResult,
 			@SuppressWarnings({ "unused", "squid:S1172" }) @Nullable FileScannerResult oldResult) {
 		if (newResult != null) {
-			TreeItem resultItem = newResult.getData(TreeItem.class);
+			TreeItem resultItem = newResult.getData(this, TreeItem.class);
 
 			this.resultTreeHolder.get().select(resultItem);
 			this.resultTreeHolder.get().showItem(resultItem);
@@ -959,7 +959,7 @@ public class MainUI extends ShellUserInterface {
 					viewObjectAs.beginMenu();
 				}
 				viewObjectAs.addItem(SWT.PUSH);
-				viewObjectAs.withText(handlerId.name());
+				viewObjectAs.withText(handlerId.displayName());
 				viewObjectAs.currentItem().setData(handler);
 				viewObjectAs.onSelected(this::onViewObjectAsSelected);
 			}
