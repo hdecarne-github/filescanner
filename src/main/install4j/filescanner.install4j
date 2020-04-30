@@ -43,6 +43,8 @@
         </classPath>
       </java>
       <macStaticAssociationActions mode="selected" />
+      <infoPlist>&lt;key&gt;NSRequiresAquaSystemAppearance&lt;/key&gt;
+&lt;false/&gt;</infoPlist>
       <iconImageFiles>
         <file path="./launcherIcon16.png" />
         <file path="./launcherIcon32.png" />
