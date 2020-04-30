@@ -15,7 +15,7 @@ GNU General Public License for more details.
 
 ### v2.0.0-beta3 (2020-mm-dd)
 * Switch to Java11
-* Add dark mode suppor
+* Add alternate view selection
 * Various fixes and enhancements
 
 ### v2.0.0-beta2 (2020-04-13)
