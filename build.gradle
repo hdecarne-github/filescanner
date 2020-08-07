@@ -1,8 +1,8 @@
 // Plugins
 plugins {
 	id "de.carne.java-tools" version "0.9.0" apply false
-	id "org.sonarqube" version "2.8" apply false
-	id "com.install4j.gradle" version "8.0.5" apply false
+	id "org.sonarqube" version "3.0" apply false
+	id "com.install4j.gradle" version "8.0.8" apply false
 }
 
 // Build helpers
@@ -27,6 +27,8 @@ javatools {
 subprojects.each { draftGitHubRelease.dependsOn("${it.name}:assembleMedia") }
 
 // Projects
+defaultTasks "classes", "testClasses"
+
 subprojects {
 
 	apply plugin: "java"
@@ -111,7 +113,6 @@ subprojects {
 	jar {
 		manifest {
 			attributes(
-				'Automatic-Module-Name': automaticModuleName,
 				'Created-By': "Gradle ${gradle.gradleVersion} (${System.properties['os.name']}:${System.properties['os.arch']}:${System.properties['os.version']})",
 				'Build-Jdk' : System.properties['java.version'],
 				'Build-Timestamp': new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ").format(new Date()),
