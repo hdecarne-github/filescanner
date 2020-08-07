@@ -77,11 +77,11 @@ class FileScannerMainTest extends SWTTest {
 
 		mockFileDialog().result(file.toString());
 
-		accessShell().accessMenuBar().accessMenuItem(ItemAccessor.matchText("&Open\u2026")).select();
+		accessShell().accessMenuBar().accessItem(ItemAccessor.matchText("&Open\u2026")).select();
 	}
 
 	private ControlAccessor<ProgressBar> waitScanFinished() {
-		ControlAccessor<ProgressBar> progressBarAccessor = accessShell().accessChild(ControlAccessor::wrapControl,
+		ControlAccessor<ProgressBar> progressBarAccessor = accessShell().accessChild(ControlAccessor::new,
 				ProgressBar.class, control -> true);
 		Optional<? extends ProgressBar> optionalProgressBar = progressBarAccessor.getOptional();
 
@@ -97,7 +97,7 @@ class FileScannerMainTest extends SWTTest {
 	private static final String ZIP_ARCHIVE_RESULT_NAME = "ZIP archive";
 
 	private void doVerifyScanResult(ControlAccessor<ProgressBar> progressBar) {
-		Tree resultView = accessShell().accessChild(ControlAccessor::wrapControl, Tree.class, control -> true).get();
+		Tree resultView = accessShell().accessChild(ControlAccessor::new, Tree.class, control -> true).get();
 
 		TreeItem rootItem = resultView.getItem(0);
 
@@ -115,7 +115,7 @@ class FileScannerMainTest extends SWTTest {
 	private void doOpenExport() {
 		traceAction();
 
-		accessShell().accessMenuBar().accessMenuItem(ItemAccessor.matchText("&Export\u2026")).select();
+		accessShell().accessMenuBar().accessItem(ItemAccessor.matchText("&Export\u2026")).select();
 	}
 
 	private void doVerifyExport(ShellAccessor exportDialog) {
