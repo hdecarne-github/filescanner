@@ -7,6 +7,6 @@ jabba use $BUILD_JDK
 export JAVA_HOME="$HOME/.jabba/jdk/$BUILD_JDK"
 export PATH="$JAVA_HOME/bin:$PATH"
 
-sudo apt-get -y install fluxbox
-sudo apt-get -y install imagemagick
-sudo apt-get -y install libwebkit2gtk-4.0-37
+sudo apt-get -y install -f fluxbox
+sudo apt-get -y install -f imagemagick
+sudo apt-get -y install -f libwebkit2gtk-4.0-37
