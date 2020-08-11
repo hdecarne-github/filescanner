@@ -9,4 +9,4 @@ export PATH="$JAVA_HOME/bin:$PATH"
 
 sudo apt-get -y install fluxbox
 sudo apt-get -y install imagemagick
-sudo apt-get -y install libwebkit2gtk
+sudo apt-get -y install libwebkit2gtk-4.0-37
