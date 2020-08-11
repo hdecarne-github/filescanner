@@ -27,7 +27,7 @@ install:
 before_script:
   - if [[ -e "./.travis/$TRAVIS_OS_NAME/before_script.sh" ]]; then source ./.travis/$TRAVIS_OS_NAME/before_script.sh; fi
 script:
-  - if [[ "$TRAVIS_OS_NAME" == "$DEPLOY_OS_NAME" ]]; then ./gradlew -s --no-daemon clean build artifactoryPublish sonarqube checkDependencyVersions; else ./gradlew -s --no-daemon clean build; fi
+  - if [[ "$TRAVIS_OS_NAME" == "$DEPLOY_OS_NAME" ]]; then ./gradlew -s --no-daemon clean build sonarqube checkDependencyVersions; else ./gradlew -s --no-daemon clean build; fi
 
 notifications:
   email: false
