@@ -1,4 +1,4 @@
-language: genericxy
+language: generic
 
 os:
   - linux
