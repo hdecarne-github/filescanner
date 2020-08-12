@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -aex
 
 export DISPLAY=":99.0"
 export DBUS_SESSION_BUS_ADDRESS="/dev/null"

@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash -aex
 
 curl -sL https://github.com/shyiko/jabba/raw/master/install.sh | bash && . ~/.jabba/jabba.sh
 jabba ls-remote
