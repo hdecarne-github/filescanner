@@ -93,7 +93,8 @@ subprojects {
 		}
 		compileOnly(group: "com.install4j", name: "install4j-runtime", version: project.i4jVersion)
 		testImplementation(group: "com.install4j", name: "install4j-runtime", version: project.i4jVersion)
-		testImplementation(group: "de.carne.common", name: "java-test-swt${platformSuffix}", version: project.javaSwtVersion)
+		testImplementation(group: "de.carne.common", name: "java-test", version: project.javaTestVersion)
+		testImplementation(group: "de.carne.common", name: "java-test-swt${platformSuffix}", version: project.javaTestSwtVersion)
 	}
 
 	test {
