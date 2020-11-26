@@ -75,7 +75,7 @@ class FileScannerMainTest extends SWTTest {
 		Path file = Paths.get("./build/libs",
 				"filescanner-" + PlatformIntegration.toolkitName() + "-" + getFileScannerVersion() + ".jar");
 
-		mockFileDialog().result(file.toString());
+		mockFileDialog().offerResult(file.toString());
 
 		accessShell().accessMenuBar().accessItem(ItemAccessor.matchText("&Open\u2026")).select();
 	}
@@ -103,7 +103,7 @@ class FileScannerMainTest extends SWTTest {
 
 		Assertions.assertNotNull(rootItem);
 		Assertions.assertTrue(rootItem.getExpanded());
-		Assertions.assertTrue(rootItem.getItemCount() == 1);
+		Assertions.assertEquals(rootItem.getItemCount(), 1);
 
 		TreeItem zipArchiveItem = rootItem.getItem(0);
 
