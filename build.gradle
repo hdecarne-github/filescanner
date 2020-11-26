@@ -43,13 +43,13 @@ subprojects {
 	targetCompatibility = JavaVersion.VERSION_11
 	
 	repositories {
+		jcenter()
+		maven { url "https://oss.jfrog.org/libs-release/" }
+		maven { url "https://maven.ej-technologies.com/repository/" }
 		if(snapshotBuild) {
 			mavenLocal()
 			maven { url "https://oss.jfrog.org/libs-snapshot/" }
 		}
-		jcenter()
-		maven { url "https://oss.jfrog.org/libs-release/" }
-		maven { url "https://maven.ej-technologies.com/repository/" }
 	}
 
 	def sharedSrcDir = "../filescanner-gtk-linux-x86_64/shared-src"
@@ -85,6 +85,7 @@ subprojects {
 		implementation(group: "org.eclipse.jdt", name: "org.eclipse.jdt.annotation", version: project.annotationVersion)
 		implementation(group: "de.carne.common", name: "java-default", version: project.javaDefaultVersion)
 		implementation(group: "de.carne.common", name: "java-swt${platformSuffix}", version: project.javaSwtVersion)
+		implementation(group: "de.carne.common", name: "java-swt-browseradapter${platformSuffix}", version: project.javaSwtBrowseradapterVersion)
 		implementation(group: "de.carne.common", name: "filescanner-engine", version: project.filescannerEngineVersion)
 		implementation(group: "org.glassfish.grizzly", name: "grizzly-http-server", version: project.glassfishGrizzlyVersion)
 		implementation(group: "org.apache.lucene", name: "lucene-analyzers-common", version: project.luceneVersion)
@@ -105,7 +106,6 @@ subprojects {
 			events "started", "failed", "passed", "skipped"
 			exceptionFormat "full"
 		}
-		jvmArgs "-javaagent:${classpath.find { it.name.contains('jmockit') }.absolutePath}"
 		enabled = project.name.endsWith(javatools.platform.swtToolkit)
 	}
 
@@ -188,7 +188,7 @@ subprojects {
 	}
 
 	jacoco {
-		toolVersion = "0.8.5"
+		toolVersion = project.jacocoVersion
 	}
 		
 	jacocoTestReport {
