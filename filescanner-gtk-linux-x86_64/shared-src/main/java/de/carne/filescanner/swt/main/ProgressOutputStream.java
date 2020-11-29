@@ -39,11 +39,10 @@ class ProgressOutputStream extends FilterOutputStream {
 		}
 	}
 
-	@SuppressWarnings("null")
 	@Override
 	public void write(byte @Nullable [] b) throws IOException {
 		this.out.write(b);
-		if (!this.progress.addProgress(b.length)) {
+		if (!this.progress.addProgress(b != null ? b.length : 0)) {
 			throw new StoppedException();
 		}
 	}
