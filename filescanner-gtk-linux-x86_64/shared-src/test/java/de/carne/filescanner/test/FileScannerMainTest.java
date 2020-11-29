@@ -81,7 +81,7 @@ class FileScannerMainTest extends SWTTest {
 	}
 
 	private ControlAccessor<ProgressBar> waitScanFinished() {
-		ControlAccessor<ProgressBar> progressBarAccessor = accessShell().accessChild(ControlAccessor::new,
+		ControlAccessor<ProgressBar> progressBarAccessor = accessShell().accessChild(ControlAccessor<ProgressBar>::new,
 				ProgressBar.class, control -> true);
 		Optional<? extends ProgressBar> optionalProgressBar = progressBarAccessor.getOptional();
 
@@ -96,8 +96,8 @@ class FileScannerMainTest extends SWTTest {
 
 	private static final String ZIP_ARCHIVE_RESULT_NAME = "ZIP archive";
 
-	private void doVerifyScanResult(ControlAccessor<ProgressBar> progressBar) {
-		Tree resultView = accessShell().accessChild(ControlAccessor::new, Tree.class, control -> true).get();
+	private void doVerifyScanResult(@SuppressWarnings("unused") ControlAccessor<ProgressBar> progressBar) {
+		Tree resultView = accessShell().accessChild(ControlAccessor<Tree>::new, Tree.class, control -> true).get();
 
 		TreeItem rootItem = resultView.getItem(0);
 
