@@ -103,7 +103,7 @@ class FileScannerMainTest extends SWTTest {
 
 		Assertions.assertNotNull(rootItem);
 		Assertions.assertTrue(rootItem.getExpanded());
-		Assertions.assertEquals(rootItem.getItemCount(), 1);
+		Assertions.assertEquals(1, rootItem.getItemCount());
 
 		TreeItem zipArchiveItem = rootItem.getItem(0);
 
