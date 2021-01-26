@@ -13,7 +13,7 @@ GNU General Public License for more details.
 
 ![Install4J](http://certmgr.carne.de/install4j_small.png) The provided installer/launcher packages have been created using the multi-platform installer builder [Install4J](https://www.ej-technologies.com/products/install4j/overview.html).
 
-### v2.0.0-beta3 (2020-mm-dd)
+### v2.0.0-beta3 (2021-01-26)
 * Switch to Java11
 * Add alternate view selection
 * Various fixes and enhancements
