@@ -128,11 +128,13 @@ public class FileScannerMain extends UserApplication implements ApplicationMain 
 	}
 
 	private void logRuntimeInfo() {
-		SortedMap<String, ManifestInfos> runtimeInfos = ManifestInfos.getRuntimeInfos();
+		if (LOG.isInfoLoggable()) {
+			SortedMap<String, ManifestInfos> runtimeInfos = ManifestInfos.getRuntimeInfos();
 
-		LOG.info("Runtime infos:");
-		for (ManifestInfos manifestInfos : runtimeInfos.values()) {
-			LOG.info(" {0}", manifestInfos);
+			LOG.info("Runtime infos:");
+			for (ManifestInfos manifestInfos : runtimeInfos.values()) {
+				LOG.info(" {0}", manifestInfos);
+			}
 		}
 	}
 
