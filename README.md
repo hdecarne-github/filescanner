@@ -11,7 +11,7 @@ If you want to see a specific format be supported by FileScanner, just drop me a
 message with a link to an example via [info@filescanner.org](mailto:info@filescanner.org)
 
 #### Installation & usage:
-A Java SE 8 Runtime Environment is required to run FileScanner. FileScanner uses on the [SWT UI toolkit](https://www.eclipse.org/swt/) and builds are available for the following platforms:
+A Java SE 11 Runtime Environment is required to run FileScanner. FileScanner uses on the [SWT UI toolkit](https://www.eclipse.org/swt/) and builds are available for the following platforms:
 * macOS 64bit (cocoa-macosx-x86_64)
 * Linux GTK 64bit (gtk-linux-x86_64)
 * Windows 64bit (win32-win32-x86_64)
