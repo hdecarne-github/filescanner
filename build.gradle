@@ -8,6 +8,10 @@ plugins {
 
 // Build helpers
 def snapshotBuild = project.version.endsWith("-SNAPSHOT")
+def releaseBuild = !snapshotBuild
+
+def mavenReleaseRepository = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+def mavenSnapshotRepository = "https://oss.sonatype.org/content/repositories/snapshots/"
 
 apply plugin: "de.carne.java-tools"
 
@@ -44,13 +48,12 @@ subprojects {
 	targetCompatibility = JavaVersion.VERSION_11
 	
 	repositories {
-		jcenter()
-		maven { url "https://oss.jfrog.org/libs-release/" }
+		mavenCentral()
 		maven { url "https://maven.ej-technologies.com/repository/" }
 		if(snapshotBuild) {
-			mavenLocal()
-			maven { url "https://oss.jfrog.org/libs-snapshot/" }
+			maven { url mavenSnapshotRepository }
 		}
+		mavenLocal()
 	}
 
 	def sharedSrcDir = "../filescanner-gtk-linux-x86_64/shared-src"
@@ -84,10 +87,10 @@ subprojects {
 
 	dependencies {
 		implementation(group: "org.eclipse.jdt", name: "org.eclipse.jdt.annotation", version: project.annotationVersion)
-		implementation(group: "de.carne.common", name: "java-default", version: project.javaDefaultVersion)
-		implementation(group: "de.carne.common", name: "java-swt${platformSuffix}", version: project.javaSwtVersion)
-		implementation(group: "de.carne.common", name: "java-swt-browseradapter${platformSuffix}", version: project.javaSwtBrowseradapterVersion)
-		implementation(group: "de.carne.common", name: "filescanner-engine", version: project.filescannerEngineVersion)
+		implementation(group: "de.carne", name: "java-default", version: project.javaDefaultVersion)
+		implementation(group: "de.carne", name: "java-swt${platformSuffix}", version: project.javaSwtVersion)
+		implementation(group: "de.carne", name: "java-swt-browseradapter${platformSuffix}", version: project.javaSwtBrowseradapterVersion)
+		implementation(group: "de.carne", name: "filescanner-engine", version: project.filescannerEngineVersion)
 		implementation(group: "org.glassfish.grizzly", name: "grizzly-http-server", version: project.glassfishGrizzlyVersion)
 		implementation(group: "org.apache.lucene", name: "lucene-analyzers-common", version: project.luceneVersion)
 		implementation(group: "org.apache.lucene", name: "lucene-queryparser", version: project.luceneVersion) {
@@ -95,8 +98,8 @@ subprojects {
 		}
 		compileOnly(group: "com.install4j", name: "install4j-runtime", version: project.i4jVersion)
 		testImplementation(group: "com.install4j", name: "install4j-runtime", version: project.i4jVersion)
-		testImplementation(group: "de.carne.common", name: "java-test", version: project.javaTestVersion)
-		testImplementation(group: "de.carne.common", name: "java-test-swt${platformSuffix}", version: project.javaTestSwtVersion)
+		testImplementation(group: "de.carne", name: "java-test", version: project.javaTestVersion)
+		testImplementation(group: "de.carne", name: "java-test-swt${platformSuffix}", version: project.javaTestSwtVersion)
 	}
 
 	test {

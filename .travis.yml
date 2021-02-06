@@ -11,11 +11,11 @@ osx_image: xcode12
 env:
   JAVA_OPTS="-Xmx4g -Dfile.encoding=UTF-8"
   GRADLE_OPTS="-Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=hdecarne-github -Dsonar.login=$SONAR_TOKEN"
-  BUILD_JDK="adopt@1.11.0-7"
-  DEPLOY_OS_NAME="linux"
+  BUILD_JDK="adopt@1.11.0-9"
+  PRIMARY_OS_NAME="linux"
   GRADLE_INSTALL_CMDLINE="-s --no-daemon --refresh-dependencies clean classes testClasses"
-  GRADLE_FAST_CMDLINE="-s --no-daemon clean build"
-  GRADLE_FULL_CMDLINE="-s --no-daemon clean build sonarqube checkDependencyVersions"
+  GRADLE_DEFAULT_CMDLINE="-s --no-daemon clean build javadoc"
+  GRADLE_EXTENDED_CMDLINE="-s --no-daemon clean build javadoc sonarqube checkDependencyVersions"
 
 git:
   depth: false  
@@ -30,7 +30,7 @@ install:
 before_script:
   - if [[ -e "./.travis/$TRAVIS_OS_NAME/before_script.sh" ]]; then source ./.travis/$TRAVIS_OS_NAME/before_script.sh; fi
 script:
-  - if [[ "$TRAVIS_OS_NAME" == "$DEPLOY_OS_NAME" ]]; then ./gradlew $GRADLE_FULL_CMDLINE; else ./gradlew $GRADLE_FAST_CMDLINE; fi
+  - if [[ "$TRAVIS_OS_NAME" == "$PRIMARY_OS_NAME" ]]; then ./gradlew $GRADLE_EXTENDED_CMDLINE; else ./gradlew $GRADLE_DEFAULT_CMDLINE; fi
 
 notifications:
   email: false
