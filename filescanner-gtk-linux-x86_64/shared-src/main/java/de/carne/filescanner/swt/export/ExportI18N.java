@@ -97,14 +97,14 @@ public final class ExportI18N {
 	/**
 	 * Resource key {@code I18N_LABEL_EXPORT_RESULT}
 	 * <p>
-	 * Scan result: &apos;&apos;{0}&apos;&apos;
+	 * Scan result: &#39;&#39;{0}&#39;&#39;
 	 */
 	public static final String I18N_LABEL_EXPORT_RESULT = "I18N_LABEL_EXPORT_RESULT";
 
 	/**
 	 * Resource string {@code I18N_LABEL_EXPORT_RESULT}
 	 * <p>
-	 * Scan result: &apos;&apos;{0}&apos;&apos;
+	 * Scan result: &#39;&#39;{0}&#39;&#39;
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -135,14 +135,14 @@ public final class ExportI18N {
 	/**
 	 * Resource key {@code I18N_MESSAGE_INVALID_EXPORT_PATH}
 	 * <p>
-	 * &apos;&apos;{0}&apos;&apos; is not a valid export path.<br>Please enter or select an existing directory and a valid file name.
+	 * &#39;&#39;{0}&#39;&#39; is not a valid export path.<br>Please enter or select an existing directory and a valid file name.
 	 */
 	public static final String I18N_MESSAGE_INVALID_EXPORT_PATH = "I18N_MESSAGE_INVALID_EXPORT_PATH";
 
 	/**
 	 * Resource string {@code I18N_MESSAGE_INVALID_EXPORT_PATH}
 	 * <p>
-	 * &apos;&apos;{0}&apos;&apos; is not a valid export path.<br>Please enter or select an existing directory and a valid file name.
+	 * &#39;&#39;{0}&#39;&#39; is not a valid export path.<br>Please enter or select an existing directory and a valid file name.
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
@@ -192,14 +192,14 @@ public final class ExportI18N {
 	/**
 	 * Resource key {@code I18N_MESSAGE_OVERWRITE_EXPORT_PATH}
 	 * <p>
-	 * File &apos;&apos;{0}&apos;&apos; already exists.<br>Do you want to overwrite the file?
+	 * File &#39;&#39;{0}&#39;&#39; already exists.<br>Do you want to overwrite the file?
 	 */
 	public static final String I18N_MESSAGE_OVERWRITE_EXPORT_PATH = "I18N_MESSAGE_OVERWRITE_EXPORT_PATH";
 
 	/**
 	 * Resource string {@code I18N_MESSAGE_OVERWRITE_EXPORT_PATH}
 	 * <p>
-	 * File &apos;&apos;{0}&apos;&apos; already exists.<br>Do you want to overwrite the file?
+	 * File &#39;&#39;{0}&#39;&#39; already exists.<br>Do you want to overwrite the file?
 	 *
 	 * @param arguments Format arguments.
 	 * @return The formatted string.
