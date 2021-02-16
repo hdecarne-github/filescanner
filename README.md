@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.com/hdecarne/filescanner.svg?branch=master)](https://travis-ci.com/hdecarne/filescanner)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=filescanner&metric=coverage)](https://sonarcloud.io/dashboard?id=filescanner)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=de.carne%3Afilescanner&metric=coverage)](https://sonarcloud.io/dashboard?id=de.carne:filescanner)
 [![Downloads](https://img.shields.io/github/downloads/hdecarne/filescanner/total.svg)](https://github.com/hdecarne/filescanner/releases)
 
 ### About FileScanner
