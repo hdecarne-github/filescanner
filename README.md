@@ -1,6 +1,6 @@
 [![Downloads](https://img.shields.io/github/downloads/hdecarne/filescanner/total.svg)](https://github.com/hdecarne/filescanner/releases)
 [![Build Status](https://travis-ci.com/hdecarne/filescanner.svg?branch=master)](https://travis-ci.com/hdecarne/filescanner)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=de.carne%3Afilescanner&metric=coverage)](https://sonarcloud.io/dashboard?id=de.carne:filescanner)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=de.carne%3Afilescanner&metric=coverage)](https://sonarcloud.io/dashboard?id=de.carne%3Afilescanner)
 
 ### About FileScanner
 Did you ever wonder what is inside a file. The FileScanner tool is capable to detect and decode several file formats even recursively. Data structures can be inspected in detail. Contained data can be viewed or exported.
