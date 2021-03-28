@@ -43,9 +43,9 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 import de.carne.boot.Application;
-import de.carne.filescanner.FileScannerMain;
 import de.carne.filescanner.engine.spi.Format;
 import de.carne.filescanner.engine.transfer.RenderStyle;
+import de.carne.filescanner.swt.FileScannerMain;
 import de.carne.swt.graphics.ResourceException;
 import de.carne.swt.graphics.ResourceTracker;
 import de.carne.swt.layout.GridLayoutBuilder;

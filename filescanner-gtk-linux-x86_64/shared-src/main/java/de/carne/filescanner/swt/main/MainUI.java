@@ -54,7 +54,6 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
-import de.carne.filescanner.ModuleManifestInfos;
 import de.carne.filescanner.engine.FileScannerProgress;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.spi.FileScannerResultRenderHandlerFactory;
@@ -62,6 +61,7 @@ import de.carne.filescanner.engine.spi.FileScannerResultRenderHandlerFactory.Han
 import de.carne.filescanner.engine.spi.FileScannerResultRenderHandlerFactory.HandlerId;
 import de.carne.filescanner.engine.transfer.FileScannerResultExportHandler;
 import de.carne.filescanner.engine.transfer.FileScannerResultRenderHandler;
+import de.carne.filescanner.swt.ModuleManifestInfos;
 import de.carne.filescanner.swt.export.ExportDialog;
 import de.carne.filescanner.swt.export.ExportOptions;
 import de.carne.filescanner.swt.preferences.Config;

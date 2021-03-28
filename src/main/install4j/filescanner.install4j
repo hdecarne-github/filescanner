@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="8.0.5" transformSequenceNumber="8">
+<install4j version="9.0.1" transformSequenceNumber="9">
   <directoryPresets config="${compiler:i4jProjectBuildDir}/libs/${compiler:sys.shortName}-boot-${compiler:sys.version}.jar" />
   <application name="${compiler:i4jProjectFullName}" applicationId="${compiler:i4jProjectApplicationID}" mediaDir="${compiler:i4jProjectBuildDir}/distributions" shortName="${compiler:i4jProjectName}" publisherWeb="${compiler:i4jProjectUrl}" version="${compiler:i4jProjectVersion}" allPathsRelative="true" macVolumeId="8caddfd136c560fa" javaMinVersion="11" jdkMode="jdk" jdkName="JDK 11.0">
     <languages>
@@ -23,7 +23,7 @@
     </variables>
     <codeSigning macEnabled="true" macPkcs12File="${compiler:i4jProjectSigningDir}/Developer_ID_Application.pkcs12" appleId="${compiler:i4jProjectAppleNotarizationId}" />
   </application>
-  <files>
+  <files preserveSymlinks="false">
     <mountPoints>
       <mountPoint id="58" />
     </mountPoints>
@@ -830,11 +830,19 @@ return true;</property>
           <group id="42" beanClass="com.install4j.runtime.beans.groups.VerticalFormComponentGroup" useExternalParametrization="true" externalParametrizationName="Customize banner image" externalParametrizationMode="include">
             <serializedBean>
               <property name="backgroundColor">
-                <object class="java.awt.Color">
-                  <int>255</int>
-                  <int>255</int>
-                  <int>255</int>
-                  <int>255</int>
+                <object class="com.install4j.runtime.beans.LightOrDarkColor">
+                  <object class="java.awt.Color">
+                    <int>255</int>
+                    <int>255</int>
+                    <int>255</int>
+                    <int>255</int>
+                  </object>
+                  <object class="java.awt.Color">
+                    <int>49</int>
+                    <int>52</int>
+                    <int>53</int>
+                    <int>255</int>
+                  </object>
                 </object>
               </property>
               <property name="borderSides">
@@ -843,11 +851,19 @@ return true;</property>
                 </object>
               </property>
               <property name="imageEdgeBackgroundColor">
-                <object class="java.awt.Color">
-                  <int>25</int>
-                  <int>143</int>
-                  <int>220</int>
-                  <int>255</int>
+                <object class="com.install4j.runtime.beans.LightOrDarkColor">
+                  <object class="java.awt.Color">
+                    <int>25</int>
+                    <int>143</int>
+                    <int>220</int>
+                    <int>255</int>
+                  </object>
+                  <object class="java.awt.Color">
+                    <int>0</int>
+                    <int>74</int>
+                    <int>151</int>
+                    <int>255</int>
+                  </object>
                 </object>
               </property>
               <property name="imageEdgeBorder" type="boolean" value="true" />
@@ -901,11 +917,19 @@ return true;</property>
               <group id="49" beanClass="com.install4j.runtime.beans.groups.VerticalFormComponentGroup" useExternalParametrization="true" externalParametrizationName="Customize title bar" externalParametrizationMode="include">
                 <serializedBean>
                   <property name="backgroundColor">
-                    <object class="java.awt.Color">
-                      <int>255</int>
-                      <int>255</int>
-                      <int>255</int>
-                      <int>255</int>
+                    <object class="com.install4j.runtime.beans.LightOrDarkColor">
+                      <object class="java.awt.Color">
+                        <int>255</int>
+                        <int>255</int>
+                        <int>255</int>
+                        <int>255</int>
+                      </object>
+                      <object class="java.awt.Color">
+                        <int>49</int>
+                        <int>52</int>
+                        <int>53</int>
+                        <int>255</int>
+                      </object>
                     </object>
                   </property>
                   <property name="borderSides">
@@ -1008,8 +1032,11 @@ return true;</property>
     </styles>
   </installerGui>
   <mediaSets>
-    <windows name="Windows (x64)" id="66" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}" />
+    <windows name="Windows (x64)" id="66" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}">
+      <jreBundle jreBundleSource="none" />
+    </windows>
     <macosArchive name="macOS Single Bundle Archive" id="905" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}" launcherId="60">
+      <jreBundle jreBundleSource="none" />
       <topLevelFiles>
         <symlink name="&quot; &quot;" target="/Applications" />
         <file name="LICENSE" file="${compiler:i4jProjectBaseDir}/src/main/dist/LICENSE" />

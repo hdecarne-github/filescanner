@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolItem;
 
 import de.carne.boot.Application;
-import de.carne.filescanner.FileScannerMain;
+import de.carne.filescanner.swt.FileScannerMain;
 import de.carne.filescanner.swt.resources.Images;
 import de.carne.swt.graphics.ResourceTracker;
 import de.carne.swt.layout.RowLayoutBuilder;

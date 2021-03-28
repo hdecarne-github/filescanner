@@ -23,11 +23,11 @@ import java.io.PipedWriter;
 import org.eclipse.jdt.annotation.Nullable;
 
 import de.carne.boot.Application;
-import de.carne.filescanner.FileScannerMain;
 import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.transfer.RenderOutput;
 import de.carne.filescanner.engine.transfer.RenderStyle;
 import de.carne.filescanner.engine.transfer.renderer.PlainTextRenderer;
+import de.carne.filescanner.swt.FileScannerMain;
 import de.carne.util.Exceptions;
 
 class PipedResultContent extends PipedReader {

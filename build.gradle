@@ -1,9 +1,8 @@
 // Plugins
 plugins {
-	id "de.carne.java-tools" version "0.9.1" apply false
-	id "org.sonarqube" version "3.1" apply false
-	id "org.owasp.dependencycheck" version "6.0.5"
-	id "com.install4j.gradle" version "8.0.10" apply false
+	id "de.carne.java-tools" version "1.0.0" apply false
+	id "org.sonarqube" version "3.1.1" apply false
+	id "com.install4j.gradle" version "9.0.1a" apply false
 }
 
 // Build helpers
@@ -58,10 +57,19 @@ subprojects {
 
 	def sharedSrcDir = "../filescanner-gtk-linux-x86_64/shared-src"
 
+	javatools {
+		generateI18N {
+			enabled = true
+			bundles = fileTree("${sharedSrcDir}/main/resources").include("**/*I18N.properties")
+			lineSeparator = "\n"
+		}
+	}
+
 	sourceSets {
 		main {
 			java {
 				srcDir "${sharedSrcDir}/main/java"
+				srcDir javatools.generateI18N.genDir
 			}
 			resources {
 				srcDir "${sharedSrcDir}/main/resources"
@@ -71,15 +79,6 @@ subprojects {
 			java {
 				srcDir "${sharedSrcDir}/test/java"
 			}
-		}
-	}
-
-	javatools {
-		generateI18N {
-			enabled = true
-			genDir = file("${sharedSrcDir}/main/java")
-			bundles = fileTree("${sharedSrcDir}/main/resources").include("**/*I18N.properties")
-			lineSeparator = "\n"
 		}
 	}
 
@@ -230,6 +229,8 @@ subprojects {
 							if(eeaPath != null) {
 								it.entryAttributes.put("annotationpath", eeaPath)
 							}
+						} else if(it.path.contains("/generated-src/")) {
+							it.entryAttributes.put("ignore_optional_problems", "true")
 						}
 					}
 				}
