@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.carne.filescanner;
+package de.carne.filescanner.swt;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -43,7 +43,7 @@ import de.carne.util.logging.Log;
 import de.carne.util.logging.Logs;
 
 /**
- * Application main class.
+ * FileScanner main class.
  */
 public class FileScannerMain extends UserApplication implements ApplicationMain {
 

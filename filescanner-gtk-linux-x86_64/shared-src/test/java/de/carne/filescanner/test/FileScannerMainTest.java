@@ -34,7 +34,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import de.carne.boot.Application;
-import de.carne.filescanner.FileScannerMain;
+import de.carne.filescanner.swt.FileScannerMain;
 import de.carne.swt.platform.PlatformIntegration;
 import de.carne.test.swt.DisableIfThreadNotSWTCapable;
 import de.carne.test.swt.tester.SWTTest;
