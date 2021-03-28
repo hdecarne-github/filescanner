@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.carne.filescanner;
+package de.carne.filescanner.swt;
 
 import de.carne.swt.platform.PlatformIntegration;
 import de.carne.util.ManifestInfos;
