@@ -1,5 +1,4 @@
 title: FileScanner
-description: "FileScanner: Analyse file data and identify known file formats and structures"
-google_analytics: 
+description: "FileScanner: Analyze file data and identify known file formats and structures"
 show_downloads: false
 theme: jekyll-theme-hacker
