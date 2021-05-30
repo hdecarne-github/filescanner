@@ -37,6 +37,7 @@ import de.carne.filescanner.engine.transfer.RenderStyle;
 import de.carne.filescanner.engine.transfer.TransferSource;
 import de.carne.swt.browseradapter.BrowserAdapter;
 import de.carne.swt.browseradapter.PlatformBrowserAdapterProvider;
+import de.carne.swt.browseradapter.UltralightBrowserAdapterProvider;
 import de.carne.swt.browseradapter.WebKitBrowserAdapterProvider;
 import de.carne.swt.layout.GridLayoutBuilder;
 import de.carne.util.Exceptions;
@@ -63,8 +64,8 @@ public class ResultView extends Composite {
 	 */
 	public ResultView(Composite parent, int style) {
 		super(parent, style);
-		this.browser = BrowserAdapter.getInstance(this, SWT.NONE, WebKitBrowserAdapterProvider.NAME,
-				PlatformBrowserAdapterProvider.NAME);
+		this.browser = BrowserAdapter.getInstance(this, SWT.NONE, UltralightBrowserAdapterProvider.NAME,
+				WebKitBrowserAdapterProvider.NAME, PlatformBrowserAdapterProvider.NAME);
 
 		Composite browserWidget = this.browser.getBrowserWidget();
 
