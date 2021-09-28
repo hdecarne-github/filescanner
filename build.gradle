@@ -132,7 +132,7 @@ subprojects {
 	}
 	
 	task bootJar(type: Jar) {
-		appendix = "boot"
+		archiveAppendix = "boot"
 		entryCompression = ZipEntryCompression.STORED
 		from jar
 		from configurations.runtimeClasspath.collect {
@@ -195,8 +195,9 @@ subprojects {
 	}
 		
 	jacocoTestReport {
+		dependsOn test
 		reports {
-			xml.required
+			xml.required = true
 			xml.destination file("${buildDir}/reports/jacoco/coverage.xml")
 		}
 	}
