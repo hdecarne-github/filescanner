@@ -1,0 +1,26 @@
+name: build
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      JAVA_OPTS: "-Xmx4g -Dfile.encoding=UTF-8"
+      GRADLE_OPTS: "-Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=hdecarne-github"
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+          cache: 'gradle'
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: Init Build
+        run: ./gradlew -s --refresh-dependencies clean classes testClasses
+      - name: Run Build
+        run: xvfb-run --auto-servernum ./gradlew -s build javadoc sonarqube
