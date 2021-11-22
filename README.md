@@ -1,5 +1,5 @@
 [![Downloads](https://img.shields.io/github/downloads/hdecarne/filescanner/total.svg)](https://github.com/hdecarne/filescanner/releases)
-![Build](https://github.com/hdecarne/filescanner/actions/workflows/build-on-linux.yml/badge.svg)
+[![Build](https://github.com/hdecarne/filescanner/actions/workflows/build-on-linux.yml/badge.svg)](https://github.com/hdecarne/filescanner/actions)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=de.carne%3Afilescanner&metric=coverage)](https://sonarcloud.io/dashboard?id=de.carne%3Afilescanner)
 
 ### About FileScanner
