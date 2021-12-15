@@ -16,15 +16,30 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '11'
-          distribution: 'adopt'
+          distribution: 'temurin'
           cache: 'gradle'
       - name: Install Dependencies
         run: |
           sudo apt-get update
           sudo apt-get install libwebkit2gtk-4.0-dev
+      - name: Cache dependency check data
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/dependency-check-data
+          key: gradle-dependency-check-data
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v1
       - name: Init Build
-        run: ./gradlew -s --refresh-dependencies clean classes testClasses
+        run: ./gradlew -s --refresh-dependencies clean classes testClasses dependencyCheckUpdate
       - name: Run Build
-        run: xvfb-run --auto-servernum ./gradlew -s build javadoc sonarqube
+        run: xvfb-run --auto-servernum ./gradlew -s build javadoc
+      - name: Run SonarQube
+        run: ./gradlew -s sonarqube
+      - name: Run OWASP dependency check
+        run: ./gradlew -s dependencyCheckAggregate
+      - name: Upload Reports
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-reports
+          path: ./build/reports
+          retention-days: 7
