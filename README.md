@@ -1,5 +1,5 @@
-[![Downloads](https://img.shields.io/github/downloads/hdecarne/filescanner/total.svg)](https://github.com/hdecarne/filescanner/releases)
-[![Build](https://github.com/hdecarne/filescanner/actions/workflows/build-on-linux.yml/badge.svg)](https://github.com/hdecarne/filescanner/actions/workflows/build-on-linux.yml)
+[![Downloads](https://img.shields.io/github/downloads/hdecarne/filescanner/total.svg)](https://github.com/hdecarne-github/filescanner/releases)
+[![Build](https://github.com/hdecarne-github/filescanner/actions/workflows/build-on-linux.yml/badge.svg)](https://github.com/hdecarne-github/filescanner/actions/workflows/build-on-linux.yml)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=de.carne%3Afilescanner&metric=coverage)](https://sonarcloud.io/dashboard?id=de.carne%3Afilescanner)
 
 ### About FileScanner
@@ -16,7 +16,7 @@ A Java SE 11 Runtime Environment is required to run FileScanner. FileScanner use
 * Linux GTK 64bit (gtk-linux-x86_64)
 * Windows 64bit (win32-win32-x86_64)
 
-Download the latest version from the project's [releases page](https://github.com/hdecarne/filescanner/releases/latest).
+Download the latest version from the project's [releases page](https://github.com/hdecarne-github/filescanner/releases/latest).
 
 ![Install4j](docs/install4j_small.png)
 The provided installer/launcher packages have been created using the multi-platform installer builder
@@ -44,4 +44,4 @@ file
 ```
 
 #### Changelog:
-See [CHANGELOG.md](https://github.com/hdecarne/filescanner/blob/master/CHANGELOG.md).
+See [CHANGELOG.md](https://github.com/hdecarne-github/filescanner/blob/master/CHANGELOG.md).

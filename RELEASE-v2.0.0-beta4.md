@@ -2,7 +2,7 @@
 This is a beta release of the completely rewritten FileScanner 2.0 application.
 
 Main enhancements are:
-* A new generic format specification driven [scan engine](https://github.com/hdecarne/filescanner-engine).
+* A new generic format specification driven [scan engine](https://github.com/hdecarne-github/filescanner-engine).
 * Ad-hoc full-text search support via [Apache Lucene](https://lucene.apache.org).
 * Native Installer, Launcher and automatic update support via [Install4J](https://www.ej-technologies.com/products/install4j/overview.html).
 
@@ -16,4 +16,4 @@ GNU General Public License for more details.
 ### v2.0.0-beta4 (2021-mm-dd)
 * Various fixes and enhancements
 
-See full [changelog](https://github.com/hdecarne/filescanner/blob/master/CHANGELOG.md).
+See full [changelog](https://github.com/hdecarne-github/filescanner/blob/master/CHANGELOG.md).

@@ -53,7 +53,7 @@
       </iconImageFiles>
     </launcher>
   </launchers>
-  <installerGui autoUpdateDescriptorUrl="https://updates.carne.de/${compiler:sys.shortName}/updates.xml" useAutoUpdateBaseUrl="true" autoUpdateBaseUrl="https://github.com/hdecarne/${compiler:i4jProjectBaseName}/releases/download/v${compiler:sys.version}/">
+  <installerGui autoUpdateDescriptorUrl="https://updates.carne.de/${compiler:sys.shortName}/updates.xml" useAutoUpdateBaseUrl="true" autoUpdateBaseUrl="https://github.com/hdecarne-github/${compiler:i4jProjectBaseName}/releases/download/v${compiler:sys.version}/">
     <applications>
       <application id="installer" beanClass="com.install4j.runtime.beans.applications.InstallerApplication">
         <startup>
