@@ -10,8 +10,11 @@ plugins {
 def snapshotBuild = project.version.endsWith("-SNAPSHOT")
 def releaseBuild = !snapshotBuild
 
-def mavenReleaseRepository = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-def mavenSnapshotRepository = "https://oss.sonatype.org/content/repositories/snapshots/"
+def mavenPublicRepository = "https://s01.oss.sonatype.org/content/groups/public/"
+def mavenReleaseRepository = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+def mavenSnapshotRepository = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+def mavenI4jRepository = "https://maven.ej-technologies.com/repository/"
+
 
 apply plugin: "de.carne.java-tools"
 
@@ -49,7 +52,8 @@ subprojects {
 	
 	repositories {
 		mavenCentral()
-		maven { url "https://maven.ej-technologies.com/repository/" }
+		maven { url mavenPublicRepository }
+		maven { url mavenI4jRepository }
 		if(snapshotBuild) {
 			maven { url mavenSnapshotRepository }
 		}
@@ -93,7 +97,7 @@ subprojects {
 		implementation(group: "de.carne", name: "filescanner-engine", version: project.filescannerEngineVersion)
 		implementation(group: "org.glassfish.grizzly", name: "grizzly-http-server", version: project.glassfishGrizzlyVersion)
 		implementation(group: "org.apache.lucene", name: "lucene-analyzers-common", version: project.luceneVersion)
-		implementation(group: "org.apache.lucene", name: "lucene-queryparser", version: project.luceneVersion) {
+		implementation(group: "org.apache.lucene", name: "lucene-queryparser", version: project.luceneQueryParserVersion) {
 			exclude(group: "org.apache.lucene", module: "lucene-sandbox")
 		}
 		compileOnly(group: "com.install4j", name: "install4j-runtime", version: project.i4jVersion)
