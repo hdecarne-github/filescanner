@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
@@ -35,10 +36,6 @@ import de.carne.filescanner.engine.FileScannerResult;
 import de.carne.filescanner.engine.transfer.FileScannerResultRenderHandler;
 import de.carne.filescanner.engine.transfer.RenderStyle;
 import de.carne.filescanner.engine.transfer.TransferSource;
-import de.carne.swt.browseradapter.BrowserAdapter;
-import de.carne.swt.browseradapter.PlatformBrowserAdapterProvider;
-import de.carne.swt.browseradapter.UltralightBrowserAdapterProvider;
-import de.carne.swt.browseradapter.WebKitBrowserAdapterProvider;
 import de.carne.swt.layout.GridLayoutBuilder;
 import de.carne.util.Exceptions;
 import de.carne.util.Strings;
@@ -50,7 +47,7 @@ public class ResultView extends Composite {
 
 	private static final String ABOUT_BLANK_URL = "about:blank";
 
-	private final BrowserAdapter browser;
+	private final Browser browser;
 	private final Link pagination;
 	private @Nullable ResultViewContentHandler contentHandler = null;
 	private List<ResultNavigator> resultNavigators = new ArrayList<>(1);
@@ -64,17 +61,13 @@ public class ResultView extends Composite {
 	 */
 	public ResultView(Composite parent, int style) {
 		super(parent, style);
-		this.browser = BrowserAdapter.getInstance(this, SWT.NONE, UltralightBrowserAdapterProvider.NAME,
-				WebKitBrowserAdapterProvider.NAME, PlatformBrowserAdapterProvider.NAME);
-
-		Composite browserWidget = this.browser.getBrowserWidget();
-
+		this.browser = new Browser(this, SWT.NONE);
 		this.pagination = new Link(this, SWT.NONE);
-		browserWidget.addListener(SWT.MenuDetect, event -> event.doit = false);
-		browserWidget.addTraverseListener(event -> event.doit = true);
+		this.browser.addListener(SWT.MenuDetect, event -> event.doit = false);
+		this.browser.addTraverseListener(event -> event.doit = true);
 		this.pagination.addListener(SWT.Selection, this::onPageSelection);
 		GridLayoutBuilder.layout().margin(0, 0).apply(this);
-		GridLayoutBuilder.data(GridData.FILL_BOTH).apply(browserWidget);
+		GridLayoutBuilder.data(GridData.FILL_BOTH).apply(this.browser);
 		GridLayoutBuilder.data(GridData.FILL_HORIZONTAL).exclude(true).apply(this.pagination);
 
 		Display display = getDisplay();
@@ -193,7 +186,7 @@ public class ResultView extends Composite {
 		}
 		this.pagination.setText(pageLinks);
 		if (layoutRequired) {
-			this.browser.getBrowserWidget().requestLayout();
+			this.browser.requestLayout();
 			this.pagination.requestLayout();
 		}
 	}
