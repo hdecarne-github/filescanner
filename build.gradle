@@ -3,7 +3,7 @@ plugins {
 	id "de.carne.java-tools" version "1.2.0" apply false
 	id "org.sonarqube" version "3.3" apply false
 	id "com.install4j.gradle" version "9.0.5" apply false
-	id "org.owasp.dependencycheck" version "6.5.0.1"
+	id "org.owasp.dependencycheck" version "6.5.1"
 }
 
 // Build helpers
@@ -93,7 +93,6 @@ subprojects {
 		implementation(group: "org.eclipse.jdt", name: "org.eclipse.jdt.annotation", version: project.annotationVersion)
 		implementation(group: "de.carne", name: "java-default", version: project.javaDefaultVersion)
 		implementation(group: "de.carne", name: "java-swt${platformSuffix}", version: project.javaSwtVersion)
-		implementation(group: "de.carne", name: "java-swt-browseradapter${platformSuffix}", version: project.javaSwtBrowseradapterVersion)
 		implementation(group: "de.carne", name: "filescanner-engine", version: project.filescannerEngineVersion)
 		implementation(group: "org.glassfish.grizzly", name: "grizzly-http-server", version: project.glassfishGrizzlyVersion)
 		implementation(group: "org.apache.lucene", name: "lucene-analyzers-common", version: project.luceneVersion)
